@@ -12,6 +12,10 @@ export interface TrustRegistry {
   versions: TrustRegistryVersion[]
 }
 
+export interface TrustRegistryListResponse {
+  trust_registries: TrustRegistry[]
+}
+
 export interface TrustRegistryVersion {
   id: string
   tr_id: string

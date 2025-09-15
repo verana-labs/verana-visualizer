@@ -1,4 +1,4 @@
-import { TrustRegistry, CredentialSchema, ApiResponse } from '@/types'
+import { TrustRegistry, CredentialSchema, ApiResponse, TrustRegistryListResponse } from '@/types'
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
 
@@ -22,11 +22,29 @@ export async function fetchCredentialSchemas(trId: string): Promise<ApiResponse<
   return response.json()
 }
 
+export async function fetchTrustRegistryList(maxSize: number = 100): Promise<TrustRegistryListResponse> {
+  const response = await fetch(`${API_ENDPOINT}/verana/tr/v1/list?response_max_size=${maxSize}`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch trust registry list: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
 export function convertUvnaToVna(uvna: string): string {
-  // Convert from uvna (micro units) to VNA
   const uvnaNumber = parseInt(uvna, 10)
   const vna = uvnaNumber / 1000000 // 1 VNA = 1,000,000 uvna
-  return vna.toFixed(6)
+  
+  if (vna >= 1000) {
+    return vna.toFixed(0) 
+  } else if (vna >= 100) {
+    return vna.toFixed(1)
+  } else if (vna >= 10) {
+    return vna.toFixed(2) 
+  } else {
+    return vna.toFixed(2)
+  }
 }
 
 export function formatSnakeCaseToTitleCase(str: string): string {

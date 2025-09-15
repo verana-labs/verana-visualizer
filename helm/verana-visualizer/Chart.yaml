@@ -1,0 +1,18 @@
+apiVersion: v2
+name: verana-visualizer
+description: A Helm chart for Verana Visualizer - Decentralized Trust Layer Visualizer
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+home: https://verana.io
+sources:
+  - https://github.com/verana-labs/verana-visualizer
+maintainers:
+  - name: Verana Team
+    email: team@verana.io
+keywords:
+  - verana
+  - blockchain
+  - trust
+  - visualizer
+  - decentralized

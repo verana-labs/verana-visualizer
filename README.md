@@ -95,12 +95,43 @@ src/
 
 Place your `logo.svg` file in the `public/` directory. The application will automatically use it as the logo.
 
+## CI/CD Pipeline
+
+The project includes a comprehensive GitHub Actions CI/CD pipeline (`.github/workflows/cd.yml`) that provides:
+
+### 🔄 **Automated Checks:**
+- **Build Verification**: Tests on Node.js 18.x and 20.x
+- **Linting**: ESLint code quality checks
+- **Type Checking**: TypeScript compilation validation
+- **Security Audit**: npm audit for vulnerability scanning
+- **Docker Build**: Multi-architecture container builds
+
+### 🚀 **Deployment Stages:**
+- **Staging**: Auto-deploy on `develop` branch
+- **Production**: Auto-deploy on `main` branch
+- **Docker Hub**: Automated image publishing
+- **Kubernetes**: Ready for K8s deployment
+
+### 📦 **Containerization:**
+- **Dockerfile**: Optimized multi-stage build
+- **Docker Hub**: `verana/verana-visualizer` repository
+- **Multi-arch**: Linux AMD64 and ARM64 support
+
+### ☸️ **Kubernetes Support:**
+- **Deployment**: `k8s/deployment.yaml`
+- **Helm Chart**: `helm/verana-visualizer/`
+- **Service**: LoadBalancer configuration
+- **Health Checks**: Liveness and readiness probes
+
 ## Development Roadmap
 
 ### V1 (Current)
 - [x] Project initialization with React NextJS + Tailwind
 - [x] Basic UI components and theme system
 - [x] Search form for trust registry ID
+- [x] CI/CD pipeline with GitHub Actions
+- [x] Docker containerization
+- [x] Kubernetes deployment configuration
 - [ ] API integration for trust registry data
 - [ ] Results display with formatted JSON schemas
 - [ ] Responsive design optimization
@@ -108,9 +139,8 @@ Place your `logo.svg` file in the `public/` directory. The application will auto
 ### V2 (Planned)
 - [ ] Network graph visualization
 - [ ] Advanced filtering and search
-- [ ] Docker containerization
-- [ ] Kubernetes deployment
-- [ ] CI/CD pipeline
+- [ ] Amazon Lambda deployment
+- [ ] Performance optimization
 
 ## Contributing
 
