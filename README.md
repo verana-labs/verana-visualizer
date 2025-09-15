@@ -55,9 +55,9 @@ npm run dev
 Create a `.env.local` file with the following variables:
 
 ```env
-NEXT_PUBLIC_API_ENDPOINT=https://api.verana.network
-NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.verana.network
-NEXT_PUBLIC_IDX_ENDPOINT=https://idx.verana.network
+NEXT_PUBLIC_API_ENDPOINT=https://api.testnet.verana.network
+NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.testnet.verana.network
+NEXT_PUBLIC_IDX_ENDPOINT=https://idx.testnet.verana.network
 NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.verana.network
 NEXT_PUBLIC_CHAIN_ID=vna-testnet-1
 NEXT_PUBLIC_CHAIN_NAME=Testnet
@@ -127,8 +127,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Verana is an open initiative creating a decentralized trust layer for the Internet. It is built on verifiable credentials, DIDs, and public permissionless trust registries.
 
-- **Website**: [verana.io](https://verana.io)
-- **GitHub**: [verana-labs](https://github.com/verana-labs)
-- **Discord**: [Join our community](https://discord.gg/verana)
+- **Docs**: [docs.verana.io](https://docs.verana.io/)
+- **GitHub**: [github](https://github.com/verana-labs)
+- **Discord**: [Join our community](https://discord.gg/edjaFn252q)
 
 Don't trust. Verify.

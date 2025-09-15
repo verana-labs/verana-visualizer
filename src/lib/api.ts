@@ -1,6 +1,6 @@
 import { TrustRegistry, CredentialSchema, ApiResponse } from '@/types'
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.verana.network'
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
 
 export async function fetchTrustRegistry(trId: string): Promise<ApiResponse<{ trust_registry: TrustRegistry }>> {
   const response = await fetch(`${API_ENDPOINT}/verana/tr/v1/get/${trId}`)

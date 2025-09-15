@@ -12,9 +12,9 @@ Verana is an open initiative creating a decentralized trust layer for the Intern
 - **Logo**: logo.svg (to be placed after init)
 
 ## API Endpoints
-- **API_ENDPOINT**: https://api.verana.network
-- **RPC_ENDPOINT**: https://rpc.verana.network
-- **IDX_ENDPOINT**: https://idx.verana.network
+- **API_ENDPOINT**: https://api.testnet.verana.network
+- **RPC_ENDPOINT**: https://rpc.testnet.verana.network
+- **IDX_ENDPOINT**: https://idx.testnet.verana.network
 - **RESOLVER_ENDPOINT**: https://resolver.verana.network
 - **CHAIN_ID**: vna-testnet-1
 - **CHAIN_NAME**: Testnet
@@ -73,9 +73,9 @@ Verana is an open initiative creating a decentralized trust layer for the Intern
 ## Environment Variables
 - APP_NAME: Verana Visualizer
 - APP_LOGO: logo.svg
-- API_ENDPOINT: https://api.verana.network
-- RPC_ENDPOINT: https://rpc.verana.network
-- IDX_ENDPOINT: https://idx.verana.network
+- API_ENDPOINT: https://api.testnet.verana.network
+- RPC_ENDPOINT: https://rpc.testnet.verana.network
+- IDX_ENDPOINT: https://idx.testnet.verana.network
 - RESOLVER_ENDPOINT: https://resolver.verana.network
 - CHAIN_ID: vna-testnet-1
 - CHAIN_NAME: Testnet
