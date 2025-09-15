@@ -184,3 +184,167 @@ export interface DID {
 export interface DIDListResponse {
   dids: DID[]
 }
+
+// New API Response Types
+export interface SupplyResponse {
+  supply: Array<{
+    denom: string
+    amount: string
+  }>
+  pagination: {
+    next_key: string | null
+    total: string
+  }
+}
+
+export interface InflationResponse {
+  inflation: string
+}
+
+export interface MintParamsResponse {
+  params: {
+    mint_denom: string
+    inflation_rate_change: string
+    inflation_max: string
+    inflation_min: string
+    goal_bonded: string
+    blocks_per_year: string
+  }
+}
+
+export interface StakingPoolResponse {
+  pool: {
+    not_bonded_tokens: string
+    bonded_tokens: string
+  }
+}
+
+export interface CommunityPoolResponse {
+  pool: Array<{
+    denom: string
+    amount: string
+  }>
+}
+
+export interface Validator {
+  operator_address: string
+  consensus_pubkey: {
+    "@type": string
+    key: string
+  }
+  jailed: boolean
+  status: string
+  tokens: string
+  delegator_shares: string
+  description: {
+    moniker: string
+    identity: string
+    website: string
+    security_contact: string
+    details: string
+  }
+  unbonding_height: string
+  unbonding_time: string
+  commission: {
+    commission_rates: {
+      rate: string
+      max_rate: string
+      max_change_rate: string
+    }
+    update_time: string
+  }
+  min_self_delegation: string
+  unbonding_on_hold_ref_count: string
+  unbonding_ids: string[]
+}
+
+export interface ValidatorsResponse {
+  validators: Validator[]
+  pagination: {
+    next_key: string | null
+    total: string
+  }
+}
+
+export interface Proposal {
+  id: string
+  messages: Array<{
+    "@type": string
+    authority: string
+    plan?: {
+      name: string
+      time: string
+      height: string
+      info: string
+      upgraded_client_state: any
+    }
+  }>
+  status: string
+  final_tally_result: {
+    yes_count: string
+    abstain_count: string
+    no_count: string
+    no_with_veto_count: string
+  }
+  submit_time: string
+  deposit_end_time: string
+  total_deposit: Array<{
+    denom: string
+    amount: string
+  }>
+  voting_start_time: string
+  voting_end_time: string
+  metadata: string
+  title: string
+  summary: string
+  proposer: string
+  expedited: boolean
+  failed_reason: string
+}
+
+export interface ProposalsResponse {
+  proposals: Proposal[]
+  pagination: {
+    next_key: string | null
+    total: string
+  }
+}
+
+export interface DenomsMetadataResponse {
+  metadatas: any[]
+  pagination: {
+    next_key: string | null
+    total: string
+  }
+}
+
+export interface HeaderResponse {
+  jsonrpc: string
+  id: number
+  result: {
+    header: {
+      version: {
+        block: string
+      }
+      chain_id: string
+      height: string
+      time: string
+      last_block_id: {
+        hash: string
+        parts: {
+          total: number
+          hash: string
+        }
+      }
+      last_commit_hash: string
+      data_hash: string
+      validators_hash: string
+      next_validators_hash: string
+      consensus_hash: string
+      app_hash: string
+      last_results_hash: string
+      evidence_hash: string
+      proposer_address: string
+    }
+  }
+}

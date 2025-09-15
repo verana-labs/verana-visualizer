@@ -2,14 +2,37 @@
 
 import { useState, useEffect } from 'react'
 import LayoutWrapper from '@/components/LayoutWrapper'
-import DashboardCards from '@/components/DashboardCards'
-import { fetchAbciInfo, fetchLatestBlock, fetchGenesis } from '@/lib/api'
-import { AbciInfoResponse, BlockResponse, GenesisResponse } from '@/types'
+import EnhancedDashboardCards from '@/components/EnhancedDashboardCards'
+import { 
+  fetchSupply, 
+  fetchInflation, 
+  fetchMintParams, 
+  fetchStakingPool, 
+  fetchCommunityPool, 
+  fetchValidators, 
+  fetchProposals,
+  fetchHeader
+} from '@/lib/api'
+import { 
+  SupplyResponse, 
+  InflationResponse, 
+  MintParamsResponse, 
+  StakingPoolResponse, 
+  CommunityPoolResponse, 
+  ValidatorsResponse, 
+  ProposalsResponse,
+  HeaderResponse
+} from '@/types'
 
 export default function Dashboard() {
-  const [abciInfo, setAbciInfo] = useState<AbciInfoResponse | null>(null)
-  const [latestBlock, setLatestBlock] = useState<BlockResponse | null>(null)
-  const [genesis, setGenesis] = useState<GenesisResponse | null>(null)
+  const [supply, setSupply] = useState<SupplyResponse | null>(null)
+  const [inflation, setInflation] = useState<InflationResponse | null>(null)
+  const [mintParams, setMintParams] = useState<MintParamsResponse | null>(null)
+  const [stakingPool, setStakingPool] = useState<StakingPoolResponse | null>(null)
+  const [communityPool, setCommunityPool] = useState<CommunityPoolResponse | null>(null)
+  const [validators, setValidators] = useState<ValidatorsResponse | null>(null)
+  const [proposals, setProposals] = useState<ProposalsResponse | null>(null)
+  const [header, setHeader] = useState<HeaderResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -19,15 +42,34 @@ export default function Dashboard() {
         setIsLoading(true)
         setError(null)
 
-        const [abciInfoData, blockData, genesisData] = await Promise.all([
-          fetchAbciInfo(),
-          fetchLatestBlock(),
-          fetchGenesis()
+        const [
+          supplyData,
+          inflationData,
+          mintParamsData,
+          stakingPoolData,
+          communityPoolData,
+          validatorsData,
+          proposalsData,
+          headerData
+        ] = await Promise.all([
+          fetchSupply(),
+          fetchInflation(),
+          fetchMintParams(),
+          fetchStakingPool(),
+          fetchCommunityPool(),
+          fetchValidators(),
+          fetchProposals(),
+          fetchHeader()
         ])
 
-        setAbciInfo(abciInfoData)
-        setLatestBlock(blockData)
-        setGenesis(genesisData)
+        setSupply(supplyData)
+        setInflation(inflationData)
+        setMintParams(mintParamsData)
+        setStakingPool(stakingPoolData)
+        setCommunityPool(communityPoolData)
+        setValidators(validatorsData)
+        setProposals(proposalsData)
+        setHeader(headerData)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load network data')
         console.error('Error loading network data:', err)
@@ -49,10 +91,15 @@ export default function Dashboard() {
       subtitle="Verana Network Overview"
     >
       <div className="p-6">
-        <DashboardCards
-          abciInfo={abciInfo}
-          latestBlock={latestBlock}
-          genesis={genesis}
+        <EnhancedDashboardCards
+          supply={supply}
+          inflation={inflation}
+          mintParams={mintParams}
+          stakingPool={stakingPool}
+          communityPool={communityPool}
+          validators={validators}
+          proposals={proposals}
+          header={header}
           isLoading={isLoading}
           error={error}
         />

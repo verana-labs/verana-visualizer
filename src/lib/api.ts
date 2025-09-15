@@ -1,4 +1,23 @@
-import { TrustRegistry, CredentialSchema, ApiResponse, TrustRegistryListResponse, AbciInfoResponse, BlockResponse, GenesisResponse, DID, DIDListResponse } from '@/types'
+import { 
+  TrustRegistry, 
+  CredentialSchema, 
+  ApiResponse, 
+  TrustRegistryListResponse, 
+  AbciInfoResponse, 
+  BlockResponse, 
+  GenesisResponse, 
+  DID, 
+  DIDListResponse,
+  SupplyResponse,
+  InflationResponse,
+  MintParamsResponse,
+  StakingPoolResponse,
+  CommunityPoolResponse,
+  ValidatorsResponse,
+  ProposalsResponse,
+  DenomsMetadataResponse,
+  HeaderResponse
+} from '@/types'
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
 const RPC_ENDPOINT = process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://rpc.testnet.verana.network'
@@ -106,6 +125,97 @@ export async function fetchDIDList(): Promise<DIDListResponse> {
   
   if (!response.ok) {
     throw new Error(`Failed to fetch DID list: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+// New Dashboard API Functions
+export async function fetchSupply(): Promise<SupplyResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/bank/v1beta1/supply`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch supply: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchInflation(): Promise<InflationResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/mint/v1beta1/inflation`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch inflation: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchMintParams(): Promise<MintParamsResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/mint/v1beta1/params`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch mint params: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchStakingPool(): Promise<StakingPoolResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/pool`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch staking pool: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchCommunityPool(): Promise<CommunityPoolResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/distribution/v1beta1/community_pool`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch community pool: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchValidators(): Promise<ValidatorsResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/validators`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch validators: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchProposals(): Promise<ProposalsResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/gov/v1/proposals`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch proposals: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchDenomsMetadata(): Promise<DenomsMetadataResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/bank/v1beta1/denoms_metadata`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch denoms metadata: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+export async function fetchHeader(): Promise<HeaderResponse> {
+  const response = await fetch(`${RPC_ENDPOINT}/header`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch header: ${response.statusText}`)
   }
   
   return response.json()
