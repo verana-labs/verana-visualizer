@@ -2,24 +2,24 @@
 
 import { useState } from 'react'
 
-export default function SearchForm() {
-  const [trustRegistryId, setTrustRegistryId] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+interface SearchFormProps {
+  onSearch: (searchTerm: string) => void
+  isLoading?: boolean
+}
+
+export default function SearchForm({ onSearch, isLoading = false }: SearchFormProps) {
+  const [searchTerm, setSearchTerm] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!trustRegistryId.trim()) return
+    if (!searchTerm.trim()) return
 
-    setIsLoading(true)
-    try {
-      // TODO: Implement API call to fetch trust registry data
-      console.log('Searching for trust registry:', trustRegistryId)
-      // This will be implemented in the next steps
-    } catch (error) {
-      console.error('Error fetching trust registry:', error)
-    } finally {
-      setIsLoading(false)
-    }
+    onSearch(searchTerm.trim())
+  }
+
+  const handleClear = () => {
+    setSearchTerm('')
+    onSearch('')
   }
 
   return (
@@ -31,19 +31,28 @@ export default function SearchForm() {
         <div className="flex-1">
           <input
             type="text"
-            value={trustRegistryId}
-            onChange={(e) => setTrustRegistryId(e.target.value)}
-            placeholder="Enter Trust Registry ID (e.g., 18)"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Enter Trust Registry DID (e.g., did:example:184a2fddab1b3d505d477adbf0643446)"
             className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg focus:ring-2 focus:ring-verana-accent focus:border-transparent bg-white dark:bg-dark-surface text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
         <button
           type="submit"
-          disabled={isLoading || !trustRegistryId.trim()}
+          disabled={isLoading || !searchTerm.trim()}
           className="px-6 py-2 bg-verana-accent text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isLoading ? 'Searching...' : 'Search'}
         </button>
+        {searchTerm && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            Clear
+          </button>
+        )}
       </form>
     </div>
   )

@@ -10,8 +10,11 @@ import { TrustRegistry } from '@/types'
 
 export default function Home() {
   const [trustRegistries, setTrustRegistries] = useState<TrustRegistry[]>([])
+  const [filteredRegistries, setFilteredRegistries] = useState<TrustRegistry[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     const loadTrustRegistries = async () => {
@@ -19,6 +22,7 @@ export default function Home() {
         setIsLoading(true)
         const response = await fetchTrustRegistryList(100)
         setTrustRegistries(response.trust_registries)
+        setFilteredRegistries(response.trust_registries)
         setError(null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load trust registries')
@@ -31,11 +35,27 @@ export default function Home() {
     loadTrustRegistries()
   }, [])
 
+  const handleSearch = (searchTerm: string) => {
+    setSearchTerm(searchTerm)
+    setIsSearching(true)
+    
+    if (!searchTerm.trim()) {
+      setFilteredRegistries(trustRegistries)
+    } else {
+      const filtered = trustRegistries.filter(registry => 
+        registry.did.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      setFilteredRegistries(filtered)
+    }
+    
+    setIsSearching(false)
+  }
+
   return (
     <main className="min-h-screen bg-white dark:bg-black transition-colors">
       <Header />
       <div className="container mx-auto px-4 py-8">
-        <SearchForm />
+        <SearchForm onSearch={handleSearch} isLoading={isSearching} />
         
         {isLoading ? (
           <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
@@ -76,10 +96,13 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <TrustRegistryTable trustRegistries={trustRegistries} />
+          <TrustRegistryTable 
+            trustRegistries={filteredRegistries} 
+            isSearchResult={!!searchTerm}
+          />
         )}
         
-        <ResultsSection />
+        {!isLoading && !error && filteredRegistries.length === 0 && !searchTerm && <ResultsSection />}
       </div>
     </main>
   )

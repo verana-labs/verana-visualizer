@@ -2,14 +2,20 @@
 
 import { TrustRegistry } from '@/types'
 import { convertUvnaToVna, formatSnakeCaseToTitleCase } from '@/lib/api'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+
+type SortField = 'id' | 'did' | 'controller' | 'deposit' | 'version' | 'created' | 'status'
+type SortDirection = 'asc' | 'desc'
 
 interface TrustRegistryTableProps {
   trustRegistries: TrustRegistry[]
+  isSearchResult?: boolean
 }
 
-export default function TrustRegistryTable({ trustRegistries }: TrustRegistryTableProps) {
+export default function TrustRegistryTable({ trustRegistries, isSearchResult = false }: TrustRegistryTableProps) {
   const [selectedRegistry, setSelectedRegistry] = useState<TrustRegistry | null>(null)
+  const [sortField, setSortField] = useState<SortField>('id')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -29,20 +35,101 @@ export default function TrustRegistryTable({ trustRegistries }: TrustRegistryTab
     return controller.length > 20 ? `${controller.substring(0, 20)}...` : controller
   }
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return (
+        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+        </svg>
+      )
+    }
+    
+    return sortDirection === 'asc' ? (
+      <svg className="w-4 h-4 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+      </svg>
+    ) : (
+      <svg className="w-4 h-4 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
+    )
+  }
+
+  const sortedRegistries = useMemo(() => {
+    return [...trustRegistries].sort((a, b) => {
+      let aValue: any
+      let bValue: any
+
+      switch (sortField) {
+        case 'id':
+          aValue = parseInt(a.id)
+          bValue = parseInt(b.id)
+          break
+        case 'did':
+          aValue = a.did.toLowerCase()
+          bValue = b.did.toLowerCase()
+          break
+        case 'controller':
+          aValue = a.controller.toLowerCase()
+          bValue = b.controller.toLowerCase()
+          break
+        case 'deposit':
+          aValue = parseInt(a.deposit)
+          bValue = parseInt(b.deposit)
+          break
+        case 'version':
+          aValue = a.active_version
+          bValue = b.active_version
+          break
+        case 'created':
+          aValue = new Date(a.created).getTime()
+          bValue = new Date(b.created).getTime()
+          break
+        case 'status':
+          aValue = a.archived ? 1 : 0 // Archived = 1, Active = 0
+          bValue = b.archived ? 1 : 0
+          break
+        default:
+          return 0
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
+  }, [trustRegistries, sortField, sortDirection])
+
   if (trustRegistries.length === 0) {
     return (
       <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
         <div className="text-center py-12">
           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            {isSearchResult ? (
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            ) : (
+              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            )}
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            No Trust Registries Found
+            {isSearchResult ? 'No Trust Registries Found' : 'No Trust Registries Available'}
           </h3>
           <p className="text-gray-500 dark:text-gray-400">
-            No trust registries are currently available.
+            {isSearchResult 
+              ? 'No trust registries match your search criteria.' 
+              : 'No trust registries are currently available.'}
           </p>
         </div>
       </div>
@@ -53,7 +140,7 @@ export default function TrustRegistryTable({ trustRegistries }: TrustRegistryTab
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-dark-border">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          Trust Registries ({trustRegistries.length})
+          Trust Registries ({sortedRegistries.length})
         </h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Click on any row to view detailed information
@@ -64,31 +151,73 @@ export default function TrustRegistryTable({ trustRegistries }: TrustRegistryTab
         <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-border">
           <thead className="bg-gray-50 dark:bg-dark-surface">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                ID
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('id')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>ID</span>
+                  {getSortIcon('id')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                DID
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('did')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>DID</span>
+                  {getSortIcon('did')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Controller
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('controller')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Controller</span>
+                  {getSortIcon('controller')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Deposit (VNA)
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('deposit')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Deposit (VNA)</span>
+                  {getSortIcon('deposit')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Version
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('version')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Version</span>
+                  {getSortIcon('version')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Created
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('created')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Created</span>
+                  {getSortIcon('created')}
+                </div>
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Status
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
+                onClick={() => handleSort('status')}
+              >
+                <div className="flex items-center space-x-1">
+                  <span>Status</span>
+                  {getSortIcon('status')}
+                </div>
               </th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-dark-card divide-y divide-gray-200 dark:divide-dark-border">
-            {trustRegistries.map((registry) => (
+            {sortedRegistries.map((registry) => (
               <tr
                 key={registry.id}
                 onClick={() => setSelectedRegistry(registry)}
@@ -181,14 +310,16 @@ export default function TrustRegistryTable({ trustRegistries }: TrustRegistryTab
               {selectedRegistry.aka && (
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Website</label>
-                  <a
-                    href={selectedRegistry.aka}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-verana-accent hover:underline break-all"
-                  >
-                    {selectedRegistry.aka}
-                  </a>
+                  <div className="mt-1">
+                    <a
+                      href={selectedRegistry.aka}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-verana-accent hover:underline break-all"
+                    >
+                      {selectedRegistry.aka}
+                    </a>
+                  </div>
                 </div>
               )}
 
