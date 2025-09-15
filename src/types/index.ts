@@ -61,3 +61,126 @@ export interface NetworkStats {
   trustDepositSize: string
   blockHeight: string
 }
+
+export interface AbciInfoResponse {
+  jsonrpc: string
+  id: number
+  result: {
+    response: {
+      data: string
+      version: string
+      last_block_height: string
+      last_block_app_hash: string
+    }
+  }
+}
+
+export interface BlockResponse {
+  jsonrpc: string
+  id: number
+  result: {
+    block_id: {
+      hash: string
+      parts: {
+        total: number
+        hash: string
+      }
+    }
+    block: {
+      header: {
+        version: {
+          block: string
+        }
+        chain_id: string
+        height: string
+        time: string
+        last_block_id: {
+          hash: string
+          parts: {
+            total: number
+            hash: string
+          }
+        }
+        last_commit_hash: string
+        data_hash: string
+        validators_hash: string
+        next_validators_hash: string
+        consensus_hash: string
+        app_hash: string
+        last_results_hash: string
+        evidence_hash: string
+        proposer_address: string
+      }
+      data: {
+        txs: any[]
+      }
+      evidence: {
+        evidence: any[]
+      }
+      last_commit: {
+        height: string
+        round: number
+        block_id: {
+          hash: string
+          parts: {
+            total: number
+            hash: string
+          }
+        }
+        signatures: Array<{
+          block_id_flag: number
+          validator_address: string
+          timestamp: string
+          signature: string
+        }>
+      }
+    }
+  }
+}
+
+export interface GenesisResponse {
+  jsonrpc: string
+  id: number
+  result: {
+    genesis: {
+      genesis_time: string
+      chain_id: string
+      initial_height: string
+      app_state: {
+        bank: {
+          supply: Array<{
+            denom: string
+            amount: string
+          }>
+        }
+        mint: {
+          minter: {
+            inflation: string
+            annual_provisions: string
+          }
+          params: {
+            mint_denom: string
+            inflation_rate_change: string
+            inflation_max: string
+            inflation_min: string
+            goal_bonded: string
+            blocks_per_year: string
+          }
+        }
+      }
+    }
+  }
+}
+
+export interface DID {
+  did: string
+  controller: string
+  created: string
+  modified: string
+  exp: string
+  deposit: string
+}
+
+export interface DIDListResponse {
+  dids: DID[]
+}
