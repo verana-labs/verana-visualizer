@@ -20,17 +20,19 @@ export default function RefreshButton({
     if (!isAutoRefreshEnabled || isRefreshing) return
 
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          onRefresh()
-          return autoRefreshInterval
-        }
-        return prev - 1
-      })
+      setCountdown((prev) => (prev <= 1 ? 0 : prev - 1))
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [isAutoRefreshEnabled, isRefreshing, onRefresh, autoRefreshInterval])
+  }, [isAutoRefreshEnabled, isRefreshing])
+
+  useEffect(() => {
+    if (!isAutoRefreshEnabled || isRefreshing) return
+    if (countdown === 0) {
+      onRefresh()
+      setCountdown(autoRefreshInterval)
+    }
+  }, [countdown, isAutoRefreshEnabled, isRefreshing, onRefresh, autoRefreshInterval])
 
   const handleManualRefresh = () => {
     onRefresh()

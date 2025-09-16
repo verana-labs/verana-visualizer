@@ -331,8 +331,8 @@ export default function NetworkGraph() {
                     <div className="text-xs bg-gray-50 dark:bg-dark-surface rounded p-2 max-h-40 overflow-auto">
                       {selectedNode.ref.versions.map((v: any) => (
                         <div key={v.id} className="py-1 border-b last:border-b-0 border-gray-200 dark:border-dark-border">
-                          <div className="flex justify-between"><span>Version</span><span className="font-mono">{v.version}</span></div>
-                          <div className="flex justify-between"><span>Created</span><span className="font-mono">{formatDateTime(v.created)}</span></div>
+                          <div className="flex justify-between text-gray-700 dark:text-gray-300"><span>Version</span><span className="font-mono text-gray-900 dark:text-white">{v.version}</span></div>
+                          <div className="flex justify-between text-gray-700 dark:text-gray-300"><span>Created</span><span className="font-mono text-gray-900 dark:text-white">{formatDateTime(v.created)}</span></div>
                           {Array.isArray(v.documents) && v.documents.length > 0 && (
                             <div className="mt-1">
                               <p className="text-[10px] text-gray-500 dark:text-gray-400">Documents</p>
@@ -389,14 +389,14 @@ export default function NetworkGraph() {
             </div>
           </div>
         )}
-        <div className="mt-6">
+        <div className="mt-6 text-gray-800 dark:text-gray-200">
           <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Legend</h4>
           <ul className="space-y-1 text-sm">
-            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.core }} /> <span>Verana</span></li>
-            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.controller }} /> <span>Controller</span></li>
-            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.trustRegistry }} /> <span>Trust Registry</span></li>
-            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.didDirectory }} /> <span>DID Directory</span></li>
-            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.did }} /> <span>DID</span></li>
+            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.core }} /> <span className="text-gray-800 dark:text-gray-200">Verana</span></li>
+            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.controller }} /> <span className="text-gray-800 dark:text-gray-200">Controller</span></li>
+            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.trustRegistry }} /> <span className="text-gray-800 dark:text-gray-200">Trust Registry</span></li>
+            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.didDirectory }} /> <span className="text-gray-800 dark:text-gray-200">DID Directory</span></li>
+            <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.did }} /> <span className="text-gray-800 dark:text-gray-200">DID</span></li>
           </ul>
         </div>
       </div>
