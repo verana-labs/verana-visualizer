@@ -105,7 +105,10 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href
+            // Special handling for dashboard (root path)
+            const isActive = item.href === '/' 
+              ? pathname === '/' || pathname === '/dashboard'
+              : pathname === item.href
             return (
               <Link
                 key={item.name}
