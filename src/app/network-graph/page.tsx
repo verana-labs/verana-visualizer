@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import LayoutWrapper from '@/components/LayoutWrapper'
+import dynamic from 'next/dynamic'
+
+const NetworkGraph = dynamic(() => import('@/components/NetworkGraph'), { ssr: false })
 
 export default function NetworkGraphPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -38,29 +41,7 @@ export default function NetworkGraphPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
-            <div className="text-center py-12">
-              <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                <svg className="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                Network Graph Visualization
-              </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
-                Interactive network graph showing connections between nodes, validators, and trust relationships.
-              </p>
-              <div className="bg-gray-50 dark:bg-dark-surface rounded-lg p-8">
-                <div className="text-gray-400 dark:text-gray-500">
-                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                  <p className="text-sm">Network graph visualization will be implemented here</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <NetworkGraph />
         )}
       </div>
     </LayoutWrapper>
