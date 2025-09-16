@@ -8,9 +8,11 @@ import { usePathname } from 'next/navigation'
 interface SidebarProps {
   isCollapsed: boolean
   onToggle: () => void
+  isLoaded?: boolean
+  isManualToggle?: boolean
 }
 
-export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
+export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManualToggle = false }: SidebarProps) {
   const pathname = usePathname()
 
   const menuItems = [
@@ -66,7 +68,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       {/* Sidebar */}
       <div className={`
         fixed top-0 left-0 z-50 h-full bg-white dark:bg-black border-r border-gray-200 dark:border-dark-border
-        transition-all duration-300 ease-in-out
+        ${isManualToggle ? 'transition-all duration-300 ease-in-out' : ''}
         ${isCollapsed ? 'w-16' : 'w-64'}
         lg:translate-x-0
         ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
@@ -114,7 +116,11 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 className={`
-                  flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200
+                  flex items-center rounded-lg transition-all duration-200
+                  ${isCollapsed 
+                    ? 'justify-center px-3 py-3' 
+                    : 'space-x-3 px-3 py-2'
+                  }
                   ${isActive 
                     ? 'bg-verana-accent text-white shadow-lg' 
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-surface'

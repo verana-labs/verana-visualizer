@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Sidebar from '@/components/Sidebar'
 import MobileHeader from '@/components/MobileHeader'
 import Footer from '@/components/Footer'
+import ThemeToggle from '@/components/ThemeToggle'
 import { fetchHeader, fetchSupply, fetchInflation, fetchMintParams } from '@/lib/api'
 import { HeaderResponse, SupplyResponse, InflationResponse, MintParamsResponse } from '@/types'
 import { convertUvnaToVna, formatInflationRate } from '@/lib/api'
@@ -16,6 +17,8 @@ interface LayoutWrapperProps {
 
 export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapperProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarLoaded, setIsSidebarLoaded] = useState(false)
+  const [isManualToggle, setIsManualToggle] = useState(false)
   const [networkInfo, setNetworkInfo] = useState<{
     chainId: string
     blockHeight: string
@@ -25,6 +28,13 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
   } | null>(null)
 
   useEffect(() => {
+    // Load sidebar state from localStorage
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed')
+    if (savedSidebarState !== null) {
+      setIsSidebarCollapsed(JSON.parse(savedSidebarState))
+    }
+    setIsSidebarLoaded(true)
+
     const loadNetworkInfo = async () => {
       try {
         const [header, supply, inflation, mintParams] = await Promise.all([
@@ -53,22 +63,36 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
     loadNetworkInfo()
   }, [])
 
+  const handleSidebarToggle = () => {
+    const newState = !isSidebarCollapsed
+    setIsSidebarCollapsed(newState)
+    setIsManualToggle(true)
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(newState))
+    
+    // Reset manual toggle flag after animation completes
+    setTimeout(() => {
+      setIsManualToggle(false)
+    }, 300)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black transition-colors">
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
-        onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+        onToggle={handleSidebarToggle}
+        isLoaded={isSidebarLoaded}
+        isManualToggle={isManualToggle}
       />
       
       {/* Mobile Header */}
       <MobileHeader
         title={title}
         subtitle={subtitle}
-        onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        onMenuClick={handleSidebarToggle}
       />
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ease-in-out ${
+      <div className={`${isManualToggle ? 'transition-all duration-300 ease-in-out' : ''} ${
         isSidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
       }`}>
         {/* Desktop Header */}
@@ -81,6 +105,7 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
                   {subtitle}
                 </p>
               </div>
+              <ThemeToggle />
             </div>
           </div>
           
