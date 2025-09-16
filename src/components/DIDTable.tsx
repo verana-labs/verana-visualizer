@@ -257,7 +257,6 @@ export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps
         </table>
       </div>
 
-      {/* Modal for detailed view */}
       {selectedDID && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-dark-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -276,7 +275,6 @@ export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps
             </div>
             
             <div className="p-6 space-y-6">
-              {/* Basic Information */}
               <div>
                 <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,7 +1,6 @@
 'use client'
 
 export default function ResultsSection() {
-  // This will be populated with actual data later
   const hasResults = false
 
   if (!hasResults) {
@@ -29,7 +28,6 @@ export default function ResultsSection() {
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
         Search Results
       </h2>
-      {/* Results will be displayed here */}
     </div>
   )
 }

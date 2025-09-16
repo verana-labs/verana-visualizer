@@ -10,7 +10,6 @@ import {
 } from '@/lib/api'
 import type { DID, TrustRegistry } from '@/types'
 
-// Dynamically import ForceGraph2D to avoid SSR issues
 const ForceGraph2D = dynamic(async () => (await import('react-force-graph-2d')).default, { ssr: false }) as any
 
 type NodeType = 'core' | 'controller' | 'trustRegistry' | 'didDirectory' | 'did'
@@ -59,11 +58,8 @@ async function loadGraphData(): Promise<GraphData> {
   const links: GraphLink[] = []
   const nodeIds = new Set<string>()
 
-  // Core
   nodes.push({ id: 'verana', label: 'Verana Network', type: 'core' })
   nodeIds.add('verana')
-
-  // Build a map of controller -> { trs, dids }
   const controllerToTRs = new Map<string, TrustRegistry[]>()
   const controllerToDIDs = new Map<string, DID[]>()
 
@@ -81,13 +77,11 @@ async function loadGraphData(): Promise<GraphData> {
     controllerToDIDs.set(d.controller, list)
   }
 
-  // Gather all controllers seen in either map
   const controllers = new Set<string>([
     ...Array.from(controllerToTRs.keys()),
     ...Array.from(controllerToDIDs.keys())
   ])
 
-  // Add controllers and their connections
   for (const controller of Array.from(controllers)) {
     const ctrlNodeId = createId('ctrl', controller)
     if (!nodeIds.has(ctrlNodeId)) {
@@ -95,8 +89,6 @@ async function loadGraphData(): Promise<GraphData> {
       nodeIds.add(ctrlNodeId)
     }
     links.push({ source: ctrlNodeId, target: 'verana', type: 'participant' })
-
-    // Trust Registries under this controller (connect directly to controller)
     const trs = controllerToTRs.get(controller) || []
     for (const tr of trs) {
       const trId = createId('tr', tr.id)
@@ -107,7 +99,6 @@ async function loadGraphData(): Promise<GraphData> {
       links.push({ source: ctrlNodeId, target: trId, type: 'owns-tr' })
     }
 
-    // DID Directory hub
     const dids = controllerToDIDs.get(controller) || []
     if (dids.length > 0) {
       const dirId = createId('did-dir', controller)
@@ -162,7 +153,6 @@ export default function NetworkGraph() {
     refreshData()
   }, [refreshData])
 
-  // Poll every 30s; if block height changes, refresh graph
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -173,13 +163,11 @@ export default function NetworkGraph() {
           setData(graph)
         }
       } catch {
-        // ignore transient errors
       }
     }, 30000)
     return () => clearInterval(interval)
   }, [lastBlockHeight])
 
-  // Measure container and update graph dimensions
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -312,7 +300,6 @@ export default function NetworkGraph() {
               </span>
             </div>
 
-            {/* Trust Registry details */}
             {selectedNode.type === 'trustRegistry' && selectedNode.ref && (
               <div className="space-y-2">
                 <InfoRow label="DID" value={selectedNode.ref.did} mono />
@@ -351,7 +338,6 @@ export default function NetworkGraph() {
               </div>
             )}
 
-            {/* DID details */}
             {selectedNode.type === 'did' && selectedNode.ref && (
               <div className="space-y-2">
                 <InfoRow label="DID" value={selectedNode.ref.did} mono />
@@ -364,7 +350,6 @@ export default function NetworkGraph() {
               </div>
             )}
 
-            {/* Controller info */}
             {selectedNode.type === 'controller' && (
               <div className="space-y-2">
                 <InfoRow label="Address" value={selectedNode.label} mono />
@@ -372,7 +357,6 @@ export default function NetworkGraph() {
               </div>
             )}
 
-            {/* DID Directory info */}
             {selectedNode.type === 'didDirectory' && (
               <div className="space-y-2">
                 <p className="text-xs text-gray-500 dark:text-gray-400">Contains all DIDs controlled by the controller.</p>

@@ -28,7 +28,6 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
   } | null>(null)
 
   useEffect(() => {
-    // Load sidebar state from localStorage
     const savedSidebarState = localStorage.getItem('sidebarCollapsed')
     if (savedSidebarState !== null) {
       setIsSidebarCollapsed(JSON.parse(savedSidebarState))
@@ -69,7 +68,6 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
     setIsManualToggle(true)
     localStorage.setItem('sidebarCollapsed', JSON.stringify(newState))
     
-    // Reset manual toggle flag after animation completes
     setTimeout(() => {
       setIsManualToggle(false)
     }, 300)
@@ -84,18 +82,14 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
         isManualToggle={isManualToggle}
       />
       
-      {/* Mobile Header */}
       <MobileHeader
         title={title}
         subtitle={subtitle}
         onMenuClick={handleSidebarToggle}
       />
-
-      {/* Main Content */}
       <div className={`${isManualToggle ? 'transition-all duration-300 ease-in-out' : ''} ${
         isSidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
       }`}>
-        {/* Desktop Header */}
         <header className="hidden lg:block bg-white dark:bg-black border-b border-gray-200 dark:border-dark-border">
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
@@ -108,8 +102,6 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
               <ThemeToggle />
             </div>
           </div>
-          
-          {/* Network Info Bar */}
           {networkInfo && (
             <div className="px-6 py-3 bg-gray-50 dark:bg-dark-surface border-t border-gray-200 dark:border-dark-border">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm">
@@ -138,12 +130,9 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
           )}
         </header>
 
-        {/* Content */}
         <main className="min-h-[calc(100vh-200px)]">
           {children}
         </main>
-
-        {/* Footer */}
         <Footer />
       </div>
     </div>

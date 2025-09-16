@@ -31,7 +31,6 @@ export default function Header() {
           <ThemeToggle />
         </div>
         
-        {/* Network Info */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-gray-50 dark:bg-dark-card p-3 rounded-lg">
             <p className="text-xs text-gray-500 dark:text-gray-400">Chain</p>

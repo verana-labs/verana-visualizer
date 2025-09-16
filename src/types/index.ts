@@ -185,7 +185,6 @@ export interface DIDListResponse {
   dids: DID[]
 }
 
-// New API Response Types
 export interface SupplyResponse {
   supply: Array<{
     denom: string

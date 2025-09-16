@@ -7,7 +7,6 @@ export default function Footer() {
     <footer className="bg-white dark:bg-black border-t border-gray-200 dark:border-dark-border">
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Specifications */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Specifications
@@ -46,7 +45,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Community */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               Community
@@ -85,7 +83,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* About Verana */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               About Verana
@@ -115,7 +112,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-gray-200 dark:border-dark-border">
           <p className="text-center text-sm text-gray-500 dark:text-gray-400">
             ©{currentYear} Verana Foundation

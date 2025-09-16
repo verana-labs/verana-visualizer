@@ -54,7 +54,7 @@ export async function fetchTrustRegistryList(maxSize: number = 100): Promise<Tru
 
 export function convertUvnaToVna(uvna: string): string {
   const uvnaNumber = parseInt(uvna, 10)
-  const vna = uvnaNumber / 1000000 // 1 VNA = 1,000,000 uvna
+  const vna = uvnaNumber / 1000000
   
   if (vna >= 1000) {
     return vna.toFixed(0) 
@@ -74,7 +74,6 @@ export function formatSnakeCaseToTitleCase(str: string): string {
     .join(' ')
 }
 
-// RPC API Functions
 export async function fetchAbciInfo(): Promise<AbciInfoResponse> {
   const response = await fetch(`${RPC_ENDPOINT}/abci_info`)
   
@@ -119,7 +118,6 @@ export function formatTotalSupply(amount: string): string {
   return `${parseFloat(vna).toLocaleString()} VNA`
 }
 
-// DID API Functions
 export async function fetchDIDList(): Promise<DIDListResponse> {
   const response = await fetch(`${API_ENDPOINT}/verana/dd/v1/list`)
   
@@ -130,7 +128,6 @@ export async function fetchDIDList(): Promise<DIDListResponse> {
   return response.json()
 }
 
-// New Dashboard API Functions
 export async function fetchSupply(): Promise<SupplyResponse> {
   const response = await fetch(`${API_ENDPOINT}/cosmos/bank/v1beta1/supply`)
   

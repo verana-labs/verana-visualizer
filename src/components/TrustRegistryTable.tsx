@@ -95,7 +95,7 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
           bValue = new Date(b.created).getTime()
           break
         case 'status':
-          aValue = a.archived ? 1 : 0 // Archived = 1, Active = 0
+          aValue = a.archived ? 1 : 0
           bValue = b.archived ? 1 : 0
           break
         default:
@@ -256,7 +256,6 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
         </table>
       </div>
 
-      {/* Modal for detailed view */}
       {selectedRegistry && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-dark-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -275,7 +274,6 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
             </div>
             
             <div className="p-6 space-y-6">
-              {/* Basic Information */}
               <div>
                 <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -306,7 +304,6 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
                 </div>
               </div>
 
-              {/* AKA Link */}
               {selectedRegistry.aka && (
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Website</label>
@@ -323,7 +320,6 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
                 </div>
               )}
 
-              {/* Versions */}
               <div>
                 <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Versions ({selectedRegistry.versions.length})</h4>
                 <div className="space-y-3">
@@ -344,7 +340,6 @@ export default function TrustRegistryTable({ trustRegistries, isSearchResult = f
                         <p>Active Since: {formatDate(version.active_since)}</p>
                       </div>
                       
-                      {/* Documents */}
                       {version.documents.length > 0 && (
                         <div className="mt-3">
                           <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Documents</h5>

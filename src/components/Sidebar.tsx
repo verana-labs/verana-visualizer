@@ -57,15 +57,12 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
 
   return (
     <>
-      {/* Mobile Overlay */}
       {!isCollapsed && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onToggle}
         />
       )}
-
-      {/* Sidebar */}
       <div className={`
         fixed top-0 left-0 z-50 h-full bg-white dark:bg-black border-r border-gray-200 dark:border-dark-border
         ${isManualToggle ? 'transition-all duration-300 ease-in-out' : ''}
@@ -73,7 +70,6 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
         lg:translate-x-0
         ${isCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'}
       `}>
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
           {!isCollapsed && (
             <div className="flex items-center space-x-3">
@@ -104,10 +100,8 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2">
           {menuItems.map((item) => {
-            // Special handling for dashboard (root path)
             const isActive = item.href === '/' 
               ? pathname === '/' || pathname === '/dashboard'
               : pathname === item.href
@@ -138,7 +132,6 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
           })}
         </nav>
 
-        {/* Footer */}
         <div className="p-4 border-t border-gray-200 dark:border-dark-border">
           {!isCollapsed && (
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">

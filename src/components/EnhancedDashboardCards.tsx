@@ -209,7 +209,6 @@ export default function EnhancedDashboardCards({
 
   return (
     <div className="space-y-6">
-      {/* Main Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => (
           <div
@@ -259,13 +258,11 @@ export default function EnhancedDashboardCards({
         ))}
       </div>
 
-      {/* Navigation Cards */}
       <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
           Explore Verana Network
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Trust Registries Card */}
           <Link 
             href="/trust-registries"
             className="group bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -289,7 +286,6 @@ export default function EnhancedDashboardCards({
             </div>
           </Link>
 
-          {/* DID Directory Card */}
           <Link 
             href="/did-directory"
             className="group bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -313,7 +309,6 @@ export default function EnhancedDashboardCards({
             </div>
           </Link>
 
-          {/* Network Graph Card */}
           <Link 
             href="/network-graph"
             className="group bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -339,7 +334,6 @@ export default function EnhancedDashboardCards({
         </div>
       </div>
 
-      {/* Validators Visualization */}
       {validators && validators.validators.length > 0 && (
         <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
@@ -384,7 +378,6 @@ export default function EnhancedDashboardCards({
         </div>
       )}
 
-      {/* Proposals Section */}
       {proposals && proposals.proposals.length > 0 && (
         <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
