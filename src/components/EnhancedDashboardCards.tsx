@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { 
   SupplyResponse, 
   InflationResponse, 
@@ -256,6 +257,86 @@ export default function EnhancedDashboardCards({
             )}
           </div>
         ))}
+      </div>
+
+      {/* Navigation Cards */}
+      <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+          Explore Verana Network
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Trust Registries Card */}
+          <Link 
+            href="/trust-registries"
+            className="group bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
+          >
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">Trust Registries</h4>
+                <p className="text-blue-100 text-sm">Explore and manage trust registries</p>
+              </div>
+            </div>
+            <div className="flex items-center text-blue-100 group-hover:text-white transition-colors">
+              <span className="text-sm font-medium">View Registries</span>
+              <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
+          {/* DID Directory Card */}
+          <Link 
+            href="/did-directory"
+            className="group bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
+          >
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">DID Directory</h4>
+                <p className="text-green-100 text-sm">Explore decentralized identifiers</p>
+              </div>
+            </div>
+            <div className="flex items-center text-green-100 group-hover:text-white transition-colors">
+              <span className="text-sm font-medium">Browse DIDs</span>
+              <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+
+          {/* Network Graph Card */}
+          <Link 
+            href="/network-graph"
+            className="group bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white hover:shadow-xl transition-all duration-200 hover:scale-105"
+          >
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">Network Graph</h4>
+                <p className="text-purple-100 text-sm">Visualize network connections</p>
+              </div>
+            </div>
+            <div className="flex items-center text-purple-100 group-hover:text-white transition-colors">
+              <span className="text-sm font-medium">View Graph</span>
+              <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+        </div>
       </div>
 
       {/* Validators Visualization */}
