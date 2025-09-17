@@ -105,7 +105,7 @@ export default function Dashboard() {
         subtitle="Verana Network Overview"
       >
         <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Network Overview
@@ -114,11 +114,13 @@ export default function Dashboard() {
                 Real-time data from the Verana network
               </p>
             </div>
-            <RefreshButton 
-              onRefresh={handleRefresh}
-              isRefreshing={isRefreshing}
-              autoRefreshInterval={30}
-            />
+            <div>
+              <RefreshButton 
+                onRefresh={handleRefresh}
+                isRefreshing={isRefreshing}
+                autoRefreshInterval={30}
+              />
+            </div>
           </div>
 
           <EnhancedDashboardCards
