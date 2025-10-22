@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ${DEPLOYMENT_NAME}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  verana-visualizer
+  template:
+    metadata:
+      labels:
+        app:  verana-visualizer
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: ${CLUSTER_NODE}
+      containers:
+      - name:  verana-visualizer
+        image: ${DH_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: NEXT_PUBLIC_PORT
+          value: "${NEXT_PUBLIC_PORT}"
+        - name: NEXT_PUBLIC_BASE_URL
+          value: "${NEXT_PUBLIC_BASE_URL}"
+        - name: NEXT_PUBLIC_VERANA_CHAIN_ID
+          value: "${NEXT_PUBLIC_VERANA_CHAIN_ID}"
+        - name: NEXT_PUBLIC_VERANA_CHAIN_NAME
+          value: "${NEXT_PUBLIC_VERANA_CHAIN_NAME}"
+        - name: NEXT_PUBLIC_VERANA_RPC_ENDPOINT
+          value: "${NEXT_PUBLIC_VERANA_RPC_ENDPOINT}"
+        - name: NEXT_PUBLIC_VERANA_REST_ENDPOINT
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT}"
+        - name: NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT}"
+        - name: NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID}"
+        - name: NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY}"
+        - name: NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA}"
+        - name: NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE
+          value: "${NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE}"
+        - name: NEXT_PUBLIC_SESSION_LIFETIME_SECONDS
+          value: "${NEXT_PUBLIC_SESSION_LIFETIME_SECONDS}"
+        - name: NEXT_PUBLIC_API_ENDPOINT
+          value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT}"
+        - name: NEXT_PUBLIC_RPC_ENDPOINT
+          value: "${NEXT_PUBLIC_VERANA_RPC_ENDPOINT}"
+        - name: NEXT_PUBLIC_APP_NAME
+          value: "Verana Visualizer"
+        - name: NEXT_PUBLIC_APP_LOGO
+          value: "logo.svg"
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: visualizer-service-${NEXT_PUBLIC_VERANA_CHAIN_ID}
+spec:
+  selector:
+    app: verana-visualizer
+  ports:
+  - port: 80
+    targetPort: 3000
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: visualizer-ingress-${NEXT_PUBLIC_VERANA_CHAIN_ID}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  tls:
+  - hosts:
+    - vis.${ENV}.verana.network
+    secretName: visualizer-tls-${NEXT_PUBLIC_VERANA_CHAIN_ID}-secret
+  rules:
+  - host: vis.${ENV}.verana.network
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: visualizer-service-${NEXT_PUBLIC_VERANA_CHAIN_ID}
+            port:
+              number: 80
