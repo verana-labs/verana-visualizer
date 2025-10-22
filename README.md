@@ -106,6 +106,7 @@ You can configure the visualizer via environment variables. For local developmen
 Environment variables (public runtime):
 
 ```env
+NEXT_PUBLIC_BASE_URL=https://vis.testnet.verana.network
 NEXT_PUBLIC_API_ENDPOINT=https://api.testnet.verana.network
 NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.testnet.verana.network
 NEXT_PUBLIC_IDX_ENDPOINT=https://idx.testnet.verana.network
@@ -116,8 +117,9 @@ NEXT_PUBLIC_APP_NAME=Verana Visualizer
 NEXT_PUBLIC_APP_LOGO=logo.svg
 ```
 
-- Logo file is expected at `public/logo.svg`.
-- These defaults are set in `Dockerfile` and Helm `values.yaml` for convenience.
+- `NEXT_PUBLIC_BASE_URL` is the full URL where the application will be hosted (used for asset prefixing and base paths)
+- Logo file is expected at `public/logo.svg`
+- These defaults are set in `Dockerfile` and Helm `values.yaml` for convenience
 
 ---
 
@@ -176,8 +178,18 @@ kubectl apply -f k8s/deployment.yaml
 
 This creates a `Deployment` and a `Service` of type `LoadBalancer`.
 
-- To customize environment variables, edit `k8s/deployment.yaml` under the `env:` section.
-- Health probes and resource requests/limits are preconfigured.
+For production deployments to https://vis.testnet.verana.network/, we use GitHub Actions for continuous deployment:
+
+1. Every push to `main` branch triggers the workflow
+2. The Docker image is built and pushed to Docker Hub
+3. The Kubernetes deployment is updated with the new image
+4. An Ingress resource is created to expose the application at https://vis.testnet.verana.network/
+
+The workflow file is at `.github/workflows/cd.yaml`.
+
+- To customize environment variables, edit `k8s/deployment.yaml` under the `env:` section
+- Health probes and resource requests/limits are preconfigured
+- The `NEXT_PUBLIC_BASE_URL` environment variable is set to ensure assets load correctly
 
 ---
 
