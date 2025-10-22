@@ -4,7 +4,6 @@ env:
   IMAGE_NAME: verana-visualizer
   DH_USERNAME: ${{ secrets.DOCKER_HUB_LOGIN }}
   DH_TOKEN: ${{ secrets.DOCKER_HUB_PWD }}
-  KUBECONFIG: ${{ secrets.OVH_KUBECONFIG }}
   VERANA_DEPLOY_PATH: verana-deploy
   CLUSTER_NODE: cluster-utc-node-07efe5
 
@@ -126,8 +125,22 @@ jobs:
       - name: Deploy to OVH
         run: |
           set -euo pipefail
-          echo "$KUBECONFIG" > k8s_config
-          export KUBECONFIG=k8s_config
+          # Write kubeconfig from secret (supports raw YAML or base64-encoded)
+          KUBECONFIG_CONTENT="${{ secrets.OVH_KUBECONFIG }}"
+          if [ -z "$KUBECONFIG_CONTENT" ]; then
+            echo "OVH_KUBECONFIG secret is empty or not set" >&2
+            exit 1
+          fi
+          if echo "$KUBECONFIG_CONTENT" | grep -q "apiVersion:"; then
+            printf "%s" "$KUBECONFIG_CONTENT" > k8s_config
+          else
+            echo "$KUBECONFIG_CONTENT" | base64 -d > k8s_config || printf "%s" "$KUBECONFIG_CONTENT" > k8s_config
+          fi
+          export KUBECONFIG=$PWD/k8s_config
+
+          # Preflight: show contexts and ensure cluster is reachable
+          kubectl config get-contexts || true
+          kubectl cluster-info
           
           # Set DH_USERNAME for envsubst
           export DH_USERNAME=${{ secrets.DOCKER_HUB_LOGIN }}
@@ -144,6 +157,7 @@ jobs:
             VERANA_CHAIN_ID="${CHAIN_IDS[$ENV]}"
             VERANA_CHAIN_NAME="${CHAIN_NAMES[$ENV]}"
             VERANA_SIGN_DIRECT_MODE="${SIGN_DIRECT_MODE[$ENV]}"
+            export ENV
 
             export DEPLOYMENT_NAME="verana-visualizer-deployment"
             export NEXT_PUBLIC_PORT=3000
