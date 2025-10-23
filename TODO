@@ -3,7 +3,12 @@
 ✔ Remove toogle controls button @done(25-10-23 11:01)
 ✔ Arriere plan galaxie violet @done(25-10-23 11:47)
 ✔ enlever le bouton toogle controls @done(25-10-23 17:48)
-☐ Faire une systeme de WebSocket pour refresh en temps réel les data dans le dashboard plus de refresh périodique ou de buton refresh
+☐ Fix Fit All button not working
 ☐ Quand un node est cliqué le node se mets en plein écran avec un effet de zoom fluide
 ☐ Mette les liens plus gros avec des animations de particule type lumiere avec du blur 
-☐ Plus le déposit est gros plus la node est grande pour les trust registries jaunes
+☐ Plus le déposit est gros plus la node est grande dans le graph 3D
+☐ Augmenter la taille de la node Verana bleu centrale
+☐ Faire une systeme de WebSocket pour refresh en temps réel les data dans le dashboard plus de refresh périodique ou de buton refresh
+☐ Changer l'ordre dans la sidebar et mettre le network graph tout en haut
+☐ Update le readme
+☐ Passer en V2.0.0
