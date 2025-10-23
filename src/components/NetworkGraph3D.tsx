@@ -626,15 +626,6 @@ export default function NetworkGraph3D() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 dark:text-white">Fullscreen Mode</h4>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li><strong>Fullscreen button</strong>: Toggle fullscreen mode</li>
-                      <li><strong>F11 key</strong>: Toggle fullscreen</li>
-                      <li><strong>Escape key</strong>: Exit fullscreen</li>
-                      <li><strong>Fullscreen</strong>: Graph takes full screen space</li>
-                    </ul>
-                  </div>
-                  <div>
                     <h4 className="font-medium text-gray-900 dark:text-white">Color Legend</h4>
                     <ul className="list-disc pl-5 space-y-1">
                       <li><span className="inline-block w-3 h-3 rounded-full mr-1" style={{ backgroundColor: NODE_COLOR.core }}></span> <strong>Blue</strong>: Verana Core</li>
