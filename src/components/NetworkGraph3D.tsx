@@ -258,6 +258,7 @@ export default function NetworkGraph3D() {
   const [pulseAnimation, setPulseAnimation] = useState<boolean>(false)
   const pulseRef = useRef<any>(null)
   const [showHelp, setShowHelp] = useState<boolean>(false)
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
 
   const refreshData = useCallback(async () => {
     setRefreshing(true)
@@ -511,12 +512,33 @@ export default function NetworkGraph3D() {
     }
   }, [])
 
+  // Toggle fullscreen mode
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen(!isFullscreen)
+  }, [isFullscreen])
+
+  // Handle keyboard shortcuts for fullscreen
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'F11') {
+        event.preventDefault()
+        toggleFullscreen()
+      } else if (event.key === 'Escape' && isFullscreen) {
+        event.preventDefault()
+        setIsFullscreen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [toggleFullscreen, isFullscreen])
+
   // Memoize data to prevent unnecessary re-renders
   const memoData = useMemo(() => data, [data])
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <div className="lg:col-span-3 bg-white dark:bg-dark-card rounded-lg shadow-lg">
+    <div className={`grid grid-cols-1 ${isFullscreen ? 'lg:grid-cols-1' : 'lg:grid-cols-4'} gap-6`}>
+      <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
           <div className="flex items-center space-x-3">
             <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
@@ -568,6 +590,22 @@ export default function NetworkGraph3D() {
               )}
             </button>
             <button
+              onClick={toggleFullscreen}
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            >
+              {isFullscreen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9V4.5M9 9H4.5M9 9L3.5 3.5M15 9v4.5M15 9h4.5M15 9l5.5-5.5M9 15v4.5M9 15H4.5M9 15l-5.5 5.5M15 15v-4.5M15 15h4.5M15 15l5.5 5.5" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                </svg>
+              )}
+              {isFullscreen ? "Exit" : "Fullscreen"}
+            </button>
+            <button
               onClick={() => setShowHelp(!showHelp)}
               className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
             >
@@ -579,7 +617,7 @@ export default function NetworkGraph3D() {
           </div>
         </div>
 
-        <div ref={containerRef} className="h-[70vh] relative overflow-hidden">
+        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden`}>
           {/* Help Overlay */}
           {showHelp && (
             <div className="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">
@@ -604,6 +642,15 @@ export default function NetworkGraph3D() {
                       <li><strong>Scroll</strong>: Zoom in/out</li>
                       <li><strong>Click node</strong>: Select and focus on node</li>
                       <li><strong>Click background</strong>: Deselect</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 dark:text-white">Fullscreen Mode</h4>
+                    <ul className="list-disc pl-5 space-y-1">
+                      <li><strong>Fullscreen button</strong>: Toggle fullscreen mode</li>
+                      <li><strong>F11 key</strong>: Toggle fullscreen</li>
+                      <li><strong>Escape key</strong>: Exit fullscreen</li>
+                      <li><strong>Fullscreen</strong>: Graph takes full screen space</li>
                     </ul>
                   </div>
                   <div>
@@ -828,7 +875,8 @@ export default function NetworkGraph3D() {
         </div>
       </div>
 
-      <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4">
+      {!isFullscreen && (
+        <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Details</h3>
         {!selectedNode && (
           <p className="text-sm text-gray-500 dark:text-gray-400">Click a node to see details.</p>
@@ -939,7 +987,8 @@ export default function NetworkGraph3D() {
             <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.did }} /> <span className="text-gray-800 dark:text-gray-200">DID</span></li>
           </ul>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   )
 }
