@@ -536,15 +536,16 @@ export default function NetworkGraph3D() {
   return (
     <div className={`grid grid-cols-1 ${isFullscreen ? 'lg:grid-cols-1' : 'lg:grid-cols-4'} gap-6`}>
       <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg`}>
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
-          <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
-            <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
-          </div>
-          <div className="flex items-center space-x-2">
+        <div className="p-4 border-b border-gray-200 dark:border-dark-border">
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
+              <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
             <button 
               onClick={fitToGraph} 
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
               title="Fit all nodes in view"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -552,7 +553,7 @@ export default function NetworkGraph3D() {
               </svg>
               Fit All
             </button>
-            <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center">
+            <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
               {refreshing ? (
                 <>
                   <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -572,7 +573,7 @@ export default function NetworkGraph3D() {
             </button>
             <button
               onClick={toggleFullscreen}
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
               title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullscreen ? (
@@ -588,13 +589,14 @@ export default function NetworkGraph3D() {
             </button>
             <button
               onClick={() => setShowHelp(!showHelp)}
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Help
             </button>
+            </div>
           </div>
         </div>
 
