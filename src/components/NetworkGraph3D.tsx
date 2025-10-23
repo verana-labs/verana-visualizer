@@ -535,8 +535,8 @@ export default function NetworkGraph3D() {
 
   return (
     <div className={`grid grid-cols-1 ${isFullscreen ? 'lg:grid-cols-1' : 'lg:grid-cols-4'} gap-6`}>
-      <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg`}>
-        <div className="p-4 border-b border-gray-200 dark:border-dark-border">
+      <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg flex flex-col`}>
+        <div className="p-4 border-b border-gray-200 dark:border-dark-border flex-shrink-0">
           <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
@@ -600,7 +600,7 @@ export default function NetworkGraph3D() {
           </div>
         </div>
 
-        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden galaxy-background`}>
+        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden galaxy-background flex-grow`}>
           {/* Help Overlay */}
           {showHelp && (
             <div className="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">
@@ -857,8 +857,9 @@ export default function NetworkGraph3D() {
       </div>
 
       {!isFullscreen && (
-        <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Details</h3>
+        <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4 flex flex-col max-h-[70vh]">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">Details</h3>
+        <div className="flex-1 overflow-y-auto">
         {!selectedNode && (
           <p className="text-sm text-gray-500 dark:text-gray-400">Click a node to see details.</p>
         )}
@@ -958,7 +959,8 @@ export default function NetworkGraph3D() {
             </div>
           </div>
         )}
-        <div className="mt-6 text-gray-800 dark:text-gray-200">
+        </div>
+        <div className="mt-6 text-gray-800 dark:text-gray-200 flex-shrink-0">
           <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Legend</h4>
           <ul className="space-y-1 text-sm">
             <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.core }} /> <span className="text-gray-800 dark:text-gray-200">Verana</span></li>

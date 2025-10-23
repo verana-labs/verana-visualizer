@@ -136,7 +136,7 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
           {!isCollapsed && (
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               <p>Verana Visualizer</p>
-              <p>v1.0.0</p>
+              <p>v1.4.2</p>
             </div>
           )}
         </div>
