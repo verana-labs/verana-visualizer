@@ -598,7 +598,7 @@ export default function NetworkGraph3D() {
           </div>
         </div>
 
-        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden`}>
+        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden galaxy-background`}>
           {/* Help Overlay */}
           {showHelp && (
             <div className="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">
@@ -658,7 +658,14 @@ export default function NetworkGraph3D() {
               linkTarget="target"
               width={containerSize.width}
               height={containerSize.height}
-              backgroundColor="#000011"
+              backgroundColor="rgba(26, 11, 46, 0.1)"
+              // Add some visual enhancements for galaxy effect
+              showNavInfo={false}
+              // Add subtle fog for depth
+              fog={true}
+              fogColor="#1a0b2e"
+              fogNear={100}
+              fogFar={800}
               // Use a calculated nodeVal for dynamic sizing
               nodeVal={(node: GraphNode) => node.val || 1}
               nodeColor={(node: GraphNode) => NODE_COLOR[node.type]}

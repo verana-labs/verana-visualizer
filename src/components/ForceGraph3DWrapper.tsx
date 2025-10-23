@@ -30,22 +30,23 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         if (!graphRef.current && containerRef.current) {
           graphRef.current = new ForceGraph3D(containerRef.current)
           
-          // Wait a bit for Three.js to be available
-          setTimeout(() => {
-            // Apply all props to the graph instance
-            Object.keys(props).forEach(key => {
-              if (key !== 'ref' && typeof graphRef.current[key] === 'function') {
-                try {
-                  graphRef.current[key](props[key])
-                } catch (error) {
-                  // Some props might not be valid methods, ignore silently
-                  console.warn(`Failed to apply prop ${key}:`, error)
+            // Wait a bit for Three.js to be available
+            setTimeout(() => {
+              // Apply all props to the graph instance
+              Object.keys(props).forEach(key => {
+                if (key !== 'ref' && typeof graphRef.current[key] === 'function') {
+                  try {
+                    graphRef.current[key](props[key])
+                  } catch (error) {
+                    // Some props might not be valid methods, ignore silently
+                    console.warn(`Failed to apply prop ${key}:`, error)
+                  }
                 }
-              }
-            })
-            
-            setIsLoading(false)
-          }, 200) // Give Three.js time to load
+              })
+              
+              
+              setIsLoading(false)
+            }, 200) // Give Three.js time to load
         }
       } catch (error) {
         console.error('Failed to initialize ForceGraph3D:', error)
