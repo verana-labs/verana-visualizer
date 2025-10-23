@@ -134,6 +134,24 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     }
   }, [props.graphData])
 
+  // Handle resize when width/height props change
+  useEffect(() => {
+    if (!graphRef.current || !props.width || !props.height) return
+
+    // Add a small delay to ensure DOM has updated
+    const resizeTimeout = setTimeout(() => {
+      try {
+        // Force the graph to resize its internal canvas
+        graphRef.current.width(props.width)
+        graphRef.current.height(props.height)
+      } catch (error) {
+        console.warn('Failed to resize graph:', error)
+      }
+    }, 50) // Small delay to ensure DOM updates are complete
+
+    return () => clearTimeout(resizeTimeout)
+  }, [props.width, props.height])
+
   // Ensure the graph instance is properly exposed
   useEffect(() => {
     if (graphRef.current && ref) {
