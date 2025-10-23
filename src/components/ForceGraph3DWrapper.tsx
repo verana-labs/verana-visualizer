@@ -24,8 +24,8 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         setError(null)
         
         // Dynamic import with proper error handling
-        const module = await import('3d-force-graph')
-        const ForceGraph3D = module.default || module
+        const importedModule = await import('3d-force-graph')
+        const ForceGraph3D = importedModule.default || importedModule
         
         if (!graphRef.current && containerRef.current) {
           graphRef.current = new ForceGraph3D(containerRef.current)
@@ -64,7 +64,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         graphRef.current._destructor()
       }
     }
-  }, [])
+  }, [props])
 
   // Update graph when props change
   useEffect(() => {
@@ -91,7 +91,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         (ref as any).current = graphRef.current
       }
     }
-  }, [graphRef.current, ref])
+  }, [ref])
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
