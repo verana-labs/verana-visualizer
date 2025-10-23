@@ -552,22 +552,6 @@ export default function NetworkGraph3D() {
               </svg>
               Fit All
             </button>
-            <button 
-              onClick={() => {
-                if (graphRef.current) {
-                  // Toggle between default (orbit) and fly control type
-                  const currentType = graphRef.current.controlType();
-                  graphRef.current.controlType(currentType === 'orbit' ? 'fly' : 'orbit');
-                }
-              }}
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              Toggle Controls
-            </button>
             <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center">
               {refreshing ? (
                 <>
