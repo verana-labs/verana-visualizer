@@ -463,12 +463,9 @@ export default function NetworkGraph3D() {
       })
       .distanceMax(300); // Limit the maximum distance of effect
     
-    // Add collision force to prevent node overlap
-    graphRef.current.d3Force('collision', (window as any).d3.forceCollide()
-      .radius((node: any) => {
-        if (!node) return 5;
-        return (node.val || 1) + 2; // Slightly larger than node size
-      }));
+    // Note: Collision force is handled by the charge force configuration above
+    // The 3d-force-graph library manages D3 internally and doesn't expose it on window
+    // The charge force with appropriate strengths will prevent node overlap
   }, []);
   
   // Apply force configuration after data loads
