@@ -480,7 +480,34 @@ export default function NetworkGraph3D() {
   // Fit graph to view
   const fitToGraph = useCallback(() => {
     if (graphRef.current) {
-      graphRef.current.zoomToFit(600, 40);
+      try {
+        // Check if zoomToFit method exists
+        if (typeof graphRef.current.zoomToFit === 'function') {
+          // Use zoomToFit with proper parameters
+          // First parameter: transition duration in ms
+          // Second parameter: padding in pixels
+          graphRef.current.zoomToFit(1000, 50);
+        } else {
+          // Alternative: reset camera to a good overview position
+          graphRef.current.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000);
+        }
+        
+        // Also reset any selected node and animations
+        setSelectedNode(null);
+        setHighlightLinks(new Set());
+        if (pulseRef.current) {
+          clearInterval(pulseRef.current);
+          setPulseAnimation(false);
+        }
+      } catch (error) {
+        console.warn('Error fitting graph to view:', error);
+        // Fallback: try to reset camera position
+        try {
+          graphRef.current.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000);
+        } catch (fallbackError) {
+          console.warn('Fallback camera reset also failed:', fallbackError);
+        }
+      }
     }
   }, [])
 
@@ -496,7 +523,11 @@ export default function NetworkGraph3D() {
             <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
           </div>
           <div className="flex items-center space-x-2">
-            <button onClick={fitToGraph} className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center">
+            <button 
+              onClick={fitToGraph} 
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              title="Fit all nodes in view"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
               </svg>
@@ -755,13 +786,14 @@ export default function NetworkGraph3D() {
               d3AlphaDecay={0.02}         // Faster simulation stability
               d3VelocityDecay={0.4}       // Standard medium resistance
               d3AlphaMin={0.001}          // Helps reach stable state faster
-              // Show labels on hover or when zoomed in
+              // Show labels with type information
               nodeLabel={(node: GraphNode) => {
-                if (graphRef.current && graphRef.current.zoom() > 1.5) {
-                  return `${node.label}${node.type === 'controller' ? ' (Controller)' : ''}${node.type === 'trustRegistry' ? ' (Trust Registry)' : ''}${node.type === 'didDirectory' ? ' (DID Directory)' : ''}${node.type === 'did' ? ' (DID)' : ''}`;
-                } else {
-                  return node.label;
-                }
+                // Always show the full label with type information
+                const typeLabel = node.type === 'controller' ? ' (Controller)' : 
+                                 node.type === 'trustRegistry' ? ' (Trust Registry)' : 
+                                 node.type === 'didDirectory' ? ' (DID Directory)' : 
+                                 node.type === 'did' ? ' (DID)' : '';
+                return `${node.label}${typeLabel}`;
               }}
               // Set distance view controls for better UX
               maxZoom={20}
@@ -786,13 +818,6 @@ export default function NetworkGraph3D() {
           500
         );
                   }
-                }
-              }}
-              // Register on zoom to handle visibility of labels
-              onZoom={(zoom: number) => {
-                if (graphRef.current) {
-                  // Update node visibility based on zoom level
-                  graphRef.current.refresh();
                 }
               }}
             />

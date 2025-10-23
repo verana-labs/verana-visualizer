@@ -80,6 +80,18 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     })
   }, [props])
 
+  // Ensure the graph instance is properly exposed
+  useEffect(() => {
+    if (graphRef.current && ref) {
+      // Make sure the ref is properly set
+      if (typeof ref === 'function') {
+        ref(graphRef.current)
+      } else if (ref && 'current' in ref) {
+        (ref as any).current = graphRef.current
+      }
+    }
+  }, [graphRef.current, ref])
+
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
