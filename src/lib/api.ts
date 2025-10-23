@@ -169,7 +169,7 @@ export async function fetchStakingPool(): Promise<StakingPoolResponse> {
 }
 
 export async function fetchCommunityPool(): Promise<CommunityPoolResponse> {
-  const response = await fetch(`${API_ENDPOINT}/cosmos/distribution/v1beta1/community_pool`)
+  const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/pool`)
   
   if (!response.ok) {
     throw new Error(`Failed to fetch community pool: ${response.statusText}`)
