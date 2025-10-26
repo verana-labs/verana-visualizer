@@ -1,0 +1,11 @@
+# Task ID: 3
+# Title: Scale Node Sizes Based on Deposit Amounts
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Implement proportional node sizing in the 3D graph based on deposit amounts - larger deposits should have bigger nodes
+# Details:
+Create a visual relationship between deposit amounts and node sizes in the 3D network graph. This will help users visually identify nodes with larger deposits.
+
+# Test Strategy:
+Verify nodes with larger deposits appear larger. Test with various deposit amounts to ensure proper scaling.

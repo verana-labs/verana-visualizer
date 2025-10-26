@@ -1,0 +1,11 @@
+# Task ID: 2
+# Title: Implement Smooth Zoom Focus for Selected Nodes
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: When a node is clicked, implement a smooth zoom animation to bring it to full screen focus
+# Details:
+Enhance user experience by adding a smooth zoom animation when clicking on nodes. The selected node should smoothly transition to full screen focus for better inspection.
+
+# Test Strategy:
+Click on various nodes and verify smooth zoom animation works. Test on different node types and edge cases.

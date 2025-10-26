@@ -1,0 +1,11 @@
+# Task ID: 10
+# Title: Create GitHub Tab with Repositories and Advanced Stats
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Build a GitHub tab feature showing all repositories and advanced project statistics
+# Details:
+Create a new GitHub tab that displays all repositories with advanced project statistics. This will provide users with insights into the GitHub ecosystem.
+
+# Test Strategy:
+Verify GitHub tab displays all repositories with accurate statistics. Test data loading and display.

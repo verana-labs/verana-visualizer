@@ -1,0 +1,11 @@
+# Task ID: 15
+# Title: Add Repository Creation Dates and Metadata
+# Status: pending
+# Dependencies: 10
+# Priority: low
+# Description: Display repository creation dates and other important metadata
+# Details:
+Show repository creation dates, last update times, and other relevant metadata to provide context about project history and activity.
+
+# Test Strategy:
+Verify creation dates and metadata display correctly. Test with repositories of different ages.

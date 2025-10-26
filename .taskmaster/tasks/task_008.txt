@@ -1,0 +1,11 @@
+# Task ID: 8
+# Title: Set Up Unit Tests in CI/CD
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Implement unit tests in the CI/CD GitHub Actions workflow
+# Details:
+Add unit testing to the CI/CD pipeline using GitHub Actions. This includes setting up the test framework, writing test cases, and configuring the workflow.
+
+# Test Strategy:
+Verify tests run automatically on push/PR. Ensure test coverage is adequate.
