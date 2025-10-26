@@ -11,7 +11,7 @@ interface RefreshButtonProps {
 export default function RefreshButton({ 
   onRefresh, 
   isRefreshing, 
-  autoRefreshInterval = 30 
+  autoRefreshInterval = 60,
 }: RefreshButtonProps) {
   const [countdown, setCountdown] = useState(autoRefreshInterval)
   const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = useState(true)
