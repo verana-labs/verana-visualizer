@@ -890,6 +890,16 @@ export default function NetworkGraph3D() {
               <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={fitToGraph}
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
+              title="Center graph (fit to view)"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v3m0 12v3m9-9h-3M6 12H3m12.728-6.728l-2.121 2.121M8.393 17.657l-2.121 2.121m12.849 0l-2.121-2.121M8.393 6.343 6.272 4.222" />
+              </svg>
+              Center
+            </button>
             <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
               {refreshing ? (
                 <>
