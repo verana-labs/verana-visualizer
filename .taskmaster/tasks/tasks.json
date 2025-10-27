@@ -25,7 +25,7 @@
         "id": 3,
         "title": "Scale Node Sizes Based on Deposit Amounts",
         "description": "Implement proportional node sizing in the 3D graph based on deposit amounts - larger deposits should have bigger nodes",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [],
         "details": "Create a visual relationship between deposit amounts and node sizes in the 3D network graph. This will help users visually identify nodes with larger deposits.",
@@ -35,7 +35,7 @@
         "id": 4,
         "title": "Increase Central Verana Node Size to 14",
         "description": "Change the size of the central blue Verana node to 14",
-        "status": "pending",
+        "status": "done",
         "priority": "low",
         "dependencies": [],
         "details": "Simple size adjustment for the central Verana node to improve its visual prominence in the 3D graph.",
@@ -167,7 +167,7 @@
     ],
     "metadata": {
       "created": "2025-10-26T22:59:33.850Z",
-      "updated": "2025-10-27T08:17:08.156Z",
+      "updated": "2025-10-27T08:43:13.776Z",
       "description": "Tasks for master context"
     }
   }

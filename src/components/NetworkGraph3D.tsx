@@ -51,11 +51,11 @@ const NODE_COLOR: Record<NodeType, string> = {
 
 // Node size multipliers
 const NODE_SIZE: Record<NodeType, number> = {
-  core: 5,
-  controller: 3,
-  trustRegistry: 2,
-  didDirectory: 1.5,
-  did: 1
+  core: 19,        // Updated to 45 (user adjusted from 14)
+  controller: 16,  // Target ~30
+  trustRegistry: 8, // Target ~20 (base size)
+  didDirectory: 3, // Target ~15
+  did: 1          // Target ~10 (base size)
 }
 
 // Function to create text textures for node labels
@@ -104,7 +104,7 @@ async function loadGraphData(): Promise<GraphData> {
     id: 'verana', 
     label: 'Verana Network', 
     type: 'core',
-    val: NODE_SIZE.core * 2 // Make core node larger
+    val: 45 
   })
   nodeIds.add('verana')
   
@@ -131,20 +131,11 @@ async function loadGraphData(): Promise<GraphData> {
     ...Array.from(controllerToTRs.keys()),
     ...Array.from(controllerToDIDs.keys())
   ])
-
-  // Calculate importance metrics
-  const controllerImportance = new Map<string, number>()
   
   // Build the graph structure
   for (const controller of Array.from(controllers)) {
     const trs = controllerToTRs.get(controller) || []
     const dids = controllerToDIDs.get(controller) || []
-    
-    // Calculate controller importance based on number of trust registries and DIDs
-    const trScore = trs.length * 2 // Weight TRs more heavily
-    const didScore = dids.length
-    const importance = Math.sqrt(trScore + didScore) // Use sqrt to prevent extreme size differences
-    controllerImportance.set(controller, importance)
     
     const ctrlNodeId = createId('ctrl', controller)
     if (!nodeIds.has(ctrlNodeId)) {
@@ -152,8 +143,8 @@ async function loadGraphData(): Promise<GraphData> {
         id: ctrlNodeId, 
         label: controller, 
         type: 'controller',
-        // Size controller nodes based on their importance
-        val: NODE_SIZE.controller * (1 + Math.min(importance / 3, 2))
+        // Size controller nodes at default size
+        val: NODE_SIZE.controller
       })
       nodeIds.add(ctrlNodeId)
     }
@@ -170,18 +161,14 @@ async function loadGraphData(): Promise<GraphData> {
     for (const tr of trs) {
       const trId = createId('tr', tr.id)
       
-      // Calculate trust registry importance based on deposit amount
-      const depositAmount = parseInt(tr.deposit, 10) || 0
-      const depositScore = Math.log10(depositAmount + 1) / 10 // Logarithmic scaling
-      
       if (!nodeIds.has(trId)) {
         nodes.push({ 
           id: trId, 
           label: `TR ${tr.id}`, 
           type: 'trustRegistry', 
           ref: tr,
-          // Size trust registry nodes based on deposit amount
-          val: NODE_SIZE.trustRegistry * (1 + depositScore)
+          // Size trust registry nodes at default size
+          val: NODE_SIZE.trustRegistry
         })
         nodeIds.add(trId)
       }
@@ -201,8 +188,8 @@ async function loadGraphData(): Promise<GraphData> {
           id: dirId, 
           label: `DID Directory (${dids.length})`, 
           type: 'didDirectory',
-          // Size DID directory nodes based on number of DIDs
-          val: NODE_SIZE.didDirectory * (1 + Math.min(Math.log10(dids.length) / 2, 1))
+          // Size DID directory nodes at default size
+          val: NODE_SIZE.didDirectory
         })
         nodeIds.add(dirId)
       }
@@ -217,18 +204,14 @@ async function loadGraphData(): Promise<GraphData> {
       for (const d of dids) {
         const didId = createId('did', d.did)
         
-        // Calculate DID importance based on deposit
-        const depositAmount = parseInt(d.deposit, 10) || 0
-        const depositScore = Math.log10(depositAmount + 1) / 20 // Logarithmic scaling, smaller effect
-        
         if (!nodeIds.has(didId)) {
           nodes.push({ 
             id: didId, 
             label: d.did, 
             type: 'did', 
             ref: d,
-            // Size DID nodes based on deposit amount
-            val: NODE_SIZE.did * (1 + depositScore)
+            // Size DID nodes at default size
+            val: NODE_SIZE.did
           })
           nodeIds.add(didId)
         }
