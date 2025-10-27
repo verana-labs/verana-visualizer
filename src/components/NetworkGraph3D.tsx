@@ -51,11 +51,11 @@ const NODE_COLOR: Record<NodeType, string> = {
 
 // Node size multipliers
 const NODE_SIZE: Record<NodeType, number> = {
-  core: 5,
-  controller: 3,
-  trustRegistry: 2,
-  didDirectory: 1.5,
-  did: 1
+  core: 19,
+  controller: 16,
+  trustRegistry: 8, 
+  didDirectory: 3, 
+  did: 1          
 }
 
 // Function to create text textures for node labels
@@ -104,7 +104,7 @@ async function loadGraphData(): Promise<GraphData> {
     id: 'verana', 
     label: 'Verana Network', 
     type: 'core',
-    val: NODE_SIZE.core * 2 // Make core node larger
+    val: 45 
   })
   nodeIds.add('verana')
   
@@ -131,20 +131,11 @@ async function loadGraphData(): Promise<GraphData> {
     ...Array.from(controllerToTRs.keys()),
     ...Array.from(controllerToDIDs.keys())
   ])
-
-  // Calculate importance metrics
-  const controllerImportance = new Map<string, number>()
   
   // Build the graph structure
   for (const controller of Array.from(controllers)) {
     const trs = controllerToTRs.get(controller) || []
     const dids = controllerToDIDs.get(controller) || []
-    
-    // Calculate controller importance based on number of trust registries and DIDs
-    const trScore = trs.length * 2 // Weight TRs more heavily
-    const didScore = dids.length
-    const importance = Math.sqrt(trScore + didScore) // Use sqrt to prevent extreme size differences
-    controllerImportance.set(controller, importance)
     
     const ctrlNodeId = createId('ctrl', controller)
     if (!nodeIds.has(ctrlNodeId)) {
@@ -152,8 +143,8 @@ async function loadGraphData(): Promise<GraphData> {
         id: ctrlNodeId, 
         label: controller, 
         type: 'controller',
-        // Size controller nodes based on their importance
-        val: NODE_SIZE.controller * (1 + Math.min(importance / 3, 2))
+        // Size controller nodes at default size
+        val: NODE_SIZE.controller
       })
       nodeIds.add(ctrlNodeId)
     }
@@ -170,18 +161,14 @@ async function loadGraphData(): Promise<GraphData> {
     for (const tr of trs) {
       const trId = createId('tr', tr.id)
       
-      // Calculate trust registry importance based on deposit amount
-      const depositAmount = parseInt(tr.deposit, 10) || 0
-      const depositScore = Math.log10(depositAmount + 1) / 10 // Logarithmic scaling
-      
       if (!nodeIds.has(trId)) {
         nodes.push({ 
           id: trId, 
           label: `TR ${tr.id}`, 
           type: 'trustRegistry', 
           ref: tr,
-          // Size trust registry nodes based on deposit amount
-          val: NODE_SIZE.trustRegistry * (1 + depositScore)
+          // Size trust registry nodes at default size
+          val: NODE_SIZE.trustRegistry
         })
         nodeIds.add(trId)
       }
@@ -201,8 +188,8 @@ async function loadGraphData(): Promise<GraphData> {
           id: dirId, 
           label: `DID Directory (${dids.length})`, 
           type: 'didDirectory',
-          // Size DID directory nodes based on number of DIDs
-          val: NODE_SIZE.didDirectory * (1 + Math.min(Math.log10(dids.length) / 2, 1))
+          // Size DID directory nodes at default size
+          val: NODE_SIZE.didDirectory
         })
         nodeIds.add(dirId)
       }
@@ -217,18 +204,14 @@ async function loadGraphData(): Promise<GraphData> {
       for (const d of dids) {
         const didId = createId('did', d.did)
         
-        // Calculate DID importance based on deposit
-        const depositAmount = parseInt(d.deposit, 10) || 0
-        const depositScore = Math.log10(depositAmount + 1) / 20 // Logarithmic scaling, smaller effect
-        
         if (!nodeIds.has(didId)) {
           nodes.push({ 
             id: didId, 
             label: d.did, 
             type: 'did', 
             ref: d,
-            // Size DID nodes based on deposit amount
-            val: NODE_SIZE.did * (1 + depositScore)
+            // Size DID nodes at default size
+            val: NODE_SIZE.did
           })
           nodeIds.add(didId)
         }
@@ -240,6 +223,26 @@ async function loadGraphData(): Promise<GraphData> {
         })
       }
     }
+  }
+
+  // Fallback demo graph if fetched data is empty or minimal
+  if (nodes.length <= 1 || links.length === 0) {
+    const demoNodes: GraphNode[] = [
+      { id: 'verana', label: 'Verana Network', type: 'core', val: 45 },
+      { id: 'ctrl:demo', label: 'demo-controller', type: 'controller', val: NODE_SIZE.controller },
+      { id: 'tr:demo-1', label: 'TR demo-1', type: 'trustRegistry', val: NODE_SIZE.trustRegistry },
+      { id: 'did-dir:demo', label: 'DID Directory (2)', type: 'didDirectory', val: NODE_SIZE.didDirectory },
+      { id: 'did:demo:1', label: 'did:demo:1', type: 'did', val: NODE_SIZE.did },
+      { id: 'did:demo:2', label: 'did:demo:2', type: 'did', val: NODE_SIZE.did }
+    ]
+    const demoLinks: GraphLink[] = [
+      { source: 'ctrl:demo', target: 'verana', type: 'participant', curvature: 0.1 },
+      { source: 'ctrl:demo', target: 'tr:demo-1', type: 'owns-tr', curvature: 0.2 },
+      { source: 'ctrl:demo', target: 'did-dir:demo', type: 'has-did-dir', curvature: 0.1 },
+      { source: 'did-dir:demo', target: 'did:demo:1', type: 'owns-did', curvature: 0.05 },
+      { source: 'did-dir:demo', target: 'did:demo:2', type: 'owns-did', curvature: 0.05 }
+    ]
+    return { nodes: demoNodes, links: demoLinks }
   }
 
   return { nodes, links }
@@ -254,11 +257,18 @@ export default function NetworkGraph3D() {
   const [lastBlockHeight, setLastBlockHeight] = useState<string>('')
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set())
+  const [activePulseLinks, setActivePulseLinks] = useState<Set<string>>(new Set())
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
   const [pulseAnimation, setPulseAnimation] = useState<boolean>(false)
   const pulseRef = useRef<any>(null)
   const [showHelp, setShowHelp] = useState<boolean>(false)
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  const txAnimRef = useRef<any>(null)
+  const txSpawnRef = useRef<any>(null)
+  const txActiveRef = useRef<any[]>([])
+  const nodePulseAnimRef = useRef<any>(null)
+  const nodePulseSpawnRef = useRef<any>(null)
+  const nodePulsesRef = useRef<any[]>([])
 
   const refreshData = useCallback(async () => {
     setRefreshing(true)
@@ -351,13 +361,45 @@ export default function NetworkGraph3D() {
         
         // Update particles on links connected to selected node
         if (graphRef.current) {
-          graphRef.current.linkDirectionalParticleWidth(() => intensity * 3);
-          graphRef.current.linkDirectionalParticles((link: any) => {
+          const getIds = (link: any) => {
             const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
             const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
-            const linkId = `${sourceId}-${targetId}`;
-            return highlightLinks.has(linkId) ? Math.round(3 + intensity * 5) : 0;
+            return `${sourceId}-${targetId}`;
+          };
+          // Particle count prioritizes highlighted links; background pulses supplement
+          graphRef.current.linkDirectionalParticles((link: any) => {
+            const linkId = getIds(link);
+            if (highlightLinks.has(linkId)) return Math.round(3 + intensity * 5);
+            if (activePulseLinks.has(linkId)) return 2;
+            return 0;
           });
+          // Particle width: thicker on highlighted links, thinner for background pulses
+          if (typeof graphRef.current.linkDirectionalParticleWidth === 'function') {
+            graphRef.current.linkDirectionalParticleWidth((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return Math.max(1.5, intensity * 3);
+              if (activePulseLinks.has(linkId)) return 1.5;
+              return 0;
+            });
+          }
+          // Particle speed: faster on highlighted links, slower on background pulses
+          if (typeof graphRef.current.linkDirectionalParticleSpeed === 'function') {
+            graphRef.current.linkDirectionalParticleSpeed((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return 0.01; // focused pulse
+              if (activePulseLinks.has(linkId)) return 0.003; // subtle background
+              return 0.003;
+            });
+          }
+          // Particle color: vivid for highlighted, cool glow for background
+          if (typeof graphRef.current.linkDirectionalParticleColor === 'function') {
+            graphRef.current.linkDirectionalParticleColor((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return '#F472B6'; // pink highlight
+              if (activePulseLinks.has(linkId)) return '#A5F3FC'; // soft cyan glow
+              return '#A5F3FC';
+            });
+          }
         }
       }, 50);
       
@@ -366,6 +408,299 @@ export default function NetworkGraph3D() {
       };
     }
   }, [pulseAnimation, selectedNode, highlightLinks]);
+
+  // Periodic subtle background pulses on a small random subset of links
+  useEffect(() => {
+    if (!data.links || data.links.length === 0) return;
+    let intervalId: any = null;
+    const chooseSubset = () => {
+      const total = data.links.length;
+      const desired = Math.min(10, Math.max(1, Math.floor(total * 0.06))); // ~6% up to 10 links
+      const indices = new Set<number>();
+      while (indices.size < desired) {
+        indices.add(Math.floor(Math.random() * total));
+      }
+      const subset = new Set<string>();
+      Array.from(indices).forEach(i => {
+        const link = (data.links as any)[i];
+        const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
+        const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
+        subset.add(`${sourceId}-${targetId}`);
+      });
+      setActivePulseLinks(subset);
+    };
+    // Initial selection and periodic refresh
+    chooseSubset();
+    intervalId = setInterval(chooseSubset, 2500);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [data.links]);
+
+  // When not focusing a selected node, apply background particle accessors
+  useEffect(() => {
+    if (!graphRef.current) return;
+    if (pulseAnimation && selectedNode) return; // handled by the pulse effect above
+    const getIds = (link: any) => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
+      return `${sourceId}-${targetId}`;
+    };
+    if (typeof graphRef.current.linkDirectionalParticles === 'function') {
+      graphRef.current.linkDirectionalParticles((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 2 : 0;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleWidth === 'function') {
+      graphRef.current.linkDirectionalParticleWidth((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 1.5 : 0;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleSpeed === 'function') {
+      graphRef.current.linkDirectionalParticleSpeed((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 0.003 : 0.003;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleColor === 'function') {
+      graphRef.current.linkDirectionalParticleColor((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? '#A5F3FC' : '#A5F3FC';
+      });
+    }
+  }, [activePulseLinks, pulseAnimation, selectedNode]);
+
+  // Transaction light-trail animation (glowing orbs moving along links with ghost trail)
+  useEffect(() => {
+    if (!graphRef.current) return;
+    const fg = graphRef.current;
+    const scene = typeof fg.scene === 'function' ? fg.scene() : null;
+    const THREE = (window as any).THREE;
+    if (!scene || !THREE) return;
+
+    const MAX_CONCURRENT = 6;
+    const GHOST_COUNT = 5;
+
+    const getNodePos = (nodeOrId: any) => {
+      if (!nodeOrId) return { x: 0, y: 0, z: 0 };
+      if (typeof nodeOrId === 'object') {
+        const { x = 0, y = 0, z = 0 } = nodeOrId;
+        return { x, y, z };
+      }
+      const n = (data.nodes as any[]).find(n => n.id === nodeOrId);
+      if (!n) return { x: 0, y: 0, z: 0 };
+      const { x = 0, y = 0, z = 0 } = n as any;
+      return { x, y, z };
+    };
+
+    const createTx = (link: any) => {
+      const src = getNodePos(link.source);
+      const dst = getNodePos(link.target);
+      const start = performance.now();
+      const duration = 1800 + Math.random() * 1200; // 1.8s - 3s
+      const color = link && link.type === 'participant' ? '#7dd3fc' : '#f472b6';
+
+      const headGeom = new THREE.SphereGeometry(1.2, 12, 12);
+      const headMat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.2, transparent: true, opacity: 0.95 });
+      const head = new THREE.Mesh(headGeom, headMat);
+      head.renderOrder = 2;
+      scene.add(head);
+
+      const ghosts: any[] = [];
+      for (let i = 0; i < GHOST_COUNT; i++) {
+        const gGeom = new THREE.SphereGeometry(1.0, 10, 10);
+        const gMat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.8, transparent: true, opacity: Math.max(0.15, 0.5 - i * 0.1) });
+        const g = new THREE.Mesh(gGeom, gMat);
+        g.renderOrder = 1;
+        scene.add(g);
+        ghosts.push(g);
+      }
+
+      const tx = { link, start, duration, src, dst, head, ghosts };
+      txActiveRef.current.push(tx);
+    };
+
+    const spawn = () => {
+      if (!data.links || data.links.length === 0) return;
+      // Limit concurrent transactions
+      if (txActiveRef.current.length >= MAX_CONCURRENT) return;
+      const tries = Math.min(5, data.links.length);
+      for (let i = 0; i < tries; i++) {
+        const link = (data.links as any[])[Math.floor(Math.random() * data.links.length)];
+        if (!link) continue;
+        createTx(link);
+        if (txActiveRef.current.length >= MAX_CONCURRENT) break;
+      }
+    };
+
+    const animate = () => {
+      const now = performance.now();
+      const remaining: any[] = [];
+      for (const tx of txActiveRef.current) {
+        const t = (now - tx.start) / tx.duration;
+        if (t >= 1) {
+          // Cleanup finished tx
+          scene.remove(tx.head);
+          tx.head.geometry.dispose();
+          tx.head.material.dispose();
+          tx.ghosts.forEach((g: any) => {
+            scene.remove(g);
+            g.geometry.dispose();
+            g.material.dispose();
+          });
+          continue;
+        }
+        // Interpolate position
+        const px = tx.src.x + (tx.dst.x - tx.src.x) * t;
+        const py = tx.src.y + (tx.dst.y - tx.src.y) * t;
+        const pz = tx.src.z + (tx.dst.z - tx.src.z) * t;
+        tx.head.position.set(px, py, pz);
+        // Slight scale pulse
+        const scale = 0.8 + Math.sin(t * Math.PI) * 0.4;
+        tx.head.scale.set(scale, scale, scale);
+        // Ghosts trailing behind
+        for (let i = 0; i < tx.ghosts.length; i++) {
+          const back = t - (i + 1) * 0.03;
+          if (back <= 0) {
+            tx.ghosts[i].visible = false;
+            continue;
+          }
+          tx.ghosts[i].visible = true;
+          const gx = tx.src.x + (tx.dst.x - tx.src.x) * back;
+          const gy = tx.src.y + (tx.dst.y - tx.src.y) * back;
+          const gz = tx.src.z + (tx.dst.z - tx.src.z) * back;
+          tx.ghosts[i].position.set(gx, gy, gz);
+          const gScale = Math.max(0.4, scale - (i + 1) * 0.1);
+          tx.ghosts[i].scale.set(gScale, gScale, gScale);
+        }
+        remaining.push(tx);
+      }
+      txActiveRef.current = remaining;
+      txAnimRef.current = requestAnimationFrame(animate);
+    };
+
+    // Start loops
+    txSpawnRef.current = setInterval(spawn, 900);
+    txAnimRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (txSpawnRef.current) clearInterval(txSpawnRef.current);
+      if (txAnimRef.current) cancelAnimationFrame(txAnimRef.current);
+      // Cleanup any remaining objects
+      for (const tx of txActiveRef.current) {
+        try {
+          scene.remove(tx.head);
+          tx.head.geometry?.dispose?.();
+          tx.head.material?.dispose?.();
+          tx.ghosts?.forEach((g: any) => {
+            scene.remove(g);
+            g.geometry?.dispose?.();
+            g.material?.dispose?.();
+          });
+        } catch {}
+      }
+      txActiveRef.current = [];
+    };
+  }, [data.links, data.nodes]);
+
+  // Random node glow pulse halos (many concurrent)
+  useEffect(() => {
+    if (!graphRef.current) return;
+    const fg = graphRef.current;
+    const scene = typeof fg.scene === 'function' ? fg.scene() : null;
+    const THREE = (window as any).THREE;
+    if (!scene || !THREE) return;
+
+    const MAX_PULSES = 260; // even higher concurrency cap for many simultaneous pulses
+
+    const getNodePos = (node: any) => {
+      if (!node) return { x: 0, y: 0, z: 0 };
+      const { x = 0, y = 0, z = 0 } = node as any;
+      return { x, y, z };
+    };
+
+    const getNodeColor = (node: GraphNode) => {
+      try { return NODE_COLOR[node.type] || '#A78BFA'; } catch { return '#A78BFA'; }
+    };
+
+    const createPulse = (node: GraphNode) => {
+      const pos = getNodePos(node);
+      const color = getNodeColor(node);
+      const start = performance.now();
+      const duration = 600 + Math.random() * 1000; // 0.6s - 1.6s
+
+      const mat = new THREE.SpriteMaterial({
+        color,
+        transparent: true,
+        opacity: 0.8,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(pos.x, pos.y, pos.z);
+      sprite.scale.set(5, 5, 5);
+      sprite.renderOrder = 3;
+      scene.add(sprite);
+
+      nodePulsesRef.current.push({ node, sprite, start, duration });
+    };
+
+    const spawn = () => {
+      if (!data.nodes || data.nodes.length === 0) return;
+      // keep many active pulses
+      const budget = Math.max(0, MAX_PULSES - nodePulsesRef.current.length);
+      if (budget <= 0) return;
+      const spawnCount = Math.min(16, budget); // even more pulses per burst
+      for (let i = 0; i < spawnCount; i++) {
+        const node = (data.nodes as any[])[Math.floor(Math.random() * data.nodes.length)];
+        if (node) createPulse(node);
+      }
+    };
+
+    const animate = () => {
+      const now = performance.now();
+      const remaining: any[] = [];
+      for (const pulse of nodePulsesRef.current) {
+        const t = (now - pulse.start) / pulse.duration; // 0..1
+        if (t >= 1) {
+          // cleanup
+          scene.remove(pulse.sprite);
+          pulse.sprite.material?.dispose?.();
+          pulse.sprite.geometry?.dispose?.();
+          continue;
+        }
+        // Update position to follow moving node
+        const pos = getNodePos(pulse.node);
+        pulse.sprite.position.set(pos.x, pos.y, pos.z);
+        // Scale expands and fades (even larger)
+        const s = 3.5 + t * 26; // expand from ~3.5 to ~29.5
+        pulse.sprite.scale.set(s, s, s);
+        const material = pulse.sprite.material as any;
+        if (material) material.opacity = Math.max(0, 0.8 * (1 - t));
+        remaining.push(pulse);
+      }
+      nodePulsesRef.current = remaining;
+      nodePulseAnimRef.current = requestAnimationFrame(animate);
+    };
+
+    nodePulseSpawnRef.current = setInterval(spawn, 60); // much more frequent spawns
+    nodePulseAnimRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (nodePulseSpawnRef.current) clearInterval(nodePulseSpawnRef.current);
+      if (nodePulseAnimRef.current) cancelAnimationFrame(nodePulseAnimRef.current);
+      for (const pulse of nodePulsesRef.current) {
+        try {
+          scene.remove(pulse.sprite);
+          pulse.sprite.material?.dispose?.();
+          pulse.sprite.geometry?.dispose?.();
+        } catch {}
+      }
+      nodePulsesRef.current = [];
+    };
+  }, [data.nodes]);
 
   // Handle node click - zoom to node with animation
   const onNodeClick = useCallback((node: GraphNode) => {
@@ -474,6 +809,18 @@ export default function NetworkGraph3D() {
       configureForces();
     }
   }, [data.nodes, configureForces]);
+
+  // Auto-fit the graph into view once data and size are ready
+  useEffect(() => {
+    if (!graphRef.current) return;
+    if (data.nodes.length === 0) return;
+    if (containerSize.width <= 0 || containerSize.height <= 0) return;
+    try {
+      if (typeof graphRef.current.zoomToFit === 'function') {
+        graphRef.current.zoomToFit(800, 60);
+      }
+    } catch {}
+  }, [data.nodes.length, containerSize.width, containerSize.height]);
   
   // Fit graph to view
   const fitToGraph = useCallback(() => {
@@ -535,24 +882,25 @@ export default function NetworkGraph3D() {
 
   return (
     <div className={`grid grid-cols-1 ${isFullscreen ? 'lg:grid-cols-1' : 'lg:grid-cols-4'} gap-6`}>
-      <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg`}>
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
-          <div className="flex items-center space-x-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
-            <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <button 
-              onClick={fitToGraph} 
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
-              title="Fit all nodes in view"
+      <div className={`${isFullscreen ? 'lg:col-span-1' : 'lg:col-span-3'} bg-white dark:bg-dark-card rounded-lg shadow-lg flex flex-col`}>
+        <div className="p-4 border-b border-gray-200 dark:border-dark-border flex-shrink-0">
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-500 dark:text-gray-400">Block</span>
+              <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={fitToGraph}
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
+              title="Center graph (fit to view)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v3m0 12v3m9-9h-3M6 12H3m12.728-6.728l-2.121 2.121M8.393 17.657l-2.121 2.121m12.849 0l-2.121-2.121M8.393 6.343 6.272 4.222" />
               </svg>
-              Fit All
+              Center
             </button>
-            <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center">
+            <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
               {refreshing ? (
                 <>
                   <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -572,7 +920,7 @@ export default function NetworkGraph3D() {
             </button>
             <button
               onClick={toggleFullscreen}
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
               title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             >
               {isFullscreen ? (
@@ -588,17 +936,18 @@ export default function NetworkGraph3D() {
             </button>
             <button
               onClick={() => setShowHelp(!showHelp)}
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center"
+              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               Help
             </button>
+            </div>
           </div>
         </div>
 
-        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden galaxy-background`}>
+        <div ref={containerRef} className={`${isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[70vh]'} relative overflow-hidden galaxy-background flex-grow`}>
           {/* Help Overlay */}
           {showHelp && (
             <div className="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">
@@ -626,15 +975,6 @@ export default function NetworkGraph3D() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 dark:text-white">Fullscreen Mode</h4>
-                    <ul className="list-disc pl-5 space-y-1">
-                      <li><strong>Fullscreen button</strong>: Toggle fullscreen mode</li>
-                      <li><strong>F11 key</strong>: Toggle fullscreen</li>
-                      <li><strong>Escape key</strong>: Exit fullscreen</li>
-                      <li><strong>Fullscreen</strong>: Graph takes full screen space</li>
-                    </ul>
-                  </div>
-                  <div>
                     <h4 className="font-medium text-gray-900 dark:text-white">Color Legend</h4>
                     <ul className="list-disc pl-5 space-y-1">
                       <li><span className="inline-block w-3 h-3 rounded-full mr-1" style={{ backgroundColor: NODE_COLOR.core }}></span> <strong>Blue</strong>: Verana Core</li>
@@ -658,18 +998,20 @@ export default function NetworkGraph3D() {
               linkTarget="target"
               width={containerSize.width}
               height={containerSize.height}
-              backgroundColor="rgba(26, 11, 46, 0.1)"
+              backgroundColor="rgba(0,0,0,0)"
               // Add some visual enhancements for galaxy effect
-              showNavInfo={false}
+              showNavInfo={true}
+              // Ensure D3 engine is used so dragging reheats simulation
+              forceEngine="d3"
               // Add subtle fog for depth
-              fog={true}
+              fog={false}
               fogColor="#1a0b2e"
-              fogNear={100}
-              fogFar={800}
+              fogNear={150}
+              fogFar={1200}
               // Use a calculated nodeVal for dynamic sizing
               nodeVal={(node: GraphNode) => node.val || 1}
               nodeColor={(node: GraphNode) => NODE_COLOR[node.type]}
-              nodeOpacity={0.9}
+              nodeOpacity={1}
               nodeResolution={8}
               linkCurvature="curvature"
               linkColor={(link: GraphLink) => {
@@ -683,17 +1025,17 @@ export default function NetworkGraph3D() {
                 
                 return highlightLinks.has(linkId) ? '#F472B6' : '#94A3B844';
               }}
-              linkOpacity={0.3}
+              linkOpacity={0.6}
               linkWidth={(link: GraphLink) => {
                 // Make highlighted links thicker
-                if (!selectedNode) return 1;
+                if (!selectedNode) return 1.25;
                 
                 // Safely handle source/target which might be string or object
                 const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
                 const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
                 const linkId = `${sourceId}-${targetId}`;
                 
-                return highlightLinks.has(linkId) ? 2 : 1;
+                return highlightLinks.has(linkId) ? 2 : 1.25;
               }}
               linkDirectionalParticles={(link: GraphLink) => {
                 // Add particles to highlighted links
@@ -835,6 +1177,10 @@ export default function NetworkGraph3D() {
               minZoom={0.5}
               // Enhance camera controls for better navigation
               cameraPosition={{ x: 0, y: 0, z: 200 }}
+              onNodeDrag={(node: GraphNode) => {
+                // Explicitly reheat simulation during drag to ensure forces respond
+                try { graphRef.current?.d3ReheatSimulation?.() } catch {}
+              }}
               onNodeDragEnd={(node: GraphNode) => {
                 // When a node is dragged, update its position for the animation
                 if (selectedNode && selectedNode.id === node.id) {
@@ -864,8 +1210,9 @@ export default function NetworkGraph3D() {
       </div>
 
       {!isFullscreen && (
-        <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Details</h3>
+        <div className="lg:col-span-1 bg-white dark:bg-dark-card rounded-lg shadow-lg p-4 flex flex-col max-h-[70vh]">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex-shrink-0">Details</h3>
+        <div className="flex-1 overflow-y-auto">
         {!selectedNode && (
           <p className="text-sm text-gray-500 dark:text-gray-400">Click a node to see details.</p>
         )}
@@ -965,7 +1312,8 @@ export default function NetworkGraph3D() {
             </div>
           </div>
         )}
-        <div className="mt-6 text-gray-800 dark:text-gray-200">
+        </div>
+        <div className="mt-6 text-gray-800 dark:text-gray-200 flex-shrink-0">
           <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Legend</h4>
           <ul className="space-y-1 text-sm">
             <li className="flex items-center space-x-2"><span className="w-3 h-3 rounded-full" style={{ backgroundColor: NODE_COLOR.core }} /> <span className="text-gray-800 dark:text-gray-200">Verana</span></li>

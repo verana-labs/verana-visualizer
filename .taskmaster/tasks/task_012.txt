@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: Create Project Cards with Categories
+# Status: pending
+# Dependencies: 10
+# Priority: medium
+# Description: Design and implement project cards with category organization for repositories
+# Details:
+Build visually appealing project cards organized by categories. Each card should display key project information and be easily browsable.
+
+# Test Strategy:
+Verify project cards display correctly with proper categorization. Test filtering and organization features.

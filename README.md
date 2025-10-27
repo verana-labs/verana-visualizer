@@ -16,6 +16,10 @@
   <a href="https://discord.gg/edjaFn252q"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white&style=flat-square"></a>
 </div>
 
+<div align="center">
+  <img src="public/screenshot.jpeg" alt="Verana Visualizer Dashboard Screenshot" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+</div>
+
 ---
 
 ### What is this?
@@ -68,13 +72,20 @@ The application is built for real-world operations: dark/light theme, responsive
 - Network Graph view for relationships
 - Dashboard with at-a-glance metrics
 - Responsive and mobile-friendly
+- 3D network graph with:
+  - Smooth zoom-to-focus on node click
+  - Link particle effects with subtle periodic pulses
+  - Adjustable forces and curved links for readability
+  - Context panel with rich details for TRs and DIDs
+  - Fit-to-view (Center) control and fullscreen toggle
+  - Help overlay with controls and color legend
 
 ### Tech stack
 
 - Next.js 15 (App Router, standalone output)
 - React 18 + TypeScript 5
 - Tailwind CSS 3
-- react-force-graph-2d (interactive graphs)
+- 3d-force-graph / three for 3D visualization
 
 ---
 
@@ -117,6 +128,21 @@ NEXT_PUBLIC_APP_NAME=Verana Visualizer
 NEXT_PUBLIC_APP_LOGO=logo.svg
 ```
 
+Kubernetes/CD also supports the following Verana-specific envs (mapped in `kubernetes/verana-visualizer-deployment.yaml`):
+
+```env
+NEXT_PUBLIC_VERANA_CHAIN_ID=vna-testnet-1
+NEXT_PUBLIC_VERANA_CHAIN_NAME=VeranaTestnet1
+NEXT_PUBLIC_VERANA_RPC_ENDPOINT=https://rpc.testnet.verana.network
+NEXT_PUBLIC_VERANA_REST_ENDPOINT=https://api.testnet.verana.network
+NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT=https://api.testnet.verana.network/verana/td/v1
+NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID=https://api.testnet.verana.network/verana/dd/v1
+NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY=https://api.testnet.verana.network/verana/tr/v1
+NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA=https://api.testnet.verana.network/verana/cs/v1
+NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE=false
+NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
+```
+
 - `NEXT_PUBLIC_BASE_URL` is the full URL where the application will be hosted (used for asset prefixing and base paths)
 - Logo file is expected at `public/logo.svg`
 - These defaults are set in `Dockerfile` and Helm `values.yaml` for convenience
@@ -131,6 +157,7 @@ Common scripts:
 - `npm run build` – production build
 - `npm run start` – start the production server locally
 - `npm run lint` – run ESLint
+- `npm test` – run unit tests with coverage (Vitest)
 
 When developing UI or data formats:
 
@@ -185,11 +212,13 @@ For production deployments to https://vis.testnet.verana.network/, we use GitHub
 3. The Kubernetes deployment is updated with the new image
 4. An Ingress resource is created to expose the application at https://vis.testnet.verana.network/
 
-The workflow file is at `.github/workflows/cd.yaml`.
+The workflow file is at `.github/workflows/cd.yml`.
 
-- To customize environment variables, edit `k8s/deployment.yaml` under the `env:` section
+- To customize environment variables, edit `kubernetes/verana-visualizer-deployment.yaml` under the `env:` section
 - Health probes and resource requests/limits are preconfigured
 - The `NEXT_PUBLIC_BASE_URL` environment variable is set to ensure assets load correctly
+
+Also see `.github/workflows/ci.yml` which runs tests on pushes and PRs using Node 20.
 
 ---
 
@@ -265,14 +294,14 @@ Note: For very low-latency web serving, a container orchestrator (Kubernetes) is
 src/
 ├─ app/
 │  ├─ dashboard/            # Main dashboard route
-│  ├─ network-graph/        # Interactive graph view
+│  ├─ network-graph/        # Interactive 3D graph view
 │  ├─ trust-registries/     # Trust registries explorer
 │  ├─ did-directory/        # DID directory view
 │  ├─ layout.tsx            # Root layout
 │  └─ globals.css           # Global styles
 ├─ components/
 │  ├─ Header.tsx, Sidebar.tsx, ThemeToggle.tsx
-│  ├─ EnhancedDashboardCards.tsx, NetworkGraph.tsx
+│  ├─ EnhancedDashboardCards.tsx, NetworkGraph3D.tsx, ForceGraph3DWrapper.tsx
 │  ├─ DIDTable.tsx, TrustRegistryTable.tsx
 │  └─ RefreshButton.tsx, ResultsSection.tsx, SearchForm.tsx
 ├─ lib/

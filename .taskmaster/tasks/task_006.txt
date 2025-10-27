@@ -1,0 +1,11 @@
+# Task ID: 6
+# Title: Reorganize Sidebar Navigation
+# Status: pending
+# Dependencies: None
+# Priority: low
+# Description: Change the order in the sidebar and move Network Graph to the top of the navigation list
+# Details:
+Reorganize sidebar navigation items to prioritize the Network Graph by placing it at the top of the list.
+
+# Test Strategy:
+Verify Network Graph appears at the top of the sidebar. Check that all navigation links still work correctly.

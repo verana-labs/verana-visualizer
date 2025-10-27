@@ -1,0 +1,11 @@
+# Task ID: 14
+# Title: Display Contributor Statistics
+# Status: pending
+# Dependencies: 10
+# Priority: medium
+# Description: Show the number of contributors for each project with additional contributor metrics
+# Details:
+Display contributor counts and statistics for each repository. Include metrics like active contributors, contribution percentages, and top contributors.
+
+# Test Strategy:
+Verify contributor statistics are accurate. Test display for projects with varying contributor counts.

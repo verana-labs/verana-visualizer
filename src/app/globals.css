@@ -43,6 +43,7 @@ body {
   background: radial-gradient(ellipse at center, #2d1b69 0%, #1a0b2e 50%, #0f0f23 100%);
   position: relative;
   overflow: hidden;
+  z-index: 0;
 }
 
 .galaxy-background::before {
