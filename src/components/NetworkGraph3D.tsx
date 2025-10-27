@@ -225,6 +225,26 @@ async function loadGraphData(): Promise<GraphData> {
     }
   }
 
+  // Fallback demo graph if fetched data is empty or minimal
+  if (nodes.length <= 1 || links.length === 0) {
+    const demoNodes: GraphNode[] = [
+      { id: 'verana', label: 'Verana Network', type: 'core', val: 45 },
+      { id: 'ctrl:demo', label: 'demo-controller', type: 'controller', val: NODE_SIZE.controller },
+      { id: 'tr:demo-1', label: 'TR demo-1', type: 'trustRegistry', val: NODE_SIZE.trustRegistry },
+      { id: 'did-dir:demo', label: 'DID Directory (2)', type: 'didDirectory', val: NODE_SIZE.didDirectory },
+      { id: 'did:demo:1', label: 'did:demo:1', type: 'did', val: NODE_SIZE.did },
+      { id: 'did:demo:2', label: 'did:demo:2', type: 'did', val: NODE_SIZE.did }
+    ]
+    const demoLinks: GraphLink[] = [
+      { source: 'ctrl:demo', target: 'verana', type: 'participant', curvature: 0.1 },
+      { source: 'ctrl:demo', target: 'tr:demo-1', type: 'owns-tr', curvature: 0.2 },
+      { source: 'ctrl:demo', target: 'did-dir:demo', type: 'has-did-dir', curvature: 0.1 },
+      { source: 'did-dir:demo', target: 'did:demo:1', type: 'owns-did', curvature: 0.05 },
+      { source: 'did-dir:demo', target: 'did:demo:2', type: 'owns-did', curvature: 0.05 }
+    ]
+    return { nodes: demoNodes, links: demoLinks }
+  }
+
   return { nodes, links }
 }
 
@@ -237,11 +257,15 @@ export default function NetworkGraph3D() {
   const [lastBlockHeight, setLastBlockHeight] = useState<string>('')
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set())
+  const [activePulseLinks, setActivePulseLinks] = useState<Set<string>>(new Set())
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
   const [pulseAnimation, setPulseAnimation] = useState<boolean>(false)
   const pulseRef = useRef<any>(null)
   const [showHelp, setShowHelp] = useState<boolean>(false)
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false)
+  const txAnimRef = useRef<any>(null)
+  const txSpawnRef = useRef<any>(null)
+  const txActiveRef = useRef<any[]>([])
 
   const refreshData = useCallback(async () => {
     setRefreshing(true)
@@ -334,13 +358,45 @@ export default function NetworkGraph3D() {
         
         // Update particles on links connected to selected node
         if (graphRef.current) {
-          graphRef.current.linkDirectionalParticleWidth(() => intensity * 3);
-          graphRef.current.linkDirectionalParticles((link: any) => {
+          const getIds = (link: any) => {
             const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
             const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
-            const linkId = `${sourceId}-${targetId}`;
-            return highlightLinks.has(linkId) ? Math.round(3 + intensity * 5) : 0;
+            return `${sourceId}-${targetId}`;
+          };
+          // Particle count prioritizes highlighted links; background pulses supplement
+          graphRef.current.linkDirectionalParticles((link: any) => {
+            const linkId = getIds(link);
+            if (highlightLinks.has(linkId)) return Math.round(3 + intensity * 5);
+            if (activePulseLinks.has(linkId)) return 2;
+            return 0;
           });
+          // Particle width: thicker on highlighted links, thinner for background pulses
+          if (typeof graphRef.current.linkDirectionalParticleWidth === 'function') {
+            graphRef.current.linkDirectionalParticleWidth((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return Math.max(1.5, intensity * 3);
+              if (activePulseLinks.has(linkId)) return 1.5;
+              return 0;
+            });
+          }
+          // Particle speed: faster on highlighted links, slower on background pulses
+          if (typeof graphRef.current.linkDirectionalParticleSpeed === 'function') {
+            graphRef.current.linkDirectionalParticleSpeed((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return 0.01; // focused pulse
+              if (activePulseLinks.has(linkId)) return 0.003; // subtle background
+              return 0.003;
+            });
+          }
+          // Particle color: vivid for highlighted, cool glow for background
+          if (typeof graphRef.current.linkDirectionalParticleColor === 'function') {
+            graphRef.current.linkDirectionalParticleColor((link: any) => {
+              const linkId = getIds(link);
+              if (highlightLinks.has(linkId)) return '#F472B6'; // pink highlight
+              if (activePulseLinks.has(linkId)) return '#A5F3FC'; // soft cyan glow
+              return '#A5F3FC';
+            });
+          }
         }
       }, 50);
       
@@ -349,6 +405,202 @@ export default function NetworkGraph3D() {
       };
     }
   }, [pulseAnimation, selectedNode, highlightLinks]);
+
+  // Periodic subtle background pulses on a small random subset of links
+  useEffect(() => {
+    if (!data.links || data.links.length === 0) return;
+    let intervalId: any = null;
+    const chooseSubset = () => {
+      const total = data.links.length;
+      const desired = Math.min(10, Math.max(1, Math.floor(total * 0.06))); // ~6% up to 10 links
+      const indices = new Set<number>();
+      while (indices.size < desired) {
+        indices.add(Math.floor(Math.random() * total));
+      }
+      const subset = new Set<string>();
+      Array.from(indices).forEach(i => {
+        const link = (data.links as any)[i];
+        const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
+        const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
+        subset.add(`${sourceId}-${targetId}`);
+      });
+      setActivePulseLinks(subset);
+    };
+    // Initial selection and periodic refresh
+    chooseSubset();
+    intervalId = setInterval(chooseSubset, 2500);
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [data.links]);
+
+  // When not focusing a selected node, apply background particle accessors
+  useEffect(() => {
+    if (!graphRef.current) return;
+    if (pulseAnimation && selectedNode) return; // handled by the pulse effect above
+    const getIds = (link: any) => {
+      const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
+      const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
+      return `${sourceId}-${targetId}`;
+    };
+    if (typeof graphRef.current.linkDirectionalParticles === 'function') {
+      graphRef.current.linkDirectionalParticles((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 2 : 0;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleWidth === 'function') {
+      graphRef.current.linkDirectionalParticleWidth((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 1.5 : 0;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleSpeed === 'function') {
+      graphRef.current.linkDirectionalParticleSpeed((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? 0.003 : 0.003;
+      });
+    }
+    if (typeof graphRef.current.linkDirectionalParticleColor === 'function') {
+      graphRef.current.linkDirectionalParticleColor((link: any) => {
+        const linkId = getIds(link);
+        return activePulseLinks.has(linkId) ? '#A5F3FC' : '#A5F3FC';
+      });
+    }
+  }, [activePulseLinks, pulseAnimation, selectedNode]);
+
+  // Transaction light-trail animation (glowing orbs moving along links with ghost trail)
+  useEffect(() => {
+    if (!graphRef.current) return;
+    const fg = graphRef.current;
+    const scene = typeof fg.scene === 'function' ? fg.scene() : null;
+    const THREE = (window as any).THREE;
+    if (!scene || !THREE) return;
+
+    const MAX_CONCURRENT = 6;
+    const GHOST_COUNT = 5;
+
+    const getNodePos = (nodeOrId: any) => {
+      if (!nodeOrId) return { x: 0, y: 0, z: 0 };
+      if (typeof nodeOrId === 'object') {
+        const { x = 0, y = 0, z = 0 } = nodeOrId;
+        return { x, y, z };
+      }
+      const n = (data.nodes as any[]).find(n => n.id === nodeOrId);
+      if (!n) return { x: 0, y: 0, z: 0 };
+      const { x = 0, y = 0, z = 0 } = n as any;
+      return { x, y, z };
+    };
+
+    const createTx = (link: any) => {
+      const src = getNodePos(link.source);
+      const dst = getNodePos(link.target);
+      const start = performance.now();
+      const duration = 1800 + Math.random() * 1200; // 1.8s - 3s
+      const color = link && link.type === 'participant' ? '#7dd3fc' : '#f472b6';
+
+      const headGeom = new THREE.SphereGeometry(1.2, 12, 12);
+      const headMat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 1.2, transparent: true, opacity: 0.95 });
+      const head = new THREE.Mesh(headGeom, headMat);
+      head.renderOrder = 2;
+      scene.add(head);
+
+      const ghosts: any[] = [];
+      for (let i = 0; i < GHOST_COUNT; i++) {
+        const gGeom = new THREE.SphereGeometry(1.0, 10, 10);
+        const gMat = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.8, transparent: true, opacity: Math.max(0.15, 0.5 - i * 0.1) });
+        const g = new THREE.Mesh(gGeom, gMat);
+        g.renderOrder = 1;
+        scene.add(g);
+        ghosts.push(g);
+      }
+
+      const tx = { link, start, duration, src, dst, head, ghosts };
+      txActiveRef.current.push(tx);
+    };
+
+    const spawn = () => {
+      if (!data.links || data.links.length === 0) return;
+      // Limit concurrent transactions
+      if (txActiveRef.current.length >= MAX_CONCURRENT) return;
+      const tries = Math.min(5, data.links.length);
+      for (let i = 0; i < tries; i++) {
+        const link = (data.links as any[])[Math.floor(Math.random() * data.links.length)];
+        if (!link) continue;
+        createTx(link);
+        if (txActiveRef.current.length >= MAX_CONCURRENT) break;
+      }
+    };
+
+    const animate = () => {
+      const now = performance.now();
+      const remaining: any[] = [];
+      for (const tx of txActiveRef.current) {
+        const t = (now - tx.start) / tx.duration;
+        if (t >= 1) {
+          // Cleanup finished tx
+          scene.remove(tx.head);
+          tx.head.geometry.dispose();
+          tx.head.material.dispose();
+          tx.ghosts.forEach((g: any) => {
+            scene.remove(g);
+            g.geometry.dispose();
+            g.material.dispose();
+          });
+          continue;
+        }
+        // Interpolate position
+        const px = tx.src.x + (tx.dst.x - tx.src.x) * t;
+        const py = tx.src.y + (tx.dst.y - tx.src.y) * t;
+        const pz = tx.src.z + (tx.dst.z - tx.src.z) * t;
+        tx.head.position.set(px, py, pz);
+        // Slight scale pulse
+        const scale = 0.8 + Math.sin(t * Math.PI) * 0.4;
+        tx.head.scale.set(scale, scale, scale);
+        // Ghosts trailing behind
+        for (let i = 0; i < tx.ghosts.length; i++) {
+          const back = t - (i + 1) * 0.03;
+          if (back <= 0) {
+            tx.ghosts[i].visible = false;
+            continue;
+          }
+          tx.ghosts[i].visible = true;
+          const gx = tx.src.x + (tx.dst.x - tx.src.x) * back;
+          const gy = tx.src.y + (tx.dst.y - tx.src.y) * back;
+          const gz = tx.src.z + (tx.dst.z - tx.src.z) * back;
+          tx.ghosts[i].position.set(gx, gy, gz);
+          const gScale = Math.max(0.4, scale - (i + 1) * 0.1);
+          tx.ghosts[i].scale.set(gScale, gScale, gScale);
+        }
+        remaining.push(tx);
+      }
+      txActiveRef.current = remaining;
+      txAnimRef.current = requestAnimationFrame(animate);
+    };
+
+    // Start loops
+    txSpawnRef.current = setInterval(spawn, 900);
+    txAnimRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (txSpawnRef.current) clearInterval(txSpawnRef.current);
+      if (txAnimRef.current) cancelAnimationFrame(txAnimRef.current);
+      // Cleanup any remaining objects
+      for (const tx of txActiveRef.current) {
+        try {
+          scene.remove(tx.head);
+          tx.head.geometry?.dispose?.();
+          tx.head.material?.dispose?.();
+          tx.ghosts?.forEach((g: any) => {
+            scene.remove(g);
+            g.geometry?.dispose?.();
+            g.material?.dispose?.();
+          });
+        } catch {}
+      }
+      txActiveRef.current = [];
+    };
+  }, [data.links, data.nodes]);
 
   // Handle node click - zoom to node with animation
   const onNodeClick = useCallback((node: GraphNode) => {
@@ -457,6 +709,18 @@ export default function NetworkGraph3D() {
       configureForces();
     }
   }, [data.nodes, configureForces]);
+
+  // Auto-fit the graph into view once data and size are ready
+  useEffect(() => {
+    if (!graphRef.current) return;
+    if (data.nodes.length === 0) return;
+    if (containerSize.width <= 0 || containerSize.height <= 0) return;
+    try {
+      if (typeof graphRef.current.zoomToFit === 'function') {
+        graphRef.current.zoomToFit(800, 60);
+      }
+    } catch {}
+  }, [data.nodes.length, containerSize.width, containerSize.height]);
   
   // Fit graph to view
   const fitToGraph = useCallback(() => {
@@ -624,18 +888,18 @@ export default function NetworkGraph3D() {
               linkTarget="target"
               width={containerSize.width}
               height={containerSize.height}
-              backgroundColor="rgba(26, 11, 46, 0.1)"
+              backgroundColor="#000011"
               // Add some visual enhancements for galaxy effect
-              showNavInfo={false}
+              showNavInfo={true}
               // Add subtle fog for depth
-              fog={true}
+              fog={false}
               fogColor="#1a0b2e"
-              fogNear={100}
-              fogFar={800}
+              fogNear={150}
+              fogFar={1200}
               // Use a calculated nodeVal for dynamic sizing
               nodeVal={(node: GraphNode) => node.val || 1}
               nodeColor={(node: GraphNode) => NODE_COLOR[node.type]}
-              nodeOpacity={0.9}
+              nodeOpacity={1}
               nodeResolution={8}
               linkCurvature="curvature"
               linkColor={(link: GraphLink) => {
@@ -649,17 +913,17 @@ export default function NetworkGraph3D() {
                 
                 return highlightLinks.has(linkId) ? '#F472B6' : '#94A3B844';
               }}
-              linkOpacity={0.3}
+              linkOpacity={0.6}
               linkWidth={(link: GraphLink) => {
                 // Make highlighted links thicker
-                if (!selectedNode) return 1;
+                if (!selectedNode) return 1.25;
                 
                 // Safely handle source/target which might be string or object
                 const sourceId = typeof link.source === 'string' ? link.source : (link.source as any)?.id || '';
                 const targetId = typeof link.target === 'string' ? link.target : (link.target as any)?.id || '';
                 const linkId = `${sourceId}-${targetId}`;
                 
-                return highlightLinks.has(linkId) ? 2 : 1;
+                return highlightLinks.has(linkId) ? 2 : 1.25;
               }}
               linkDirectionalParticles={(link: GraphLink) => {
                 // Add particles to highlighted links

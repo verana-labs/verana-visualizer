@@ -13,7 +13,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  useImperativeHandle(ref, () => graphRef.current, [])
+  useImperativeHandle(ref, () => graphRef.current, [graphRef.current])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -68,22 +68,46 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
           }
           
           console.log('Creating ForceGraph3D instance...')
-          graphRef.current = new (ForceGraph3D as any)(containerRef.current)
+          // 3d-force-graph default export is a FACTORY function, not a class
+          // Prefer constructor per docs; pass rendererConfig to ensure alpha transparency
+          try {
+            graphRef.current = new (ForceGraph3D as any)(containerRef.current, {
+              rendererConfig: { antialias: true, alpha: true }
+            })
+          } catch (e) {
+            // Fallback to factory invocation
+            graphRef.current = (ForceGraph3D as any)(containerRef.current)
+          }
+          // Guard: ensure underlying canvas is visible above backgrounds
+          try {
+            const canvas = containerRef.current.querySelector('canvas') as HTMLCanvasElement | null
+            if (canvas) {
+              canvas.style.position = 'relative'
+              canvas.style.zIndex = '2'
+              canvas.style.pointerEvents = 'auto'
+            }
+          } catch {}
           
           // Apply props immediately after creating the graph instance
           setTimeout(() => {
             try {
               // Apply all props to the graph instance
               Object.keys(props).forEach(key => {
-                if (key !== 'ref' && typeof graphRef.current[key] === 'function') {
+                if (key === 'ref' || key === 'graphData') return
+                if (typeof graphRef.current[key] === 'function') {
                   try {
                     graphRef.current[key](props[key])
                   } catch (error) {
-                    // Some props might not be valid methods, ignore silently
                     console.warn(`Failed to apply prop ${key}:`, error)
                   }
                 }
               })
+              // Ensure data is applied last
+              if (props.graphData) {
+                try { graphRef.current.graphData(props.graphData) } catch {}
+              }
+              // Force a refresh
+              try { graphRef.current.refresh() } catch {}
               
               console.log('3D graph initialized successfully')
               setIsLoading(false)
@@ -123,16 +147,19 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     }
   }, [retryCount])
 
-  // Update graph when props change (only for data changes)
+  // Update graph when props change (data and key props)
   useEffect(() => {
-    if (!graphRef.current || !props.graphData) return
-
+    if (!graphRef.current) return
     try {
-      graphRef.current.graphData(props.graphData)
+      if (props.graphData) graphRef.current.graphData(props.graphData)
+      if (props.width) graphRef.current.width(props.width)
+      if (props.height) graphRef.current.height(props.height)
+      if (props.backgroundColor) graphRef.current.backgroundColor(props.backgroundColor)
+      if (props.showNavInfo !== undefined) graphRef.current.showNavInfo(props.showNavInfo)
     } catch (error) {
-      console.warn('Failed to update graph data:', error)
+      console.warn('Failed to update graph props:', error)
     }
-  }, [props.graphData])
+  }, [props.graphData, props.width, props.height, props.backgroundColor, props.showNavInfo])
 
   // Handle resize when width/height props change
   useEffect(() => {
@@ -166,7 +193,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-      <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
+      <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} />
       {isLoading && (
         <div style={{
           position: 'absolute',
@@ -174,7 +201,8 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
           left: '50%',
           transform: 'translate(-50%, -50%)',
           color: '#666',
-          fontSize: '14px'
+          fontSize: '14px',
+          zIndex: 3
         }}>
           Loading 3D visualization...
         </div>
