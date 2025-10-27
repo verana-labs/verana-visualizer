@@ -65,10 +65,10 @@
         "id": 7,
         "title": "Update README Documentation",
         "description": "Update the README with latest features and project status",
-        "status": "pending",
+        "status": "done",
         "priority": "medium",
         "dependencies": [],
-        "details": "Review and update the README to reflect the current state of the project, including new features, improvements, and current capabilities.",
+        "details": "README updated to reflect current features (3D graph zoom focus, particle link effects, fullscreen/help overlay), tech stack, environment variables (including Kubernetes/CD variants), scripts, CI and CD workflows, and project structure.",
         "testStrategy": "Review README for accuracy and completeness. Ensure all sections are up to date."
       },
       {
