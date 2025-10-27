@@ -543,16 +543,6 @@ export default function NetworkGraph3D() {
               <span className="font-mono text-gray-900 dark:text-white">{lastBlockHeight || '...'}</span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-            <button 
-              onClick={fitToGraph} 
-              className="px-3 py-1.5 text-sm rounded bg-gray-100 dark:bg-dark-surface hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center whitespace-nowrap"
-              title="Fit all nodes in view"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" />
-              </svg>
-              Fit All
-            </button>
             <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
               {refreshing ? (
                 <>
