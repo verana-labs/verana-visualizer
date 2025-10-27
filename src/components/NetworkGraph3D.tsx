@@ -1001,6 +1001,8 @@ export default function NetworkGraph3D() {
               backgroundColor="rgba(0,0,0,0)"
               // Add some visual enhancements for galaxy effect
               showNavInfo={true}
+              // Ensure D3 engine is used so dragging reheats simulation
+              forceEngine="d3"
               // Add subtle fog for depth
               fog={false}
               fogColor="#1a0b2e"
@@ -1175,6 +1177,10 @@ export default function NetworkGraph3D() {
               minZoom={0.5}
               // Enhance camera controls for better navigation
               cameraPosition={{ x: 0, y: 0, z: 200 }}
+              onNodeDrag={(node: GraphNode) => {
+                // Explicitly reheat simulation during drag to ensure forces respond
+                try { graphRef.current?.d3ReheatSimulation?.() } catch {}
+              }}
               onNodeDragEnd={(node: GraphNode) => {
                 // When a node is dragged, update its position for the animation
                 if (selectedNode && selectedNode.id === node.id) {
