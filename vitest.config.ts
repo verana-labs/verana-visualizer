@@ -15,6 +15,11 @@ export default defineConfig({
     alias: {
       '@': '/src'
     }
+  },
+  esbuild: {
+    jsx: 'automatic',
+    jsxDev: true,
+    jsxImportSource: 'react'
   }
 })
 
