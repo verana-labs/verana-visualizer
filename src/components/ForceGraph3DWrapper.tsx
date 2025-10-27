@@ -12,6 +12,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [retryCount, setRetryCount] = useState(0)
+  const initializedRef = useRef(false)
 
   useImperativeHandle(ref, () => graphRef.current, [graphRef.current])
 
@@ -24,6 +25,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         console.log('Initializing 3D graph...')
         setIsLoading(true)
         setError(null)
+        initializedRef.current = false
         
         // Check if we're in production and handle potential asset loading issues
         const isProduction = process.env.NODE_ENV === 'production'
@@ -110,16 +112,33 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
               try { graphRef.current.refresh() } catch {}
               
               console.log('3D graph initialized successfully')
+              initializedRef.current = true
               setIsLoading(false)
             } catch (error) {
               console.error('Error applying props to graph:', error)
-              setError('Failed to initialize 3D visualization')
+              // Don't show error if graph was initialized successfully, just log it
+              if (graphRef.current) {
+                console.warn('Graph initialized but error applying props:', error)
+              } else {
+                setError('Failed to initialize 3D visualization')
+              }
               setIsLoading(false)
             }
           }, isProduction ? 300 : 100) // Shorter delay
+        } else {
+          // Graph already exists, just update props
+          try {
+            if (props.graphData) graphRef.current.graphData(props.graphData)
+            initializedRef.current = true
+            setIsLoading(false)
+          } catch (error) {
+            console.warn('Error updating existing graph:', error)
+            setIsLoading(false)
+          }
         }
       } catch (error) {
         console.error('Failed to initialize ForceGraph3D:', error)
+        // Only show error if this is a critical failure, not just a prop update error
         setError(`Failed to load 3D visualization: ${error instanceof Error ? error.message : String(error)}`)
         setIsLoading(false)
       }
@@ -131,9 +150,13 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     
     // Add timeout for production to prevent infinite loading
     const timeout = process.env.NODE_ENV === 'production' ? setTimeout(() => {
-      if (isLoading) {
+      // Only show timeout error if graph is still null and hasn't been initialized
+      if (!initializedRef.current) {
         console.error('3D graph initialization timeout')
         setError('Initialization timeout - please try refreshing the page')
+        setIsLoading(false)
+      } else {
+        // Graph was initialized, just clear loading state
         setIsLoading(false)
       }
     }, 30000) : null // 30 second timeout for production
@@ -149,7 +172,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
 
   // Update graph when props change (data and key props)
   useEffect(() => {
-    if (!graphRef.current) return
+    if (!graphRef.current || !initializedRef.current) return
     try {
       if (props.graphData) graphRef.current.graphData(props.graphData)
       if (props.width) graphRef.current.width(props.width)
@@ -158,6 +181,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
       if (props.showNavInfo !== undefined) graphRef.current.showNavInfo(props.showNavInfo)
     } catch (error) {
       console.warn('Failed to update graph props:', error)
+      // Don't show error if graph is working, just log the warning
     }
   }, [props.graphData, props.width, props.height, props.backgroundColor, props.showNavInfo])
 
