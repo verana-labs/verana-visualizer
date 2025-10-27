@@ -16,6 +16,10 @@
   <a href="https://discord.gg/edjaFn252q"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white&style=flat-square"></a>
 </div>
 
+<div align="center">
+  <img src="public/screenshot.jpeg" alt="Verana Visualizer Dashboard Screenshot" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+</div>
+
 ---
 
 ### What is this?
