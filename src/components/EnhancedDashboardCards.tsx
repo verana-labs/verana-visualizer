@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { 
   SupplyResponse, 
@@ -40,16 +40,52 @@ export default function EnhancedDashboardCards({
   error
 }: EnhancedDashboardCardsProps) {
   const [selectedCard, setSelectedCard] = useState<string | null>(null)
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+  const [isMobile, setIsMobile] = useState(false)
+  
+  // Check if the device is mobile or tablet
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 1024) // Anything less than 1024px is considered mobile/tablet
+    }
+    
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile)
+    }
+  }, [])
+  
+  // Handle card hover
+  const handleCardHover = (cardId: string | null) => {
+    if (!isMobile) {
+      setHoveredCard(cardId)
+    }
+  }
 
+  // Handle card click
   const handleCardClick = (cardId: string, event: React.MouseEvent) => {
     event.stopPropagation()
-    setSelectedCard(prevSelected => {
-      if (prevSelected === cardId) {
-        return null
-      } else {
-        return cardId
-      }
-    })
+    // Only use click behavior on mobile
+    if (isMobile) {
+      setSelectedCard(prevSelected => {
+        if (prevSelected === cardId) {
+          return null
+        } else {
+          return cardId
+        }
+      })
+    }
+  }
+  
+  // Get the currently active card (either by hover on desktop or click on mobile)
+  const getActiveCard = () => {
+    if (isMobile) {
+      return selectedCard
+    } else {
+      return hoveredCard
+    }
   }
 
   if (isLoading) {
@@ -214,7 +250,18 @@ export default function EnhancedDashboardCards({
           <div
             key={card.id}
             onClick={(event) => handleCardClick(card.id, event)}
-            className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all duration-200 border border-gray-200 dark:border-dark-border hover:border-verana-accent relative z-10 self-start"
+            onMouseEnter={() => handleCardHover(card.id)}
+            onMouseLeave={() => handleCardHover(null)}
+            className={`
+              bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 cursor-pointer 
+              hover:shadow-xl transition-all duration-200 border border-gray-200 
+              dark:border-dark-border hover:border-verana-accent relative self-start
+              ${getActiveCard() === card.id ? 'ring-2 ring-verana-accent z-40' : 'z-10'}
+            `}
+            data-expanded={getActiveCard() === card.id}
+            style={{
+              position: getActiveCard() === card.id ? 'relative' : undefined,
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
@@ -229,7 +276,7 @@ export default function EnhancedDashboardCards({
                 </div>
               </div>
               <svg 
-                className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${selectedCard === card.id ? 'rotate-180' : 'rotate-0'}`}
+                className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${getActiveCard() === card.id ? 'rotate-180' : 'rotate-0'}`}
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -242,8 +289,9 @@ export default function EnhancedDashboardCards({
               {card.value}
             </div>
             
-            {selectedCard === card.id && (
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-dark-border">
+            {/* Card Details - Position fixed to ensure visibility */}
+            {getActiveCard() === card.id && (
+              <div className="absolute left-0 right-0 bg-white dark:bg-dark-card p-6 border border-gray-200 dark:border-dark-border rounded-lg shadow-xl z-50 mt-2 top-full" style={{ position: 'absolute', zIndex: 9999 }}>
                 <div className="space-y-2">
                   {Object.entries(card.details).map(([key, value]) => (
                     <div key={key} className="flex flex-col sm:flex-row sm:justify-between text-sm gap-1 sm:gap-0">

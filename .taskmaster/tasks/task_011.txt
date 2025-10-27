@@ -1,0 +1,11 @@
+# Task ID: 11
+# Title: Build Contribution Graph per Project
+# Status: pending
+# Dependencies: 10
+# Priority: medium
+# Description: Create a GitHub contribution graph that displays contribution statistics per project
+# Details:
+Implement a visual contribution graph showing GitHub contributions per project. This will help visualize developer activity across different repositories.
+
+# Test Strategy:
+Verify contribution graphs display accurately. Test with various time ranges and project selections.

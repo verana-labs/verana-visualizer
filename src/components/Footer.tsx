@@ -90,7 +90,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="https://verana.io/"
+                  href="https://docs.verana.io/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-gray-600 dark:text-gray-400 hover:text-verana-accent transition-colors"
@@ -100,7 +100,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://verana.foundation/"
+                  href="https://verana.io/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-gray-600 dark:text-gray-400 hover:text-verana-accent transition-colors"

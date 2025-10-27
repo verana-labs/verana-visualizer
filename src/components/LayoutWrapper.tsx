@@ -28,9 +28,20 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
   } | null>(null)
 
   useEffect(() => {
-    const savedSidebarState = localStorage.getItem('sidebarCollapsed')
-    if (savedSidebarState !== null) {
-      setIsSidebarCollapsed(JSON.parse(savedSidebarState))
+    // Check if device is mobile
+    const isMobile = window.innerWidth < 1024 // lg breakpoint
+    
+    if (isMobile) {
+      // On mobile, always start with sidebar collapsed
+      setIsSidebarCollapsed(true)
+    } else {
+      // On desktop, use saved state or default to collapsed
+      const savedSidebarState = localStorage.getItem('sidebarCollapsed')
+      if (savedSidebarState !== null) {
+        setIsSidebarCollapsed(JSON.parse(savedSidebarState))
+      } else {
+        setIsSidebarCollapsed(false) // Default to open on desktop
+      }
     }
     setIsSidebarLoaded(true)
 
@@ -60,6 +71,28 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
     }
 
     loadNetworkInfo()
+
+    // Handle window resize to adjust sidebar behavior
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 1024
+      if (isMobile) {
+        setIsSidebarCollapsed(true)
+      } else {
+        // When switching to desktop, restore saved state or default to open
+        const savedSidebarState = localStorage.getItem('sidebarCollapsed')
+        if (savedSidebarState !== null) {
+          setIsSidebarCollapsed(JSON.parse(savedSidebarState))
+        } else {
+          setIsSidebarCollapsed(false) // Default to open on desktop
+        }
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
 
   const handleSidebarToggle = () => {

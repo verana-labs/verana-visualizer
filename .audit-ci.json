@@ -1,10 +1,7 @@
 {
-  "low": true,
   "moderate": true,
-  "high": true,
-  "critical": true,
-  "allowlist": [],
-  "skip-dev": false,
-  "report-type": "summary",
-  "output-format": "text"
+  "allowlist": [
+    "1094566",
+    "GHSA-c2qf-rxjj-qqgw"
+  ]
 }

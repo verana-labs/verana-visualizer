@@ -1,0 +1,11 @@
+# Task ID: 4
+# Title: Increase Central Verana Node Size to 14
+# Status: pending
+# Dependencies: None
+# Priority: low
+# Description: Change the size of the central blue Verana node to 14
+# Details:
+Simple size adjustment for the central Verana node to improve its visual prominence in the 3D graph.
+
+# Test Strategy:
+Verify the central Verana node displays with size 14 in the 3D graph visualization.

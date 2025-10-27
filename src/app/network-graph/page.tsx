@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import LayoutWrapper from '@/components/LayoutWrapper'
 import dynamic from 'next/dynamic'
 
-const NetworkGraph = dynamic(() => import('@/components/NetworkGraph'), { ssr: false })
+const NetworkGraph3D = dynamic(() => import('@/components/NetworkGraph3D'), { ssr: false })
 
 export default function NetworkGraphPage() {
   const [isLoading, setIsLoading] = useState(true)
@@ -19,8 +19,8 @@ export default function NetworkGraphPage() {
 
   return (
     <LayoutWrapper 
-      title="Network Graph" 
-      subtitle="Visualize network connections and relationships"
+      title="3D Network Graph" 
+      subtitle="Interactive 3D visualization of network connections and relationships"
     >
       <div className="p-6">
         {isLoading ? (
@@ -40,7 +40,7 @@ export default function NetworkGraphPage() {
             </div>
           </div>
         ) : (
-          <NetworkGraph />
+          <NetworkGraph3D />
         )}
       </div>
     </LayoutWrapper>

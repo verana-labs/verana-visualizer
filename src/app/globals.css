@@ -37,3 +37,64 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Galaxy Background Effect */
+.galaxy-background {
+  background: radial-gradient(ellipse at center, #2d1b69 0%, #1a0b2e 50%, #0f0f23 100%);
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.galaxy-background::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(3px 3px at 20px 30px, #fff, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(2px 2px at 90px 40px, #fff, transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(2px 2px at 160px 30px, #ddd, transparent),
+    radial-gradient(1px 1px at 200px 50px, #fff, transparent),
+    radial-gradient(2px 2px at 250px 120px, rgba(255,255,255,0.7), transparent);
+  background-repeat: repeat;
+  background-size: 300px 200px;
+  animation: twinkle 4s ease-in-out infinite alternate;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.galaxy-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(4px 4px at 50px 50px, #8B5CF6, transparent),
+    radial-gradient(3px 3px at 100px 100px, #A855F7, transparent),
+    radial-gradient(2px 2px at 150px 50px, #7C3AED, transparent),
+    radial-gradient(3px 3px at 200px 150px, #6D28D9, transparent),
+    radial-gradient(2px 2px at 300px 80px, #8B5CF6, transparent),
+    radial-gradient(4px 4px at 350px 200px, #A855F7, transparent);
+  background-repeat: repeat;
+  background-size: 400px 300px;
+  animation: drift 8s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes twinkle {
+  0% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes drift {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(-300px) translateY(-200px); }
+}

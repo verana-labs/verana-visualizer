@@ -1,0 +1,174 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Fix or Remove Non-Working Fit All Button",
+        "description": "Remove the 'Fit All' button that is not working properly from the 3D graph interface",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "The Fit All button in the 3D network graph is not functioning correctly and should be either fixed or removed entirely.",
+        "testStrategy": "Verify the button is removed from UI or that it properly centers and fits all nodes in view when clicked"
+      },
+      {
+        "id": 2,
+        "title": "Implement Smooth Zoom Focus for Selected Nodes",
+        "description": "When a node is clicked, implement a smooth zoom animation to bring it to full screen focus",
+        "status": "pending",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Enhance user experience by adding a smooth zoom animation when clicking on nodes. The selected node should smoothly transition to full screen focus for better inspection.",
+        "testStrategy": "Click on various nodes and verify smooth zoom animation works. Test on different node types and edge cases."
+      },
+      {
+        "id": 3,
+        "title": "Scale Node Sizes Based on Deposit Amounts",
+        "description": "Implement proportional node sizing in the 3D graph based on deposit amounts - larger deposits should have bigger nodes",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a visual relationship between deposit amounts and node sizes in the 3D network graph. This will help users visually identify nodes with larger deposits.",
+        "testStrategy": "Verify nodes with larger deposits appear larger. Test with various deposit amounts to ensure proper scaling."
+      },
+      {
+        "id": 4,
+        "title": "Increase Central Verana Node Size to 14",
+        "description": "Change the size of the central blue Verana node to 14",
+        "status": "done",
+        "priority": "low",
+        "dependencies": [],
+        "details": "Simple size adjustment for the central Verana node to improve its visual prominence in the 3D graph.",
+        "testStrategy": "Verify the central Verana node displays with size 14 in the 3D graph visualization."
+      },
+      {
+        "id": 5,
+        "title": "Add Particle Animations to Graph Links",
+        "description": "Implement particle animations on links in the 3D graph with light effects and blur, similar to real-time transactions. Should be subtle and periodic, not always on all nodes",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Add subtle particle animations that move along the links between nodes. The animation should be periodic and not persistent on all links at once, creating a dynamic and visually appealing network visualization.",
+        "testStrategy": "Verify particle animations appear periodically on links. Ensure performance is not significantly impacted. Test the subtlety of the effect."
+      },
+      {
+        "id": 6,
+        "title": "Reorganize Sidebar Navigation",
+        "description": "Change the order in the sidebar and move Network Graph to the top of the navigation list",
+        "status": "done",
+        "priority": "low",
+        "dependencies": [],
+        "details": "Reorganize sidebar navigation items to prioritize the Network Graph by placing it at the top of the list.",
+        "testStrategy": "Verify Network Graph appears at the top of the sidebar. Check that all navigation links still work correctly."
+      },
+      {
+        "id": 7,
+        "title": "Update README Documentation",
+        "description": "Update the README with latest features and project status",
+        "status": "done",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "README updated to reflect current features (3D graph zoom focus, particle link effects, fullscreen/help overlay), tech stack, environment variables (including Kubernetes/CD variants), scripts, CI and CD workflows, and project structure.",
+        "testStrategy": "Review README for accuracy and completeness. Ensure all sections are up to date."
+      },
+      {
+        "id": 8,
+        "title": "Set Up Unit Tests in CI/CD",
+        "description": "Implement unit tests in the CI/CD GitHub Actions workflow",
+        "status": "done",
+        "priority": "high",
+        "dependencies": [],
+        "details": "Add unit testing to the CI/CD pipeline using GitHub Actions. This includes setting up the test framework, writing test cases, and configuring the workflow.",
+        "testStrategy": "Verify tests run automatically on push/PR. Ensure test coverage is adequate."
+      },
+      {
+        "id": 9,
+        "title": "Release v2.0.0",
+        "description": "Prepare and release version 2.0.0 of the application",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          "7",
+          "8"
+        ],
+        "details": "Create the v2.0.0 release including version bump, changelog, and release notes. This should be done after updating documentation and implementing tests.",
+        "testStrategy": "Verify version number is updated correctly. Check that release notes are complete."
+      },
+      {
+        "id": 10,
+        "title": "Create GitHub Tab with Repositories and Advanced Stats",
+        "description": "Build a GitHub tab feature showing all repositories and advanced project statistics",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [],
+        "details": "Create a new GitHub tab that displays all repositories with advanced project statistics. This will provide users with insights into the GitHub ecosystem.",
+        "testStrategy": "Verify GitHub tab displays all repositories with accurate statistics. Test data loading and display."
+      },
+      {
+        "id": 11,
+        "title": "Build Contribution Graph per Project",
+        "description": "Create a GitHub contribution graph that displays contribution statistics per project",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          "10"
+        ],
+        "details": "Implement a visual contribution graph showing GitHub contributions per project. This will help visualize developer activity across different repositories.",
+        "testStrategy": "Verify contribution graphs display accurately. Test with various time ranges and project selections."
+      },
+      {
+        "id": 12,
+        "title": "Create Project Cards with Categories",
+        "description": "Design and implement project cards with category organization for repositories",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          "10"
+        ],
+        "details": "Build visually appealing project cards organized by categories. Each card should display key project information and be easily browsable.",
+        "testStrategy": "Verify project cards display correctly with proper categorization. Test filtering and organization features."
+      },
+      {
+        "id": 13,
+        "title": "Implement Commit Statistics Timeline",
+        "description": "Create a timeline visualization showing commit counts by year, month, and week",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          "10"
+        ],
+        "details": "Build a comprehensive timeline showing commit statistics at different granularities (yearly, monthly, weekly). This will help track project activity over time.",
+        "testStrategy": "Verify timeline displays accurate commit counts. Test with projects of varying activity levels."
+      },
+      {
+        "id": 14,
+        "title": "Display Contributor Statistics",
+        "description": "Show the number of contributors for each project with additional contributor metrics",
+        "status": "pending",
+        "priority": "medium",
+        "dependencies": [
+          "10"
+        ],
+        "details": "Display contributor counts and statistics for each repository. Include metrics like active contributors, contribution percentages, and top contributors.",
+        "testStrategy": "Verify contributor statistics are accurate. Test display for projects with varying contributor counts."
+      },
+      {
+        "id": 15,
+        "title": "Add Repository Creation Dates and Metadata",
+        "description": "Display repository creation dates and other important metadata",
+        "status": "pending",
+        "priority": "low",
+        "dependencies": [
+          "10"
+        ],
+        "details": "Show repository creation dates, last update times, and other relevant metadata to provide context about project history and activity.",
+        "testStrategy": "Verify creation dates and metadata display correctly. Test with repositories of different ages."
+      }
+    ],
+    "metadata": {
+      "created": "2025-10-26T22:59:33.850Z",
+      "updated": "2025-10-27T10:22:12.543Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

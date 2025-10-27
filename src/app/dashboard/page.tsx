@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import LayoutWrapper from '@/components/LayoutWrapper'
 import EnhancedDashboardCards from '@/components/EnhancedDashboardCards'
-import RefreshButton from '@/components/RefreshButton'
-import BlockLoader from '@/components/BlockLoader'
 import { 
   fetchSupply, 
   fetchInflation, 
@@ -38,6 +36,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isConnected, setIsConnected] = useState(true)
 
   const loadNetworkData = async (isRefresh = false) => {
     try {
@@ -81,9 +80,15 @@ export default function Dashboard() {
       setValidators(validatorsData)
       setProposals(proposalsData)
       setHeader(headerData)
+      
+      // Mark as connected when data loads successfully
+      setIsConnected(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load network data')
       console.error('Error loading network data:', err)
+      
+      // Mark as disconnected on error
+      setIsConnected(false)
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
@@ -94,8 +99,25 @@ export default function Dashboard() {
     loadNetworkData(true)
   }
 
+  // Initial data load
   useEffect(() => {
     loadNetworkData()
+  }, [])
+  
+  // Handle auto refresh every 30 seconds
+  useEffect(() => {
+    // Initial connection status
+    setIsConnected(true)
+    
+    // Create interval for silent refresh every 30 seconds
+    const refreshTimer = setInterval(() => {
+      loadNetworkData(false).catch(err => {
+        console.error('Auto-refresh failed:', err)
+        setIsConnected(false)
+      })
+    }, 30000)
+    
+    return () => clearInterval(refreshTimer)
   }, [])
 
   return (
@@ -114,12 +136,11 @@ export default function Dashboard() {
                 Real-time data from the Verana network
               </p>
             </div>
-            <div>
-              <RefreshButton 
-                onRefresh={handleRefresh}
-                isRefreshing={isRefreshing}
-                autoRefreshInterval={30}
-              />
+            <div className="flex items-center">
+              <div className={`w-3 h-3 rounded-full mr-2 ${isConnected ? 'bg-blue-500' : 'bg-red-500'}`}></div>
+              <span className={`text-sm font-medium ${isConnected ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
             </div>
           </div>
 
@@ -138,10 +159,6 @@ export default function Dashboard() {
         </div>
       </LayoutWrapper>
 
-      <BlockLoader 
-        isLoading={isRefreshing} 
-        message="Refreshing network data..."
-      />
     </>
   )
 }

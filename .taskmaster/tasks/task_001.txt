@@ -1,0 +1,11 @@
+# Task ID: 1
+# Title: Remove Fit All Button
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Remove the 'Fit All' button that is not working properly from the 3D graph interface
+# Details:
+The Fit All button in the 3D network graph is not functioning correctly and should be removed entirely.
+
+# Test Strategy:
+Verify the button is removed from UI or that it properly centers and fits all nodes in view when clicked

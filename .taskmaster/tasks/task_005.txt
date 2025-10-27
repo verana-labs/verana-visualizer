@@ -1,0 +1,11 @@
+# Task ID: 5
+# Title: Add Particle Animations to Graph Links
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Implement particle animations on links in the 3D graph with light effects and blur, similar to real-time transactions. Should be subtle and periodic, not always on all nodes
+# Details:
+Add subtle particle animations that move along the links between nodes. The animation should be periodic and not persistent on all links at once, creating a dynamic and visually appealing network visualization.
+
+# Test Strategy:
+Verify particle animations appear periodically on links. Ensure performance is not significantly impacted. Test the subtlety of the effect.

@@ -5,12 +5,15 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+# Install all dependencies (including dev) for build-time tools like Tailwind/PostCSS
+RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ARG NEXT_PUBLIC_BASE_URL=http://localhost:3000
+ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 ENV NEXT_PUBLIC_API_ENDPOINT=https://api.testnet.verana.network
 ENV NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.testnet.verana.network
 ENV NEXT_PUBLIC_IDX_ENDPOINT=https://idx.testnet.verana.network
