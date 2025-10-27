@@ -888,7 +888,7 @@ export default function NetworkGraph3D() {
               linkTarget="target"
               width={containerSize.width}
               height={containerSize.height}
-              backgroundColor="#000011"
+              backgroundColor="rgba(0,0,0,0)"
               // Add some visual enhancements for galaxy effect
               showNavInfo={true}
               // Add subtle fog for depth
