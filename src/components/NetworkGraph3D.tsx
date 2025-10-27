@@ -266,6 +266,9 @@ export default function NetworkGraph3D() {
   const txAnimRef = useRef<any>(null)
   const txSpawnRef = useRef<any>(null)
   const txActiveRef = useRef<any[]>([])
+  const nodePulseAnimRef = useRef<any>(null)
+  const nodePulseSpawnRef = useRef<any>(null)
+  const nodePulsesRef = useRef<any[]>([])
 
   const refreshData = useCallback(async () => {
     setRefreshing(true)
@@ -601,6 +604,103 @@ export default function NetworkGraph3D() {
       txActiveRef.current = [];
     };
   }, [data.links, data.nodes]);
+
+  // Random node glow pulse halos (many concurrent)
+  useEffect(() => {
+    if (!graphRef.current) return;
+    const fg = graphRef.current;
+    const scene = typeof fg.scene === 'function' ? fg.scene() : null;
+    const THREE = (window as any).THREE;
+    if (!scene || !THREE) return;
+
+    const MAX_PULSES = 60; // concurrency cap
+
+    const getNodePos = (node: any) => {
+      if (!node) return { x: 0, y: 0, z: 0 };
+      const { x = 0, y = 0, z = 0 } = node as any;
+      return { x, y, z };
+    };
+
+    const getNodeColor = (node: GraphNode) => {
+      try { return NODE_COLOR[node.type] || '#A78BFA'; } catch { return '#A78BFA'; }
+    };
+
+    const createPulse = (node: GraphNode) => {
+      const pos = getNodePos(node);
+      const color = getNodeColor(node);
+      const start = performance.now();
+      const duration = 900 + Math.random() * 900; // 0.9s - 1.8s
+
+      const mat = new THREE.SpriteMaterial({
+        color,
+        transparent: true,
+        opacity: 0.5,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending
+      });
+      const sprite = new THREE.Sprite(mat);
+      sprite.position.set(pos.x, pos.y, pos.z);
+      sprite.scale.set(3, 3, 3);
+      sprite.renderOrder = 3;
+      scene.add(sprite);
+
+      nodePulsesRef.current.push({ node, sprite, start, duration });
+    };
+
+    const spawn = () => {
+      if (!data.nodes || data.nodes.length === 0) return;
+      // keep many active pulses
+      const budget = Math.max(0, MAX_PULSES - nodePulsesRef.current.length);
+      if (budget <= 0) return;
+      const spawnCount = Math.min(6, budget); // bursty
+      for (let i = 0; i < spawnCount; i++) {
+        const node = (data.nodes as any[])[Math.floor(Math.random() * data.nodes.length)];
+        if (node) createPulse(node);
+      }
+    };
+
+    const animate = () => {
+      const now = performance.now();
+      const remaining: any[] = [];
+      for (const pulse of nodePulsesRef.current) {
+        const t = (now - pulse.start) / pulse.duration; // 0..1
+        if (t >= 1) {
+          // cleanup
+          scene.remove(pulse.sprite);
+          pulse.sprite.material?.dispose?.();
+          pulse.sprite.geometry?.dispose?.();
+          continue;
+        }
+        // Update position to follow moving node
+        const pos = getNodePos(pulse.node);
+        pulse.sprite.position.set(pos.x, pos.y, pos.z);
+        // Scale expands and fades
+        const s = 2 + t * 16; // expand from 2 to ~18
+        pulse.sprite.scale.set(s, s, s);
+        const material = pulse.sprite.material as any;
+        if (material) material.opacity = Math.max(0, 0.5 * (1 - t));
+        remaining.push(pulse);
+      }
+      nodePulsesRef.current = remaining;
+      nodePulseAnimRef.current = requestAnimationFrame(animate);
+    };
+
+    nodePulseSpawnRef.current = setInterval(spawn, 220); // frequent spawns
+    nodePulseAnimRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (nodePulseSpawnRef.current) clearInterval(nodePulseSpawnRef.current);
+      if (nodePulseAnimRef.current) cancelAnimationFrame(nodePulseAnimRef.current);
+      for (const pulse of nodePulsesRef.current) {
+        try {
+          scene.remove(pulse.sprite);
+          pulse.sprite.material?.dispose?.();
+          pulse.sprite.geometry?.dispose?.();
+        } catch {}
+      }
+      nodePulsesRef.current = [];
+    };
+  }, [data.nodes]);
 
   // Handle node click - zoom to node with animation
   const onNodeClick = useCallback((node: GraphNode) => {
