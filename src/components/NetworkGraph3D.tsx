@@ -51,11 +51,11 @@ const NODE_COLOR: Record<NodeType, string> = {
 
 // Node size multipliers
 const NODE_SIZE: Record<NodeType, number> = {
-  core: 19,        // Updated to 45 (user adjusted from 14)
-  controller: 16,  // Target ~30
-  trustRegistry: 8, // Target ~20 (base size)
-  didDirectory: 3, // Target ~15
-  did: 1          // Target ~10 (base size)
+  core: 19,
+  controller: 16,
+  trustRegistry: 8, 
+  didDirectory: 3, 
+  did: 1          
 }
 
 // Function to create text textures for node labels
