@@ -613,7 +613,7 @@ export default function NetworkGraph3D() {
     const THREE = (window as any).THREE;
     if (!scene || !THREE) return;
 
-    const MAX_PULSES = 60; // concurrency cap
+    const MAX_PULSES = 260; // even higher concurrency cap for many simultaneous pulses
 
     const getNodePos = (node: any) => {
       if (!node) return { x: 0, y: 0, z: 0 };
@@ -629,18 +629,18 @@ export default function NetworkGraph3D() {
       const pos = getNodePos(node);
       const color = getNodeColor(node);
       const start = performance.now();
-      const duration = 900 + Math.random() * 900; // 0.9s - 1.8s
+      const duration = 600 + Math.random() * 1000; // 0.6s - 1.6s
 
       const mat = new THREE.SpriteMaterial({
         color,
         transparent: true,
-        opacity: 0.5,
+        opacity: 0.8,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const sprite = new THREE.Sprite(mat);
       sprite.position.set(pos.x, pos.y, pos.z);
-      sprite.scale.set(3, 3, 3);
+      sprite.scale.set(5, 5, 5);
       sprite.renderOrder = 3;
       scene.add(sprite);
 
@@ -652,7 +652,7 @@ export default function NetworkGraph3D() {
       // keep many active pulses
       const budget = Math.max(0, MAX_PULSES - nodePulsesRef.current.length);
       if (budget <= 0) return;
-      const spawnCount = Math.min(6, budget); // bursty
+      const spawnCount = Math.min(16, budget); // even more pulses per burst
       for (let i = 0; i < spawnCount; i++) {
         const node = (data.nodes as any[])[Math.floor(Math.random() * data.nodes.length)];
         if (node) createPulse(node);
@@ -674,18 +674,18 @@ export default function NetworkGraph3D() {
         // Update position to follow moving node
         const pos = getNodePos(pulse.node);
         pulse.sprite.position.set(pos.x, pos.y, pos.z);
-        // Scale expands and fades
-        const s = 2 + t * 16; // expand from 2 to ~18
+        // Scale expands and fades (even larger)
+        const s = 3.5 + t * 26; // expand from ~3.5 to ~29.5
         pulse.sprite.scale.set(s, s, s);
         const material = pulse.sprite.material as any;
-        if (material) material.opacity = Math.max(0, 0.5 * (1 - t));
+        if (material) material.opacity = Math.max(0, 0.8 * (1 - t));
         remaining.push(pulse);
       }
       nodePulsesRef.current = remaining;
       nodePulseAnimRef.current = requestAnimationFrame(animate);
     };
 
-    nodePulseSpawnRef.current = setInterval(spawn, 220); // frequent spawns
+    nodePulseSpawnRef.current = setInterval(spawn, 60); // much more frequent spawns
     nodePulseAnimRef.current = requestAnimationFrame(animate);
 
     return () => {
