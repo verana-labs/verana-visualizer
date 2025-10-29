@@ -47,18 +47,16 @@ export default function Dashboard() {
       }
       setError(null)
 
-      const [apiResults] = await Promise.all([
-        Promise.all([
-          fetchSupply(),
-          fetchInflation(),
-          fetchMintParams(),
-          fetchStakingPool(),
-          fetchCommunityPool(),
-          fetchValidators(),
-          fetchProposals(),
-          fetchHeader()
-        ]),
-        new Promise(resolve => setTimeout(resolve, isRefresh ? 2000 : 1000))
+      // Fetch new data in the background
+      const apiResults = await Promise.all([
+        fetchSupply(),
+        fetchInflation(),
+        fetchMintParams(),
+        fetchStakingPool(),
+        fetchCommunityPool(),
+        fetchValidators(),
+        fetchProposals(),
+        fetchHeader()
       ])
 
       const [
@@ -72,6 +70,8 @@ export default function Dashboard() {
         headerData
       ] = apiResults
 
+      // Atomically update all state at once to prevent flickering
+      // This preserves existing data during refresh until new data is ready
       setSupply(supplyData)
       setInflation(inflationData)
       setMintParams(mintParamsData)
@@ -109,9 +109,10 @@ export default function Dashboard() {
     // Initial connection status
     setIsConnected(true)
     
-    // Create interval for silent refresh every 30 seconds
+    // Create interval for background refresh every 30 seconds
+    // Using isRefresh=true to show refresh indicator
     const refreshTimer = setInterval(() => {
-      loadNetworkData(false).catch(err => {
+      loadNetworkData(true).catch(err => {
         console.error('Auto-refresh failed:', err)
         setIsConnected(false)
       })
@@ -154,6 +155,7 @@ export default function Dashboard() {
             proposals={proposals}
             header={header}
             isLoading={isLoading}
+            isRefreshing={isRefreshing}
             error={error}
           />
         </div>

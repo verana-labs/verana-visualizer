@@ -270,9 +270,10 @@ export default function NetworkGraph3D() {
   const nodePulseSpawnRef = useRef<any>(null)
   const nodePulsesRef = useRef<any[]>([])
 
-  const refreshData = useCallback(async () => {
+  const refreshData = useCallback(async (isInitialLoad = false) => {
     setRefreshing(true)
     try {
+      // Fetch new data in the background while keeping existing data visible
       const [header, graph] = await Promise.all([
         fetchHeader().catch(() => null),
         loadGraphData()
@@ -280,29 +281,37 @@ export default function NetworkGraph3D() {
       if (header) {
         setLastBlockHeight(header.result.header.height)
       }
+      // Atomically update data - this preserves the graph during refresh
       setData(graph)
     } finally {
-      setLoading(false)
+      // Only set loading to false if this is the initial load
+      // During refresh, loading should remain false to keep graph visible
+      if (isInitialLoad) {
+        setLoading(false)
+      }
       setRefreshing(false)
     }
   }, [])
 
   useEffect(() => {
-    refreshData()
+    refreshData(true) // Pass true to indicate initial load
   }, [refreshData])
 
-  // Poll for updates
+  // Poll for updates - silent background refresh
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const header = await fetchHeader()
         if (header.result.header.height !== lastBlockHeight) {
+          // Update block height immediately
           setLastBlockHeight(header.result.header.height)
+          // Fetch and update graph data in background
           const graph = await loadGraphData()
+          // Atomically update - graph remains visible during update
           setData(graph)
         }
       } catch {
-        // Handle error silently
+        // Handle error silently - don't disrupt the user experience
       }
     }, 30000)
     return () => clearInterval(interval)
@@ -900,7 +909,7 @@ export default function NetworkGraph3D() {
               </svg>
               Center
             </button>
-            <button onClick={refreshData} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
+            <button onClick={() => refreshData(false)} disabled={refreshing} className="px-3 py-1.5 text-sm rounded bg-verana-accent text-white hover:bg-opacity-90 disabled:opacity-50 flex items-center whitespace-nowrap">
               {refreshing ? (
                 <>
                   <svg className="animate-spin h-4 w-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
