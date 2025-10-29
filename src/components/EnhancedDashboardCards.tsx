@@ -24,6 +24,7 @@ interface EnhancedDashboardCardsProps {
   proposals: ProposalsResponse | null
   header: HeaderResponse | null
   isLoading: boolean
+  isRefreshing?: boolean
   error: string | null
 }
 
@@ -37,6 +38,7 @@ export default function EnhancedDashboardCards({
   proposals,
   header,
   isLoading,
+  isRefreshing = false,
   error
 }: EnhancedDashboardCardsProps) {
   const [selectedCard, setSelectedCard] = useState<string | null>(null)
@@ -244,7 +246,26 @@ export default function EnhancedDashboardCards({
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Subtle refresh indicator overlay */}
+      {isRefreshing && (
+        <div className="absolute top-0 right-0 z-50 flex items-center gap-2 bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg shadow-sm border border-blue-200 dark:border-blue-800">
+          <svg 
+            className="w-4 h-4 text-blue-600 dark:text-blue-400 animate-spin" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
+            />
+          </svg>
+          <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Updating...</span>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cards.map((card) => (
           <div
@@ -257,6 +278,7 @@ export default function EnhancedDashboardCards({
               hover:shadow-xl transition-all duration-200 border border-gray-200 
               dark:border-dark-border hover:border-verana-accent relative self-start
               ${getActiveCard() === card.id ? 'ring-2 ring-verana-accent z-40' : 'z-10'}
+              ${isRefreshing ? 'opacity-95' : 'opacity-100'}
             `}
             data-expanded={getActiveCard() === card.id}
             style={{
