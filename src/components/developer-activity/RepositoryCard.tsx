@@ -10,15 +10,16 @@ interface RepositoryCardProps {
 }
 
 export default function RepositoryCard({ repo }: RepositoryCardProps) {
-  const [isExpanded, setIsExpanded] = useState(true) // Show graphs by default
+  const [isExpanded, setIsExpanded] = useState(false) // Collapsed by default
 
   const chartData = formatCommitActivityForChart(repo.commitActivity)
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200 overflow-hidden">
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between mb-3">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200 overflow-hidden flex flex-col">
+      <div className="p-6 flex-1 min-h-[320px] flex flex-col justify-between">
+        <div className="flex-1">
+          {/* Header */}
+          <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <a 
               href={repo.url} 
@@ -111,49 +112,48 @@ export default function RepositoryCard({ repo }: RepositoryCardProps) {
           </div>
         </div>
 
-        {/* Last Updated */}
-        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
-          <span>Updated {formatRelativeTime(repo.lastUpdated)}</span>
+          {/* Last Updated */}
+          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
+            <span>Updated {formatRelativeTime(repo.lastUpdated)}</span>
+          </div>
         </div>
 
-        {/* Collapse Button (graphs shown by default) */}
-        {chartData.length > 0 && (
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
-          >
-            {isExpanded ? (
-              <>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-                Hide Graph
-              </>
-            ) : (
-              <>
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-                Show Graph
-              </>
-            )}
-          </button>
-        )}
+        {/* Collapse Button */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+        >
+          {isExpanded ? (
+            <>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+              Hide Graph
+            </>
+          ) : (
+            <>
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Show Graph
+            </>
+          )}
+        </button>
       </div>
 
-      {/* Chart Section - Animated */}
+      {/* Chart Section - Always Present */}
       <div className={`border-t border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out ${
-        isExpanded ? 'max-h-[400px] opacity-100' : 'max-h-12 opacity-100'
+        isExpanded ? 'max-h-[400px] opacity-100' : 'h-12 opacity-100'
       }`}>
-        {isExpanded && chartData.length > 0 ? (
+        {isExpanded ? (
           <div className="p-4 bg-gray-50 dark:bg-gray-800/50">
             <CommitActivityChart 
               data={chartData} 
               repoName={repo.name}
             />
           </div>
-        ) : chartData.length > 0 ? (
-          <div className="p-3 bg-gray-50 dark:bg-gray-800/50">
+        ) : (
+          <div className="h-12 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
             <div className="flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -161,7 +161,7 @@ export default function RepositoryCard({ repo }: RepositoryCardProps) {
               Commit activity graph hidden
             </div>
           </div>
-        ) : null}
+        )}
       </div>
     </div>
   )
