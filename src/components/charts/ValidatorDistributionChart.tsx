@@ -42,14 +42,14 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
   return (
     <div className="w-full bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
       <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Top Validators by Voting Power</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Distribution of voting power among top validators</p>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white">Top Validators by Stake</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total staked tokens delegated to top validators</p>
       </div>
       
       <ResponsiveContainer width="100%" height={320}>
         <BarChart 
           data={topValidators} 
-          margin={{ top: 10, right: 30, left: 0, bottom: 60 }}
+          margin={{ top: 10, right: 30, left: 20, bottom: 60 }}
         >
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
           <XAxis 
@@ -61,9 +61,16 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
             height={80}
           />
           <YAxis 
+            width={80}
             tick={{ fill: '#9ca3af', fontSize: 12 }}
             stroke="#4b5563"
             tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
+            label={{ 
+              value: 'Staked Tokens (VNA)', 
+              angle: -90, 
+              position: 'insideLeft',
+              style: { fill: '#9ca3af', fontSize: 12 }
+            }}
           />
           <Tooltip
             contentStyle={{
@@ -73,7 +80,7 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
               color: '#f3f4f6'
             }}
             formatter={(value: number, name: string) => {
-              if (name === 'Voting Power') {
+              if (name === 'Total Stake') {
                 return [`${(value / 1000000).toFixed(2)}M VNA`, name]
               }
               return [`${(value * 100).toFixed(2)}%`, name]
@@ -83,10 +90,11 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
           <Legend 
             wrapperStyle={{ paddingTop: '10px' }}
             iconType="circle"
+            formatter={(value) => <span style={{ color: '#9ca3af' }}>{value}</span>}
           />
           <Bar 
             dataKey="votingPower" 
-            name="Voting Power"
+            name="Total Stake"
             radius={[8, 8, 0, 0]}
           >
             {topValidators.map((entry, index) => (

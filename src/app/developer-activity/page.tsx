@@ -12,12 +12,6 @@ import {
 } from '@/lib/githubApi'
 
 
-// ⚠️ IMPORTANT: Update this with your actual GitHub organization name
-// The organization "verana-labs" may not exist. Try testing with:
-// - 'microsoft' - Microsoft's public repos
-// - 'facebook' - Facebook's public repos  
-// - 'vercel' - Vercel's public repos
-// - Your own organization name
 const ORGANIZATION = 'verana-labs'
 
 export default function DeveloperActivityPage() {

@@ -38,7 +38,7 @@ export default function TokenSupplyChart({ data, isLoading }: TokenSupplyChartPr
       </div>
       
       <ResponsiveContainer width="100%" height={320}>
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 0 }}>
           <defs>
             <linearGradient id="colorSupply" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
@@ -60,6 +60,7 @@ export default function TokenSupplyChart({ data, isLoading }: TokenSupplyChartPr
             stroke="#4b5563"
           />
           <YAxis 
+            width={80}
             tick={{ fill: '#9ca3af', fontSize: 12 }}
             stroke="#4b5563"
             tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}

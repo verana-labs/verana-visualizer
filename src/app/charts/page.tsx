@@ -192,23 +192,6 @@ export default function ChartsPage() {
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-              ✅ Real Blockchain Data
-            </h3>
-            <div className="px-2 py-1 rounded text-xs font-medium bg-green-200 dark:bg-green-800 text-green-900 dark:text-green-100">
-              LIVE
-            </div>
-          </div>
-          <p className="text-sm text-green-700 dark:text-green-300">
-            These charts display <strong>real historical data</strong> from the Verana blockchain by querying 
-            state at different block heights. Data is fetched directly from the network and represents actual 
-            on-chain activity over the past 30 days. Hover over data points for detailed information, and interact 
-            with the legends to show/hide specific data series.
-          </p>
-        </div>
       </div>
     </LayoutWrapper>
   )
