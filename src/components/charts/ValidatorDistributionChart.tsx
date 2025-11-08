@@ -86,6 +86,7 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
               return [`${(value * 100).toFixed(2)}%`, name]
             }}
             labelStyle={{ color: '#9ca3af' }}
+            itemStyle={{ color: '#f3f4f6' }}
           />
           <Legend 
             wrapperStyle={{ paddingTop: '10px' }}
