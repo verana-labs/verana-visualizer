@@ -344,15 +344,19 @@ export async function fetchRepositoryStats(
     const repoData: GitHubRepository = await repoResponse.json()
 
     // Fetch commits (last 90 days for better graph coverage)
+    // Limiting to 100 per_page is already in fetchRepositoryCommits
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
     const commits = await fetchRepositoryCommits(owner, repo, ninetyDaysAgo)
     const commitStats = calculateCommitStats(commits)
+    
+    // Fetch contributors and commit activity in parallel for speed
+    const [contributors, commitActivityResult] = await Promise.all([
+      fetchRepositoryContributors(owner, repo),
+      fetchCommitActivity(owner, repo)
+    ])
 
-    // Fetch contributors
-    const contributors = await fetchRepositoryContributors(owner, repo)
-
-    // Fetch commit activity (weekly stats from GitHub)
-    let commitActivity = await fetchCommitActivity(owner, repo)
+    // Use commit activity from parallel fetch
+    let commitActivity = commitActivityResult
     
     // Fallback: If GitHub stats API doesn't return data, generate from commits
     if (!commitActivity || commitActivity.length === 0) {

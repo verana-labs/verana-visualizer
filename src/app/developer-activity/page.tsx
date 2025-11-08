@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import LayoutWrapper from '@/components/LayoutWrapper'
-import { RepositoryCard, ContributorsSection } from '@/components/developer-activity'
+import { RepositoryCard, ContributorsSection, SkeletonCard } from '@/components/developer-activity'
 import { RepositoryStats, AggregatedContributor } from '@/types'
 import { 
   fetchOrganizationRepos, 
@@ -27,12 +27,15 @@ export default function DeveloperActivityPage() {
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [loadingMessage, setLoadingMessage] = useState('Initializing...')
   const [error, setError] = useState<string | null>(null)
+  const [totalRepos, setTotalRepos] = useState(0)
 
   const loadDeveloperActivity = async () => {
     try {
       setIsLoading(true)
       setError(null)
       setLoadingProgress(0)
+      setRepoStats([]) // Clear previous data
+      setContributors([])
 
       console.log(`Fetching repositories from ${ORGANIZATION} organization...`)
       
@@ -46,34 +49,49 @@ export default function DeveloperActivityPage() {
       }
 
       console.log(`Found ${repos.length} repositories`)
+      setTotalRepos(repos.length)
+      setLoadingProgress(20)
       
-      // Fetch stats for each repository
-      setLoadingMessage('Fetching repository statistics...')
-      const statsPromises = repos.map((repo, index) => {
-        // Update progress as we process each repo
-        setTimeout(() => {
-          setLoadingProgress(10 + ((index + 1) / repos.length) * 70)
-          setLoadingMessage(`Fetching stats for ${repo.name}...`)
-        }, 0)
-        return fetchRepositoryStats(repo.owner.login, repo.name)
-      })
-
-      const allStats = await Promise.all(statsPromises)
-      const validStats = allStats.filter((stat): stat is RepositoryStats => stat !== null)
+      // Progressive loading: Show repos as they load
+      setLoadingMessage(`Loading ${repos.length} repositories...`)
+      const validStats: RepositoryStats[] = []
+      
+      // Process repos in batches for better UX (larger batches = faster but uses more rate limit)
+      const batchSize = 5 // Fetch 5 repos at a time
+      for (let i = 0; i < repos.length; i += batchSize) {
+        const batch = repos.slice(i, i + batchSize)
+        const batchNumber = Math.floor(i / batchSize) + 1
+        const totalBatches = Math.ceil(repos.length / batchSize)
+        setLoadingMessage(`Loading batch ${batchNumber}/${totalBatches} (${batch.length} repos)...`)
+        
+        // Fetch batch in parallel
+        const batchPromises = batch.map(repo => 
+          fetchRepositoryStats(repo.owner.login, repo.name)
+        )
+        const batchStats = await Promise.all(batchPromises)
+        
+        // Add valid stats to array
+        batchStats.forEach(stat => {
+          if (stat) {
+            validStats.push(stat)
+          }
+        })
+        
+        // Update progress and show partial results
+        const progress = 20 + ((i + batch.length) / repos.length) * 70
+        setLoadingProgress(progress)
+        
+        // Sort and update UI progressively
+        const sortedStats = [...validStats].sort((a, b) => b.commitsThisMonth - a.commitsThisMonth)
+        setRepoStats(sortedStats)
+        
+        // Aggregate contributors progressively
+        const partialContributors = aggregateContributors(sortedStats)
+        setContributors(partialContributors)
+      }
       
       console.log(`Successfully fetched stats for ${validStats.length} repositories`)
       
-      // Sort by most recent commits
-      validStats.sort((a, b) => b.commitsThisMonth - a.commitsThisMonth)
-      
-      setRepoStats(validStats)
-
-      // Aggregate contributors
-      setLoadingMessage('Aggregating contributors...')
-      setLoadingProgress(90)
-      const aggregatedContributors = aggregateContributors(validStats)
-      setContributors(aggregatedContributors)
-
       setLoadingProgress(100)
       setLoadingMessage('Complete!')
       
@@ -185,22 +203,39 @@ export default function DeveloperActivityPage() {
             </div>
           )}
 
-          {/* Loading State */}
+          {/* Loading State - Compact when showing partial results */}
           {isLoading && (
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                <p className="text-blue-700 dark:text-blue-300 font-medium">{loadingMessage}</p>
+            <div className={`mt-4 rounded-lg transition-all duration-300 ${
+              repoStats.length > 0 
+                ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50' 
+                : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 flex-shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-blue-700 dark:text-blue-300 truncate ${
+                    repoStats.length > 0 ? 'text-sm' : 'font-medium'
+                  }`}>
+                    {loadingMessage}
+                  </p>
+                  {repoStats.length === 0 && (
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      Batching requests for optimal performance...
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="w-32 bg-blue-200 dark:bg-blue-800 rounded-full h-1.5">
+                    <div 
+                      className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${loadingProgress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300 tabular-nums">
+                    {Math.round(loadingProgress)}%
+                  </span>
+                </div>
               </div>
-              <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${loadingProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                Fetching data from GitHub API... This may take 20-60 seconds depending on the number of repositories.
-              </p>
             </div>
           )}
         </div>
@@ -256,7 +291,7 @@ export default function DeveloperActivityPage() {
         )}
 
         {/* Repository Cards Grid */}
-        {!isLoading && !error && repoStats.length > 0 && (
+        {!error && (isLoading || repoStats.length > 0) && (
           <>
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -266,14 +301,26 @@ export default function DeveloperActivityPage() {
                 Repositories
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
-                {repoStats.length} repositories sorted by recent activity
+                {isLoading && totalRepos > 0 
+                  ? `Loading ${repoStats.length} of ${totalRepos} repositories...` 
+                  : `${repoStats.length} repositories sorted by recent activity`}
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-start">
+              {/* Show loaded repositories */}
               {repoStats.map((repo) => (
                 <RepositoryCard key={repo.name} repo={repo} />
               ))}
+              
+              {/* Show skeleton cards for remaining repos while loading */}
+              {isLoading && totalRepos > repoStats.length && (
+                <>
+                  {Array.from({ length: Math.min(6, totalRepos - repoStats.length) }).map((_, idx) => (
+                    <SkeletonCard key={`skeleton-${idx}`} />
+                  ))}
+                </>
+              )}
             </div>
           </>
         )}
