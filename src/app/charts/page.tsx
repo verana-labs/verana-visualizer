@@ -5,13 +5,11 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 import TokenSupplyChart from '@/components/charts/TokenSupplyChart'
 import InflationChart from '@/components/charts/InflationChart'
 import ValidatorDistributionChart from '@/components/charts/ValidatorDistributionChart'
-import StakingDistributionChart from '@/components/charts/StakingDistributionChart'
 import NetworkActivityChart from '@/components/charts/NetworkActivityChart'
 import { 
   fetchHistoricalSupplyData,
   fetchHistoricalInflationData,
   fetchCurrentValidatorDistribution,
-  fetchCurrentStakingDistribution,
   fetchHistoricalNetworkActivity
 } from '@/lib/historicalDataFetcher'
 
@@ -19,14 +17,13 @@ export default function ChartsPage() {
   const [tokenSupplyData, setTokenSupplyData] = useState<any[]>([])
   const [inflationData, setInflationData] = useState<any[]>([])
   const [validatorData, setValidatorData] = useState<any[]>([])
-  const [stakingData, setStakingData] = useState<any[]>([])
   const [networkActivityData, setNetworkActivityData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [loadingMessage, setLoadingMessage] = useState('Initializing...')
   const [error, setError] = useState<string | null>(null)
   const [chartsLoaded, setChartsLoaded] = useState(0)
-  const totalCharts = 5
+  const totalCharts = 4
 
   useEffect(() => {
     const loadChartData = async () => {
@@ -58,33 +55,21 @@ export default function ChartsPage() {
           })
         ])
         
-        setLoadingProgress(40)
+        setLoadingProgress(50)
 
-        // Group 2: Current distribution data (can be fetched in parallel)
-        setLoadingMessage('Loading Staking & Validator data...')
+        // Group 2: Validator data
+        setLoadingMessage('Loading Validator data...')
         
-        await Promise.all([
-          fetchCurrentStakingDistribution().then(data => {
-            setStakingData(data)
-            setChartsLoaded(prev => prev + 1)
-            setLoadingProgress(55)
-            return data
-          }),
-          fetchCurrentValidatorDistribution().then(data => {
-            setValidatorData(data)
-            setChartsLoaded(prev => prev + 1)
-            setLoadingProgress(70)
-            return data
-          })
-        ])
-
-        setLoadingProgress(80)
+        const validatorDistribution = await fetchCurrentValidatorDistribution()
+        setValidatorData(validatorDistribution)
+        setChartsLoaded(prev => prev + 1)
+        setLoadingProgress(70)
 
         // Group 3: Network activity
         setLoadingMessage('Loading Network Activity...')
         const networkActivity = await fetchHistoricalNetworkActivity(30)
         setNetworkActivityData(networkActivity)
-        setChartsLoaded(5)
+        setChartsLoaded(4)
 
         setLoadingProgress(100)
         setLoadingMessage('All charts loaded!')
@@ -168,16 +153,11 @@ export default function ChartsPage() {
             <TokenSupplyChart data={tokenSupplyData} isLoading={tokenSupplyData.length === 0 && isLoading} />
           </div>
 
-          {/* Inflation Chart */}
-          <div className="col-span-1">
-            <InflationChart data={inflationData} isLoading={inflationData.length === 0 && isLoading} />
-          </div>
-
-          {/* Two Column Layout */}
+          {/* Two Column Layout - Inflation and Network Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Staking Distribution */}
+            {/* Inflation Chart */}
             <div>
-              <StakingDistributionChart data={stakingData} isLoading={stakingData.length === 0 && isLoading} />
+              <InflationChart data={inflationData} isLoading={inflationData.length === 0 && isLoading} />
             </div>
 
             {/* Network Activity */}

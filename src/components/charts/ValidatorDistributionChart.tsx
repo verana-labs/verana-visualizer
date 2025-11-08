@@ -90,7 +90,7 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
           <Legend 
             wrapperStyle={{ paddingTop: '10px' }}
             iconType="circle"
-            formatter={(value) => <span style={{ color: '#9ca3af' }}>{value}</span>}
+            formatter={(value) => <span className="text-gray-600 dark:text-gray-300">{value}</span>}
           />
           <Bar 
             dataKey="votingPower" 
