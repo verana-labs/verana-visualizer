@@ -250,12 +250,63 @@ export function calculateCommitStats(commits: GitHubCommit[]): {
 }
 
 /**
+ * Convert commits array into weekly activity data (fallback when stats API fails)
+ */
+export function generateCommitActivityFromCommits(commits: GitHubCommit[]): CommitActivity[] {
+  // Get the last 12 weeks
+  const now = new Date()
+  const weeklyData: { [key: number]: number } = {}
+  
+  // Initialize all 12 weeks with zero commits
+  for (let i = 11; i >= 0; i--) {
+    const weekStart = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000)
+    weekStart.setHours(0, 0, 0, 0)
+    weekStart.setMinutes(0, 0, 0)
+    const weekTimestamp = Math.floor(weekStart.getTime() / 1000)
+    weeklyData[weekTimestamp] = 0
+  }
+  
+  // Count commits per week (if any)
+  if (commits.length > 0) {
+    const twelveWeeksAgo = new Date(now.getTime() - 12 * 7 * 24 * 60 * 60 * 1000)
+    
+    commits.forEach(commit => {
+      const commitDate = new Date(commit.commit.author.date)
+      if (commitDate >= twelveWeeksAgo) {
+        // Find which week this commit belongs to
+        const weekIndex = Math.floor((now.getTime() - commitDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
+        if (weekIndex >= 0 && weekIndex < 12) {
+          const weekStart = new Date(now.getTime() - weekIndex * 7 * 24 * 60 * 60 * 1000)
+          weekStart.setHours(0, 0, 0, 0)
+          weekStart.setMinutes(0, 0, 0)
+          const weekTimestamp = Math.floor(weekStart.getTime() / 1000)
+          if (weeklyData[weekTimestamp] !== undefined) {
+            weeklyData[weekTimestamp] += 1
+          }
+        }
+      }
+    })
+  }
+  
+  // Convert to CommitActivity format, sorted chronologically
+  return Object.keys(weeklyData)
+    .map(timestamp => ({
+      week: parseInt(timestamp),
+      total: weeklyData[parseInt(timestamp)],
+      days: [0, 0, 0, 0, 0, 0, 0], // Not used for display
+    }))
+    .sort((a, b) => a.week - b.week)
+}
+
+/**
  * Format commit activity data for charts
  */
 export function formatCommitActivityForChart(activity: CommitActivity[]): Array<{
   week: string
   commits: number
 }> {
+  if (!activity || activity.length === 0) return []
+  
   // Get the last 12 weeks
   const lastTwelveWeeks = activity.slice(-12)
   
@@ -292,16 +343,22 @@ export async function fetchRepositoryStats(
 
     const repoData: GitHubRepository = await repoResponse.json()
 
-    // Fetch commits (last 30 days)
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-    const commits = await fetchRepositoryCommits(owner, repo, thirtyDaysAgo)
+    // Fetch commits (last 90 days for better graph coverage)
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
+    const commits = await fetchRepositoryCommits(owner, repo, ninetyDaysAgo)
     const commitStats = calculateCommitStats(commits)
 
     // Fetch contributors
     const contributors = await fetchRepositoryContributors(owner, repo)
 
-    // Fetch commit activity
-    const commitActivity = await fetchCommitActivity(owner, repo)
+    // Fetch commit activity (weekly stats from GitHub)
+    let commitActivity = await fetchCommitActivity(owner, repo)
+    
+    // Fallback: If GitHub stats API doesn't return data, generate from commits
+    if (!commitActivity || commitActivity.length === 0) {
+      console.log(`Generating commit activity from commits for ${owner}/${repo}`)
+      commitActivity = generateCommitActivityFromCommits(commits)
+    }
 
     return {
       name: repoData.name,

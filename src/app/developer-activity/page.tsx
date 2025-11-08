@@ -112,7 +112,7 @@ export default function DeveloperActivityPage() {
                 Developer Activity
               </h2>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
-                Tracking development activity across all {ORGANIZATION} repositories
+                Real-time development activity from {ORGANIZATION} with 12-week commit graphs
               </p>
             </div>
             {!isLoading && !error && (
@@ -148,10 +148,10 @@ export default function DeveloperActivityPage() {
                       <ul className="text-red-600 dark:text-red-400 text-xs space-y-1 list-disc list-inside">
                         <li>
                           Verify the organization name: Update <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">ORGANIZATION</code> in{' '}
-                          <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">page.tsx</code> (currently: "{ORGANIZATION}")
+                          <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">page.tsx</code> (currently: &quot;{ORGANIZATION}&quot;)
                         </li>
                         <li>
-                          Try a known organization like "microsoft", "facebook", or "vercel"
+                          Try a known organization like &quot;microsoft&quot;, &quot;facebook&quot;, or &quot;vercel&quot;
                         </li>
                         {!hasGitHubToken() && (
                           <li>
@@ -212,7 +212,7 @@ export default function DeveloperActivityPage() {
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium mb-1">Total Commits (30d)</p>
+                  <p className="text-blue-100 text-sm font-medium mb-1">Total Commits (90d)</p>
                   <p className="text-3xl font-bold">{totalCommits.toLocaleString()}</p>
                 </div>
                 <div className="bg-white/20 p-3 rounded-lg">
