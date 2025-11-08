@@ -1261,4 +1261,4 @@ The system fetches real historical blockchain data to provide accurate, verifiab
 
 ---
 
-*Architecture documentation maintained as of November 2024*
+*Architecture documentation maintained as of November 2025*
