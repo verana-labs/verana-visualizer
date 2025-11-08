@@ -13,7 +13,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ARG NEXT_PUBLIC_BASE_URL=http://localhost:3000
+ARG NEXT_PUBLIC_GITHUB_TOKEN
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
+ENV NEXT_PUBLIC_GITHUB_TOKEN=${NEXT_PUBLIC_GITHUB_TOKEN}
 ENV NEXT_PUBLIC_API_ENDPOINT=https://api.testnet.verana.network
 ENV NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.testnet.verana.network
 ENV NEXT_PUBLIC_IDX_ENDPOINT=https://idx.testnet.verana.network
