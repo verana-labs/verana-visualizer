@@ -347,3 +347,87 @@ export interface HeaderResponse {
     }
   }
 }
+
+// GitHub API Types
+export interface GitHubRepository {
+  id: number
+  name: string
+  full_name: string
+  description: string | null
+  html_url: string
+  stargazers_count: number
+  forks_count: number
+  fork: boolean
+  language: string | null
+  updated_at: string
+  created_at: string
+  pushed_at: string
+  open_issues_count: number
+  watchers_count: number
+  default_branch: string
+  owner: {
+    login: string
+    avatar_url: string
+    html_url: string
+  }
+}
+
+export interface GitHubContributor {
+  login: string
+  id: number
+  avatar_url: string
+  html_url: string
+  contributions: number
+  type: string
+}
+
+export interface GitHubCommit {
+  sha: string
+  commit: {
+    author: {
+      name: string
+      email: string
+      date: string
+    }
+    message: string
+  }
+  author: {
+    login: string
+    avatar_url: string
+    html_url: string
+  } | null
+}
+
+export interface CommitActivity {
+  week: number
+  total: number
+  days: number[]
+}
+
+export interface RepositoryStats {
+  name: string
+  description: string | null
+  url: string
+  stars: number
+  forks: number
+  language: string | null
+  totalCommits: number
+  commitsThisWeek: number
+  commitsThisMonth: number
+  lastUpdated: string
+  contributors: GitHubContributor[]
+  commitActivity: CommitActivity[]
+}
+
+export interface AggregatedContributor {
+  login: string
+  avatar_url: string
+  html_url: string
+  totalContributions: number
+  repositories: string[]
+}
+
+export interface GitHubApiError {
+  message: string
+  documentation_url?: string
+}

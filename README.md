@@ -24,12 +24,12 @@
 
 ### What is this?
 
-The Verana Visualizer is a containerized Next.js application that presents Verana network activity and entities through a delightful, responsive UI. It lets you search and explore Trust Registries, their versions and documents, Credential Schemas, and relationships across the network.
+The Verana Visualizer is a containerized Next.js application that presents Verana network activity and entities through a delightful, responsive UI. It lets you search and explore Trust Registries, their versions and documents, Credential Schemas, and relationships across the network. The visualizer includes interactive analytics charts that display **real historical blockchain data** by querying network state at different block heights.
 
 - Verana is an open initiative building a decentralized trust layer with DIDs, verifiable credentials, and public permissionless trust registries.
-- This visualizer focuses on discovery and transparency: find a Trust Registry by ID, inspect its attributes and versions, view related Credential Schemas, and see connections as a network graph.
+- This visualizer focuses on discovery and transparency: find a Trust Registry by ID, inspect its attributes and versions, view related Credential Schemas, see connections as a network graph, and analyze network trends through interactive charts powered by actual on-chain data.
 
-Note: The Visualizer is free to optimize display to make it look nice and effective. Expect the UI to evolve as we improve clarity and usability.
+**Note on Charts**: The analytics charts fetch historical data by querying the blockchain state at 30 different block heights over the past 30 days. Initial load takes 10-30 seconds as it retrieves real on-chain data. All displayed metrics represent actual network state—not simulated or estimated values.
 
 ---
 
@@ -69,6 +69,16 @@ The application is built for real-world operations: dark/light theme, responsive
 - Trust Registry search by ID, with rich details and formatted JSON Schema
 - Clickable external links and safe formatting
 - Automatic conversions (e.g., deposit in uvna to VNA)
+- **Interactive Analytics Charts** with **real blockchain data**:
+  - Token supply trends over 30 days (area chart)
+  - Inflation rate history (line chart with dual Y-axis)
+  - Top 10 validator distribution by voting power (bar chart)
+  - Staking distribution: bonded vs unbonded (pie chart)
+  - Network activity: transactions, gas, block time (composed chart)
+  - Fetches historical state by querying different block heights
+  - Loading progress indicators
+  - Dark mode support and fully responsive
+  - Interactive tooltips and legends
 - Network Graph view for relationships
 - Dashboard with at-a-glance metrics
 - Responsive and mobile-friendly
@@ -85,6 +95,7 @@ The application is built for real-world operations: dark/light theme, responsive
 - Next.js 15 (App Router, standalone output)
 - React 18 + TypeScript 5
 - Tailwind CSS 3
+- Recharts 2.15 for interactive charts
 - 3d-force-graph / three for 3D visualization
 
 ---
@@ -293,38 +304,64 @@ Note: For very low-latency web serving, a container orchestrator (Kubernetes) is
 ```
 src/
 ├─ app/
-│  ├─ dashboard/            # Main dashboard route
-│  ├─ network-graph/        # Interactive 3D graph view
-│  ├─ trust-registries/     # Trust registries explorer
-│  ├─ did-directory/        # DID directory view
-│  ├─ layout.tsx            # Root layout
-│  └─ globals.css           # Global styles
+│  ├─ dashboard/              # Main dashboard route
+│  ├─ charts/                 # Interactive analytics charts (real blockchain data)
+│  ├─ network-graph/          # Interactive 3D graph view
+│  ├─ trust-registries/       # Trust registries explorer
+│  ├─ did-directory/          # DID directory view
+│  ├─ layout.tsx              # Root layout
+│  ├─ page.tsx                # Home page
+│  └─ globals.css             # Global styles
 ├─ components/
+│  ├─ charts/                 # Recharts chart components
+│  │  ├─ TokenSupplyChart.tsx
+│  │  ├─ InflationChart.tsx
+│  │  ├─ ValidatorDistributionChart.tsx
+│  │  ├─ StakingDistributionChart.tsx
+│  │  └─ NetworkActivityChart.tsx
 │  ├─ Header.tsx, Sidebar.tsx, ThemeToggle.tsx
-│  ├─ EnhancedDashboardCards.tsx, NetworkGraph3D.tsx, ForceGraph3DWrapper.tsx
+│  ├─ EnhancedDashboardCards.tsx
+│  ├─ NetworkGraph3D.tsx, ForceGraph3DWrapper.tsx
 │  ├─ DIDTable.tsx, TrustRegistryTable.tsx
 │  └─ RefreshButton.tsx, ResultsSection.tsx, SearchForm.tsx
 ├─ lib/
-│  └─ api.ts                # API helpers
+│  ├─ api.ts                  # API client functions
+│  └─ historicalDataFetcher.ts # Historical blockchain data fetcher
 └─ types/
-   └─ index.ts              # Shared types
+   └─ index.ts                # TypeScript type definitions
 ```
 
 Routing:
 
-- The root route redirects to `/dashboard`.
-- Explore `/network-graph`, `/trust-registries`, and `/did-directory` for specialized views.
+- The root route redirects to `/dashboard`
+- `/charts` - Interactive analytics with real historical blockchain data (30-day trends)
+- `/network-graph` - 3D visualization of network relationships
+- `/trust-registries` - Search and explore trust registries
+- `/did-directory` - Browse decentralized identifiers
+
+**Charts Feature**: The analytics page fetches historical data by querying blockchain state at different block heights using the Cosmos SDK `?height=X` parameter. This provides actual on-chain trends rather than simulated data. See [docs/architecture.md](docs/architecture.md) for complete implementation details.
 
 ---
 
 ### Roadmap
 
-- Richer ecosystem visualizations and filters
-- Performance tuning and streaming data
-- Deeper integration with indexer and resolver services
-- Expanded search and discovery
+#### Phase 2 - Performance
+- Client-side caching for faster chart loads
+- Incremental data updates
+- Service worker for offline support
 
-Have ideas? Open an issue or discussion!
+#### Phase 3 - Features
+- Custom time ranges for charts (7d, 90d, 1y)
+- Data export (CSV, JSON, PNG)
+- Chart customization options
+
+#### Phase 4 - Advanced
+- Indexer integration for sub-second data loading
+- Custom dashboards and alerts
+- Advanced analytics and predictions
+- Multi-chain support
+
+Have ideas? Open an [issue](https://github.com/verana-labs/verana-visualizer/issues) or [discussion](https://github.com/verana-labs/verana-visualizer/discussions)!
 
 ---
 
