@@ -45,6 +45,7 @@ jobs:
     - name: Build application
       run: npm run build
       env:
+        NEXT_PUBLIC_GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         NEXT_PUBLIC_BASE_URL: https://vis.testnet.verana.network
         NEXT_PUBLIC_API_ENDPOINT: https://api.testnet.verana.network
         NEXT_PUBLIC_RPC_ENDPOINT: https://rpc.testnet.verana.network
@@ -114,6 +115,7 @@ jobs:
             ${{ github.ref_name == 'main' && format('{0}/{1}:latest', secrets.DOCKER_HUB_LOGIN, env.IMAGE_NAME) || '' }}
           build-args: |
             NEXT_PUBLIC_BASE_URL=https://vis.testnet.verana.network
+            NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -218,6 +220,7 @@ jobs:
         cache-to: type=gha,mode=max
         build-args: |
           NEXT_PUBLIC_BASE_URL=https://vis-staging.testnet.verana.network
+          NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
           
     - name: Deploy to staging
       run: |

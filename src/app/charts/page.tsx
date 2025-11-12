@@ -5,13 +5,11 @@ import LayoutWrapper from '@/components/LayoutWrapper'
 import TokenSupplyChart from '@/components/charts/TokenSupplyChart'
 import InflationChart from '@/components/charts/InflationChart'
 import ValidatorDistributionChart from '@/components/charts/ValidatorDistributionChart'
-import StakingDistributionChart from '@/components/charts/StakingDistributionChart'
 import NetworkActivityChart from '@/components/charts/NetworkActivityChart'
 import { 
   fetchHistoricalSupplyData,
   fetchHistoricalInflationData,
   fetchCurrentValidatorDistribution,
-  fetchCurrentStakingDistribution,
   fetchHistoricalNetworkActivity
 } from '@/lib/historicalDataFetcher'
 
@@ -19,49 +17,62 @@ export default function ChartsPage() {
   const [tokenSupplyData, setTokenSupplyData] = useState<any[]>([])
   const [inflationData, setInflationData] = useState<any[]>([])
   const [validatorData, setValidatorData] = useState<any[]>([])
-  const [stakingData, setStakingData] = useState<any[]>([])
   const [networkActivityData, setNetworkActivityData] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
   const [loadingMessage, setLoadingMessage] = useState('Initializing...')
   const [error, setError] = useState<string | null>(null)
+  const [chartsLoaded, setChartsLoaded] = useState(0)
+  const totalCharts = 4
 
   useEffect(() => {
     const loadChartData = async () => {
       try {
         setIsLoading(true)
         setError(null)
+        setLoadingProgress(0)
 
         console.log('Fetching historical data from Verana blockchain...')
+        setChartsLoaded(0)
         
-        // Fetch data sequentially to show progress
-        setLoadingMessage('Fetching token supply history...')
+        // Load charts progressively - show each as it loads
+        // Group 1: Historical data (can be fetched in parallel)
+        setLoadingMessage('Loading Token Supply & Inflation...')
         setLoadingProgress(10)
-        const supplyHistory = await fetchHistoricalSupplyData(30)
-        setTokenSupplyData(supplyHistory)
-
-        setLoadingMessage('Fetching inflation history...')
-        setLoadingProgress(30)
-        const inflationHistory = await fetchHistoricalInflationData(30)
-        setInflationData(inflationHistory)
-
-        setLoadingMessage('Fetching validator distribution...')
+        
+        await Promise.all([
+          fetchHistoricalSupplyData(30).then(data => {
+            setTokenSupplyData(data)
+            setChartsLoaded(prev => prev + 1)
+            setLoadingProgress(20)
+            return data
+          }),
+          fetchHistoricalInflationData(30).then(data => {
+            setInflationData(data)
+            setChartsLoaded(prev => prev + 1)
+            setLoadingProgress(30)
+            return data
+          })
+        ])
+        
         setLoadingProgress(50)
-        const validatorDist = await fetchCurrentValidatorDistribution()
-        setValidatorData(validatorDist)
 
-        setLoadingMessage('Fetching staking distribution...')
+        // Group 2: Validator data
+        setLoadingMessage('Loading Validator data...')
+        
+        const validatorDistribution = await fetchCurrentValidatorDistribution()
+        setValidatorData(validatorDistribution)
+        setChartsLoaded(prev => prev + 1)
         setLoadingProgress(70)
-        const stakingDist = await fetchCurrentStakingDistribution()
-        setStakingData(stakingDist)
 
-        setLoadingMessage('Fetching network activity...')
-        setLoadingProgress(90)
+        // Group 3: Network activity
+        setLoadingMessage('Loading Network Activity...')
         const networkActivity = await fetchHistoricalNetworkActivity(30)
         setNetworkActivityData(networkActivity)
+        setChartsLoaded(4)
 
         setLoadingProgress(100)
-        setLoadingMessage('Complete!')
+        setLoadingMessage('All charts loaded!')
 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load chart data')
@@ -95,20 +106,42 @@ export default function ChartsPage() {
             </div>
           )}
           {isLoading && (
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-                <p className="text-blue-700 dark:text-blue-300 font-medium">{loadingMessage}</p>
+            <div className={`mt-4 rounded-lg transition-all duration-300 ${
+              chartsLoaded > 0 
+                ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50' 
+                : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+            }`}>
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 flex-shrink-0"></div>
+                <div className="flex-1 min-w-0">
+                  <p className={`text-blue-700 dark:text-blue-300 ${
+                    chartsLoaded > 0 ? 'text-sm' : 'font-medium'
+                  }`}>
+                    {loadingMessage}
+                  </p>
+                  {chartsLoaded === 0 && (
+                    <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      Fetching blockchain data in parallel batches...
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {chartsLoaded > 0 && (
+                    <span className="text-xs text-blue-700 dark:text-blue-300 mr-2">
+                      {chartsLoaded}/{totalCharts}
+                    </span>
+                  )}
+                  <div className="w-32 bg-blue-200 dark:bg-blue-800 rounded-full h-1.5">
+                    <div 
+                      className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
+                      style={{ width: `${loadingProgress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs font-medium text-blue-700 dark:text-blue-300 tabular-nums">
+                    {Math.round(loadingProgress)}%
+                  </span>
+                </div>
               </div>
-              <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${loadingProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
-                Fetching historical data from multiple block heights... This may take 10-30 seconds.
-              </p>
             </div>
           )}
         </div>
@@ -117,50 +150,28 @@ export default function ChartsPage() {
         <div className="grid grid-cols-1 gap-6">
           {/* Token Supply Chart */}
           <div className="col-span-1">
-            <TokenSupplyChart data={tokenSupplyData} isLoading={isLoading} />
+            <TokenSupplyChart data={tokenSupplyData} isLoading={tokenSupplyData.length === 0 && isLoading} />
           </div>
 
-          {/* Inflation Chart */}
-          <div className="col-span-1">
-            <InflationChart data={inflationData} isLoading={isLoading} />
-          </div>
-
-          {/* Two Column Layout */}
+          {/* Two Column Layout - Inflation and Network Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Staking Distribution */}
+            {/* Inflation Chart */}
             <div>
-              <StakingDistributionChart data={stakingData} isLoading={isLoading} />
+              <InflationChart data={inflationData} isLoading={inflationData.length === 0 && isLoading} />
             </div>
 
             {/* Network Activity */}
             <div>
-              <NetworkActivityChart data={networkActivityData} isLoading={isLoading} />
+              <NetworkActivityChart data={networkActivityData} isLoading={networkActivityData.length === 0 && isLoading} />
             </div>
           </div>
 
           {/* Validator Distribution */}
           <div className="col-span-1">
-            <ValidatorDistributionChart data={validatorData} isLoading={isLoading} />
+            <ValidatorDistributionChart data={validatorData} isLoading={validatorData.length === 0 && isLoading} />
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <h3 className="text-lg font-semibold text-green-900 dark:text-green-100">
-              ✅ Real Blockchain Data
-            </h3>
-            <div className="px-2 py-1 rounded text-xs font-medium bg-green-200 dark:bg-green-800 text-green-900 dark:text-green-100">
-              LIVE
-            </div>
-          </div>
-          <p className="text-sm text-green-700 dark:text-green-300">
-            These charts display <strong>real historical data</strong> from the Verana blockchain by querying 
-            state at different block heights. Data is fetched directly from the network and represents actual 
-            on-chain activity over the past 30 days. Hover over data points for detailed information, and interact 
-            with the legends to show/hide specific data series.
-          </p>
-        </div>
       </div>
     </LayoutWrapper>
   )

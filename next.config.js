@@ -5,6 +5,15 @@ const nextConfig = {
     new URL(process.env.NEXT_PUBLIC_BASE_URL).pathname : undefined 
     : undefined,
   assetPrefix: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BASE_URL || '' : '',
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
+      },
+    ],
+  },
   webpack: (config, { isServer, dev_ }) => {
     // Handle 3D force graph library
     if (!isServer) {
