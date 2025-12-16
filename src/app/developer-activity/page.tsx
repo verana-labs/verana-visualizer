@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
+import { LayoutWrapper } from '@/components/layout'
 import { RepositoryCard, ContributorsSection, SkeletonCard } from '@/components/developer-activity'
 import { RepositoryStats, AggregatedContributor } from '@/types'
 import { 

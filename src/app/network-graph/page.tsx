@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
+import { LayoutWrapper } from '@/components/layout'
 import dynamic from 'next/dynamic'
 
-const NetworkGraph3D = dynamic(() => import('@/components/NetworkGraph3D'), { ssr: false })
+const NetworkGraph3D = dynamic(() => import('@/components/network/NetworkGraph3D'), { ssr: false })
 
 export default function NetworkGraphPage() {
   const [isLoading, setIsLoading] = useState(true)

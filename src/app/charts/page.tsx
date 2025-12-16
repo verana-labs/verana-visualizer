@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
+import { LayoutWrapper } from '@/components/layout'
 import TokenSupplyChart from '@/components/charts/TokenSupplyChart'
 import InflationChart from '@/components/charts/InflationChart'
 import ValidatorDistributionChart from '@/components/charts/ValidatorDistributionChart'

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import LayoutWrapper from '@/components/LayoutWrapper'
+import { LayoutWrapper } from '@/components/layout'
 import { UpgradeSummaryWidget } from '@/components/governance'
 import { fetchProposal } from '@/lib/api'
 import { Proposal } from '@/types'

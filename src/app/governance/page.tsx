@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import LayoutWrapper from '@/components/LayoutWrapper'
+import { LayoutWrapper } from '@/components/layout'
 import { ProposalList } from '@/components/governance'
 import { fetchProposals, fetchCurrentHeight } from '@/lib/api'
 import { ProposalsResponse } from '@/types'
