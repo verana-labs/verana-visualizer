@@ -135,7 +135,7 @@ export default function UpgradeSummaryWidget({
 
       <div className="p-6 space-y-6">
         {/* Message Type & Authority */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
           <InfoCard
             label="Message Type"
             value={messageType || 'N/A'}
@@ -155,7 +155,6 @@ export default function UpgradeSummaryWidget({
               </svg>
             }
             mono
-            truncate
           />
         </div>
 
@@ -261,12 +260,12 @@ function InfoCard({
   truncate?: boolean
 }) {
   return (
-    <div className="p-4 bg-gray-50 dark:bg-dark-surface rounded-lg">
+    <div className="p-4 bg-gray-50 dark:bg-dark-surface rounded-lg min-w-0">
       <div className="flex items-center space-x-2 text-gray-500 dark:text-gray-400 mb-1">
         {icon}
         <span className="text-xs font-medium uppercase">{label}</span>
       </div>
-      <p className={`text-sm text-gray-900 dark:text-white ${mono ? 'font-mono' : ''} ${truncate ? 'truncate' : ''}`}>
+      <p className={`text-sm text-gray-900 dark:text-white ${mono ? 'font-mono' : ''} ${truncate ? 'truncate' : 'break-all'}`}>
         {value}
       </p>
     </div>

@@ -86,7 +86,7 @@ export default function ProposalDetailPage() {
                       </span>
                     )}
                   </div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 break-words">
                     {proposal.title}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400">
@@ -98,11 +98,11 @@ export default function ProposalDetailPage() {
               {/* Proposer Info */}
               <div className="border-t border-gray-200 dark:border-dark-border pt-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <span className="text-gray-500 dark:text-gray-400">Proposer: </span>
-                    <span className="font-mono text-gray-900 dark:text-white">{proposal.proposer}</span>
+                    <span className="font-mono text-gray-900 dark:text-white break-all">{proposal.proposer}</span>
                   </div>
-                  <div>
+                  <div className="flex-shrink-0">
                     <span className="text-gray-500 dark:text-gray-400">Submitted: </span>
                     <span className="text-gray-900 dark:text-white">
                       {new Date(proposal.submit_time).toLocaleString()}
@@ -133,11 +133,11 @@ export default function ProposalDetailPage() {
                     key={index}
                     className="p-4 bg-gray-50 dark:bg-dark-surface rounded-lg"
                   >
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
                       <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
                         Message {index + 1}
                       </span>
-                      <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400">
+                      <span className="text-xs font-mono text-indigo-600 dark:text-indigo-400 break-all">
                         {message['@type']}
                       </span>
                     </div>
