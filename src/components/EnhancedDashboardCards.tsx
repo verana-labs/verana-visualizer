@@ -13,7 +13,7 @@ import {
   HeaderResponse
 } from '@/types'
 import { convertUvnaToVna, formatInflationRate, formatBlockHeight } from '@/lib/api'
-import { Proposal } from '@/types'
+import { ProposalCard } from '@/components/governance'
 
 interface EnhancedDashboardCardsProps {
   supply: SupplyResponse | null
@@ -141,78 +141,6 @@ export default function EnhancedDashboardCards({
   const totalValidators = validators?.validators.length || 0
   const activeProposals = proposals?.proposals.filter(p => p.status === 'PROPOSAL_STATUS_VOTING_PERIOD').length || 0
   const totalProposals = proposals?.proposals.length || 0
-
-  // Helper function to extract upgrade plan information from proposals
-  const getUpgradeInfo = (proposal: Proposal): { height: string | null; binaryVersion: string | null } => {
-    if (!proposal.messages || proposal.messages.length === 0) {
-      return { height: null, binaryVersion: null }
-    }
-
-    const upgradeMessage = proposal.messages.find(msg => {
-      const msgType = msg['@type'] || ''
-      return (
-        msgType.includes('Upgrade') ||
-        msgType.includes('upgrade') ||
-        msg.plan !== undefined
-      )
-    })
-    
-    if (upgradeMessage?.plan) {
-      const height = upgradeMessage.plan.height || null
-      let binaryVersion = upgradeMessage.plan.name || null
-      
-      // Try to parse info field if it contains JSON with version information
-      if (upgradeMessage.plan.info && typeof upgradeMessage.plan.info === 'string') {
-        try {
-          const info = JSON.parse(upgradeMessage.plan.info)
-          // Extract version from binaries URLs
-          // URLs typically look like: https://github.com/.../releases/download/v0.9-dev.7/...
-          if (info.binaries) {
-            // Get the first available binary URL
-            const binaryUrl = info.binaries['linux/amd64'] || 
-                            info.binaries['linux/arm64'] || 
-                            info.binaries['darwin/amd64'] ||
-                            info.binaries['darwin/arm64'] ||
-                            Object.values(info.binaries)[0]
-            
-            if (binaryUrl && typeof binaryUrl === 'string') {
-              // Extract version from URL pattern: /releases/download/v0.9-dev.7/
-              // or from filename pattern: veranad-v0.9-dev.7-linux-amd64
-              const versionMatch = binaryUrl.match(/\/releases\/download\/(v[\d.]+(?:-[a-z]+\.\d+)?)/i) ||
-                                  binaryUrl.match(/veranad-(v[\d.]+(?:-[a-z]+\.\d+)?)/i) ||
-                                  binaryUrl.match(/(v[\d.]+(?:-[a-z]+\.\d+)?)/i)
-              
-              if (versionMatch && versionMatch[1]) {
-                binaryVersion = versionMatch[1]
-              }
-            }
-          } else if (info.version) {
-            binaryVersion = info.version
-          } else if (info.binary) {
-            binaryVersion = info.binary
-          }
-        } catch {
-          // If info is not JSON, use it as-is if it looks like a version
-          if (upgradeMessage.plan.info && !binaryVersion) {
-            binaryVersion = upgradeMessage.plan.info
-          }
-        }
-      }
-      
-      // Fallback: Try to extract version from proposal title if available
-      // Titles often look like: "Upgrade to Verana v0.9-dev.7"
-      if (!binaryVersion && proposal.title) {
-        const titleVersionMatch = proposal.title.match(/(v[\d.]+(?:-[a-z]+\.\d+)?)/i)
-        if (titleVersionMatch && titleVersionMatch[1]) {
-          binaryVersion = titleVersionMatch[1]
-        }
-      }
-      
-      return { height, binaryVersion }
-    }
-    
-    return { height: null, binaryVersion: null }
-  }
 
   const cards = [
     {
@@ -523,69 +451,28 @@ export default function EnhancedDashboardCards({
 
       {proposals && proposals.proposals.length > 0 && (
         <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Recent Proposals
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Recent Proposals
+            </h3>
+            <Link
+              href="/governance"
+              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            >
+              View All
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
           <div className="space-y-4">
-            {proposals.proposals.slice(0, 3).map((proposal) => {
-              const upgradeInfo = getUpgradeInfo(proposal)
-              return (
-                <div key={proposal.id} className="p-4 bg-gray-50 dark:bg-dark-surface rounded-lg">
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">
-                      #{proposal.id} - {proposal.title}
-                    </h4>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      proposal.status === 'PROPOSAL_STATUS_PASSED'
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                        : proposal.status === 'PROPOSAL_STATUS_REJECTED'
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        : proposal.status === 'PROPOSAL_STATUS_VOTING_PERIOD'
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                    }`}>
-                      {proposal.status.replace('PROPOSAL_STATUS_', '').toLowerCase()}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                    {proposal.summary}
-                  </p>
-                  {/* Display upgrade information if available */}
-                  {(upgradeInfo.height || upgradeInfo.binaryVersion) && (
-                    <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                        <span className="text-xs font-semibold text-blue-900 dark:text-blue-200">Upgrade Information</span>
-                      </div>
-                      <div className="space-y-1 text-xs">
-                        {upgradeInfo.height && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Upgrade Height:</span>
-                            <span className="font-mono font-semibold text-gray-900 dark:text-white">
-                              {formatBlockHeight(upgradeInfo.height)}
-                            </span>
-                          </div>
-                        )}
-                        {upgradeInfo.binaryVersion && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-600 dark:text-gray-400">Binary Version:</span>
-                            <span className="font-mono font-semibold text-gray-900 dark:text-white">
-                              {upgradeInfo.binaryVersion}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 gap-1 sm:gap-0">
-                    <span className="break-all sm:break-normal">Proposer: {proposal.proposer.substring(0, 20)}...</span>
-                    <span>Submitted: {new Date(proposal.submit_time).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              )
-            })}
+            {proposals.proposals.slice(0, 3).map((proposal) => (
+              <ProposalCard
+                key={proposal.id}
+                proposal={proposal}
+                showUpgradeInfo={true}
+              />
+            ))}
           </div>
         </div>
       )}

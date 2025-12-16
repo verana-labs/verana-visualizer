@@ -431,3 +431,145 @@ export interface GitHubApiError {
   message: string
   documentation_url?: string
 }
+
+// ============================================
+// Governance Proposal Types
+// ============================================
+
+/**
+ * Upgrade plan details from MsgSoftwareUpgrade
+ */
+export interface UpgradePlan {
+  name: string
+  height: string
+  time: string
+  info: string
+  upgraded_client_state: any
+}
+
+/**
+ * Parsed binary info from plan.info JSON
+ */
+export interface UpgradeBinaries {
+  'linux/amd64'?: string
+  'linux/arm64'?: string
+  'darwin/amd64'?: string
+  'darwin/arm64'?: string
+  [key: string]: string | undefined
+}
+
+/**
+ * Parsed plan info structure
+ */
+export interface ParsedPlanInfo {
+  binaries?: UpgradeBinaries
+  version?: string
+  binary?: string
+  [key: string]: any
+}
+
+/**
+ * Execution status for upgrade proposals
+ */
+export type UpgradeExecutionStatus = 
+  | 'executed'
+  | 'not_executed'
+  | 'pending'
+  | 'unknown'
+
+/**
+ * Upgrade execution info with derived data
+ */
+export interface UpgradeExecutionInfo {
+  status: UpgradeExecutionStatus
+  executedAt?: string
+  message: string
+  planHeight: string
+  currentHeight?: string
+}
+
+/**
+ * Voting summary with BigInt-safe calculations
+ * Note: All vote counts are stored as strings to preserve precision
+ */
+export interface VotingSummary {
+  yesCount: string
+  noCount: string
+  abstainCount: string
+  noWithVetoCount: string
+  totalVotingPower: string
+  bondedTokens: string
+  turnoutPercent: string
+}
+
+/**
+ * Complete upgrade proposal data structure
+ * Combines proposal data with derived metrics
+ */
+export interface UpgradeProposalData {
+  proposal: Proposal
+  isUpgradeProposal: boolean
+  plan?: UpgradePlan
+  authority?: string
+  messageType?: string
+  parsedPlanInfo?: ParsedPlanInfo
+  execution: UpgradeExecutionInfo
+  voting: VotingSummary
+}
+
+/**
+ * Response for a single proposal query
+ */
+export interface ProposalResponse {
+  proposal: Proposal
+}
+
+/**
+ * Block at height response for execution time lookup
+ */
+export interface BlockAtHeightResponse {
+  jsonrpc: string
+  id: number
+  result: {
+    block_id: {
+      hash: string
+      parts: {
+        total: number
+        hash: string
+      }
+    }
+    block: {
+      header: {
+        version: {
+          block: string
+        }
+        chain_id: string
+        height: string
+        time: string
+        last_block_id: {
+          hash: string
+          parts: {
+            total: number
+            hash: string
+          }
+        }
+        last_commit_hash: string
+        data_hash: string
+        validators_hash: string
+        next_validators_hash: string
+        consensus_hash: string
+        app_hash: string
+        last_results_hash: string
+        evidence_hash: string
+        proposer_address: string
+      }
+      data: {
+        txs: any[]
+      }
+      evidence: {
+        evidence: any[]
+      }
+      last_commit: any
+    }
+  }
+}
