@@ -238,14 +238,14 @@ export default function DeveloperActivityPage() {
         {!isLoading && !error && repoStats.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Total Commits */}
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-lg p-6 text-white">
+            <div className="bg-white dark:bg-dark-card rounded-lg border border-gray-200 dark:border-dark-border shadow-lg p-6 hover:border-verana-accent hover:shadow-xl transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-sm font-medium mb-1">Total Commits (90d)</p>
-                  <p className="text-3xl font-bold">{totalCommits.toLocaleString()}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Total Commits (90d)</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{totalCommits.toLocaleString()}</p>
                 </div>
-                <div className="bg-white/20 p-3 rounded-lg">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
+                  <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
@@ -253,14 +253,14 @@ export default function DeveloperActivityPage() {
             </div>
 
             {/* Active Repositories */}
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-lg p-6 text-white">
+            <div className="bg-white dark:bg-dark-card rounded-lg border border-gray-200 dark:border-dark-border shadow-lg p-6 hover:border-verana-accent hover:shadow-xl transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-sm font-medium mb-1">Active Repositories</p>
-                  <p className="text-3xl font-bold">{activeRepos} / {repoStats.length}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Active Repositories</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{activeRepos} / {repoStats.length}</p>
                 </div>
-                <div className="bg-white/20 p-3 rounded-lg">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
+                  <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
                   </svg>
                 </div>
@@ -268,14 +268,14 @@ export default function DeveloperActivityPage() {
             </div>
 
             {/* Total Contributors */}
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+            <div className="bg-white dark:bg-dark-card rounded-lg border border-gray-200 dark:border-dark-border shadow-lg p-6 hover:border-verana-accent hover:shadow-xl transition-all duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-sm font-medium mb-1">Total Contributors</p>
-                  <p className="text-3xl font-bold">{contributors.length}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Total Contributors</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{contributors.length}</p>
                 </div>
-                <div className="bg-white/20 p-3 rounded-lg">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
+                  <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 </div>
