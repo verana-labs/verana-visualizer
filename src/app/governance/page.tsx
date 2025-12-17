@@ -55,7 +55,7 @@ export default function GovernancePage() {
           </div>
           
           {/* Stats */}
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <StatCard
               label="Total Proposals"
               value={proposals?.proposals.length || 0}
@@ -115,16 +115,16 @@ function StatCard({
   highlight?: boolean
 }) {
   return (
-    <div className={`px-4 py-3 rounded-lg ${
+    <div className={`px-4 py-3 rounded-lg min-w-0 ${
       highlight 
         ? 'bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800' 
         : 'bg-gray-50 dark:bg-dark-surface border border-gray-200 dark:border-dark-border'
     }`}>
-      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium">{label}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium truncate">{label}</p>
       {isLoading ? (
         <div className="h-6 w-16 bg-gray-200 dark:bg-dark-border rounded animate-pulse mt-1"></div>
       ) : (
-        <p className={`text-xl font-bold ${
+        <p className={`text-lg sm:text-xl font-bold break-words ${
           highlight ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-900 dark:text-white'
         }`}>
           {value}
