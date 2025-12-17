@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "3d-force-graph": "^1.79.0",
-    "next": "15.5.3",
+    "next": "15.5.9",
     "react": "^18",
     "react-dom": "^18",
     "react-force-graph-2d": "^1.29.0",
@@ -20,6 +20,7 @@
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
@@ -29,8 +30,8 @@
     "@vitest/coverage-v8": "^2.1.8",
     "autoprefixer": "^10.4.20",
     "esbuild": "^0.25.11",
-    "eslint": "^8",
-    "eslint-config-next": "15.5.3",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "15.5.9",
     "jsdom": "^24.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
@@ -38,6 +39,8 @@
     "vitest": "^2.1.8"
   },
   "overrides": {
-    "esbuild": "^0.25.11"
+    "esbuild": "^0.25.11",
+    "glob": "^10.4.5",
+    "js-yaml": "^4.1.1"
   }
 }

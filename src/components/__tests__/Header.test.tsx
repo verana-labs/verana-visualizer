@@ -1,6 +1,7 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import Header from '../Header'
+import { render } from '@testing-library/react'
+import { screen } from '@testing-library/dom'
+import { Header } from '../layout'
 
 describe('Header', () => {
   it('renders title and subtitle', () => {

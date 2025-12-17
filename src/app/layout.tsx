@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   title: 'Verana Visualizer',
   description: 'A decentralized trust layer visualizer for the Verana network',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: '/logo.svg',
+    shortcut: '/logo.svg',
     apple: '/logo.svg',
   },
 }

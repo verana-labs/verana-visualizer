@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
-import SearchForm from '@/components/SearchForm'
-import TrustRegistryTable from '@/components/TrustRegistryTable'
-import ResultsSection from '@/components/ResultsSection'
+import { LayoutWrapper } from '@/components/layout'
+import { SearchForm } from '@/components/search'
+import { TrustRegistryTable } from '@/components/tables'
+import { ResultsSection } from '@/components/search'
 import { fetchTrustRegistryList } from '@/lib/api'
 import { TrustRegistry } from '@/types'
 
