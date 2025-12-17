@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
-import EnhancedDashboardCards from '@/components/EnhancedDashboardCards'
+import { LayoutWrapper } from '@/components/layout'
+import { EnhancedDashboardCards } from '@/components/dashboard'
 import { 
   fetchSupply, 
   fetchInflation, 

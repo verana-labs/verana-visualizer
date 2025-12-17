@@ -16,7 +16,9 @@ import {
   ValidatorsResponse,
   ProposalsResponse,
   DenomsMetadataResponse,
-  HeaderResponse
+  HeaderResponse,
+  ProposalResponse,
+  BlockAtHeightResponse
 } from '@/types'
 
 const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
@@ -216,4 +218,49 @@ export async function fetchHeader(): Promise<HeaderResponse> {
   }
   
   return response.json()
+}
+
+// ============================================
+// Governance Proposal API Functions
+// ============================================
+
+/**
+ * Fetch a single proposal by ID
+ */
+export async function fetchProposal(proposalId: string): Promise<ProposalResponse> {
+  const response = await fetch(`${API_ENDPOINT}/cosmos/gov/v1/proposals/${proposalId}`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch proposal ${proposalId}: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+/**
+ * Fetch block at a specific height
+ * Used to get execution time for upgrade proposals
+ */
+export async function fetchBlockAtHeight(height: string | number): Promise<BlockAtHeightResponse> {
+  const response = await fetch(`${RPC_ENDPOINT}/block?height=${height}`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch block at height ${height}: ${response.statusText}`)
+  }
+  
+  return response.json()
+}
+
+/**
+ * Get current chain height from RPC status
+ */
+export async function fetchCurrentHeight(): Promise<string> {
+  const response = await fetch(`${RPC_ENDPOINT}/status`)
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch chain status: ${response.statusText}`)
+  }
+  
+  const data = await response.json()
+  return data.result?.sync_info?.latest_block_height || '0'
 }

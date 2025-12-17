@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import LayoutWrapper from '@/components/LayoutWrapper'
-import SearchForm from '@/components/SearchForm'
-import DIDTable from '@/components/DIDTable'
-import ResultsSection from '@/components/ResultsSection'
+import { LayoutWrapper } from '@/components/layout'
+import { SearchForm } from '@/components/search'
+import { DIDTable } from '@/components/tables'
+import { ResultsSection } from '@/components/search'
 import { fetchDIDList } from '@/lib/api'
 import { DID } from '@/types'
 
