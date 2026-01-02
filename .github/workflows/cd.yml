@@ -155,7 +155,7 @@ jobs:
           declare -A CHAIN_NAMES=( ["testnet"]="VeranaTestnet1" ["devnet"]="VeranaDevnet1" )
           declare -A SIGN_DIRECT_MODE=( ["testnet"]="false" ["devnet"]="false" )
 
-          for ENV in testnet; do
+          for ENV in testnet devnet; do
             VERANA_CHAIN_ID="${CHAIN_IDS[$ENV]}"
             VERANA_CHAIN_NAME="${CHAIN_NAMES[$ENV]}"
             VERANA_SIGN_DIRECT_MODE="${SIGN_DIRECT_MODE[$ENV]}"
@@ -182,7 +182,7 @@ jobs:
             envsubst < kubernetes/verana-visualizer-deployment.yaml | tee substituted-deployment.yaml | kubectl apply -f - --namespace=$VERANA_CHAIN_ID
           done
 
-          echo "Deployment complete to https://vis.testnet.verana.network/"
+          echo "Deployment complete to https://vis.testnet.verana.network/ and https://vis.devnet.verana.network/"
 
   # Deploy to Staging (on develop branch)
   deploy-staging:
