@@ -79,11 +79,26 @@ jobs:
     - name: Check for known vulnerabilities
       run: npx audit-ci --config .audit-ci.json || true
 
-  # Docker Build and Deploy Job (on main branch)
-  publish-and-deploy:
+  # Docker Build Job - builds images for all environments using matrix
+  build-images:
     needs: [build-and-test, security-audit]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # ============================================================
+          # ADD NEW ENVIRONMENTS HERE - just add a new entry like below:
+          # - environment: newenv
+          #   chain_id: vna-newenv-1
+          #   chain_name: VeranaNewenv1
+          # ============================================================
+          - environment: testnet
+            chain_id: vna-testnet-1
+            chain_name: VeranaTestnet1
+          - environment: devnet
+            chain_id: vna-devnet-1
+            chain_name: VeranaDevnet1
 
     steps:
       - name: Checkout Code
@@ -103,7 +118,7 @@ jobs:
           SANITIZED_REF=${GITHUB_REF_NAME//\//-}
           echo "IMAGE_TAG=$SANITIZED_REF" >> $GITHUB_ENV
 
-      - name: Build and push
+      - name: Build and push ${{ matrix.environment }} image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -111,23 +126,58 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            ${{ github.ref_name == 'main' && format('{0}/{1}:latest', secrets.DOCKER_HUB_LOGIN, env.IMAGE_NAME) || '' }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:latest-${{ matrix.environment }}
+            ${{ matrix.environment == 'testnet' && format('{0}/{1}:latest', secrets.DOCKER_HUB_LOGIN, env.IMAGE_NAME) || '' }}
           build-args: |
-            NEXT_PUBLIC_BASE_URL=https://vis.testnet.verana.network
+            NEXT_PUBLIC_BASE_URL=https://vis.${{ matrix.environment }}.verana.network
             NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            NEXT_PUBLIC_API_ENDPOINT=https://api.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_IDX_ENDPOINT=https://idx.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_CHAIN_ID=${{ matrix.chain_id }}
+            NEXT_PUBLIC_CHAIN_NAME=${{ matrix.chain_name }}
+          cache-from: type=gha,scope=${{ matrix.environment }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
+
+  # Deploy Job - deploys all built images to Kubernetes
+  deploy:
+    needs: [build-images]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # ============================================================
+          # KEEP THIS IN SYNC WITH build-images matrix above
+          # ============================================================
+          - environment: testnet
+            chain_id: vna-testnet-1
+            chain_name: VeranaTestnet1
+          - environment: devnet
+            chain_id: vna-devnet-1
+            chain_name: VeranaDevnet1
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Prepare Docker tag
+        run: |
+          SANITIZED_REF=${GITHUB_REF_NAME//\//-}
+          echo "IMAGE_TAG=$SANITIZED_REF" >> $GITHUB_ENV
 
       - name: Set up Kubernetes
         uses: azure/setup-kubectl@v4
         with:
           version: 'v1.29.9'
 
-      - name: Deploy to OVH
+      - name: Deploy ${{ matrix.environment }} to OVH
         run: |
           set -euo pipefail
-          # Write kubeconfig from secret (supports raw YAML or base64-encoded)
+          
+          # Write kubeconfig from secret
           KUBECONFIG_CONTENT="${{ secrets.OVH_KUBECONFIG }}"
           if [ -z "$KUBECONFIG_CONTENT" ]; then
             echo "OVH_KUBECONFIG secret is empty or not set" >&2
@@ -140,49 +190,39 @@ jobs:
           fi
           export KUBECONFIG=$PWD/k8s_config
 
-          # Preflight: show contexts and ensure cluster is reachable
+          # Preflight check
           kubectl config get-contexts || true
           kubectl cluster-info
+
+          # Environment-specific configuration
+          export ENV="${{ matrix.environment }}"
+          export DH_USERNAME="${{ secrets.DOCKER_HUB_LOGIN }}"
+          export IMAGE_NAME="${{ env.IMAGE_NAME }}"
+          export IMAGE_TAG="${{ env.IMAGE_TAG }}-${{ matrix.environment }}"
+          export CLUSTER_NODE="${{ env.CLUSTER_NODE }}"
+
+          export DEPLOYMENT_NAME="verana-visualizer-deployment"
+          export NEXT_PUBLIC_PORT=3000
+          export NEXT_PUBLIC_BASE_URL="https://vis.${ENV}.verana.network"
+          export NEXT_PUBLIC_VERANA_CHAIN_ID="${{ matrix.chain_id }}"
+          export NEXT_PUBLIC_VERANA_CHAIN_NAME="${{ matrix.chain_name }}"
+          export NEXT_PUBLIC_VERANA_RPC_ENDPOINT="https://rpc.${ENV}.verana.network"
+          export NEXT_PUBLIC_VERANA_REST_ENDPOINT="https://api.${ENV}.verana.network"
+          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT="https://api.${ENV}.verana.network/verana/td/v1"
+          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID="https://api.${ENV}.verana.network/verana/dd/v1"
+          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY="https://api.${ENV}.verana.network/verana/tr/v1"
+          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA="https://api.${ENV}.verana.network/verana/cs/v1"
+          export NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE="false"
+          export NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
+
+          echo "Deploying to $ENV (${{ matrix.chain_id }})..."
+          echo "Using image: $DH_USERNAME/$IMAGE_NAME:$IMAGE_TAG"
           
-          # Set DH_USERNAME for envsubst
-          export DH_USERNAME=${{ secrets.DOCKER_HUB_LOGIN }}
+          kubectl create namespace ${{ matrix.chain_id }} --dry-run=client -o yaml | kubectl apply -f -
+          kubectl delete -n ${{ matrix.chain_id }} deployment $DEPLOYMENT_NAME || true
+          envsubst < kubernetes/verana-visualizer-deployment.yaml | kubectl apply -f - --namespace=${{ matrix.chain_id }}
 
-          # Setup environment variables and deploy
-          export IMAGE_NAME=${IMAGE_NAME}
-          export IMAGE_TAG=${IMAGE_TAG}
-
-          declare -A CHAIN_IDS=( ["testnet"]="vna-testnet-1" ["devnet"]="vna-devnet-1" )
-          declare -A CHAIN_NAMES=( ["testnet"]="VeranaTestnet1" ["devnet"]="VeranaDevnet1" )
-          declare -A SIGN_DIRECT_MODE=( ["testnet"]="false" ["devnet"]="false" )
-
-          for ENV in testnet devnet; do
-            VERANA_CHAIN_ID="${CHAIN_IDS[$ENV]}"
-            VERANA_CHAIN_NAME="${CHAIN_NAMES[$ENV]}"
-            VERANA_SIGN_DIRECT_MODE="${SIGN_DIRECT_MODE[$ENV]}"
-            export ENV
-
-            export DEPLOYMENT_NAME="verana-visualizer-deployment"
-            export NEXT_PUBLIC_PORT=3000
-            export NEXT_PUBLIC_BASE_URL="https://vis.${ENV}.verana.network"
-            export NEXT_PUBLIC_VERANA_CHAIN_ID=$VERANA_CHAIN_ID
-            export NEXT_PUBLIC_VERANA_CHAIN_NAME=$VERANA_CHAIN_NAME
-            export NEXT_PUBLIC_VERANA_RPC_ENDPOINT="https://rpc.${ENV}.verana.network"
-            export NEXT_PUBLIC_VERANA_REST_ENDPOINT="https://api.${ENV}.verana.network"
-            export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT="https://api.${ENV}.verana.network/verana/td/v1"
-            export NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID="https://api.${ENV}.verana.network/verana/dd/v1"
-            export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY="https://api.${ENV}.verana.network/verana/tr/v1"
-            export NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA="https://api.${ENV}.verana.network/verana/cs/v1"
-            export NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE=$VERANA_SIGN_DIRECT_MODE
-            export NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
-
-            echo "Deploying to $ENV ($VERANA_CHAIN_ID)..."
-            echo "Using image: ${{ secrets.DOCKER_HUB_LOGIN }}/$IMAGE_NAME:$IMAGE_TAG"
-            kubectl create namespace $VERANA_CHAIN_ID --dry-run=client -o yaml | kubectl apply -f -
-            kubectl delete -n $VERANA_CHAIN_ID deployment $DEPLOYMENT_NAME || true
-            envsubst < kubernetes/verana-visualizer-deployment.yaml | tee substituted-deployment.yaml | kubectl apply -f - --namespace=$VERANA_CHAIN_ID
-          done
-
-          echo "Deployment complete to https://vis.testnet.verana.network/ and https://vis.devnet.verana.network/"
+          echo "✅ Deployed to https://vis.${{ matrix.environment }}.verana.network/"
 
   # Deploy to Staging (on develop branch)
   deploy-staging:
