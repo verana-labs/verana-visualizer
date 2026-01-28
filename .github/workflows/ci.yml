@@ -10,9 +10,6 @@ on:
 
 jobs:
   ci:
-    uses: 2060-io/organization/.github/workflows/2060-linter-call.yml@main
-
-  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,5 +24,17 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
       - name: Run unit tests
         run: npm test -- --reporter=verbose
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_CHAIN_ID: vna-testnet-1
+          NEXT_PUBLIC_CHAIN_NAME: VeranaTestnet1
