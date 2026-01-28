@@ -1,15 +1,15 @@
-name: CI
+name: Continuous Integration
 
 on:
-  push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - '**'
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -24,7 +24,17 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps --no-audit --no-fund
 
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
       - name: Run unit tests
         run: npm test -- --reporter=verbose
 
-
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_CHAIN_ID: vna-testnet-1
+          NEXT_PUBLIC_CHAIN_NAME: VeranaTestnet1
