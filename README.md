@@ -235,12 +235,12 @@ Also see `.github/workflows/ci.yml` which runs tests on pushes and PRs using Nod
 
 ### Helm
 
-There is a Helm chart at `chart/` with production-ready defaults.
+There is a Helm chart at `charts/` with production-ready defaults.
 
 Install (from repository root):
 
 ```bash
-helm install verana-visualizer ./chart \
+helm install verana-visualizer ./charts \
   --set image.repository=verana/verana-visualizer \
   --set image.tag=latest
 ```
@@ -255,7 +255,7 @@ Common overrides via `values.yaml` or `--set`:
 Example env overrides:
 
 ```bash
-helm upgrade --install verana-visualizer ./chart \
+helm upgrade --install verana-visualizer ./charts \
   --set env.NEXT_PUBLIC_CHAIN_NAME=Mainnet \
   --set env.NEXT_PUBLIC_CHAIN_ID=vna-mainnet-1
 ```
