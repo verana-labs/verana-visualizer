@@ -1,98 +1,29 @@
-name: CI/CD Pipeline
-
-env:
-  IMAGE_NAME: verana-visualizer
-  DH_USERNAME: ${{ secrets.DOCKER_HUB_LOGIN }}
-  DH_TOKEN: ${{ secrets.DOCKER_HUB_PWD }}
-  VERANA_DEPLOY_PATH: verana-deploy
-  CLUSTER_NODE: cluster-utc-node-07efe5
+name: Continuous Deployment
 
 on:
   push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-  workflow_dispatch:
+    branches: [main, 'release/**']
+
+permissions:
+  id-token: write
+  contents: write
+  issues: write
+  pull-requests: write
+
+env:
+  IMAGE_NAME: 'verana-visualizer'
 
 jobs:
-  # Build and Test Job
-  build-and-test:
-    runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps
-      
-    - name: Run ESLint
-      run: npm run lint
-      
-    - name: Run TypeScript type check
-      run: npx tsc --noEmit
-      
-    - name: Build application
-      run: npm run build
-      env:
-        NEXT_PUBLIC_GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-        NEXT_PUBLIC_BASE_URL: https://vis.testnet.verana.network
-        NEXT_PUBLIC_API_ENDPOINT: https://api.testnet.verana.network
-        NEXT_PUBLIC_RPC_ENDPOINT: https://rpc.testnet.verana.network
-        NEXT_PUBLIC_IDX_ENDPOINT: https://idx.testnet.verana.network
-        NEXT_PUBLIC_RESOLVER_ENDPOINT: https://resolver.testnet.verana.network
-        NEXT_PUBLIC_CHAIN_ID: vna-testnet-1
-        NEXT_PUBLIC_CHAIN_NAME: VeranaTestnet1
-        NEXT_PUBLIC_APP_NAME: Verana Visualizer
-        NEXT_PUBLIC_APP_LOGO: logo.svg
+  resolve-version:
+    uses: 2060-io/organization/.github/workflows/resolve-version-call.yml@main
 
-  # Security Audit Job
-  security-audit:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps
-      
-    - name: Run security audit
-      run: npm audit --audit-level=moderate
-      
-    - name: Check for known vulnerabilities
-      run: npx audit-ci --config .audit-ci.json || true
-
-  # Docker Build Job - builds images for all environments using matrix
-  build-images:
-    needs: [build-and-test, security-audit]
-    if: github.ref == 'refs/heads/main'
+  docker:
+    needs: resolve-version
+    if: needs.resolve-version.outputs.new-release-published == 'true'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
-          # ============================================================
-          # ADD NEW ENVIRONMENTS HERE - just add a new entry like below:
-          # - environment: newenv
-          #   chain_id: vna-newenv-1
-          #   chain_name: VeranaNewenv1
-          # ============================================================
           - environment: testnet
             chain_id: vna-testnet-1
             chain_name: VeranaTestnet1
@@ -100,35 +31,52 @@ jobs:
             chain_id: vna-devnet-1
             chain_name: VeranaDevnet1
 
+    env:
+      RELEASE_TYPE: ${{ needs.resolve-version.outputs.release-type }}
+      RELEASE_VERSION: ${{ needs.resolve-version.outputs.release-version }}
+      RELEASE_MAJOR: ${{ needs.resolve-version.outputs.release-major }}
+      RELEASE_MINOR: ${{ needs.resolve-version.outputs.release-minor }}
+      RELEASE_PATCH: ${{ needs.resolve-version.outputs.release-patch }}
+
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
+      - name: Compute tags
+        id: compute-tags
+        run: |
+          if [ "$RELEASE_TYPE" = "stable" ]; then
+            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+            echo "SUFFIX=" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
+            echo "SUFFIX=-dev" >> $GITHUB_ENV
+            echo "RELEASE_PATCH_SHORT=${RELEASE_PATCH:0:1}" >> $GITHUB_ENV
+          fi
+
+      - name: Docker login
         uses: docker/login-action@v2
         with:
-          username: ${{ env.DH_USERNAME }}
-          password: ${{ env.DH_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_LOGIN }}
+          password: ${{ secrets.DOCKER_HUB_PWD }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Prepare Docker tag
-        run: |
-          SANITIZED_REF=${GITHUB_REF_NAME//\//-}
-          echo "IMAGE_TAG=$SANITIZED_REF" >> $GITHUB_ENV
-
-      - name: Build and push ${{ matrix.environment }} image
+      - name: Build & push dev tags
+        if: env.RELEASE_TYPE == 'dev'
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile
+          file: ./Dockerfile
           push: true
           platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.environment }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:latest-${{ matrix.environment }}
-            ${{ matrix.environment == 'testnet' && format('{0}/{1}:latest', secrets.DOCKER_HUB_LOGIN, env.IMAGE_NAME) || '' }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}.${{ env.RELEASE_PATCH_SHORT }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}-${{ matrix.environment }}
           build-args: |
             NEXT_PUBLIC_BASE_URL=https://vis.${{ matrix.environment }}.verana.network
             NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
@@ -141,172 +89,64 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.environment }}
           cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
 
-  # Deploy Job - deploys all built images to Kubernetes
-  # This will be edited once we have a proper CI/CD setup
-  deploy:
-    needs: [build-images]
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          # ============================================================
-          # KEEP THIS IN SYNC WITH build-images matrix above
-          # ============================================================
-          - environment: testnet
-            chain_id: vna-testnet-1
-            chain_name: VeranaTestnet1
-          - environment: devnet
-            chain_id: vna-devnet-1
-            chain_name: VeranaDevnet1
+      - name: Build & push stable release tags
+        if: env.RELEASE_TYPE == 'stable'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}-${{ matrix.environment }}
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=https://vis.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
+            NEXT_PUBLIC_API_ENDPOINT=https://api.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_IDX_ENDPOINT=https://idx.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_CHAIN_ID=${{ matrix.chain_id }}
+            NEXT_PUBLIC_CHAIN_NAME=${{ matrix.chain_name }}
+          cache-from: type=gha,scope=${{ matrix.environment }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
 
+  helm:
+    needs: [resolve-version, docker]
+    if: needs.resolve-version.outputs.new-release-published == 'true'
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TYPE: ${{ needs.resolve-version.outputs.release-type }}
+      RELEASE_VERSION: ${{ needs.resolve-version.outputs.release-version }}
+      RELEASE_MAJOR: ${{ needs.resolve-version.outputs.release-major }}
+      RELEASE_MINOR: ${{ needs.resolve-version.outputs.release-minor }}
+      RELEASE_PATCH: ${{ needs.resolve-version.outputs.release-patch }}
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Prepare Docker tag
-        run: |
-          SANITIZED_REF=${GITHUB_REF_NAME//\//-}
-          echo "IMAGE_TAG=$SANITIZED_REF" >> $GITHUB_ENV
-
-      - name: Set up Kubernetes
-        uses: azure/setup-kubectl@v4
+      - name: Docker login
+        uses: docker/login-action@v2
         with:
-          version: 'v1.29.9'
+          username: ${{ secrets.DOCKER_HUB_LOGIN }}
+          password: ${{ secrets.DOCKER_HUB_PWD }}
 
-      - name: Deploy ${{ matrix.environment }} to OVH
+      - name: Push Helm chart to Docker Hub OCI repo
         run: |
-          set -euo pipefail
-          
-          # Write kubeconfig from secret
-          KUBECONFIG_CONTENT="${{ secrets.OVH_KUBECONFIG }}"
-          if [ -z "$KUBECONFIG_CONTENT" ]; then
-            echo "OVH_KUBECONFIG secret is empty or not set" >&2
-            exit 1
-          fi
-          if echo "$KUBECONFIG_CONTENT" | grep -q "apiVersion:"; then
-            printf "%s" "$KUBECONFIG_CONTENT" > k8s_config
+          if [ "$RELEASE_TYPE" = "stable" ]; then
+            TAGS=("${RELEASE_VERSION}")
           else
-            echo "$KUBECONFIG_CONTENT" | base64 -d > k8s_config || printf "%s" "$KUBECONFIG_CONTENT" > k8s_config
+            TAGS=(
+              "v${RELEASE_MAJOR}.${RELEASE_MINOR}.${RELEASE_PATCH:0:1}-dev"
+              "${RELEASE_VERSION}"
+            )
           fi
-          export KUBECONFIG=$PWD/k8s_config
-
-          # Preflight check
-          kubectl config get-contexts || true
-          kubectl cluster-info
-
-          # Environment-specific configuration
-          export ENV="${{ matrix.environment }}"
-          export DH_USERNAME="${{ secrets.DOCKER_HUB_LOGIN }}"
-          export IMAGE_NAME="${{ env.IMAGE_NAME }}"
-          export IMAGE_TAG="${{ env.IMAGE_TAG }}-${{ matrix.environment }}"
-          export CLUSTER_NODE="${{ env.CLUSTER_NODE }}"
-
-          export DEPLOYMENT_NAME="verana-visualizer-deployment"
-          export NEXT_PUBLIC_PORT=3000
-          export NEXT_PUBLIC_BASE_URL="https://vis.${ENV}.verana.network"
-          export NEXT_PUBLIC_VERANA_CHAIN_ID="${{ matrix.chain_id }}"
-          export NEXT_PUBLIC_VERANA_CHAIN_NAME="${{ matrix.chain_name }}"
-          export NEXT_PUBLIC_VERANA_RPC_ENDPOINT="https://rpc.${ENV}.verana.network"
-          export NEXT_PUBLIC_VERANA_REST_ENDPOINT="https://api.${ENV}.verana.network"
-          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT="https://api.${ENV}.verana.network/verana/td/v1"
-          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID="https://api.${ENV}.verana.network/verana/dd/v1"
-          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY="https://api.${ENV}.verana.network/verana/tr/v1"
-          export NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA="https://api.${ENV}.verana.network/verana/cs/v1"
-          export NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE="false"
-          export NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
-
-          echo "Deploying to $ENV (${{ matrix.chain_id }})..."
-          echo "Using image: $DH_USERNAME/$IMAGE_NAME:$IMAGE_TAG"
-          
-          kubectl create namespace ${{ matrix.chain_id }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl delete -n ${{ matrix.chain_id }} deployment $DEPLOYMENT_NAME || true
-          envsubst < kubernetes/verana-visualizer-deployment.yaml | kubectl apply -f - --namespace=${{ matrix.chain_id }}
-
-          echo "✅ Deployed to https://vis.${{ matrix.environment }}.verana.network/"
-
-  # Deploy to Staging (on develop branch)
-  deploy-staging:
-    needs: [build-and-test, security-audit]
-    if: github.ref == 'refs/heads/develop'
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Helm
-      uses: azure/setup-helm@v3
-      
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ env.DH_USERNAME }}
-        password: ${{ env.DH_TOKEN }}
-
-    - name: Prepare Docker tag
-      run: |
-        SANITIZED_REF=${GITHUB_REF_NAME//\//-}
-        echo "IMAGE_TAG=$SANITIZED_REF" >> $GITHUB_ENV
-      
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        platforms: linux/amd64
-        push: true
-        tags: |
-          ${{ env.DH_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-        build-args: |
-          NEXT_PUBLIC_BASE_URL=https://vis-staging.testnet.verana.network
-          NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
-
-    - name: Log in to Docker Hub Helm Registry
-      run: |
-        echo "${{ secrets.DOCKER_HUB_PWD }}" | helm registry login -u "${{ secrets.DOCKER_HUB_LOGIN }}" --password-stdin docker.io
-
-    - name: Push Helm chart to Docker Hub OCI repo
-      run: |
-        CHART_NAME=$(grep '^name:' ./chart/Chart.yaml | awk '{print $2}')
-        helm dependency update ./chart
-        helm package ./chart --version v0.1.0-${{ env.IMAGE_TAG }} -d ./chart
-        helm push ./chart/$CHART_NAME-v0.1.0-${{ env.IMAGE_TAG }}.tgz oci://docker.io/"${{ secrets.DOCKER_HUB_LOGIN }}"
-
-    - name: Publish Summary
-      run: |
-        echo "Docker Images" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- ${{ env.IMAGE_NAME }}:v0.1.0-${{ env.IMAGE_TAG }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Helm Charts" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- ${{ env.IMAGE_NAME }}:v0.1.0-${{ env.IMAGE_TAG }}" >> $GITHUB_STEP_SUMMARY
-          
-    - name: Deploy to staging
-      run: |
-        echo "Deploying to staging environment..."
-        # Add your staging deployment commands here when needed
-        # This would be similar to the production deployment but with staging-specific values
-
-  # Notification Job
-  notify:
-    needs: [build-and-test, security-audit]
-    runs-on: ubuntu-latest
-    if: always()
-    
-    steps:
-    - name: Notify on success
-      if: needs.build-and-test.result == 'success' && needs.security-audit.result == 'success'
-      run: |
-        echo "✅ All checks passed successfully!"
-        
-    - name: Notify on failure
-      if: needs.build-and-test.result == 'failure' || needs.security-audit.result == 'failure'
-      run: |
-        echo "❌ Build or security checks failed!"
-        exit 1
+          for tag in "${TAGS[@]}"; do
+            sed -i "s/^version:.*/version: $tag/" ./helm/verana-visualizer/Chart.yaml
+            CHART_NAME=$(grep '^name:' ./helm/verana-visualizer/Chart.yaml | awk '{print $2}')
+            helm package ./helm/verana-visualizer -d ./helm
+            helm push ./helm/${CHART_NAME}-$tag.tgz oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}
+          done
