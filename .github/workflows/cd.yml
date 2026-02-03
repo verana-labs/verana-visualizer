@@ -145,8 +145,7 @@ jobs:
             )
           fi
           for tag in "${TAGS[@]}"; do
-            sed -i "s/^version:.*/version: $tag/" ./helm/verana-visualizer/Chart.yaml
-            CHART_NAME=$(grep '^name:' ./helm/verana-visualizer/Chart.yaml | awk '{print $2}')
-            helm package ./helm/verana-visualizer -d ./helm
-            helm push ./helm/${CHART_NAME}-$tag.tgz oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}
+            CHART_NAME=$(grep '^name:' ./charts/Chart.yaml | awk '{print $2}')
+            helm package ./charts --version $tag -d ./charts
+            helm push ./charts/${CHART_NAME}-$tag.tgz oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}
           done

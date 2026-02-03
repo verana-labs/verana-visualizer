@@ -1,5 +1,5 @@
 apiVersion: v2
-name: verana-visualizer
+name: verana-visualizer-chart
 description: A Helm chart for Verana Visualizer - Decentralized Trust Layer Visualizer
 type: application
 version: 0.1.0
