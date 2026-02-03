@@ -21,6 +21,15 @@ jobs:
     needs: resolve-version
     if: needs.resolve-version.outputs.new-release-published == 'true'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - environment: testnet
+            chain_id: vna-testnet-1
+            chain_name: VeranaTestnet1
+          - environment: devnet
+            chain_id: vna-devnet-1
+            chain_name: VeranaDevnet1
 
     env:
       RELEASE_TYPE: ${{ needs.resolve-version.outputs.release-type }}
@@ -63,13 +72,22 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}.${{ env.RELEASE_PATCH_SHORT }}${{ env.SUFFIX }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}.${{ env.RELEASE_PATCH_SHORT }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}-${{ matrix.environment }}
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=https://vis.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
+            NEXT_PUBLIC_API_ENDPOINT=https://api.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_IDX_ENDPOINT=https://idx.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_CHAIN_ID=${{ matrix.chain_id }}
+            NEXT_PUBLIC_CHAIN_NAME=${{ matrix.chain_name }}
+          cache-from: type=gha,scope=${{ matrix.environment }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
 
       - name: Build & push stable release tags
         if: env.RELEASE_TYPE == 'stable'
@@ -80,12 +98,21 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}
-            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}-${{ matrix.environment }}
+            ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}-${{ matrix.environment }}
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=https://vis.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
+            NEXT_PUBLIC_API_ENDPOINT=https://api.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_IDX_ENDPOINT=https://idx.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.${{ matrix.environment }}.verana.network
+            NEXT_PUBLIC_CHAIN_ID=${{ matrix.chain_id }}
+            NEXT_PUBLIC_CHAIN_NAME=${{ matrix.chain_name }}
+          cache-from: type=gha,scope=${{ matrix.environment }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.environment }}
 
   helm:
     needs: [resolve-version, docker]
