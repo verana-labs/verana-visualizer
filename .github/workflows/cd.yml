@@ -117,7 +117,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
 
-      - name: Push Helm chart
+      - name: Push Helm chart to Docker Hub OCI repo
         run: |
           CHART_NAME=$(grep '^name:' ./charts/Chart.yaml | awk '{print $2}')
           if [ "$RELEASE_TYPE" = "stable" ]; then
