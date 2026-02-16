@@ -1,13 +1,9 @@
 import { EcosystemMetrics, EcosystemMetricsDataPoint } from '@/types'
 import { getCurrentBlockHeight, getBlockAtHeight, calculateHistoricalHeights } from './historicalDataFetcher'
 
-const IDX_ENDPOINT = process.env.NEXT_PUBLIC_IDX_ENDPOINT || 'https://idx.testnet.verana.network'
-
 async function getMetricsAtHeight(height: number): Promise<EcosystemMetrics | null> {
   try {
-    const response = await fetch(`${IDX_ENDPOINT}/verana/metrics/v1/all`, {
-      headers: { 'At-Block-Height': height.toString() }
-    })
+    const response = await fetch(`/api/ecosystem/metrics?height=${height}`)
     if (!response.ok) return null
     return await response.json()
   } catch (error) {

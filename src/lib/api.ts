@@ -270,15 +270,9 @@ export async function fetchCurrentHeight(): Promise<string> {
 // Ecosystem Metrics API Functions
 // ============================================
 
-const IDX_ENDPOINT = process.env.NEXT_PUBLIC_IDX_ENDPOINT || 'https://idx.testnet.verana.network'
-
 export async function fetchEcosystemMetrics(atBlockHeight?: number): Promise<EcosystemMetrics> {
-  const headers: HeadersInit = {}
-  if (atBlockHeight) {
-    headers['At-Block-Height'] = atBlockHeight.toString()
-  }
-
-  const response = await fetch(`${IDX_ENDPOINT}/verana/metrics/v1/all`, { headers })
+  const params = atBlockHeight ? `?height=${atBlockHeight}` : ''
+  const response = await fetch(`/api/ecosystem/metrics${params}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch ecosystem metrics: ${response.statusText}`)
