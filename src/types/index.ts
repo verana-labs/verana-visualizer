@@ -573,3 +573,34 @@ export interface BlockAtHeightResponse {
     }
   }
 }
+
+// ============================================
+// Ecosystem Metrics Types
+// ============================================
+
+export interface EcosystemMetrics {
+  participants: number
+  active_trust_registries: number
+  archived_trust_registries: number
+  active_schemas: number
+  archived_schemas: number
+  weight: number
+  issued: number
+  verified: number
+  ecosystem_slash_events: number
+  ecosystem_slashed_amount: number
+  ecosystem_slashed_amount_repaid: number
+  network_slash_events: number
+  network_slashed_amount: number
+  network_slashed_amount_repaid: number
+}
+
+export interface EcosystemMetricsDataPoint {
+  timestamp: string
+  height: number
+  participants: number
+  activeTrustRegistries: number
+  activeSchemas: number
+  issued: number
+  verified: number
+}
