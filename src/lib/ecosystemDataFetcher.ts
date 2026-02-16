@@ -1,16 +1,6 @@
-import { EcosystemMetrics, EcosystemMetricsDataPoint } from '@/types'
+import { EcosystemMetricsDataPoint } from '@/types'
+import { fetchEcosystemMetrics } from './api'
 import { getCurrentBlockHeight, getBlockAtHeight, calculateHistoricalHeights } from './historicalDataFetcher'
-
-async function getMetricsAtHeight(height: number): Promise<EcosystemMetrics | null> {
-  try {
-    const response = await fetch(`/api/ecosystem/metrics?height=${height}`)
-    if (!response.ok) return null
-    return await response.json()
-  } catch (error) {
-    console.error(`Error fetching metrics at height ${height}:`, error)
-    return null
-  }
-}
 
 export async function fetchHistoricalEcosystemData(
   dataPoints: number = 30
@@ -19,6 +9,7 @@ export async function fetchHistoricalEcosystemData(
   const heights = calculateHistoricalHeights(currentHeight, dataPoints)
 
   const data: EcosystemMetricsDataPoint[] = []
+  let failureCount = 0
   const batchSize = 5
 
   for (let i = 0; i < heights.length; i += batchSize) {
@@ -26,12 +17,20 @@ export async function fetchHistoricalEcosystemData(
 
     const results = await Promise.allSettled(
       batch.map(async (height) => {
-        const [blockInfo, metrics] = await Promise.all([
-          getBlockAtHeight(height),
-          getMetricsAtHeight(height)
-        ])
+        let blockInfo
+        try {
+          blockInfo = await getBlockAtHeight(height)
+        } catch {
+          blockInfo = { height, timestamp: new Date().toISOString() }
+        }
 
-        if (!metrics) return null
+        let metrics
+        try {
+          metrics = await fetchEcosystemMetrics(height)
+        } catch (error) {
+          console.warn(`Metrics fetch at height ${height} failed:`, error instanceof Error ? error.message : error)
+          return null
+        }
 
         return {
           timestamp: new Date(blockInfo.timestamp).toLocaleDateString('en-US', {
@@ -51,12 +50,24 @@ export async function fetchHistoricalEcosystemData(
     results.forEach((result) => {
       if (result.status === 'fulfilled' && result.value) {
         data.push(result.value)
+      } else {
+        failureCount++
       }
     })
 
     if (i + batchSize < heights.length) {
       await new Promise(resolve => setTimeout(resolve, 500))
     }
+  }
+
+  if (data.length === 0 && failureCount > 0) {
+    throw new Error(
+      `Failed to fetch historical ecosystem data: all ${failureCount} data points failed`
+    )
+  }
+
+  if (failureCount > 0) {
+    console.warn(`Ecosystem historical data: ${failureCount}/${heights.length} data points failed`)
   }
 
   return data.sort((a, b) => a.height - b.height)

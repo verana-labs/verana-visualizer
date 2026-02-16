@@ -1,13 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const IDX_ENDPOINT = process.env.NEXT_PUBLIC_IDX_ENDPOINT || 'https://idx.testnet.verana.network'
+const IDX_ENDPOINT = process.env.IDX_ENDPOINT || 'https://idx.testnet.verana.network'
 
 export async function GET(request: NextRequest) {
   const height = request.nextUrl.searchParams.get('height')
 
   const headers: HeadersInit = {}
   if (height) {
-    headers['At-Block-Height'] = height
+    const parsed = parseInt(height, 10)
+    if (isNaN(parsed) || parsed <= 0) {
+      return NextResponse.json(
+        { error: 'Invalid height parameter: must be a positive integer' },
+        { status: 400 }
+      )
+    }
+    headers['At-Block-Height'] = parsed.toString()
   }
 
   try {
