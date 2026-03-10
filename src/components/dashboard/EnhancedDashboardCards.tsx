@@ -466,7 +466,7 @@ export default function EnhancedDashboardCards({
             </Link>
           </div>
           <div className="space-y-4">
-            {proposals.proposals.slice(0, 3).map((proposal) => (
+            {[...proposals.proposals].sort((a, b) => Number(b.id) - Number(a.id)).slice(0, 3).map((proposal) => (
               <ProposalCard
                 key={proposal.id}
                 proposal={proposal}
