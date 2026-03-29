@@ -7,18 +7,19 @@ import {
   AggregatedContributor,
   GitHubApiError
 } from '@/types'
+import { env } from 'next-runtime-env'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 
-// Get GitHub token from environment variable
-const GITHUB_TOKEN = process.env.NEXT_PUBLIC_GITHUB_TOKEN
+const getGitHubToken = () =>
+  env('NEXT_PUBLIC_GITHUB_TOKEN') || process.env.NEXT_PUBLIC_GITHUB_TOKEN
 
 // Rate limit warning
 let hasWarnedAboutRateLimit = false
 
 function warnAboutRateLimit() {
   if (!hasWarnedAboutRateLimit) {
-    if (GITHUB_TOKEN) {
+    if (getGitHubToken()) {
       console.log(
         '✅ GitHub API: Using authenticated requests (5,000 requests/hour limit)'
       )
@@ -40,8 +41,8 @@ function getGitHubHeaders(): HeadersInit {
     'Accept': 'application/vnd.github.v3+json',
   }
   
-  if (GITHUB_TOKEN) {
-    headers['Authorization'] = `Bearer ${GITHUB_TOKEN}`
+  if (getGitHubToken()) {
+    headers['Authorization'] = `Bearer ${getGitHubToken()}`
   }
   
   return headers
@@ -51,7 +52,7 @@ function getGitHubHeaders(): HeadersInit {
  * Check if GitHub token is configured
  */
 export function hasGitHubToken(): boolean {
-  return !!GITHUB_TOKEN
+  return !!getGitHubToken()
 }
 
 /**
@@ -79,19 +80,19 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
           rateLimitRemaining,
           rateLimitReset,
           resetTime: resetTimeStr,
-          hasToken: !!GITHUB_TOKEN,
+          hasToken: !!getGitHubToken(),
           org
         })
         
         if (rateLimitRemaining === '0') {
           throw new Error(
             `GitHub API rate limit exceeded. Limit resets at ${resetTimeStr}. ` +
-            `${GITHUB_TOKEN ? 'Token is configured but limit still hit.' : 'Add a GitHub token to increase limits from 60 to 5,000 requests/hour.'}`
+            `${getGitHubToken() ? 'Token is configured but limit still hit.' : 'Add a GitHub token to increase limits from 60 to 5,000 requests/hour.'}`
           )
         }
         
         // If not rate limit, might be invalid token or private org
-        if (GITHUB_TOKEN) {
+        if (getGitHubToken()) {
           throw new Error(
             `Access forbidden (403). This could mean:\n` +
             `• Your GitHub token may be invalid or expired\n` +

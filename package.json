@@ -13,6 +13,7 @@
   "dependencies": {
     "3d-force-graph": "^1.79.0",
     "next": "15.5.9",
+    "next-runtime-env": "^3.3.0",
     "react": "^18",
     "react-dom": "^18",
     "react-force-graph-2d": "^1.29.0",

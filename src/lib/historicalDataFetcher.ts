@@ -4,8 +4,12 @@
  * Uses the Verana network REST API with height parameters to build time-series data.
  */
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
-const RPC_ENDPOINT = process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://rpc.testnet.verana.network'
+import { env } from 'next-runtime-env'
+
+const getApiEndpoint = () =>
+  env('NEXT_PUBLIC_API_ENDPOINT') || process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
+const getRpcEndpoint = () =>
+  env('NEXT_PUBLIC_RPC_ENDPOINT') || process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://rpc.testnet.verana.network'
 
 interface BlockInfo {
   height: number
@@ -17,7 +21,7 @@ interface BlockInfo {
  */
 export async function getCurrentBlockHeight(): Promise<number> {
   try {
-    const response = await fetch(`${RPC_ENDPOINT}/block`)
+    const response = await fetch(`${getRpcEndpoint()}/block`)
     const data = await response.json()
     return parseInt(data.result?.block?.header?.height || '0')
   } catch (error) {
@@ -31,7 +35,7 @@ export async function getCurrentBlockHeight(): Promise<number> {
  */
 export async function getBlockAtHeight(height: number): Promise<BlockInfo> {
   try {
-    const response = await fetch(`${RPC_ENDPOINT}/block?height=${height}`)
+    const response = await fetch(`${getRpcEndpoint()}/block?height=${height}`)
     const data = await response.json()
     return {
       height: parseInt(data.result?.block?.header?.height || '0'),
@@ -48,7 +52,7 @@ export async function getBlockAtHeight(height: number): Promise<BlockInfo> {
  */
 export async function getSupplyAtHeight(height: number) {
   try {
-    const response = await fetch(`${API_ENDPOINT}/cosmos/bank/v1beta1/supply?height=${height}`)
+    const response = await fetch(`${getApiEndpoint()}/cosmos/bank/v1beta1/supply?height=${height}`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
@@ -62,7 +66,7 @@ export async function getSupplyAtHeight(height: number) {
  */
 export async function getStakingPoolAtHeight(height: number) {
   try {
-    const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/pool?height=${height}`)
+    const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool?height=${height}`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
@@ -76,7 +80,7 @@ export async function getStakingPoolAtHeight(height: number) {
  */
 export async function getInflationAtHeight(height: number) {
   try {
-    const response = await fetch(`${API_ENDPOINT}/cosmos/mint/v1beta1/inflation?height=${height}`)
+    const response = await fetch(`${getApiEndpoint()}/cosmos/mint/v1beta1/inflation?height=${height}`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
@@ -90,7 +94,7 @@ export async function getInflationAtHeight(height: number) {
  */
 export async function getValidatorsAtHeight(height: number) {
   try {
-    const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/validators?height=${height}`)
+    const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/validators?height=${height}`)
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
@@ -276,7 +280,7 @@ export async function fetchHistoricalNetworkActivity(dataPoints: number = 30): P
       const results = await Promise.allSettled(
         batch.map(async (height) => {
           try {
-            const blockResponse = await fetch(`${RPC_ENDPOINT}/block?height=${height}`)
+            const blockResponse = await fetch(`${getRpcEndpoint()}/block?height=${height}`)
             const blockData = await blockResponse.json()
             
             const block = blockData.result?.block
@@ -289,7 +293,7 @@ export async function fetchHistoricalNetworkActivity(dataPoints: number = 30): P
             let blockTime = 5.5 // Default estimate
             if (height > 1) {
               try {
-                const prevBlockResponse = await fetch(`${RPC_ENDPOINT}/block?height=${height - 1}`)
+                const prevBlockResponse = await fetch(`${getRpcEndpoint()}/block?height=${height - 1}`)
                 const prevBlockData = await prevBlockResponse.json()
                 const prevTime = new Date(prevBlockData.result?.block?.header?.time)
                 const currTime = new Date(timestamp)
@@ -341,7 +345,7 @@ interface ValidatorDataPoint {
  */
 export async function fetchCurrentValidatorDistribution(): Promise<ValidatorDataPoint[]> {
   try {
-    const response = await fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/validators`)
+    const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/validators`)
     if (!response.ok) throw new Error('Failed to fetch validators')
     
     const data = await response.json()
@@ -373,8 +377,8 @@ interface StakingDataPoint {
 export async function fetchCurrentStakingDistribution(): Promise<StakingDataPoint[]> {
   try {
     const [supplyResponse, poolResponse] = await Promise.all([
-      fetch(`${API_ENDPOINT}/cosmos/bank/v1beta1/supply`),
-      fetch(`${API_ENDPOINT}/cosmos/staking/v1beta1/pool`)
+      fetch(`${getApiEndpoint()}/cosmos/bank/v1beta1/supply`),
+      fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool`)
     ])
     
     if (!supplyResponse.ok || !poolResponse.ok) {
