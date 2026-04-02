@@ -20,6 +20,8 @@ export default function EcosystemPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let mounted = true
+
     const loadData = async () => {
       try {
         setIsLoading(true)
@@ -29,6 +31,7 @@ export default function EcosystemPage() {
         setLoadingMessage('Loading current metrics...')
         setLoadingProgress(10)
         const currentMetrics = await fetchEcosystemMetrics()
+        if (!mounted) return
         setMetrics(currentMetrics)
         setIsLoading(false)
         setLoadingProgress(30)
@@ -37,19 +40,24 @@ export default function EcosystemPage() {
         setLoadingMessage('Loading historical trends...')
         setIsLoadingCharts(true)
         const historical = await fetchHistoricalEcosystemData(30)
+        if (!mounted) return
         setHistoricalData(historical)
         setLoadingProgress(100)
         setLoadingMessage('All data loaded!')
       } catch (err) {
+        if (!mounted) return
         setError(err instanceof Error ? err.message : 'Failed to load ecosystem data')
         console.error('Error loading ecosystem data:', err)
       } finally {
-        setIsLoading(false)
-        setIsLoadingCharts(false)
+        if (mounted) {
+          setIsLoading(false)
+          setIsLoadingCharts(false)
+        }
       }
     }
 
     loadData()
+    return () => { mounted = false }
   }, [])
 
   return (

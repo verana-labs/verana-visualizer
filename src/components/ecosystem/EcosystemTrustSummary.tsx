@@ -43,7 +43,7 @@ export default function EcosystemTrustSummary({ metrics, isLoading }: EcosystemT
     {
       label: 'Slash Events',
       value: totalSlashEvents.toString(),
-      detail: totalSlashed > 0
+      detail: totalSlashEvents > 0
         ? `${formatWeight(totalSlashed)} slashed / ${formatWeight(totalRepaid)} repaid`
         : 'No slashing activity',
       color: totalSlashEvents > 0 ? '#ef4444' : '#10b981'

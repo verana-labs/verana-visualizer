@@ -20,8 +20,9 @@ export async function fetchHistoricalEcosystemData(
         let blockInfo
         try {
           blockInfo = await getBlockAtHeight(height)
-        } catch {
-          blockInfo = { height, timestamp: new Date().toISOString() }
+        } catch (err) {
+          console.warn(`Block fetch at height ${height} failed, skipping:`, err instanceof Error ? err.message : err)
+          return null
         }
 
         let metrics
