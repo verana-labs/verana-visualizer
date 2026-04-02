@@ -12,27 +12,6 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ARG NEXT_PUBLIC_BASE_URL=http://localhost:3000
-ARG NEXT_PUBLIC_GITHUB_TOKEN
-ARG NEXT_PUBLIC_API_ENDPOINT=https://api.testnet.verana.network
-ARG NEXT_PUBLIC_RPC_ENDPOINT=https://rpc.testnet.verana.network
-ARG NEXT_PUBLIC_IDX_ENDPOINT=https://idx.testnet.verana.network
-ARG NEXT_PUBLIC_RESOLVER_ENDPOINT=https://resolver.testnet.verana.network
-ARG NEXT_PUBLIC_CHAIN_ID=vna-testnet-1
-ARG NEXT_PUBLIC_CHAIN_NAME=Testnet
-ARG NEXT_PUBLIC_APP_NAME=verana-visualizer
-ARG NEXT_PUBLIC_APP_LOGO=logo.svg
-
-ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
-ENV NEXT_PUBLIC_GITHUB_TOKEN=${NEXT_PUBLIC_GITHUB_TOKEN}
-ENV NEXT_PUBLIC_API_ENDPOINT=${NEXT_PUBLIC_API_ENDPOINT}
-ENV NEXT_PUBLIC_RPC_ENDPOINT=${NEXT_PUBLIC_RPC_ENDPOINT}
-ENV NEXT_PUBLIC_IDX_ENDPOINT=${NEXT_PUBLIC_IDX_ENDPOINT}
-ENV NEXT_PUBLIC_RESOLVER_ENDPOINT=${NEXT_PUBLIC_RESOLVER_ENDPOINT}
-ENV NEXT_PUBLIC_CHAIN_ID=${NEXT_PUBLIC_CHAIN_ID}
-ENV NEXT_PUBLIC_CHAIN_NAME=${NEXT_PUBLIC_CHAIN_NAME}
-ENV NEXT_PUBLIC_APP_NAME=${NEXT_PUBLIC_APP_NAME}
-ENV NEXT_PUBLIC_APP_LOGO=${NEXT_PUBLIC_APP_LOGO}
 
 RUN npm run build
 
@@ -52,6 +31,8 @@ RUN chown nextjs:nodejs .next
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/entrypoint.sh ./entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 USER nextjs
 
@@ -60,4 +41,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["node", "server.js"]
