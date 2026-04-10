@@ -1,5 +1,28 @@
+const { version } = require('./package.json')
+
+const getBasePath = () => {
+  if (process.env.NODE_ENV !== 'production' || !process.env.NEXT_PUBLIC_BASE_URL) {
+    return undefined
+  }
+  try {
+    const pathname = new URL(process.env.NEXT_PUBLIC_BASE_URL).pathname
+    const normalized = pathname.endsWith('/') && pathname !== '/'
+      ? pathname.slice(0, -1)
+      : pathname
+    return normalized !== '/' ? normalized : undefined
+  } catch {
+    console.warn('Invalid NEXT_PUBLIC_BASE_URL, skipping basePath configuration')
+    return undefined
+  }
+}
+
 const nextConfig = {
   output: 'standalone',
+  env: {
+    NEXT_PUBLIC_APP_VERSION: version,
+  },
+  basePath: getBasePath(),
+  assetPrefix: process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_BASE_URL || '' : '',
   images: {
     remotePatterns: [
       {

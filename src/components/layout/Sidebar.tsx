@@ -26,6 +26,15 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
         </svg>
       )
     },
+    {
+      name: 'Ecosystem',
+      href: '/ecosystem',
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      )
+    },
     // {
     //   name: 'Analytics',
     //   href: '/charts',
@@ -163,7 +172,7 @@ export default function Sidebar({ isCollapsed, onToggle, isLoaded = true, isManu
           {!isCollapsed && (
             <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
               <p>Verana Visualizer</p>
-              <p>2.4.0</p>
+              <p>v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
             </div>
           )}
         </div>

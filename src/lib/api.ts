@@ -1,12 +1,12 @@
-import { 
-  TrustRegistry, 
-  CredentialSchema, 
-  ApiResponse, 
-  TrustRegistryListResponse, 
-  AbciInfoResponse, 
-  BlockResponse, 
-  GenesisResponse, 
-  DID, 
+import {
+  TrustRegistry,
+  CredentialSchema,
+  ApiResponse,
+  TrustRegistryListResponse,
+  AbciInfoResponse,
+  BlockResponse,
+  GenesisResponse,
+  DID,
   DIDListResponse,
   SupplyResponse,
   InflationResponse,
@@ -18,7 +18,8 @@ import {
   DenomsMetadataResponse,
   HeaderResponse,
   ProposalResponse,
-  BlockAtHeightResponse
+  BlockAtHeightResponse,
+  EcosystemMetrics
 } from '@/types'
 import { env } from 'next-runtime-env'
 
@@ -259,11 +260,26 @@ export async function fetchBlockAtHeight(height: string | number): Promise<Block
  */
 export async function fetchCurrentHeight(): Promise<string> {
   const response = await fetch(`${getRpcEndpoint()}/status`)
-  
+
   if (!response.ok) {
     throw new Error(`Failed to fetch chain status: ${response.statusText}`)
   }
-  
+
   const data = await response.json()
   return data.result?.sync_info?.latest_block_height || '0'
+}
+
+// ============================================
+// Ecosystem Metrics API Functions
+// ============================================
+
+export async function fetchEcosystemMetrics(atBlockHeight?: number): Promise<EcosystemMetrics> {
+  const params = atBlockHeight ? `?height=${atBlockHeight}` : ''
+  const response = await fetch(`/api/ecosystem/metrics${params}`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch ecosystem metrics: ${response.statusText}`)
+  }
+
+  return response.json()
 }
