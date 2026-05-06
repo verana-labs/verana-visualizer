@@ -8,6 +8,7 @@ import {
   GenesisResponse,
   DID,
   DIDListResponse,
+  PermissionResponse,
   SupplyResponse,
   InflationResponse,
   MintParamsResponse,
@@ -27,6 +28,10 @@ const getApiEndpoint = () =>
   env('NEXT_PUBLIC_API_ENDPOINT') || process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
 const getRpcEndpoint = () =>
   env('NEXT_PUBLIC_RPC_ENDPOINT') || process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://rpc.testnet.verana.network'
+const getPermissionEndpoint = () =>
+  env('NEXT_PUBLIC_VERANA_REST_ENDPOINT_PERM') ||
+  process.env.NEXT_PUBLIC_VERANA_REST_ENDPOINT_PERM ||
+  `${getApiEndpoint()}/verana/perm/v1`
 
 export async function fetchTrustRegistry(trId: string): Promise<ApiResponse<{ trust_registry: TrustRegistry }>> {
   const response = await fetch(`${getApiEndpoint()}/verana/tr/v1/get/${trId}`)
@@ -131,6 +136,16 @@ export async function fetchDIDList(): Promise<DIDListResponse> {
     throw new Error(`Failed to fetch DID list: ${response.statusText}`)
   }
   
+  return response.json()
+}
+
+export async function fetchPermission(permissionId: string): Promise<PermissionResponse> {
+  const response = await fetch(`${getPermissionEndpoint()}/get/${permissionId}`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch permission ${permissionId}: ${response.statusText}`)
+  }
+
   return response.json()
 }
 

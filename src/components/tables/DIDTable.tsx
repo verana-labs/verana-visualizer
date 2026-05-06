@@ -2,7 +2,7 @@
 
 import { DID } from '@/types'
 import { convertUvnaToVna } from '@/lib/api'
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 type SortField = 'did' | 'controller' | 'deposit' | 'created' | 'modified' | 'exp'
 type SortDirection = 'asc' | 'desc'
@@ -10,9 +10,16 @@ type SortDirection = 'asc' | 'desc'
 interface DIDTableProps {
   dids: DID[]
   isSearchResult?: boolean
+  selectedDid?: string
 }
 
-export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps) {
+const didFallbackDomain = (did: string) => {
+  const normalizedDid = did.toLowerCase()
+  if (!normalizedDid.startsWith('did:web:') && !normalizedDid.startsWith('did:webvh:')) return undefined
+  return normalizedDid.split(':').at(-1)
+}
+
+export default function DIDTable({ dids, isSearchResult = false, selectedDid }: DIDTableProps) {
   const [selectedDID, setSelectedDID] = useState<DID | null>(null)
   const [sortField, setSortField] = useState<SortField>('did')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -103,6 +110,28 @@ export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps
       return 0
     })
   }, [dids, sortField, sortDirection])
+
+  useEffect(() => {
+    if (!selectedDid) {
+      setSelectedDID(null)
+      return
+    }
+    const normalizedSelectedDid = selectedDid.toLowerCase()
+    const exactMatch = dids.find((did) => did.did.toLowerCase() === normalizedSelectedDid)
+    if (exactMatch) {
+      setSelectedDID(exactMatch)
+      return
+    }
+
+    const domain = didFallbackDomain(selectedDid)
+    if (!domain) {
+      setSelectedDID(null)
+      return
+    }
+
+    const domainMatches = dids.filter((did) => did.did.toLowerCase().includes(domain))
+    setSelectedDID(domainMatches.length === 1 ? domainMatches[0] : null)
+  }, [dids, selectedDid])
 
   const isExpired = (expDate: string) => {
     return new Date(expDate) < new Date()
