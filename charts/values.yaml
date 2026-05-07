@@ -69,7 +69,6 @@ env:
   NEXT_PUBLIC_RPC_ENDPOINT: "https://rpc.testnet.verana.network"
   NEXT_PUBLIC_IDX_ENDPOINT: "https://idx.testnet.verana.network"
   NEXT_PUBLIC_RESOLVER_ENDPOINT: "https://resolver.testnet.verana.network"
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT_PERM: "https://idx.testnet.verana.network/verana/perm/v1"
   NEXT_PUBLIC_CHAIN_ID: "vna-testnet-1"
   NEXT_PUBLIC_CHAIN_NAME: "Testnet"
   NEXT_PUBLIC_APP_NAME: "Verana Visualizer"

@@ -9,25 +9,10 @@ import { ResultsSection } from '@/components/search'
 import { fetchDIDList } from '@/lib/api'
 import { DID } from '@/types'
 
-const didSearchTerms = (query: string) => {
-  const normalizedQuery = query.toLowerCase()
-  if (!normalizedQuery) return []
-
-  const terms = [normalizedQuery]
-  if (normalizedQuery.startsWith('did:web:') || normalizedQuery.startsWith('did:webvh:')) {
-    const domain = normalizedQuery.split(':').at(-1)
-    if (domain) terms.push(domain)
-  }
-
-  return Array.from(new Set(terms))
-}
-
 const didMatchesQuery = (did: DID, query: string) => {
-  const terms = didSearchTerms(query)
-  return terms.some((term) =>
-    did.did.toLowerCase().includes(term) ||
-    did.controller.toLowerCase().includes(term)
-  )
+  const q = query.trim().toLowerCase()
+  if (!q) return true
+  return did.did.toLowerCase().includes(q) || did.controller.toLowerCase().includes(q)
 }
 
 function DIDDirectoryContent() {

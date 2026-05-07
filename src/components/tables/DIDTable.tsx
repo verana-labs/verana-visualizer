@@ -13,12 +13,6 @@ interface DIDTableProps {
   selectedDid?: string
 }
 
-const didFallbackDomain = (did: string) => {
-  const normalizedDid = did.toLowerCase()
-  if (!normalizedDid.startsWith('did:web:') && !normalizedDid.startsWith('did:webvh:')) return undefined
-  return normalizedDid.split(':').at(-1)
-}
-
 export default function DIDTable({ dids, isSearchResult = false, selectedDid }: DIDTableProps) {
   const [selectedDID, setSelectedDID] = useState<DID | null>(null)
   const [sortField, setSortField] = useState<SortField>('did')
@@ -116,21 +110,18 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
       setSelectedDID(null)
       return
     }
-    const normalizedSelectedDid = selectedDid.toLowerCase()
-    const exactMatch = dids.find((did) => did.did.toLowerCase() === normalizedSelectedDid)
+
+    const exactMatch = dids.find((did) => did.did === selectedDid)
     if (exactMatch) {
       setSelectedDID(exactMatch)
       return
     }
 
-    const domain = didFallbackDomain(selectedDid)
-    if (!domain) {
-      setSelectedDID(null)
-      return
-    }
-
-    const domainMatches = dids.filter((did) => did.did.toLowerCase().includes(domain))
-    setSelectedDID(domainMatches.length === 1 ? domainMatches[0] : null)
+    const tail = selectedDid.toLowerCase().split(':').pop()
+    const matches = tail
+      ? dids.filter((did) => did.did.toLowerCase().endsWith(`:${tail}`))
+      : []
+    setSelectedDID(matches.length === 1 ? matches[0] : null)
   }, [dids, selectedDid])
 
   const isExpired = (expDate: string) => {

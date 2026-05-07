@@ -150,7 +150,6 @@ NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_DEPOSIT=https://api.testnet.verana.networ
 NEXT_PUBLIC_VERANA_REST_ENDPOINT_DID=https://api.testnet.verana.network/verana/dd/v1
 NEXT_PUBLIC_VERANA_REST_ENDPOINT_TRUST_REGISTRY=https://api.testnet.verana.network/verana/tr/v1
 NEXT_PUBLIC_VERANA_REST_ENDPOINT_CREDENTIAL_SCHEMA=https://api.testnet.verana.network/verana/cs/v1
-NEXT_PUBLIC_VERANA_REST_ENDPOINT_PERM=https://idx.testnet.verana.network/verana/perm/v1
 NEXT_PUBLIC_VERANA_SIGN_DIRECT_MODE=false
 NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
 ```
