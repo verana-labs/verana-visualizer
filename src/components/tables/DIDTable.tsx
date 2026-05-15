@@ -2,7 +2,7 @@
 
 import { DID } from '@/types'
 import { convertUvnaToVna } from '@/lib/api'
-import { useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 type SortField = 'did' | 'controller' | 'deposit' | 'created' | 'modified' | 'exp'
 type SortDirection = 'asc' | 'desc'
@@ -10,9 +10,10 @@ type SortDirection = 'asc' | 'desc'
 interface DIDTableProps {
   dids: DID[]
   isSearchResult?: boolean
+  selectedDid?: string
 }
 
-export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps) {
+export default function DIDTable({ dids, isSearchResult = false, selectedDid }: DIDTableProps) {
   const [selectedDID, setSelectedDID] = useState<DID | null>(null)
   const [sortField, setSortField] = useState<SortField>('did')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
@@ -103,6 +104,25 @@ export default function DIDTable({ dids, isSearchResult = false }: DIDTableProps
       return 0
     })
   }, [dids, sortField, sortDirection])
+
+  useEffect(() => {
+    if (!selectedDid) {
+      setSelectedDID(null)
+      return
+    }
+
+    const exactMatch = dids.find((did) => did.did === selectedDid)
+    if (exactMatch) {
+      setSelectedDID(exactMatch)
+      return
+    }
+
+    const tail = selectedDid.toLowerCase().split(':').pop()
+    const matches = tail
+      ? dids.filter((did) => did.did.toLowerCase().endsWith(`:${tail}`))
+      : []
+    setSelectedDID(matches.length === 1 ? matches[0] : null)
+  }, [dids, selectedDid])
 
   const isExpired = (expDate: string) => {
     return new Date(expDate) < new Date()

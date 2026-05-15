@@ -155,6 +155,10 @@ NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
 ```
 
 - `NEXT_PUBLIC_BASE_URL` is the full URL where the application will be hosted (used for asset prefixing and base paths)
+- `NEXT_PUBLIC_API_ENDPOINT` is the Verana REST API (trust registries, credential schemas, DIDs)
+- `NEXT_PUBLIC_RPC_ENDPOINT` is the Tendermint RPC endpoint (blocks, chain info)
+- `NEXT_PUBLIC_IDX_ENDPOINT` is the Verana indexer, used for permission lookups (e.g. permission card deep links) and ecosystem metrics
+- `NEXT_PUBLIC_RESOLVER_ENDPOINT` is the universal DID resolver
 - Logo file is expected at `public/logo.svg`
 - These defaults are set in `Dockerfile` and Helm `values.yaml` for convenience
 

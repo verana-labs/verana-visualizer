@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { LayoutWrapper } from '@/components/layout'
 import { SearchForm } from '@/components/search'
 import { DIDTable } from '@/components/tables'
@@ -8,7 +9,17 @@ import { ResultsSection } from '@/components/search'
 import { fetchDIDList } from '@/lib/api'
 import { DID } from '@/types'
 
-export default function DIDDirectoryPage() {
+const didMatchesQuery = (did: DID, query: string) => {
+  const q = query.trim().toLowerCase()
+  if (!q) return true
+  return did.did.toLowerCase().includes(q) || did.controller.toLowerCase().includes(q)
+}
+
+function DIDDirectoryContent() {
+  const searchParams = useSearchParams()
+  const didParam = searchParams.get('did') ?? ''
+  const controllerParam = searchParams.get('controller') ?? ''
+  const initialQuery = didParam || controllerParam
   const [dids, setDids] = useState<DID[]>([])
   const [filteredDids, setFilteredDids] = useState<DID[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -22,7 +33,12 @@ export default function DIDDirectoryPage() {
         setIsLoading(true)
         const response = await fetchDIDList()
         setDids(response.dids)
-        setFilteredDids(response.dids)
+        if (initialQuery) {
+          setSearchTerm(initialQuery)
+          setFilteredDids(response.dids.filter((did) => didMatchesQuery(did, initialQuery)))
+        } else {
+          setFilteredDids(response.dids)
+        }
         setError(null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load DIDs')
@@ -33,7 +49,7 @@ export default function DIDDirectoryPage() {
     }
 
     loadDIDs()
-  }, [])
+  }, [initialQuery])
 
   const handleSearch = (searchTerm: string) => {
     setSearchTerm(searchTerm)
@@ -42,10 +58,7 @@ export default function DIDDirectoryPage() {
     if (!searchTerm.trim()) {
       setFilteredDids(dids)
     } else {
-      const filtered = dids.filter(did => 
-        did.did.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        did.controller.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      const filtered = dids.filter((did) => didMatchesQuery(did, searchTerm))
       setFilteredDids(filtered)
     }
     
@@ -58,7 +71,13 @@ export default function DIDDirectoryPage() {
       subtitle="Explore and manage decentralized identifiers"
     >
       <div className="p-6">
-        <SearchForm onSearch={handleSearch} isLoading={isSearching} />
+        <SearchForm
+          onSearch={handleSearch}
+          isLoading={isSearching}
+          initialValue={initialQuery}
+          title="Search DID Directory"
+          placeholder="Enter a DID or controller address"
+        />
         
         {isLoading ? (
           <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
@@ -102,11 +121,20 @@ export default function DIDDirectoryPage() {
           <DIDTable 
             dids={filteredDids} 
             isSearchResult={!!searchTerm}
+            selectedDid={didParam}
           />
         )}
         
         {!isLoading && !error && filteredDids.length === 0 && !searchTerm && <ResultsSection />}
       </div>
     </LayoutWrapper>
+  )
+}
+
+export default function DIDDirectoryPage() {
+  return (
+    <Suspense fallback={null}>
+      <DIDDirectoryContent />
+    </Suspense>
   )
 }

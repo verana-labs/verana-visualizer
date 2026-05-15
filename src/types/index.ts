@@ -185,6 +185,41 @@ export interface DIDListResponse {
   dids: DID[]
 }
 
+export interface Permission {
+  id: string
+  schema_id: string
+  type: string
+  did: string
+  grantee: string
+  created_by: string
+  created: string
+  modified: string
+  modified_by: string
+  extended?: string
+  extended_by?: string
+  effective_from?: string
+  effective_until?: string
+  country?: string
+  validation_fees?: string
+  issuance_fees?: string
+  verification_fees?: string
+  deposit?: string
+  validator_perm_id?: string
+  vp_state?: string
+  vp_last_state_change?: string
+  vp_current_fees?: string
+  vp_current_deposit?: string
+  vp_summary_digest_sri?: string
+  vp_exp?: string
+  perm_state?: string
+  issued?: string
+  verified?: string
+}
+
+export interface PermissionResponse {
+  permission: Permission
+}
+
 export interface SupplyResponse {
   supply: Array<{
     denom: string

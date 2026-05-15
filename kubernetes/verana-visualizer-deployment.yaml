@@ -47,6 +47,8 @@ spec:
           value: "${NEXT_PUBLIC_VERANA_REST_ENDPOINT}"
         - name: NEXT_PUBLIC_RPC_ENDPOINT
           value: "${NEXT_PUBLIC_VERANA_RPC_ENDPOINT}"
+        - name: NEXT_PUBLIC_IDX_ENDPOINT
+          value: "${NEXT_PUBLIC_IDX_ENDPOINT}"
         - name: NEXT_PUBLIC_APP_NAME
           value: "Verana Visualizer"
         - name: NEXT_PUBLIC_APP_LOGO

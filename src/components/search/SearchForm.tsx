@@ -1,14 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface SearchFormProps {
   onSearch: (searchTerm: string) => void
   isLoading?: boolean
+  initialValue?: string
+  title?: string
+  placeholder?: string
 }
 
-export default function SearchForm({ onSearch, isLoading = false }: SearchFormProps) {
-  const [searchTerm, setSearchTerm] = useState('')
+export default function SearchForm({
+  onSearch,
+  isLoading = false,
+  initialValue = '',
+  title = 'Search Trust Registry',
+  placeholder = 'Enter Trust Registry DID (e.g., did:example:184a2fddab1b3d505d477adbf0643446)'
+}: SearchFormProps) {
+  const [searchTerm, setSearchTerm] = useState(initialValue)
+
+  useEffect(() => {
+    setSearchTerm(initialValue)
+  }, [initialValue])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,7 +38,7 @@ export default function SearchForm({ onSearch, isLoading = false }: SearchFormPr
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 mb-8">
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        Search Trust Registry
+        {title}
       </h2>
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="flex-1">
@@ -33,7 +46,7 @@ export default function SearchForm({ onSearch, isLoading = false }: SearchFormPr
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Enter Trust Registry DID (e.g., did:example:184a2fddab1b3d505d477adbf0643446)"
+            placeholder={placeholder}
             className="w-full px-4 py-2 border border-gray-300 dark:border-dark-border rounded-lg focus:ring-2 focus:ring-verana-accent focus:border-transparent bg-white dark:bg-dark-surface text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>

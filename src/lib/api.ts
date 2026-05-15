@@ -8,6 +8,7 @@ import {
   GenesisResponse,
   DID,
   DIDListResponse,
+  PermissionResponse,
   SupplyResponse,
   InflationResponse,
   MintParamsResponse,
@@ -27,47 +28,64 @@ const getApiEndpoint = () =>
   env('NEXT_PUBLIC_API_ENDPOINT') || process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
 const getRpcEndpoint = () =>
   env('NEXT_PUBLIC_RPC_ENDPOINT') || process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://rpc.testnet.verana.network'
+const getIdxEndpoint = () =>
+  env('NEXT_PUBLIC_IDX_ENDPOINT') || process.env.NEXT_PUBLIC_IDX_ENDPOINT || 'https://idx.testnet.verana.network'
+
+async function fetchJSON<T>(url: string, errorContext: string, init?: RequestInit): Promise<T> {
+  let response: Response
+  try {
+    response = await fetch(url, init)
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err)
+    throw new Error(`Failed to ${errorContext}: network error (${reason})`)
+  }
+
+  if (!response.ok) {
+    let detail = response.statusText
+    try {
+      const body = (await response.text()).trim()
+      if (body) detail = detail ? `${detail} — ${body.slice(0, 300)}` : body.slice(0, 300)
+    } catch {}
+    throw new Error(`Failed to ${errorContext}: ${response.status} ${detail}`.trim())
+  }
+
+  if (response.status === 204) {
+    throw new Error(`Failed to ${errorContext}: server returned 204 No Content`)
+  }
+
+  try {
+    return (await response.json()) as T
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err)
+    throw new Error(`Failed to ${errorContext}: invalid JSON response (${reason})`)
+  }
+}
 
 export async function fetchTrustRegistry(trId: string): Promise<ApiResponse<{ trust_registry: TrustRegistry }>> {
-  const response = await fetch(`${getApiEndpoint()}/verana/tr/v1/get/${trId}`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch trust registry: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/verana/tr/v1/get/${trId}`, 'fetch trust registry')
 }
 
 export async function fetchCredentialSchemas(trId: string): Promise<ApiResponse<{ schemas: CredentialSchema[] }>> {
-  const response = await fetch(`${getApiEndpoint()}/verana/tr/v1/schemas/${trId}`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch credential schemas: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/verana/tr/v1/schemas/${trId}`, 'fetch credential schemas')
 }
 
 export async function fetchTrustRegistryList(maxSize: number = 100): Promise<TrustRegistryListResponse> {
-  const response = await fetch(`${getApiEndpoint()}/verana/tr/v1/list?response_max_size=${maxSize}`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch trust registry list: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(
+    `${getApiEndpoint()}/verana/tr/v1/list?response_max_size=${maxSize}`,
+    'fetch trust registry list'
+  )
 }
 
 export function convertUvnaToVna(uvna: string): string {
   const uvnaNumber = parseInt(uvna, 10)
   const vna = uvnaNumber / 1000000
-  
+
   if (vna >= 1000) {
-    return vna.toFixed(0) 
+    return vna.toFixed(0)
   } else if (vna >= 100) {
     return vna.toFixed(1)
   } else if (vna >= 10) {
-    return vna.toFixed(2) 
+    return vna.toFixed(2)
   } else {
     return vna.toFixed(2)
   }
@@ -81,33 +99,15 @@ export function formatSnakeCaseToTitleCase(str: string): string {
 }
 
 export async function fetchAbciInfo(): Promise<AbciInfoResponse> {
-  const response = await fetch(`${getRpcEndpoint()}/abci_info`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ABCI info: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getRpcEndpoint()}/abci_info`, 'fetch ABCI info')
 }
 
 export async function fetchLatestBlock(): Promise<BlockResponse> {
-  const response = await fetch(`${getRpcEndpoint()}/block`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch latest block: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getRpcEndpoint()}/block`, 'fetch latest block')
 }
 
 export async function fetchGenesis(): Promise<GenesisResponse> {
-  const response = await fetch(`${getRpcEndpoint()}/genesis`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch genesis: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getRpcEndpoint()}/genesis`, 'fetch genesis')
 }
 
 export function formatBlockHeight(height: string): string {
@@ -125,103 +125,50 @@ export function formatTotalSupply(amount: string): string {
 }
 
 export async function fetchDIDList(): Promise<DIDListResponse> {
-  const response = await fetch(`${getApiEndpoint()}/verana/dd/v1/list`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch DID list: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/verana/dd/v1/list`, 'fetch DID list')
+}
+
+export async function fetchPermission(permissionId: string): Promise<PermissionResponse> {
+  return fetchJSON(
+    `${getIdxEndpoint()}/verana/perm/v1/get/${permissionId}`,
+    `fetch permission ${permissionId}`
+  )
 }
 
 export async function fetchSupply(): Promise<SupplyResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/bank/v1beta1/supply`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch supply: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/bank/v1beta1/supply`, 'fetch supply')
 }
 
 export async function fetchInflation(): Promise<InflationResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/mint/v1beta1/inflation`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch inflation: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/mint/v1beta1/inflation`, 'fetch inflation')
 }
 
 export async function fetchMintParams(): Promise<MintParamsResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/mint/v1beta1/params`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch mint params: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/mint/v1beta1/params`, 'fetch mint params')
 }
 
 export async function fetchStakingPool(): Promise<StakingPoolResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch staking pool: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool`, 'fetch staking pool')
 }
 
 export async function fetchCommunityPool(): Promise<CommunityPoolResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch community pool: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/staking/v1beta1/pool`, 'fetch community pool')
 }
 
 export async function fetchValidators(): Promise<ValidatorsResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/staking/v1beta1/validators`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch validators: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/staking/v1beta1/validators`, 'fetch validators')
 }
 
 export async function fetchProposals(): Promise<ProposalsResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/gov/v1/proposals`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch proposals: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/gov/v1/proposals`, 'fetch proposals')
 }
 
 export async function fetchDenomsMetadata(): Promise<DenomsMetadataResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/bank/v1beta1/denoms_metadata`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch denoms metadata: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getApiEndpoint()}/cosmos/bank/v1beta1/denoms_metadata`, 'fetch denoms metadata')
 }
 
 export async function fetchHeader(): Promise<HeaderResponse> {
-  const response = await fetch(`${getRpcEndpoint()}/header`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch header: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(`${getRpcEndpoint()}/header`, 'fetch header')
 }
 
 // ============================================
@@ -232,13 +179,10 @@ export async function fetchHeader(): Promise<HeaderResponse> {
  * Fetch a single proposal by ID
  */
 export async function fetchProposal(proposalId: string): Promise<ProposalResponse> {
-  const response = await fetch(`${getApiEndpoint()}/cosmos/gov/v1/proposals/${proposalId}`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch proposal ${proposalId}: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(
+    `${getApiEndpoint()}/cosmos/gov/v1/proposals/${proposalId}`,
+    `fetch proposal ${proposalId}`
+  )
 }
 
 /**
@@ -246,26 +190,20 @@ export async function fetchProposal(proposalId: string): Promise<ProposalRespons
  * Used to get execution time for upgrade proposals
  */
 export async function fetchBlockAtHeight(height: string | number): Promise<BlockAtHeightResponse> {
-  const response = await fetch(`${getRpcEndpoint()}/block?height=${height}`)
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch block at height ${height}: ${response.statusText}`)
-  }
-  
-  return response.json()
+  return fetchJSON(
+    `${getRpcEndpoint()}/block?height=${height}`,
+    `fetch block at height ${height}`
+  )
 }
 
 /**
  * Get current chain height from RPC status
  */
 export async function fetchCurrentHeight(): Promise<string> {
-  const response = await fetch(`${getRpcEndpoint()}/status`)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch chain status: ${response.statusText}`)
-  }
-
-  const data = await response.json()
+  const data = await fetchJSON<{ result?: { sync_info?: { latest_block_height?: string } } }>(
+    `${getRpcEndpoint()}/status`,
+    'fetch chain status'
+  )
   return data.result?.sync_info?.latest_block_height || '0'
 }
 
@@ -275,11 +213,5 @@ export async function fetchCurrentHeight(): Promise<string> {
 
 export async function fetchEcosystemMetrics(atBlockHeight?: number): Promise<EcosystemMetrics> {
   const params = atBlockHeight ? `?height=${atBlockHeight}` : ''
-  const response = await fetch(`/api/ecosystem/metrics${params}`)
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ecosystem metrics: ${response.statusText}`)
-  }
-
-  return response.json()
+  return fetchJSON(`/api/ecosystem/metrics${params}`, 'fetch ecosystem metrics')
 }
