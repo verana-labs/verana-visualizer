@@ -696,7 +696,7 @@ flowchart TD
 ```mermaid
 flowchart TB
     subgraph Dev["Development"]
-        DevServer[npm run dev<br/>localhost:3000]
+        DevServer[pnpm dev<br/>localhost:3000]
     end
     
     subgraph Build["Build Process"]

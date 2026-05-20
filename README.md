@@ -104,17 +104,18 @@ The application is built for real-world operations: dark/light theme, responsive
 
 Prerequisites:
 
-- Node.js 18+
-- npm
+- Node.js 22+
+- pnpm (via Corepack — the repo pins `pnpm@9.15.9` through the `packageManager` field; run `corepack enable` once)
 
 Clone and run:
 
 ```bash
 git clone https://github.com/verana-labs/verana-visualizer.git
 cd verana-visualizer
-npm install
+corepack enable
+pnpm install
 cp .env.example .env.local
-npm run dev
+pnpm dev
 ```
 
 Then open http://localhost:3000
@@ -168,11 +169,13 @@ NEXT_PUBLIC_SESSION_LIFETIME_SECONDS=86400
 
 Common scripts:
 
-- `npm run dev` – start dev server with HMR
-- `npm run build` – production build
-- `npm run start` – start the production server locally
-- `npm run lint` – run ESLint
-- `npm test` – run unit tests with coverage (Vitest)
+- `pnpm dev` – start dev server with HMR
+- `pnpm build` – production build
+- `pnpm start` – start the production server locally
+- `pnpm check-format` – lint & format check (Biome)
+- `pnpm fix-format` – auto-fix formatting and lint (Biome)
+- `pnpm check-types` – TypeScript type check (tsc)
+- `pnpm test` – run unit tests with coverage (Vitest)
 
 When developing UI or data formats:
 
