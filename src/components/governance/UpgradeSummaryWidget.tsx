@@ -1,24 +1,16 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import {
-  Proposal,
-  UpgradeProposalData,
-  UpgradeExecutionInfo,
-  VotingSummary
-} from '@/types'
+import { useEffect, useMemo, useState } from 'react'
+import { formatBlockHeight } from '@/lib/api'
 import {
   buildUpgradeProposalData,
-  formatProposalStatus,
+  extractBinaryVersion,
   formatTimestamp,
-  formatDate,
-  formatNumber,
   formatVnaAmount,
   getExecutionStatusColor,
-  extractBinaryVersion,
-  parsePlanInfo
+  parsePlanInfo,
 } from '@/lib/governanceUtils'
-import { formatBlockHeight } from '@/lib/api'
+import { Proposal, UpgradeExecutionInfo, UpgradeProposalData, VotingSummary } from '@/types'
 
 interface UpgradeSummaryWidgetProps {
   proposal: Proposal
@@ -27,17 +19,14 @@ interface UpgradeSummaryWidgetProps {
 
 /**
  * Upgrade Summary Widget
- * 
+ *
  * Displays comprehensive information about software upgrade proposals including:
  * - Upgrade plan details
  * - Execution status with block time
  * - Voting summary with turnout percentage
  * - Timeline of proposal lifecycle
  */
-export default function UpgradeSummaryWidget({
-  proposal,
-  className = ''
-}: UpgradeSummaryWidgetProps) {
+export default function UpgradeSummaryWidget({ proposal, className = '' }: UpgradeSummaryWidgetProps) {
   const [upgradeData, setUpgradeData] = useState<UpgradeProposalData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -93,7 +82,12 @@ export default function UpgradeSummaryWidget({
         <div className="text-center py-8">
           <div className="w-12 h-12 mx-auto mb-4 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
             <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <p className="text-gray-500 dark:text-gray-400">{error}</p>
@@ -125,10 +119,16 @@ export default function UpgradeSummaryWidget({
               <p className="text-white/80 text-sm">Software Upgrade Proposal</p>
             </div>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors.bg} ${statusColors.text} ${statusColors.darkBg} ${statusColors.darkText}`}>
-            {execution.status === 'executed' ? 'Executed' : 
-             execution.status === 'pending' ? 'Pending' : 
-             execution.status === 'not_executed' ? 'Not Executed' : 'Unknown'}
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors.bg} ${statusColors.text} ${statusColors.darkBg} ${statusColors.darkText}`}
+          >
+            {execution.status === 'executed'
+              ? 'Executed'
+              : execution.status === 'pending'
+                ? 'Pending'
+                : execution.status === 'not_executed'
+                  ? 'Not Executed'
+                  : 'Unknown'}
           </span>
         </div>
       </div>
@@ -141,7 +141,12 @@ export default function UpgradeSummaryWidget({
             value={messageType || 'N/A'}
             icon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
               </svg>
             }
             mono
@@ -151,7 +156,12 @@ export default function UpgradeSummaryWidget({
             value={authority || 'N/A'}
             icon={
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                />
               </svg>
             }
             mono
@@ -160,20 +170,26 @@ export default function UpgradeSummaryWidget({
 
         {/* Upgrade Plan Section */}
         {plan && (
-          <Section title="Upgrade Plan" icon={
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-            </svg>
-          }>
+          <Section
+            title="Upgrade Plan"
+            icon={
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+            }
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InfoRow label="Plan Name" value={plan.name || 'N/A'} highlight />
               <InfoRow label="Plan Height" value={plan.height ? formatBlockHeight(plan.height) : 'N/A'} mono />
-              {binaryVersion && (
-                <InfoRow label="Binary Version" value={binaryVersion} mono highlight />
-              )}
-              <InfoRow 
-                label="Scheduled Time" 
-                value={plan.time && plan.time !== '0001-01-01T00:00:00Z' ? formatTimestamp(plan.time) : 'Height-based'} 
+              {binaryVersion && <InfoRow label="Binary Version" value={binaryVersion} mono highlight />}
+              <InfoRow
+                label="Scheduled Time"
+                value={plan.time && plan.time !== '0001-01-01T00:00:00Z' ? formatTimestamp(plan.time) : 'Height-based'}
               />
             </div>
 
@@ -200,11 +216,19 @@ export default function UpgradeSummaryWidget({
         )}
 
         {/* Timeline Section */}
-        <Section title="Timeline" icon={
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        }>
+        <Section
+          title="Timeline"
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          }
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InfoRow label="Submitted At" value={formatTimestamp(proposal.submit_time)} />
             <InfoRow label="Deposit End" value={formatTimestamp(proposal.deposit_end_time)} />
@@ -214,11 +238,19 @@ export default function UpgradeSummaryWidget({
         </Section>
 
         {/* Voting Section */}
-        <Section title="Voting Summary" icon={
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
-        }>
+        <Section
+          title="Voting Summary"
+          icon={
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+          }
+        >
           <VotingSummaryDisplay voting={voting} />
         </Section>
       </div>
@@ -230,11 +262,7 @@ export default function UpgradeSummaryWidget({
 // Sub-components
 // ============================================
 
-function Section({ title, icon, children }: { 
-  title: string
-  icon: React.ReactNode
-  children: React.ReactNode 
-}) {
+function Section({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
   return (
     <div>
       <div className="flex items-center space-x-2 mb-4">
@@ -246,13 +274,13 @@ function Section({ title, icon, children }: {
   )
 }
 
-function InfoCard({ 
-  label, 
-  value, 
-  icon, 
+function InfoCard({
+  label,
+  value,
+  icon,
   mono = false,
-  truncate = false 
-}: { 
+  truncate = false,
+}: {
   label: string
   value: string
   icon: React.ReactNode
@@ -265,19 +293,21 @@ function InfoCard({
         {icon}
         <span className="text-xs font-medium uppercase">{label}</span>
       </div>
-      <p className={`text-sm text-gray-900 dark:text-white ${mono ? 'font-mono' : ''} ${truncate ? 'truncate' : 'break-all'}`}>
+      <p
+        className={`text-sm text-gray-900 dark:text-white ${mono ? 'font-mono' : ''} ${truncate ? 'truncate' : 'break-all'}`}
+      >
         {value}
       </p>
     </div>
   )
 }
 
-function InfoRow({ 
-  label, 
-  value, 
+function InfoRow({
+  label,
+  value,
   mono = false,
-  highlight = false 
-}: { 
+  highlight = false,
+}: {
   label: string
   value: string
   mono?: boolean
@@ -286,7 +316,9 @@ function InfoRow({
   return (
     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
       <span className="text-sm text-gray-500 dark:text-gray-400">{label}:</span>
-      <span className={`text-sm ${highlight ? 'font-semibold' : ''} ${mono ? 'font-mono' : ''} text-gray-900 dark:text-white`}>
+      <span
+        className={`text-sm ${highlight ? 'font-semibold' : ''} ${mono ? 'font-mono' : ''} text-gray-900 dark:text-white`}
+      >
         {value}
       </span>
     </div>
@@ -294,46 +326,48 @@ function InfoRow({
 }
 
 function ExecutionStatusDisplay({ execution }: { execution: UpgradeExecutionInfo }) {
-  const statusColors = getExecutionStatusColor(execution.status)
-
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center space-x-2">
-          <span className={`w-2 h-2 rounded-full ${
-            execution.status === 'executed' ? 'bg-green-500' :
-            execution.status === 'pending' ? 'bg-verana-accent animate-pulse' :
-            execution.status === 'not_executed' ? 'bg-yellow-500' : 'bg-gray-500'
-          }`}></span>
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            Executed At
-          </span>
+          <span
+            className={`w-2 h-2 rounded-full ${
+              execution.status === 'executed'
+                ? 'bg-green-500'
+                : execution.status === 'pending'
+                  ? 'bg-verana-accent animate-pulse'
+                  : execution.status === 'not_executed'
+                    ? 'bg-yellow-500'
+                    : 'bg-gray-500'
+            }`}
+          ></span>
+          <span className="text-sm font-medium text-gray-900 dark:text-white">Executed At</span>
         </div>
-        <span className={`text-sm font-semibold ${
-          execution.status === 'executed' ? 'text-green-600 dark:text-green-400' :
-          execution.status === 'pending' ? 'text-verana-accent dark:text-verana-accent/80' :
-          'text-gray-600 dark:text-gray-400'
-        }`}>
+        <span
+          className={`text-sm font-semibold ${
+            execution.status === 'executed'
+              ? 'text-green-600 dark:text-green-400'
+              : execution.status === 'pending'
+                ? 'text-verana-accent dark:text-verana-accent/80'
+                : 'text-gray-600 dark:text-gray-400'
+          }`}
+        >
           {execution.status === 'executed' && execution.executedAt
             ? formatTimestamp(execution.executedAt)
             : execution.status === 'pending'
-            ? 'Awaiting Execution'
-            : 'Not Executed'}
+              ? 'Awaiting Execution'
+              : 'Not Executed'}
         </span>
       </div>
 
       {/* Context Message */}
-      <p className="text-xs text-gray-500 dark:text-gray-400 italic">
-        {execution.message}
-      </p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 italic">{execution.message}</p>
 
       {/* Current Height (if available) */}
       {execution.currentHeight && (
         <div className="flex justify-between text-xs">
           <span className="text-gray-500 dark:text-gray-400">Current Height:</span>
-          <span className="font-mono text-gray-900 dark:text-white">
-            {formatBlockHeight(execution.currentHeight)}
-          </span>
+          <span className="font-mono text-gray-900 dark:text-white">{formatBlockHeight(execution.currentHeight)}</span>
         </div>
       )}
     </div>
@@ -345,7 +379,7 @@ function VotingSummaryDisplay({ voting }: { voting: VotingSummary }) {
     { label: 'Yes', value: voting.yesCount, color: 'bg-green-500' },
     { label: 'No', value: voting.noCount, color: 'bg-red-500' },
     { label: 'Abstain', value: voting.abstainCount, color: 'bg-gray-400' },
-    { label: 'No With Veto', value: voting.noWithVetoCount, color: 'bg-orange-500' }
+    { label: 'No With Veto', value: voting.noWithVetoCount, color: 'bg-orange-500' },
   ]
 
   // Calculate percentages for vote bar
@@ -449,4 +483,3 @@ function BinariesTable({ binaries }: { binaries: Record<string, string | undefin
     </div>
   )
 }
-

@@ -1,16 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { ContributorsSection, RepositoryCard, SkeletonCard } from '@/components/developer-activity'
 import { LayoutWrapper } from '@/components/layout'
-import { RepositoryCard, ContributorsSection, SkeletonCard } from '@/components/developer-activity'
-import { RepositoryStats, AggregatedContributor } from '@/types'
-import { 
-  fetchOrganizationRepos, 
-  fetchRepositoryStats,
-  aggregateContributors,
-  hasGitHubToken 
-} from '@/lib/githubApi'
-
+import { aggregateContributors, fetchOrganizationRepos, fetchRepositoryStats, hasGitHubToken } from '@/lib/githubApi'
+import { AggregatedContributor, RepositoryStats } from '@/types'
 
 const ORGANIZATION = 'verana-labs'
 
@@ -32,12 +26,12 @@ export default function DeveloperActivityPage() {
       setContributors([])
 
       console.log(`Fetching repositories from ${ORGANIZATION} organization...`)
-      
+
       // Fetch all repositories
       setLoadingMessage('Fetching repositories...')
       setLoadingProgress(10)
       const repos = await fetchOrganizationRepos(ORGANIZATION)
-      
+
       if (repos.length === 0) {
         throw new Error('No repositories found for the organization')
       }
@@ -45,11 +39,11 @@ export default function DeveloperActivityPage() {
       console.log(`Found ${repos.length} repositories`)
       setTotalRepos(repos.length)
       setLoadingProgress(20)
-      
+
       // Progressive loading: Show repos as they load
       setLoadingMessage(`Loading ${repos.length} repositories...`)
       const validStats: RepositoryStats[] = []
-      
+
       // Process repos in batches for better UX (larger batches = faster but uses more rate limit)
       const batchSize = 5 // Fetch 5 repos at a time
       for (let i = 0; i < repos.length; i += batchSize) {
@@ -57,38 +51,35 @@ export default function DeveloperActivityPage() {
         const batchNumber = Math.floor(i / batchSize) + 1
         const totalBatches = Math.ceil(repos.length / batchSize)
         setLoadingMessage(`Loading batch ${batchNumber}/${totalBatches} (${batch.length} repos)...`)
-        
+
         // Fetch batch in parallel
-        const batchPromises = batch.map(repo => 
-          fetchRepositoryStats(repo.owner.login, repo.name)
-        )
+        const batchPromises = batch.map((repo) => fetchRepositoryStats(repo.owner.login, repo.name))
         const batchStats = await Promise.all(batchPromises)
-        
+
         // Add valid stats to array
-        batchStats.forEach(stat => {
+        batchStats.forEach((stat) => {
           if (stat) {
             validStats.push(stat)
           }
         })
-        
+
         // Update progress and show partial results
         const progress = 20 + ((i + batch.length) / repos.length) * 70
         setLoadingProgress(progress)
-        
+
         // Sort and update UI progressively
         const sortedStats = [...validStats].sort((a, b) => b.commitsThisMonth - a.commitsThisMonth)
         setRepoStats(sortedStats)
-        
+
         // Aggregate contributors progressively
         const partialContributors = aggregateContributors(sortedStats)
         setContributors(partialContributors)
       }
-      
+
       console.log(`Successfully fetched stats for ${validStats.length} repositories`)
-      
+
       setLoadingProgress(100)
       setLoadingMessage('Complete!')
-      
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load developer activity'
       setError(errorMessage)
@@ -107,22 +98,16 @@ export default function DeveloperActivityPage() {
 
   // Calculate overall statistics
   const totalCommits = repoStats.reduce((sum, repo) => sum + repo.totalCommits, 0)
-  const totalStars = repoStats.reduce((sum, repo) => sum + repo.stars, 0)
-  const activeRepos = repoStats.filter(repo => repo.commitsThisMonth > 0).length
+  const activeRepos = repoStats.filter((repo) => repo.commitsThisMonth > 0).length
 
   return (
-    <LayoutWrapper 
-      title="Developer Activity" 
-      subtitle="Real-time GitHub Activity from Verana Labs"
-    >
+    <LayoutWrapper title="Developer Activity" subtitle="Real-time GitHub Activity from Verana Labs">
       <div className="p-6">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Developer Activity
-              </h2>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Developer Activity</h2>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
                 Real-time development activity from {ORGANIZATION} with 12-week commit graphs
               </p>
@@ -133,7 +118,12 @@ export default function DeveloperActivityPage() {
                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-verana-accent hover:bg-opacity-90 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
                 Refresh
               </button>
@@ -144,38 +134,45 @@ export default function DeveloperActivityPage() {
           {error && (
             <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <div className="flex-1">
                   <p className="text-red-600 dark:text-red-400 font-medium">Error loading data</p>
-                  <div className="text-red-600 dark:text-red-400 text-sm mt-1 whitespace-pre-line">
-                    {error}
-                  </div>
+                  <div className="text-red-600 dark:text-red-400 text-sm mt-1 whitespace-pre-line">{error}</div>
                   {(error.includes('not found') || error.includes('forbidden') || error.includes('403')) && (
                     <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/40 rounded-lg">
-                      <p className="text-red-700 dark:text-red-300 text-sm font-medium mb-2">
-                        💡 Quick Fixes:
-                      </p>
+                      <p className="text-red-700 dark:text-red-300 text-sm font-medium mb-2">💡 Quick Fixes:</p>
                       <ul className="text-red-600 dark:text-red-400 text-xs space-y-1 list-disc list-inside">
                         <li>
-                          Verify the organization name: Update <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">ORGANIZATION</code> in{' '}
-                          <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">page.tsx</code> (currently: &quot;{ORGANIZATION}&quot;)
+                          Verify the organization name: Update{' '}
+                          <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">ORGANIZATION</code> in{' '}
+                          <code className="bg-red-200 dark:bg-red-800 px-1 py-0.5 rounded">page.tsx</code> (currently:
+                          &quot;{ORGANIZATION}&quot;)
                         </li>
                         <li>
-                          Try a known organization like &quot;microsoft&quot;, &quot;facebook&quot;, or &quot;vercel&quot;
+                          Try a known organization like &quot;microsoft&quot;, &quot;facebook&quot;, or
+                          &quot;vercel&quot;
                         </li>
                         {!hasGitHubToken() && (
-                          <li>
-                            Add a GitHub token to access more organizations (see GITHUB_TOKEN_SETUP.md)
-                          </li>
+                          <li>Add a GitHub token to access more organizations (see GITHUB_TOKEN_SETUP.md)</li>
                         )}
                         {hasGitHubToken() && (
                           <li>
                             Check your token at{' '}
-                            <a 
-                              href="https://github.com/settings/tokens" 
-                              target="_blank" 
+                            <a
+                              href="https://github.com/settings/tokens"
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="underline hover:no-underline"
                             >
@@ -199,17 +196,21 @@ export default function DeveloperActivityPage() {
 
           {/* Loading State - Compact when showing partial results */}
           {isLoading && (
-            <div className={`mt-4 rounded-lg transition-all duration-300 ${
-              repoStats.length > 0 
-                ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50' 
-                : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-            }`}>
+            <div
+              className={`mt-4 rounded-lg transition-all duration-300 ${
+                repoStats.length > 0
+                  ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50'
+                  : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+              }`}
+            >
               <div className="flex items-center gap-3">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 flex-shrink-0"></div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-blue-700 dark:text-blue-300 truncate ${
-                    repoStats.length > 0 ? 'text-sm' : 'font-medium'
-                  }`}>
+                  <p
+                    className={`text-blue-700 dark:text-blue-300 truncate ${
+                      repoStats.length > 0 ? 'text-sm' : 'font-medium'
+                    }`}
+                  >
                     {loadingMessage}
                   </p>
                   {repoStats.length === 0 && (
@@ -220,7 +221,7 @@ export default function DeveloperActivityPage() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <div className="w-32 bg-blue-200 dark:bg-blue-800 rounded-full h-1.5">
-                    <div 
+                    <div
                       className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
                       style={{ width: `${loadingProgress}%` }}
                     ></div>
@@ -246,7 +247,12 @@ export default function DeveloperActivityPage() {
                 </div>
                 <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
                   <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -257,11 +263,18 @@ export default function DeveloperActivityPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">Active Repositories</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{activeRepos} / {repoStats.length}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {activeRepos} / {repoStats.length}
+                  </p>
                 </div>
                 <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
                   <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -276,7 +289,12 @@ export default function DeveloperActivityPage() {
                 </div>
                 <div className="bg-verana-accent/10 dark:bg-verana-accent/20 p-3 rounded-lg">
                   <svg className="w-8 h-8 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
                   </svg>
                 </div>
               </div>
@@ -290,13 +308,18 @@ export default function DeveloperActivityPage() {
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <svg className="w-6 h-6 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"
+                  />
                 </svg>
                 Repositories
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mt-2">
-                {isLoading && totalRepos > 0 
-                  ? `Loading ${repoStats.length} of ${totalRepos} repositories...` 
+                {isLoading && totalRepos > 0
+                  ? `Loading ${repoStats.length} of ${totalRepos} repositories...`
                   : `${repoStats.length} repositories sorted by recent activity`}
               </p>
             </div>
@@ -306,11 +329,12 @@ export default function DeveloperActivityPage() {
               {repoStats.map((repo) => (
                 <RepositoryCard key={repo.name} repo={repo} />
               ))}
-              
+
               {/* Show skeleton cards for remaining repos while loading */}
               {isLoading && totalRepos > repoStats.length && (
                 <>
                   {Array.from({ length: Math.min(6, totalRepos - repoStats.length) }).map((_, idx) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length skeleton placeholders, no stable identity, never reordered
                     <SkeletonCard key={`skeleton-${idx}`} />
                   ))}
                 </>
@@ -320,26 +344,26 @@ export default function DeveloperActivityPage() {
         )}
 
         {/* Contributors Section */}
-        {!isLoading && !error && contributors.length > 0 && (
-          <ContributorsSection contributors={contributors} />
-        )}
+        {!isLoading && !error && contributors.length > 0 && <ContributorsSection contributors={contributors} />}
 
         {/* Empty State */}
         {!isLoading && !error && repoStats.length === 0 && (
           <div className="text-center py-12">
             <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
               No repository data available
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
-              Unable to load repository information at this time.
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Unable to load repository information at this time.</p>
           </div>
         )}
       </div>
     </LayoutWrapper>
   )
 }
-
