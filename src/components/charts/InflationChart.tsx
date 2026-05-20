@@ -1,6 +1,6 @@
 'use client'
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface InflationChartProps {
   data: {
@@ -32,24 +32,22 @@ export default function InflationChart({ data, isLoading }: InflationChartProps)
     <div className="w-full bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
       <div className="mb-4">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">Inflation Rate</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Network inflation rate and annual provisions over time</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Network inflation rate and annual provisions over time
+        </p>
       </div>
-      
+
       <ResponsiveContainer width="100%" height={320}>
         <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
-          <XAxis 
-            dataKey="timestamp" 
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            stroke="#4b5563"
-          />
-          <YAxis 
+          <XAxis dataKey="timestamp" tick={{ fill: '#9ca3af', fontSize: 12 }} stroke="#4b5563" />
+          <YAxis
             yAxisId="left"
             tick={{ fill: '#9ca3af', fontSize: 12 }}
             stroke="#4b5563"
             tickFormatter={(value) => `${(value * 100).toFixed(2)}%`}
           />
-          <YAxis 
+          <YAxis
             yAxisId="right"
             orientation="right"
             tick={{ fill: '#9ca3af', fontSize: 12 }}
@@ -61,7 +59,7 @@ export default function InflationChart({ data, isLoading }: InflationChartProps)
               backgroundColor: '#1f2937',
               border: '1px solid #374151',
               borderRadius: '0.5rem',
-              color: '#f3f4f6'
+              color: '#f3f4f6',
             }}
             formatter={(value: number, name: string) => {
               if (name === 'Inflation Rate') {
@@ -71,25 +69,22 @@ export default function InflationChart({ data, isLoading }: InflationChartProps)
             }}
             labelStyle={{ color: '#9ca3af' }}
           />
-          <Legend 
-            wrapperStyle={{ paddingTop: '20px' }}
-            iconType="circle"
-          />
-          <Line 
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+          <Line
             yAxisId="left"
-            type="monotone" 
-            dataKey="inflationRate" 
-            stroke="#ef4444" 
+            type="monotone"
+            dataKey="inflationRate"
+            stroke="#ef4444"
             strokeWidth={3}
             dot={{ fill: '#ef4444', r: 4 }}
             activeDot={{ r: 6 }}
             name="Inflation Rate"
           />
-          <Line 
+          <Line
             yAxisId="right"
-            type="monotone" 
-            dataKey="annualProvisions" 
-            stroke="#8b5cf6" 
+            type="monotone"
+            dataKey="annualProvisions"
+            stroke="#8b5cf6"
             strokeWidth={3}
             dot={{ fill: '#8b5cf6', r: 4 }}
             activeDot={{ r: 6 }}
@@ -100,4 +95,3 @@ export default function InflationChart({ data, isLoading }: InflationChartProps)
     </div>
   )
 }
-

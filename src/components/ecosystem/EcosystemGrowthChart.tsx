@@ -1,6 +1,6 @@
 'use client'
 
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { EcosystemMetricsDataPoint } from '@/types'
 
 interface EcosystemGrowthChartProps {
@@ -51,28 +51,18 @@ export default function EcosystemGrowthChart({ data, isLoading }: EcosystemGrowt
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
-          <XAxis
-            dataKey="timestamp"
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            stroke="#4b5563"
-          />
-          <YAxis
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            stroke="#4b5563"
-          />
+          <XAxis dataKey="timestamp" tick={{ fill: '#9ca3af', fontSize: 12 }} stroke="#4b5563" />
+          <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} stroke="#4b5563" />
           <Tooltip
             contentStyle={{
               backgroundColor: '#1f2937',
               border: '1px solid #374151',
               borderRadius: '0.5rem',
-              color: '#f3f4f6'
+              color: '#f3f4f6',
             }}
             labelStyle={{ color: '#9ca3af' }}
           />
-          <Legend
-            wrapperStyle={{ paddingTop: '20px' }}
-            iconType="circle"
-          />
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
           <Area
             type="monotone"
             dataKey="activeSchemas"

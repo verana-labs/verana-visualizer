@@ -1,20 +1,20 @@
 /**
  * Governance Utilities
- * 
+ *
  * BigInt-safe arithmetic and helper functions for governance proposal processing.
  * This module handles vote counting, turnout calculations, and execution time logic
  * as specified in the Governance Proposal Upgrade Widget Spec.
  */
 
 import {
+  ParsedPlanInfo,
   Proposal,
-  UpgradePlan,
+  UpgradeBinaries,
   UpgradeExecutionInfo,
   UpgradeExecutionStatus,
-  VotingSummary,
+  UpgradePlan,
   UpgradeProposalData,
-  ParsedPlanInfo,
-  UpgradeBinaries
+  VotingSummary,
 } from '@/types'
 import { fetchBlockAtHeight, fetchCurrentHeight, fetchStakingPool } from './api'
 
@@ -39,7 +39,7 @@ export function isUpgradeProposal(proposal: Proposal): boolean {
     return false
   }
 
-  return proposal.messages.some(msg => {
+  return proposal.messages.some((msg) => {
     const msgType = msg['@type'] || ''
     return msgType === UPGRADE_MESSAGE_TYPE || msgType.includes('MsgSoftwareUpgrade')
   })
@@ -53,10 +53,12 @@ export function getUpgradeMessage(proposal: Proposal) {
     return null
   }
 
-  return proposal.messages.find(msg => {
-    const msgType = msg['@type'] || ''
-    return msgType === UPGRADE_MESSAGE_TYPE || msgType.includes('MsgSoftwareUpgrade')
-  }) || null
+  return (
+    proposal.messages.find((msg) => {
+      const msgType = msg['@type'] || ''
+      return msgType === UPGRADE_MESSAGE_TYPE || msgType.includes('MsgSoftwareUpgrade')
+    }) || null
+  )
 }
 
 /**
@@ -73,7 +75,7 @@ export function extractUpgradePlan(proposal: Proposal): UpgradePlan | undefined 
     height: upgradeMessage.plan.height || '',
     time: upgradeMessage.plan.time || '',
     info: upgradeMessage.plan.info || '',
-    upgraded_client_state: upgradeMessage.plan.upgraded_client_state
+    upgraded_client_state: upgradeMessage.plan.upgraded_client_state,
   }
 }
 
@@ -81,7 +83,7 @@ export function extractUpgradePlan(proposal: Proposal): UpgradePlan | undefined 
  * Fix binary URL format
  * Transforms: https://github.com/.../releases/download/v0.9-dev.7/veranad-v0.9-dev.7-linux-arm64
  * To: https://github.com/.../releases/download/v0.9-dev.7/veranad-linux-arm64
- * 
+ *
  * The correct format is: veranad-{platform} (e.g., veranad-linux-amd64)
  * Invalid format includes version in filename: veranad-{version}-{platform}
  */
@@ -92,7 +94,7 @@ function fixBinaryUrl(url: string): string {
 
   try {
     // Match GitHub release URL pattern
-    const match = url.match(/^(https:\/\/github\.com\/[^\/]+\/[^\/]+\/releases\/download\/)([^\/]+)\/(.+)$/)
+    const match = url.match(/^(https:\/\/github\.com\/[^/]+\/[^/]+\/releases\/download\/)([^/]+)\/(.+)$/)
     if (!match) {
       return url // Not a GitHub release URL, return as-is
     }
@@ -133,7 +135,7 @@ export function parsePlanInfo(infoString: string): ParsedPlanInfo | undefined {
 
   try {
     const parsed = JSON.parse(infoString)
-    
+
     // Fix binary URLs if they exist
     if (parsed.binaries && typeof parsed.binaries === 'object') {
       const fixedBinaries: Record<string, string | undefined> = {}
@@ -146,7 +148,7 @@ export function parsePlanInfo(infoString: string): ParsedPlanInfo | undefined {
       }
       parsed.binaries = fixedBinaries
     }
-    
+
     return parsed as ParsedPlanInfo
   } catch {
     // If not valid JSON, return undefined
@@ -166,16 +168,16 @@ export function extractBinaryVersion(plan: UpgradePlan, proposalTitle?: string):
   if (parsedInfo?.binaries) {
     // Get the first available binary URL
     const binaries = parsedInfo.binaries as UpgradeBinaries
-    const binaryUrl = 
-      binaries['linux/amd64'] || 
-      binaries['linux/arm64'] || 
+    const binaryUrl =
+      binaries['linux/amd64'] ||
+      binaries['linux/arm64'] ||
       binaries['darwin/amd64'] ||
       binaries['darwin/arm64'] ||
-      Object.values(binaries).find(v => v)
+      Object.values(binaries).find((v) => v)
 
     if (binaryUrl && typeof binaryUrl === 'string') {
       // Extract version from URL pattern
-      const versionMatch = 
+      const versionMatch =
         binaryUrl.match(/\/releases\/download\/(v[\d.]+(?:-[a-z]+\.\d+)?)/i) ||
         binaryUrl.match(/veranad-(v[\d.]+(?:-[a-z]+\.\d+)?)/i) ||
         binaryUrl.match(/(v[\d.]+(?:-[a-z]+\.\d+)?)/i)
@@ -226,12 +228,7 @@ export function calculateTotalVotingPower(tally: {
   abstain_count: string
   no_with_veto_count: string
 }): string {
-  const total = safeBigIntAdd(
-    tally.yes_count,
-    tally.no_count,
-    tally.abstain_count,
-    tally.no_with_veto_count
-  )
+  const total = safeBigIntAdd(tally.yes_count, tally.no_count, tally.abstain_count, tally.no_with_veto_count)
   return total.toString()
 }
 
@@ -240,10 +237,7 @@ export function calculateTotalVotingPower(tally: {
  * turnoutPercent = 100 * totalVotingPower / bondedTokens
  * Uses BigInt-safe arithmetic, returns string with 2-4 decimal places
  */
-export function calculateTurnoutPercent(
-  totalVotingPower: string,
-  bondedTokens: string
-): string {
+export function calculateTurnoutPercent(totalVotingPower: string, bondedTokens: string): string {
   if (!bondedTokens || bondedTokens === '0') {
     return 'N/A'
   }
@@ -283,14 +277,14 @@ export function calculateTurnoutPercent(
 /**
  * Determine upgrade execution status and time
  * Implements the rules from the spec:
- * 
+ *
  * 1. If proposalStatus != PROPOSAL_STATUS_PASSED:
  *    → not executed (proposal status: <STATUS>; target height <planHeight>)
- * 
+ *
  * 2. If proposalStatus == PROPOSAL_STATUS_PASSED and currentHeight is numeric:
  *    - If planHeight <= currentHeight: Query block at planHeight for execution time
  *    - Else: not executed (target height <planHeight>; current height <currentHeight>)
- * 
+ *
  * 3. If currentHeight unavailable:
  *    → not executed (target height <planHeight>; current height unknown)
  */
@@ -303,7 +297,7 @@ export async function determineUpgradeExecutionStatus(
     return {
       status: 'not_executed',
       message: `Not executed (proposal status: ${proposal.status.replace('PROPOSAL_STATUS_', '')}; target height ${planHeight})`,
-      planHeight
+      planHeight,
     }
   }
 
@@ -318,7 +312,7 @@ export async function determineUpgradeExecutionStatus(
       status: 'not_executed',
       message: `Not executed (target height ${planHeight}; current height unknown)`,
       planHeight,
-      currentHeight: undefined
+      currentHeight: undefined,
     }
   }
 
@@ -331,7 +325,7 @@ export async function determineUpgradeExecutionStatus(
       status: 'unknown',
       message: `Unknown (invalid height values)`,
       planHeight,
-      currentHeight
+      currentHeight,
     }
   }
 
@@ -347,14 +341,14 @@ export async function determineUpgradeExecutionStatus(
           executedAt: executionTime,
           message: `Executed at block ${planHeight}`,
           planHeight,
-          currentHeight
+          currentHeight,
         }
       } else {
         return {
           status: 'unknown',
           message: `Unknown (block data not available)`,
           planHeight,
-          currentHeight
+          currentHeight,
         }
       }
     } catch (error) {
@@ -363,7 +357,7 @@ export async function determineUpgradeExecutionStatus(
         status: 'unknown',
         message: `Unknown (block not available)`,
         planHeight,
-        currentHeight
+        currentHeight,
       }
     }
   }
@@ -373,7 +367,7 @@ export async function determineUpgradeExecutionStatus(
     status: 'pending',
     message: `Not executed (target height ${planHeight}; current height ${currentHeight})`,
     planHeight,
-    currentHeight
+    currentHeight,
   }
 }
 
@@ -412,7 +406,7 @@ export async function buildVotingSummary(proposal: Proposal): Promise<VotingSumm
     noWithVetoCount,
     totalVotingPower,
     bondedTokens,
-    turnoutPercent
+    turnoutPercent,
   }
 }
 
@@ -424,9 +418,7 @@ export async function buildVotingSummary(proposal: Proposal): Promise<VotingSumm
  * Build complete upgrade proposal data structure
  * Combines all derived metrics and execution info
  */
-export async function buildUpgradeProposalData(
-  proposal: Proposal
-): Promise<UpgradeProposalData> {
+export async function buildUpgradeProposalData(proposal: Proposal): Promise<UpgradeProposalData> {
   const isUpgrade = isUpgradeProposal(proposal)
   const upgradeMessage = getUpgradeMessage(proposal)
   const plan = extractUpgradePlan(proposal)
@@ -440,7 +432,7 @@ export async function buildUpgradeProposalData(
     execution = {
       status: 'not_executed',
       message: 'Not an upgrade proposal',
-      planHeight: '0'
+      planHeight: '0',
     }
   }
 
@@ -455,7 +447,7 @@ export async function buildUpgradeProposalData(
     messageType: upgradeMessage?.['@type'],
     parsedPlanInfo,
     execution,
-    voting
+    voting,
   }
 }
 
@@ -532,21 +524,21 @@ export function getExecutionStatusColor(status: UpgradeExecutionStatus): {
         bg: 'bg-green-100',
         text: 'text-green-800',
         darkBg: 'dark:bg-green-900',
-        darkText: 'dark:text-green-200'
+        darkText: 'dark:text-green-200',
       }
     case 'pending':
       return {
         bg: 'bg-blue-100',
         text: 'text-blue-800',
         darkBg: 'dark:bg-blue-900',
-        darkText: 'dark:text-blue-200'
+        darkText: 'dark:text-blue-200',
       }
     case 'not_executed':
       return {
         bg: 'bg-yellow-100',
         text: 'text-yellow-800',
         darkBg: 'dark:bg-yellow-900',
-        darkText: 'dark:text-yellow-200'
+        darkText: 'dark:text-yellow-200',
       }
     case 'unknown':
     default:
@@ -554,8 +546,7 @@ export function getExecutionStatusColor(status: UpgradeExecutionStatus): {
         bg: 'bg-gray-100',
         text: 'text-gray-800',
         darkBg: 'dark:bg-gray-700',
-        darkText: 'dark:text-gray-200'
+        darkText: 'dark:text-gray-200',
       }
   }
 }
-

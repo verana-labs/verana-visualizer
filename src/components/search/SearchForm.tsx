@@ -15,7 +15,7 @@ export default function SearchForm({
   isLoading = false,
   initialValue = '',
   title = 'Search Trust Registry',
-  placeholder = 'Enter Trust Registry DID (e.g., did:example:184a2fddab1b3d505d477adbf0643446)'
+  placeholder = 'Enter Trust Registry DID (e.g., did:example:184a2fddab1b3d505d477adbf0643446)',
 }: SearchFormProps) {
   const [searchTerm, setSearchTerm] = useState(initialValue)
 
@@ -37,9 +37,7 @@ export default function SearchForm({
 
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6 mb-8">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {title}
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">{title}</h2>
       <form onSubmit={handleSubmit} className="flex gap-4">
         <div className="flex-1">
           <input

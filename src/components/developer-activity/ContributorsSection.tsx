@@ -16,9 +16,7 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
     return null
   }
 
-  const displayedContributors = showAll 
-    ? contributors 
-    : contributors.slice(0, displayLimit)
+  const displayedContributors = showAll ? contributors : contributors.slice(0, displayLimit)
 
   const hasMore = contributors.length > displayLimit
 
@@ -28,7 +26,12 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <svg className="w-6 h-6 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
           </svg>
           Top Contributors
         </h2>
@@ -40,10 +43,7 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
       {/* Contributors Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
         {displayedContributors.map((contributor) => (
-          <ContributorCard 
-            key={contributor.login} 
-            contributor={contributor} 
-          />
+          <ContributorCard key={contributor.login} contributor={contributor} />
         ))}
       </div>
 
@@ -75,4 +75,3 @@ export default function ContributorsSection({ contributors }: ContributorsSectio
     </div>
   )
 }
-

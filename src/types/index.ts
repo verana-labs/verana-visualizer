@@ -263,7 +263,7 @@ export interface CommunityPoolResponse {
 export interface Validator {
   operator_address: string
   consensus_pubkey: {
-    "@type": string
+    '@type': string
     key: string
   }
   jailed: boolean
@@ -303,7 +303,7 @@ export interface ValidatorsResponse {
 export interface Proposal {
   id: string
   messages: Array<{
-    "@type": string
+    '@type': string
     authority: string
     plan?: {
       name: string
@@ -506,11 +506,7 @@ export interface ParsedPlanInfo {
 /**
  * Execution status for upgrade proposals
  */
-export type UpgradeExecutionStatus = 
-  | 'executed'
-  | 'not_executed'
-  | 'pending'
-  | 'unknown'
+export type UpgradeExecutionStatus = 'executed' | 'not_executed' | 'pending' | 'unknown'
 
 /**
  * Upgrade execution info with derived data

@@ -1,6 +1,6 @@
 'use client'
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts'
+import { Bar, BarChart, CartesianGrid, Cell, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface ValidatorDistributionChartProps {
   data: {
@@ -34,9 +34,9 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
   const topValidators = [...data]
     .sort((a, b) => b.votingPower - a.votingPower)
     .slice(0, 10)
-    .map(v => ({
+    .map((v) => ({
       ...v,
-      name: v.name.length > 20 ? v.name.substring(0, 20) + '...' : v.name
+      name: v.name.length > 20 ? v.name.substring(0, 20) + '...' : v.name,
     }))
 
   return (
@@ -45,31 +45,28 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">Top Validators by Stake</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total staked tokens delegated to top validators</p>
       </div>
-      
+
       <ResponsiveContainer width="100%" height={320}>
-        <BarChart 
-          data={topValidators} 
-          margin={{ top: 10, right: 30, left: 20, bottom: 60 }}
-        >
+        <BarChart data={topValidators} margin={{ top: 10, right: 30, left: 20, bottom: 60 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
-          <XAxis 
-            dataKey="name" 
+          <XAxis
+            dataKey="name"
             tick={{ fill: '#9ca3af', fontSize: 10 }}
             stroke="#4b5563"
             angle={-45}
             textAnchor="end"
             height={80}
           />
-          <YAxis 
+          <YAxis
             width={80}
             tick={{ fill: '#9ca3af', fontSize: 12 }}
             stroke="#4b5563"
             tickFormatter={(value) => `${(value / 1000000).toFixed(1)}M`}
-            label={{ 
-              value: 'Staked Tokens (VNA)', 
-              angle: -90, 
+            label={{
+              value: 'Staked Tokens (VNA)',
+              angle: -90,
               position: 'insideLeft',
-              style: { fill: '#9ca3af', fontSize: 12 }
+              style: { fill: '#9ca3af', fontSize: 12 },
             }}
           />
           <Tooltip
@@ -77,7 +74,7 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
               backgroundColor: '#1f2937',
               border: '1px solid #374151',
               borderRadius: '0.5rem',
-              color: '#f3f4f6'
+              color: '#f3f4f6',
             }}
             formatter={(value: number, name: string) => {
               if (name === 'Total Stake') {
@@ -88,17 +85,14 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
             labelStyle={{ color: '#9ca3af' }}
             itemStyle={{ color: '#f3f4f6' }}
           />
-          <Legend 
+          <Legend
             wrapperStyle={{ paddingTop: '10px' }}
             iconType="circle"
             formatter={(value) => <span className="text-gray-600 dark:text-gray-300">{value}</span>}
           />
-          <Bar 
-            dataKey="votingPower" 
-            name="Total Stake"
-            radius={[8, 8, 0, 0]}
-          >
+          <Bar dataKey="votingPower" name="Total Stake" radius={[8, 8, 0, 0]}>
             {topValidators.map((entry, index) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: recharts <Cell> keyed by index per library convention
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Bar>
@@ -107,4 +101,3 @@ export default function ValidatorDistributionChart({ data, isLoading }: Validato
     </div>
   )
 }
-

@@ -18,7 +18,11 @@ export default function EcosystemTrustSummary({ metrics, isLoading }: EcosystemT
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-white dark:bg-dark-card rounded-lg p-5 animate-pulse border border-gray-200 dark:border-dark-border">
+          <div
+            // biome-ignore lint/suspicious/noArrayIndexKey: static loading skeleton, fixed length, never reordered
+            key={i}
+            className="bg-white dark:bg-dark-card rounded-lg p-5 animate-pulse border border-gray-200 dark:border-dark-border"
+          >
             <div className="h-4 bg-gray-200 dark:bg-dark-surface rounded w-2/3 mb-3"></div>
             <div className="h-6 bg-gray-200 dark:bg-dark-surface rounded w-1/2"></div>
           </div>
@@ -38,22 +42,23 @@ export default function EcosystemTrustSummary({ metrics, isLoading }: EcosystemT
       label: 'Total Trust Weight',
       value: formatWeight(metrics.weight),
       detail: `${metrics.weight.toLocaleString()} raw`,
-      color: '#3b82f6'
+      color: '#3b82f6',
     },
     {
       label: 'Slash Events',
       value: totalSlashEvents.toString(),
-      detail: totalSlashEvents > 0
-        ? `${formatWeight(totalSlashed)} slashed / ${formatWeight(totalRepaid)} repaid`
-        : 'No slashing activity',
-      color: totalSlashEvents > 0 ? '#ef4444' : '#10b981'
+      detail:
+        totalSlashEvents > 0
+          ? `${formatWeight(totalSlashed)} slashed / ${formatWeight(totalRepaid)} repaid`
+          : 'No slashing activity',
+      color: totalSlashEvents > 0 ? '#ef4444' : '#10b981',
     },
     {
       label: 'Schema Health',
       value: `${metrics.active_schemas} active`,
       detail: `${metrics.archived_schemas} archived`,
-      color: '#10b981'
-    }
+      color: '#10b981',
+    },
   ]
 
   return (
@@ -63,15 +68,11 @@ export default function EcosystemTrustSummary({ metrics, isLoading }: EcosystemT
           key={item.label}
           className="bg-white dark:bg-dark-card rounded-lg p-5 border border-gray-200 dark:border-dark-border"
         >
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            {item.label}
-          </span>
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{item.label}</span>
           <div className="text-2xl font-bold mt-1" style={{ color: item.color }}>
             {item.value}
           </div>
-          <span className="text-xs text-gray-400 dark:text-gray-500">
-            {item.detail}
-          </span>
+          <span className="text-xs text-gray-400 dark:text-gray-500">{item.detail}</span>
         </div>
       ))}
     </div>

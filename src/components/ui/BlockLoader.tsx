@@ -5,7 +5,7 @@ interface BlockLoaderProps {
   message?: string
 }
 
-export default function BlockLoader({ isLoading, message = "Loading network data..." }: BlockLoaderProps) {
+export default function BlockLoader({ isLoading, message = 'Loading network data...' }: BlockLoaderProps) {
   if (!isLoading) return null
 
   return (
@@ -14,30 +14,30 @@ export default function BlockLoader({ isLoading, message = "Loading network data
         <div className="flex justify-center space-x-2 mb-6">
           {[...Array(5)].map((_, i) => (
             <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: fixed loader animation dots, static length
               key={i}
               className="w-4 h-4 bg-verana-accent rounded-sm"
               style={{
                 animation: `blockPulse 1.2s ease-in-out infinite`,
-                animationDelay: `${i * 0.15}s`
+                animationDelay: `${i * 0.15}s`,
               }}
             />
           ))}
         </div>
-        
+
         <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {message}
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Please wait while we fetch the latest data...
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{message}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Please wait while we fetch the latest data...</p>
         </div>
 
         <div className="mt-6 w-full bg-gray-200 dark:bg-dark-surface rounded-full h-2">
-          <div className="bg-verana-accent h-2 rounded-full animate-pulse" style={{
-            width: '100%',
-            animation: 'progress 2s ease-in-out infinite'
-          }} />
+          <div
+            className="bg-verana-accent h-2 rounded-full animate-pulse"
+            style={{
+              width: '100%',
+              animation: 'progress 2s ease-in-out infinite',
+            }}
+          />
         </div>
 
         <style jsx>{`

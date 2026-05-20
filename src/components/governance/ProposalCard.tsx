@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { Proposal, UpgradeExecutionInfo } from '@/types'
-import {
-  isUpgradeProposal,
-  extractUpgradePlan,
-  determineUpgradeExecutionStatus,
-  formatProposalStatus,
-  formatDate,
-  getExecutionStatusColor,
-  extractBinaryVersion
-} from '@/lib/governanceUtils'
+import { useEffect, useMemo, useState } from 'react'
 import { formatBlockHeight } from '@/lib/api'
+import {
+  determineUpgradeExecutionStatus,
+  extractBinaryVersion,
+  extractUpgradePlan,
+  formatDate,
+  formatProposalStatus,
+  getExecutionStatusColor,
+  isUpgradeProposal,
+} from '@/lib/governanceUtils'
+import { Proposal, UpgradeExecutionInfo } from '@/types'
 
 interface ProposalCardProps {
   proposal: Proposal
@@ -23,7 +23,7 @@ interface ProposalCardProps {
 
 /**
  * Proposal Card Component
- * 
+ *
  * Displays a governance proposal with optional upgrade information.
  * Used in the dashboard's Recent Proposals section and proposal list.
  */
@@ -31,13 +31,13 @@ export default function ProposalCard({
   proposal,
   showUpgradeInfo = true,
   compact = false,
-  className = ''
+  className = '',
 }: ProposalCardProps) {
   const [execution, setExecution] = useState<UpgradeExecutionInfo | null>(null)
   const [isLoadingExecution, setIsLoadingExecution] = useState(false)
 
   const isUpgrade = useMemo(() => isUpgradeProposal(proposal), [proposal])
-  const plan = useMemo(() => isUpgrade ? extractUpgradePlan(proposal) : null, [proposal, isUpgrade])
+  const plan = useMemo(() => (isUpgrade ? extractUpgradePlan(proposal) : null), [proposal, isUpgrade])
   const binaryVersion = useMemo(() => {
     if (!plan) return null
     return extractBinaryVersion(plan, proposal.title)
@@ -65,10 +65,12 @@ export default function ProposalCard({
   const statusColor = getProposalStatusColor(proposal.status)
 
   return (
-    <div className={`p-4 bg-gray-50 dark:bg-dark-surface rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors ${className}`}>
+    <div
+      className={`p-4 bg-gray-50 dark:bg-dark-surface rounded-lg hover:bg-gray-100 dark:hover:bg-dark-border transition-colors ${className}`}
+    >
       {/* Header */}
       <div className="flex items-start justify-between mb-2 gap-2">
-        <Link 
+        <Link
           href={`/governance/${proposal.id}`}
           className="font-semibold text-gray-900 dark:text-white hover:text-verana-accent dark:hover:text-verana-accent/80 transition-colors flex-1 min-w-0"
         >
@@ -76,17 +78,15 @@ export default function ProposalCard({
           {' - '}
           <span className="break-words">{proposal.title}</span>
         </Link>
-        <span className={`text-xs px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${statusColor.bg} ${statusColor.text} ${statusColor.darkBg} ${statusColor.darkText}`}>
+        <span
+          className={`text-xs px-2 py-1 rounded-full whitespace-nowrap flex-shrink-0 ${statusColor.bg} ${statusColor.text} ${statusColor.darkBg} ${statusColor.darkText}`}
+        >
           {formatProposalStatus(proposal.status)}
         </span>
       </div>
 
       {/* Summary */}
-      {!compact && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-          {proposal.summary}
-        </p>
-      )}
+      {!compact && <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{proposal.summary}</p>}
 
       {/* Upgrade Info Badge */}
       {isUpgrade && showUpgradeInfo && plan && (
@@ -100,12 +100,8 @@ export default function ProposalCard({
 
       {/* Footer */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-gray-500 dark:text-gray-400 gap-1 mt-3">
-        <span className="truncate">
-          Proposer: {proposal.proposer.substring(0, 20)}...
-        </span>
-        <span>
-          {formatDate(proposal.submit_time)}
-        </span>
+        <span className="truncate">Proposer: {proposal.proposer.substring(0, 20)}...</span>
+        <span>{formatDate(proposal.submit_time)}</span>
       </div>
     </div>
   )
@@ -119,7 +115,7 @@ function UpgradeInfoBadge({
   plan,
   execution,
   binaryVersion,
-  isLoading
+  isLoading,
 }: {
   plan: { height: string; name: string }
   execution: UpgradeExecutionInfo | null
@@ -131,14 +127,17 @@ function UpgradeInfoBadge({
   return (
     <div className="mb-3 p-3 bg-verana-accent/10 dark:bg-verana-accent/20 rounded-lg border border-verana-accent/30 dark:border-verana-accent/40">
       <div className="flex items-center space-x-2 mb-2">
-        <svg className="w-4 h-4 text-verana-accent dark:text-verana-accent/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4 text-verana-accent dark:text-verana-accent/80"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
-        <span className="text-xs font-semibold text-verana-accent dark:text-verana-accent/80">
-          Software Upgrade
-        </span>
+        <span className="text-xs font-semibold text-verana-accent dark:text-verana-accent/80">Software Upgrade</span>
       </div>
-      
+
       <div className="space-y-1 text-xs">
         {/* Upgrade Height */}
         <div className="flex justify-between items-center">
@@ -152,9 +151,7 @@ function UpgradeInfoBadge({
         {binaryVersion && (
           <div className="flex justify-between items-center">
             <span className="text-gray-600 dark:text-gray-400">Version:</span>
-            <span className="font-mono font-semibold text-gray-900 dark:text-white">
-              {binaryVersion}
-            </span>
+            <span className="font-mono font-semibold text-gray-900 dark:text-white">{binaryVersion}</span>
           </div>
         )}
 
@@ -164,7 +161,9 @@ function UpgradeInfoBadge({
           {isLoading ? (
             <span className="text-gray-400 dark:text-gray-500 animate-pulse">Loading...</span>
           ) : execution ? (
-            <span className={`font-semibold px-1.5 py-0.5 rounded ${statusColors?.bg} ${statusColors?.text} ${statusColors?.darkBg} ${statusColors?.darkText}`}>
+            <span
+              className={`font-semibold px-1.5 py-0.5 rounded ${statusColors?.bg} ${statusColors?.text} ${statusColors?.darkBg} ${statusColors?.darkText}`}
+            >
               {execution.status === 'executed' ? 'executed' : 'not executed'}
             </span>
           ) : (
@@ -191,36 +190,35 @@ function getProposalStatusColor(status: string): {
         bg: 'bg-green-100',
         text: 'text-green-800',
         darkBg: 'dark:bg-green-900',
-        darkText: 'dark:text-green-200'
+        darkText: 'dark:text-green-200',
       }
     case 'PROPOSAL_STATUS_REJECTED':
       return {
         bg: 'bg-red-100',
         text: 'text-red-800',
         darkBg: 'dark:bg-red-900',
-        darkText: 'dark:text-red-200'
+        darkText: 'dark:text-red-200',
       }
     case 'PROPOSAL_STATUS_VOTING_PERIOD':
       return {
         bg: 'bg-verana-accent/15',
         text: 'text-verana-accent',
         darkBg: 'dark:bg-verana-accent/30',
-        darkText: 'dark:text-verana-accent/80'
+        darkText: 'dark:text-verana-accent/80',
       }
     case 'PROPOSAL_STATUS_DEPOSIT_PERIOD':
       return {
         bg: 'bg-yellow-100',
         text: 'text-yellow-800',
         darkBg: 'dark:bg-yellow-900',
-        darkText: 'dark:text-yellow-200'
+        darkText: 'dark:text-yellow-200',
       }
     default:
       return {
         bg: 'bg-gray-100',
         text: 'text-gray-800',
         darkBg: 'dark:bg-gray-700',
-        darkText: 'dark:text-gray-200'
+        darkText: 'dark:text-gray-200',
       }
   }
 }
-

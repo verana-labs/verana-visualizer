@@ -1,10 +1,8 @@
 import { EcosystemMetricsDataPoint } from '@/types'
 import { fetchEcosystemMetrics } from './api'
-import { getCurrentBlockHeight, getBlockAtHeight, calculateHistoricalHeights } from './historicalDataFetcher'
+import { calculateHistoricalHeights, getBlockAtHeight, getCurrentBlockHeight } from './historicalDataFetcher'
 
-export async function fetchHistoricalEcosystemData(
-  dataPoints: number = 30
-): Promise<EcosystemMetricsDataPoint[]> {
+export async function fetchHistoricalEcosystemData(dataPoints: number = 30): Promise<EcosystemMetricsDataPoint[]> {
   const currentHeight = await getCurrentBlockHeight()
   const heights = calculateHistoricalHeights(currentHeight, dataPoints)
 
@@ -17,7 +15,7 @@ export async function fetchHistoricalEcosystemData(
 
     const results = await Promise.allSettled(
       batch.map(async (height) => {
-        let blockInfo
+        let blockInfo: Awaited<ReturnType<typeof getBlockAtHeight>>
         try {
           blockInfo = await getBlockAtHeight(height)
         } catch (err) {
@@ -25,7 +23,7 @@ export async function fetchHistoricalEcosystemData(
           return null
         }
 
-        let metrics
+        let metrics: Awaited<ReturnType<typeof fetchEcosystemMetrics>>
         try {
           metrics = await fetchEcosystemMetrics(height)
         } catch (error) {
@@ -36,14 +34,14 @@ export async function fetchHistoricalEcosystemData(
         return {
           timestamp: new Date(blockInfo.timestamp).toLocaleDateString('en-US', {
             month: 'short',
-            day: 'numeric'
+            day: 'numeric',
           }),
           height: blockInfo.height,
           participants: metrics.participants,
           activeTrustRegistries: metrics.active_trust_registries,
           activeSchemas: metrics.active_schemas,
           issued: metrics.issued,
-          verified: metrics.verified
+          verified: metrics.verified,
         }
       })
     )
@@ -57,14 +55,12 @@ export async function fetchHistoricalEcosystemData(
     })
 
     if (i + batchSize < heights.length) {
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
     }
   }
 
   if (data.length === 0 && failureCount > 0) {
-    throw new Error(
-      `Failed to fetch historical ecosystem data: all ${failureCount} data points failed`
-    )
+    throw new Error(`Failed to fetch historical ecosystem data: all ${failureCount} data points failed`)
   }
 
   if (failureCount > 0) {

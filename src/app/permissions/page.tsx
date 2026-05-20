@@ -1,9 +1,9 @@
 'use client'
 
-import { ReactNode, Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { ReactNode, Suspense, useEffect, useState } from 'react'
 import { LayoutWrapper } from '@/components/layout'
-import { fetchPermission, convertUvnaToVna } from '@/lib/api'
+import { convertUvnaToVna, fetchPermission } from '@/lib/api'
 import { Permission } from '@/types'
 
 const formatDate = (dateString?: string) => {
@@ -13,7 +13,7 @@ const formatDate = (dateString?: string) => {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   })
 }
 

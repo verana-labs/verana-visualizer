@@ -1,18 +1,16 @@
-import {
-  GitHubRepository,
-  GitHubContributor,
-  GitHubCommit,
-  CommitActivity,
-  RepositoryStats,
-  AggregatedContributor,
-  GitHubApiError
-} from '@/types'
 import { env } from 'next-runtime-env'
+import {
+  AggregatedContributor,
+  CommitActivity,
+  GitHubCommit,
+  GitHubContributor,
+  GitHubRepository,
+  RepositoryStats,
+} from '@/types'
 
 const GITHUB_API_BASE = 'https://api.github.com'
 
-const getGitHubToken = () =>
-  env('NEXT_PUBLIC_GITHUB_TOKEN') || process.env.NEXT_PUBLIC_GITHUB_TOKEN
+const getGitHubToken = () => env('NEXT_PUBLIC_GITHUB_TOKEN') || process.env.NEXT_PUBLIC_GITHUB_TOKEN
 
 // Rate limit warning
 let hasWarnedAboutRateLimit = false
@@ -20,13 +18,11 @@ let hasWarnedAboutRateLimit = false
 function warnAboutRateLimit() {
   if (!hasWarnedAboutRateLimit) {
     if (getGitHubToken()) {
-      console.log(
-        '✅ GitHub API: Using authenticated requests (5,000 requests/hour limit)'
-      )
+      console.log('✅ GitHub API: Using authenticated requests (5,000 requests/hour limit)')
     } else {
       console.warn(
         '⚠️ GitHub API: Using unauthenticated requests (60 requests/hour limit). ' +
-        'Add NEXT_PUBLIC_GITHUB_TOKEN to .env.local for higher limits (5,000 requests/hour).'
+          'Add NEXT_PUBLIC_GITHUB_TOKEN to .env.local for higher limits (5,000 requests/hour).'
       )
     }
     hasWarnedAboutRateLimit = true
@@ -38,13 +34,13 @@ function warnAboutRateLimit() {
  */
 function getGitHubHeaders(): HeadersInit {
   const headers: HeadersInit = {
-    'Accept': 'application/vnd.github.v3+json',
+    Accept: 'application/vnd.github.v3+json',
   }
-  
+
   if (getGitHubToken()) {
     headers['Authorization'] = `Bearer ${getGitHubToken()}`
   }
-  
+
   return headers
 }
 
@@ -60,7 +56,7 @@ export function hasGitHubToken(): boolean {
  */
 export async function fetchOrganizationRepos(org: string): Promise<GitHubRepository[]> {
   warnAboutRateLimit()
-  
+
   try {
     const response = await fetch(`${GITHUB_API_BASE}/orgs/${org}/repos?per_page=100&sort=updated`, {
       headers: getGitHubHeaders(),
@@ -75,35 +71,35 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
         const rateLimitReset = response.headers.get('X-RateLimit-Reset')
         const resetDate = rateLimitReset ? new Date(parseInt(rateLimitReset) * 1000) : null
         const resetTimeStr = resetDate ? resetDate.toLocaleTimeString() : 'unknown'
-        
+
         console.error('GitHub API 403 Error Details:', {
           rateLimitRemaining,
           rateLimitReset,
           resetTime: resetTimeStr,
           hasToken: !!getGitHubToken(),
-          org
+          org,
         })
-        
+
         if (rateLimitRemaining === '0') {
           throw new Error(
             `GitHub API rate limit exceeded. Limit resets at ${resetTimeStr}. ` +
-            `${getGitHubToken() ? 'Token is configured but limit still hit.' : 'Add a GitHub token to increase limits from 60 to 5,000 requests/hour.'}`
+              `${getGitHubToken() ? 'Token is configured but limit still hit.' : 'Add a GitHub token to increase limits from 60 to 5,000 requests/hour.'}`
           )
         }
-        
+
         // If not rate limit, might be invalid token or private org
         if (getGitHubToken()) {
           throw new Error(
             `Access forbidden (403). This could mean:\n` +
-            `• Your GitHub token may be invalid or expired\n` +
-            `• The organization "${org}" might be private\n` +
-            `• The token lacks required permissions (needs 'public_repo' scope)\n` +
-            `Please verify your token at: https://github.com/settings/tokens`
+              `• Your GitHub token may be invalid or expired\n` +
+              `• The organization "${org}" might be private\n` +
+              `• The token lacks required permissions (needs 'public_repo' scope)\n` +
+              `Please verify your token at: https://github.com/settings/tokens`
           )
         } else {
           throw new Error(
             `Access forbidden (403). The organization "${org}" might not exist or is private. ` +
-            `Try adding a GitHub token to access more organizations.`
+              `Try adding a GitHub token to access more organizations.`
           )
         }
       }
@@ -112,7 +108,7 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
 
     const repos: GitHubRepository[] = await response.json()
     // Filter out private repos and forks (external repositories)
-    return repos.filter(repo => !repo.name.includes('private') && !repo.fork)
+    return repos.filter((repo) => !repo.name.includes('private') && !repo.fork)
   } catch (error) {
     console.error('Error fetching organization repos:', error)
     throw error
@@ -122,19 +118,12 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
 /**
  * Fetch commits for a repository
  */
-export async function fetchRepositoryCommits(
-  owner: string,
-  repo: string,
-  since?: string
-): Promise<GitHubCommit[]> {
+export async function fetchRepositoryCommits(owner: string, repo: string, since?: string): Promise<GitHubCommit[]> {
   try {
     const sinceParam = since ? `&since=${since}` : ''
-    const response = await fetch(
-      `${GITHUB_API_BASE}/repos/${owner}/${repo}/commits?per_page=100${sinceParam}`,
-      {
-        headers: getGitHubHeaders(),
-      }
-    )
+    const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/commits?per_page=100${sinceParam}`, {
+      headers: getGitHubHeaders(),
+    })
 
     if (!response.ok) {
       if (response.status === 409) {
@@ -154,17 +143,11 @@ export async function fetchRepositoryCommits(
 /**
  * Fetch contributors for a repository
  */
-export async function fetchRepositoryContributors(
-  owner: string,
-  repo: string
-): Promise<GitHubContributor[]> {
+export async function fetchRepositoryContributors(owner: string, repo: string): Promise<GitHubContributor[]> {
   try {
-    const response = await fetch(
-      `${GITHUB_API_BASE}/repos/${owner}/${repo}/contributors?per_page=100`,
-      {
-        headers: getGitHubHeaders(),
-      }
-    )
+    const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/contributors?per_page=100`, {
+      headers: getGitHubHeaders(),
+    })
 
     if (!response.ok) {
       if (response.status === 409 || response.status === 404) {
@@ -190,24 +173,18 @@ export async function fetchRepositoryContributors(
 /**
  * Fetch commit activity statistics for a repository (weekly data)
  */
-export async function fetchCommitActivity(
-  owner: string,
-  repo: string
-): Promise<CommitActivity[]> {
+export async function fetchCommitActivity(owner: string, repo: string): Promise<CommitActivity[]> {
   try {
-    const response = await fetch(
-      `${GITHUB_API_BASE}/repos/${owner}/${repo}/stats/commit_activity`,
-      {
-        headers: getGitHubHeaders(),
-      }
-    )
+    const response = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}/stats/commit_activity`, {
+      headers: getGitHubHeaders(),
+    })
 
     if (!response.ok) {
       return []
     }
 
     const data = await response.json()
-    
+
     // GitHub returns 202 if stats are being computed
     if (response.status === 202) {
       console.log(`Stats are being computed for ${owner}/${repo}`)
@@ -233,12 +210,12 @@ export function calculateCommitStats(commits: GitHubCommit[]): {
   const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
   const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-  const thisWeek = commits.filter(commit => {
+  const thisWeek = commits.filter((commit) => {
     const commitDate = new Date(commit.commit.author.date)
     return commitDate >= oneWeekAgo
   }).length
 
-  const thisMonth = commits.filter(commit => {
+  const thisMonth = commits.filter((commit) => {
     const commitDate = new Date(commit.commit.author.date)
     return commitDate >= oneMonthAgo
   }).length
@@ -257,7 +234,7 @@ export function generateCommitActivityFromCommits(commits: GitHubCommit[]): Comm
   // Get the last 12 weeks
   const now = new Date()
   const weeklyData: { [key: number]: number } = {}
-  
+
   // Initialize all 12 weeks with zero commits
   for (let i = 11; i >= 0; i--) {
     const weekStart = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000)
@@ -266,12 +243,12 @@ export function generateCommitActivityFromCommits(commits: GitHubCommit[]): Comm
     const weekTimestamp = Math.floor(weekStart.getTime() / 1000)
     weeklyData[weekTimestamp] = 0
   }
-  
+
   // Count commits per week (if any)
   if (commits.length > 0) {
     const twelveWeeksAgo = new Date(now.getTime() - 12 * 7 * 24 * 60 * 60 * 1000)
-    
-    commits.forEach(commit => {
+
+    commits.forEach((commit) => {
       const commitDate = new Date(commit.commit.author.date)
       if (commitDate >= twelveWeeksAgo) {
         // Find which week this commit belongs to
@@ -288,10 +265,10 @@ export function generateCommitActivityFromCommits(commits: GitHubCommit[]): Comm
       }
     })
   }
-  
+
   // Convert to CommitActivity format, sorted chronologically
   return Object.keys(weeklyData)
-    .map(timestamp => ({
+    .map((timestamp) => ({
       week: parseInt(timestamp),
       total: weeklyData[parseInt(timestamp)],
       days: [0, 0, 0, 0, 0, 0, 0], // Not used for display
@@ -307,17 +284,17 @@ export function formatCommitActivityForChart(activity: CommitActivity[]): Array<
   commits: number
 }> {
   if (!activity || activity.length === 0) return []
-  
+
   // Get the last 12 weeks
   const lastTwelveWeeks = activity.slice(-12)
-  
-  return lastTwelveWeeks.map(week => {
+
+  return lastTwelveWeeks.map((week) => {
     const date = new Date(week.week * 1000)
-    const formattedDate = date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
     })
-    
+
     return {
       week: formattedDate,
       commits: week.total,
@@ -328,10 +305,7 @@ export function formatCommitActivityForChart(activity: CommitActivity[]): Array<
 /**
  * Fetch comprehensive stats for a repository
  */
-export async function fetchRepositoryStats(
-  owner: string,
-  repo: string
-): Promise<RepositoryStats | null> {
+export async function fetchRepositoryStats(owner: string, repo: string): Promise<RepositoryStats | null> {
   try {
     // Fetch repository details
     const repoResponse = await fetch(`${GITHUB_API_BASE}/repos/${owner}/${repo}`, {
@@ -349,16 +323,16 @@ export async function fetchRepositoryStats(
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString()
     const commits = await fetchRepositoryCommits(owner, repo, ninetyDaysAgo)
     const commitStats = calculateCommitStats(commits)
-    
+
     // Fetch contributors and commit activity in parallel for speed
     const [contributors, commitActivityResult] = await Promise.all([
       fetchRepositoryContributors(owner, repo),
-      fetchCommitActivity(owner, repo)
+      fetchCommitActivity(owner, repo),
     ])
 
     // Use commit activity from parallel fetch
     let commitActivity = commitActivityResult
-    
+
     // Fallback: If GitHub stats API doesn't return data, generate from commits
     if (!commitActivity || commitActivity.length === 0) {
       console.log(`Generating commit activity from commits for ${owner}/${repo}`)
@@ -388,15 +362,13 @@ export async function fetchRepositoryStats(
 /**
  * Aggregate contributors from multiple repositories
  */
-export function aggregateContributors(
-  repoStats: RepositoryStats[]
-): AggregatedContributor[] {
+export function aggregateContributors(repoStats: RepositoryStats[]): AggregatedContributor[] {
   const contributorMap = new Map<string, AggregatedContributor>()
 
-  repoStats.forEach(repo => {
-    repo.contributors.forEach(contributor => {
+  repoStats.forEach((repo) => {
+    repo.contributors.forEach((contributor) => {
       const existing = contributorMap.get(contributor.login)
-      
+
       if (existing) {
         existing.totalContributions += contributor.contributions
         existing.repositories.push(repo.name)
@@ -413,8 +385,7 @@ export function aggregateContributors(
   })
 
   // Convert to array and sort by contributions
-  return Array.from(contributorMap.values())
-    .sort((a, b) => b.totalContributions - a.totalContributions)
+  return Array.from(contributorMap.values()).sort((a, b) => b.totalContributions - a.totalContributions)
 }
 
 /**
@@ -469,4 +440,3 @@ export function formatRelativeTime(dateString: string): string {
     return `${years} year${years > 1 ? 's' : ''} ago`
   }
 }
-

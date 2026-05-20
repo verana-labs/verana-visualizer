@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutWrapper } from '@/components/layout'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { UpgradeSummaryWidget } from '@/components/governance'
+import { LayoutWrapper } from '@/components/layout'
 import { fetchProposal } from '@/lib/api'
+import { formatProposalStatus, isUpgradeProposal } from '@/lib/governanceUtils'
 import { Proposal } from '@/types'
-import { isUpgradeProposal, formatProposalStatus } from '@/lib/governanceUtils'
 
 export default function ProposalDetailPage() {
   const params = useParams()
@@ -41,26 +41,21 @@ export default function ProposalDetailPage() {
   const isUpgrade = proposal ? isUpgradeProposal(proposal) : false
 
   return (
-    <LayoutWrapper 
-      title={`Proposal #${proposalId}`}
-      subtitle="Governance Proposal Details"
-    >
+    <LayoutWrapper title={`Proposal #${proposalId}`} subtitle="Governance Proposal Details">
       <div className="p-6">
         {/* Breadcrumb */}
         <nav className="mb-6">
           <ol className="flex items-center space-x-2 text-sm">
             <li>
-              <Link 
-                href="/governance" 
+              <Link
+                href="/governance"
                 className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 Governance
               </Link>
             </li>
             <li className="text-gray-400">/</li>
-            <li className="text-gray-900 dark:text-white font-medium">
-              Proposal #{proposalId}
-            </li>
+            <li className="text-gray-900 dark:text-white font-medium">Proposal #{proposalId}</li>
           </ol>
         </nav>
 
@@ -80,7 +75,12 @@ export default function ProposalDetailPage() {
                     {isUpgrade && (
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
                         <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                          />
                         </svg>
                         Upgrade
                       </span>
@@ -89,9 +89,7 @@ export default function ProposalDetailPage() {
                   <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4 break-words">
                     {proposal.title}
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {proposal.summary}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-400">{proposal.summary}</p>
                 </div>
               </div>
 
@@ -113,23 +111,18 @@ export default function ProposalDetailPage() {
             </div>
 
             {/* Upgrade Summary Widget - Only for upgrade proposals */}
-            {isUpgrade && (
-              <UpgradeSummaryWidget proposal={proposal} />
-            )}
+            {isUpgrade && <UpgradeSummaryWidget proposal={proposal} />}
 
             {/* Standard Proposal Info (for non-upgrade or as fallback) */}
-            {!isUpgrade && (
-              <StandardProposalInfo proposal={proposal} />
-            )}
+            {!isUpgrade && <StandardProposalInfo proposal={proposal} />}
 
             {/* Messages Section */}
             <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Proposal Messages
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Proposal Messages</h3>
               <div className="space-y-4">
                 {proposal.messages?.map((message, index) => (
-                  <div 
+                  <div
+                    // biome-ignore lint/suspicious/noArrayIndexKey: read-only proposal messages render; preserving existing key behavior
                     key={index}
                     className="p-4 bg-gray-50 dark:bg-dark-surface rounded-lg"
                   >
@@ -202,10 +195,8 @@ function StandardProposalInfo({ proposal }: { proposal: Proposal }) {
 
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Voting Summary
-      </h3>
-      
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Voting Summary</h3>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <VoteBox label="Yes" value={tally.yes_count} color="green" />
         <VoteBox label="No" value={tally.no_count} color="red" />
@@ -235,7 +226,9 @@ function StandardProposalInfo({ proposal }: { proposal: Proposal }) {
         <div>
           <p className="text-sm text-gray-500 dark:text-gray-400">Total Deposit</p>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            {proposal.total_deposit?.map(d => `${parseInt(d.amount) / 1000000} ${d.denom.replace('u', '').toUpperCase()}`).join(', ') || 'N/A'}
+            {proposal.total_deposit
+              ?.map((d) => `${parseInt(d.amount) / 1000000} ${d.denom.replace('u', '').toUpperCase()}`)
+              .join(', ') || 'N/A'}
           </p>
         </div>
       </div>
@@ -248,7 +241,7 @@ function VoteBox({ label, value, color }: { label: string; value: string; color:
     green: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
     red: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
     gray: 'bg-gray-50 dark:bg-gray-800/20 border-gray-200 dark:border-gray-700',
-    orange: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800'
+    orange: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800',
   }
 
   const formatted = (parseInt(value || '0') / 1000000).toLocaleString(undefined, { maximumFractionDigits: 2 })
@@ -287,12 +280,15 @@ function ErrorState({ error, onBack }: { error: string; onBack: () => void }) {
       <div className="text-center py-12">
         <div className="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
           <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-          Error Loading Proposal
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Error Loading Proposal</h3>
         <p className="text-gray-500 dark:text-gray-400 mb-4">{error}</p>
         <button
           onClick={onBack}
@@ -309,17 +305,15 @@ function NotFoundState({ proposalId }: { proposalId: string }) {
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg p-6">
       <div className="text-center py-12">
-        <svg 
-          className="w-16 h-16 mx-auto text-gray-400 mb-4" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-          Proposal Not Found
-        </h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">Proposal Not Found</h3>
         <p className="text-gray-500 dark:text-gray-400 mb-4">
           Proposal #{proposalId} does not exist or has been removed.
         </p>
@@ -333,4 +327,3 @@ function NotFoundState({ proposalId }: { proposalId: string }) {
     </div>
   )
 }
-
