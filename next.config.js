@@ -6,11 +6,10 @@ const getBasePath = () => {
   }
   try {
     const pathname = new URL(process.env.NEXT_PUBLIC_BASE_URL).pathname
-    const normalized = pathname.endsWith('/') && pathname !== '/'
-      ? pathname.slice(0, -1)
-      : pathname
+    const normalized = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname
     return normalized !== '/' ? normalized : undefined
   } catch {
+    // biome-ignore lint/suspicious/noConsole: build-time Next config; cannot import the app logger (CJS config evaluated by Next)
     console.warn('Invalid NEXT_PUBLIC_BASE_URL, skipping basePath configuration')
     return undefined
   }
@@ -42,13 +41,13 @@ const nextConfig = {
         crypto: false,
       }
     }
-    
+
     // Optimize for 3D libraries
     config.module.rules.push({
       test: /\.(glsl|vs|fs|vert|frag)$/,
       use: ['raw-loader', 'glslify-loader'],
     })
-    
+
     // Production optimizations for 3D libraries
     if (!isServer && !dev_) {
       config.optimization = {
@@ -67,7 +66,7 @@ const nextConfig = {
         },
       }
     }
-    
+
     return config
   },
 }
