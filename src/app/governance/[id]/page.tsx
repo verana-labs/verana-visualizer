@@ -7,6 +7,7 @@ import { UpgradeSummaryWidget } from '@/components/governance'
 import { LayoutWrapper } from '@/components/layout'
 import { fetchProposal } from '@/lib/api'
 import { formatProposalStatus, isUpgradeProposal } from '@/lib/governanceUtils'
+import { logger } from '@/lib/logger'
 import { Proposal } from '@/types'
 
 export default function ProposalDetailPage() {
@@ -28,7 +29,7 @@ export default function ProposalDetailPage() {
         const data = await fetchProposal(proposalId)
         setProposal(data.proposal)
       } catch (err) {
-        console.error('Error loading proposal:', err)
+        logger.error('Error loading proposal:', err)
         setError(err instanceof Error ? err.message : 'Failed to load proposal')
       } finally {
         setIsLoading(false)

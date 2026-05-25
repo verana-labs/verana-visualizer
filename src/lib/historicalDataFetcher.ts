@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger'
+
 /**
  * Historical Data Fetcher
  * Fetches historical blockchain data by querying state at different block heights.
@@ -25,7 +27,7 @@ export async function getCurrentBlockHeight(): Promise<number> {
     const data = await response.json()
     return parseInt(data.result?.block?.header?.height || '0')
   } catch (error) {
-    console.error('Error fetching current block height:', error)
+    logger.error('Error fetching current block height:', error)
     throw error
   }
 }
@@ -42,7 +44,7 @@ export async function getBlockAtHeight(height: number): Promise<BlockInfo> {
       timestamp: data.result?.block?.header?.time || new Date().toISOString(),
     }
   } catch (error) {
-    console.error(`Error fetching block at height ${height}:`, error)
+    logger.error(`Error fetching block at height ${height}:`, error)
     throw error
   }
 }
@@ -56,7 +58,7 @@ export async function getSupplyAtHeight(height: number) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching supply at height ${height}:`, error)
+    logger.error(`Error fetching supply at height ${height}:`, error)
     return null
   }
 }
@@ -70,7 +72,7 @@ export async function getStakingPoolAtHeight(height: number) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching staking pool at height ${height}:`, error)
+    logger.error(`Error fetching staking pool at height ${height}:`, error)
     return null
   }
 }
@@ -84,7 +86,7 @@ export async function getInflationAtHeight(height: number) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching inflation at height ${height}:`, error)
+    logger.error(`Error fetching inflation at height ${height}:`, error)
     return null
   }
 }
@@ -98,7 +100,7 @@ export async function getValidatorsAtHeight(height: number) {
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching validators at height ${height}:`, error)
+    logger.error(`Error fetching validators at height ${height}:`, error)
     return null
   }
 }
@@ -188,7 +190,7 @@ export async function fetchHistoricalSupplyData(dataPoints: number = 30): Promis
 
     return data.sort((a, b) => a.height - b.height)
   } catch (error) {
-    console.error('Error fetching historical supply data:', error)
+    logger.error('Error fetching historical supply data:', error)
     throw error
   }
 }
@@ -246,7 +248,7 @@ export async function fetchHistoricalInflationData(dataPoints: number = 30): Pro
 
     return data.sort((a, b) => a.height - b.height)
   } catch (error) {
-    console.error('Error fetching historical inflation data:', error)
+    logger.error('Error fetching historical inflation data:', error)
     throw error
   }
 }
@@ -325,7 +327,7 @@ export async function fetchHistoricalNetworkActivity(dataPoints: number = 30): P
 
     return data.sort((a, b) => a.height - b.height)
   } catch (error) {
-    console.error('Error fetching historical network activity:', error)
+    logger.error('Error fetching historical network activity:', error)
     throw error
   }
 }
@@ -357,7 +359,7 @@ export async function fetchCurrentValidatorDistribution(): Promise<ValidatorData
       .sort((a: any, b: any) => b.votingPower - a.votingPower)
       .slice(0, 10)
   } catch (error) {
-    console.error('Error fetching validator distribution:', error)
+    logger.error('Error fetching validator distribution:', error)
     throw error
   }
 }
@@ -404,7 +406,7 @@ export async function fetchCurrentStakingDistribution(): Promise<StakingDataPoin
       },
     ]
   } catch (error) {
-    console.error('Error fetching staking distribution:', error)
+    logger.error('Error fetching staking distribution:', error)
     throw error
   }
 }

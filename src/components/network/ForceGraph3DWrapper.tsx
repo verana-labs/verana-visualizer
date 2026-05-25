@@ -1,6 +1,7 @@
 'use client'
 
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { logger } from '@/lib/logger'
 
 interface ForceGraph3DWrapperProps {
   [key: string]: any
@@ -22,7 +23,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     // Wait for the library to load
     const initGraph = async () => {
       try {
-        console.log('Initializing 3D graph...')
+        logger.log('Initializing 3D graph...')
         setIsLoading(true)
         setError(null)
         initializedRef.current = false
@@ -41,7 +42,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
             break
           } catch (importError) {
             importAttempts++
-            console.warn(`Import attempt ${importAttempts} failed:`, importError)
+            logger.warn(`Import attempt ${importAttempts} failed:`, importError)
 
             if (importAttempts >= maxImportAttempts) {
               throw importError
@@ -69,7 +70,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
             }
           }
 
-          console.log('Creating ForceGraph3D instance...')
+          logger.log('Creating ForceGraph3D instance...')
           // 3d-force-graph default export is a FACTORY function, not a class
           // Prefer constructor per docs; pass rendererConfig to ensure alpha transparency
           try {
@@ -101,7 +102,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
                     try {
                       graphRef.current[key](props[key])
                     } catch (error) {
-                      console.warn(`Failed to apply prop ${key}:`, error)
+                      logger.warn(`Failed to apply prop ${key}:`, error)
                     }
                   }
                 })
@@ -116,14 +117,14 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
                   graphRef.current.refresh()
                 } catch {}
 
-                console.log('3D graph initialized successfully')
+                logger.log('3D graph initialized successfully')
                 initializedRef.current = true
                 setIsLoading(false)
               } catch (error) {
-                console.error('Error applying props to graph:', error)
+                logger.error('Error applying props to graph:', error)
                 // Don't show error if graph was initialized successfully, just log it
                 if (graphRef.current) {
-                  console.warn('Graph initialized but error applying props:', error)
+                  logger.warn('Graph initialized but error applying props:', error)
                 } else {
                   setError('Failed to initialize 3D visualization')
                 }
@@ -139,12 +140,12 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
             initializedRef.current = true
             setIsLoading(false)
           } catch (error) {
-            console.warn('Error updating existing graph:', error)
+            logger.warn('Error updating existing graph:', error)
             setIsLoading(false)
           }
         }
       } catch (error) {
-        console.error('Failed to initialize ForceGraph3D:', error)
+        logger.error('Failed to initialize ForceGraph3D:', error)
         // Only show error if this is a critical failure, not just a prop update error
         setError(`Failed to load 3D visualization: ${error instanceof Error ? error.message : String(error)}`)
         setIsLoading(false)
@@ -161,7 +162,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         ? setTimeout(() => {
             // Only show timeout error if graph is still null and hasn't been initialized
             if (!initializedRef.current) {
-              console.error('3D graph initialization timeout')
+              logger.error('3D graph initialization timeout')
               setError('Initialization timeout - please try refreshing the page')
               setIsLoading(false)
             } else {
@@ -190,7 +191,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
       if (props.backgroundColor) graphRef.current.backgroundColor(props.backgroundColor)
       if (props.showNavInfo !== undefined) graphRef.current.showNavInfo(props.showNavInfo)
     } catch (error) {
-      console.warn('Failed to update graph props:', error)
+      logger.warn('Failed to update graph props:', error)
       // Don't show error if graph is working, just log the warning
     }
   }, [props.graphData, props.width, props.height, props.backgroundColor, props.showNavInfo])
@@ -206,7 +207,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         graphRef.current.width(props.width)
         graphRef.current.height(props.height)
       } catch (error) {
-        console.warn('Failed to resize graph:', error)
+        logger.warn('Failed to resize graph:', error)
       }
     }, 50) // Small delay to ensure DOM updates are complete
 

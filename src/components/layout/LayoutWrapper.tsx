@@ -9,6 +9,7 @@ import {
   fetchSupply,
   formatInflationRate,
 } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import Footer from './Footer'
 import MobileHeader from './MobileHeader'
 import Sidebar from './Sidebar'
@@ -71,7 +72,7 @@ export default function LayoutWrapper({ children, title, subtitle }: LayoutWrapp
           trustDepositSize,
         })
       } catch (error) {
-        console.error('Failed to load network info:', error)
+        logger.error('Failed to load network info:', error)
       }
     }
 

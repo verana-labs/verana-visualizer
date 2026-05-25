@@ -12,6 +12,7 @@ import {
   getExecutionStatusColor,
   isUpgradeProposal,
 } from '@/lib/governanceUtils'
+import { logger } from '@/lib/logger'
 import { Proposal, UpgradeExecutionInfo } from '@/types'
 
 interface ProposalCardProps {
@@ -53,7 +54,7 @@ export default function ProposalCard({
         const executionInfo = await determineUpgradeExecutionStatus(proposal, plan.height)
         setExecution(executionInfo)
       } catch (error) {
-        console.error('Error loading execution status:', error)
+        logger.error('Error loading execution status:', error)
       } finally {
         setIsLoadingExecution(false)
       }

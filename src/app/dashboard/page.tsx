@@ -13,6 +13,7 @@ import {
   fetchSupply,
   fetchValidators,
 } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import {
   CommunityPoolResponse,
   HeaderResponse,
@@ -85,7 +86,7 @@ export default function Dashboard() {
       setIsConnected(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load network data')
-      console.error('Error loading network data:', err)
+      logger.error('Error loading network data:', err)
 
       // Mark as disconnected on error
       setIsConnected(false)
@@ -109,7 +110,7 @@ export default function Dashboard() {
     // Using isRefresh=true to show refresh indicator
     const refreshTimer = setInterval(() => {
       loadNetworkData(true).catch((err) => {
-        console.error('Auto-refresh failed:', err)
+        logger.error('Auto-refresh failed:', err)
         setIsConnected(false)
       })
     }, 30000)

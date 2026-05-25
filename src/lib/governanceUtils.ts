@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger'
+
 /**
  * Governance Utilities
  *
@@ -306,7 +308,7 @@ export async function determineUpgradeExecutionStatus(
   try {
     currentHeight = await fetchCurrentHeight()
   } catch (error) {
-    console.error('Error fetching current height:', error)
+    logger.error('Error fetching current height:', error)
     // Rule 3: Current height unavailable
     return {
       status: 'not_executed',
@@ -352,7 +354,7 @@ export async function determineUpgradeExecutionStatus(
         }
       }
     } catch (error) {
-      console.error(`Error fetching block at height ${planHeight}:`, error)
+      logger.error(`Error fetching block at height ${planHeight}:`, error)
       return {
         status: 'unknown',
         message: `Unknown (block not available)`,
@@ -394,7 +396,7 @@ export async function buildVotingSummary(proposal: Proposal): Promise<VotingSumm
     const stakingPool = await fetchStakingPool()
     bondedTokens = stakingPool.pool?.bonded_tokens || '0'
   } catch (error) {
-    console.error('Error fetching staking pool:', error)
+    logger.error('Error fetching staking pool:', error)
   }
 
   const turnoutPercent = calculateTurnoutPercent(totalVotingPower, bondedTokens)

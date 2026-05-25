@@ -6,6 +6,7 @@ import { LayoutWrapper } from '@/components/layout'
 import { ResultsSection, SearchForm } from '@/components/search'
 import { DIDTable } from '@/components/tables'
 import { fetchDIDList } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import { DID } from '@/types'
 
 const didMatchesQuery = (did: DID, query: string) => {
@@ -41,7 +42,7 @@ function DIDDirectoryContent() {
         setError(null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load DIDs')
-        console.error('Error loading DIDs:', err)
+        logger.error('Error loading DIDs:', err)
       } finally {
         setIsLoading(false)
       }

@@ -10,6 +10,7 @@ import {
   getExecutionStatusColor,
   parsePlanInfo,
 } from '@/lib/governanceUtils'
+import { logger } from '@/lib/logger'
 import { Proposal, UpgradeExecutionInfo, UpgradeProposalData, VotingSummary } from '@/types'
 
 interface UpgradeSummaryWidgetProps {
@@ -39,7 +40,7 @@ export default function UpgradeSummaryWidget({ proposal, className = '' }: Upgra
         const data = await buildUpgradeProposalData(proposal)
         setUpgradeData(data)
       } catch (err) {
-        console.error('Error loading upgrade data:', err)
+        logger.error('Error loading upgrade data:', err)
         setError(err instanceof Error ? err.message : 'Failed to load upgrade data')
       } finally {
         setIsLoading(false)

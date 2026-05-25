@@ -1,4 +1,5 @@
 import { env } from 'next-runtime-env'
+import { logger } from '@/lib/logger'
 import {
   AggregatedContributor,
   CommitActivity,
@@ -18,9 +19,9 @@ let hasWarnedAboutRateLimit = false
 function warnAboutRateLimit() {
   if (!hasWarnedAboutRateLimit) {
     if (getGitHubToken()) {
-      console.log('✅ GitHub API: Using authenticated requests (5,000 requests/hour limit)')
+      logger.log('✅ GitHub API: Using authenticated requests (5,000 requests/hour limit)')
     } else {
-      console.warn(
+      logger.warn(
         '⚠️ GitHub API: Using unauthenticated requests (60 requests/hour limit). ' +
           'Add NEXT_PUBLIC_GITHUB_TOKEN to .env.local for higher limits (5,000 requests/hour).'
       )
@@ -72,7 +73,7 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
         const resetDate = rateLimitReset ? new Date(parseInt(rateLimitReset) * 1000) : null
         const resetTimeStr = resetDate ? resetDate.toLocaleTimeString() : 'unknown'
 
-        console.error('GitHub API 403 Error Details:', {
+        logger.error('GitHub API 403 Error Details:', {
           rateLimitRemaining,
           rateLimitReset,
           resetTime: resetTimeStr,
@@ -110,7 +111,7 @@ export async function fetchOrganizationRepos(org: string): Promise<GitHubReposit
     // Filter out private repos and forks (external repositories)
     return repos.filter((repo) => !repo.name.includes('private') && !repo.fork)
   } catch (error) {
-    console.error('Error fetching organization repos:', error)
+    logger.error('Error fetching organization repos:', error)
     throw error
   }
 }
@@ -135,7 +136,7 @@ export async function fetchRepositoryCommits(owner: string, repo: string, since?
 
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching commits for ${owner}/${repo}:`, error)
+    logger.error(`Error fetching commits for ${owner}/${repo}:`, error)
     return []
   }
 }
@@ -152,20 +153,20 @@ export async function fetchRepositoryContributors(owner: string, repo: string): 
     if (!response.ok) {
       if (response.status === 409 || response.status === 404) {
         // Repository is empty or not found
-        console.log(`No contributors found for ${owner}/${repo} (${response.status})`)
+        logger.log(`No contributors found for ${owner}/${repo} (${response.status})`)
         return []
       }
       if (response.status === 403) {
-        console.warn(`Rate limit or access denied for ${owner}/${repo}`)
+        logger.warn(`Rate limit or access denied for ${owner}/${repo}`)
         return []
       }
-      console.warn(`Failed to fetch contributors for ${owner}/${repo}: ${response.statusText}`)
+      logger.warn(`Failed to fetch contributors for ${owner}/${repo}: ${response.statusText}`)
       return []
     }
 
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching contributors for ${owner}/${repo}:`, error)
+    logger.error(`Error fetching contributors for ${owner}/${repo}:`, error)
     return []
   }
 }
@@ -187,13 +188,13 @@ export async function fetchCommitActivity(owner: string, repo: string): Promise<
 
     // GitHub returns 202 if stats are being computed
     if (response.status === 202) {
-      console.log(`Stats are being computed for ${owner}/${repo}`)
+      logger.log(`Stats are being computed for ${owner}/${repo}`)
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error(`Error fetching commit activity for ${owner}/${repo}:`, error)
+    logger.error(`Error fetching commit activity for ${owner}/${repo}:`, error)
     return []
   }
 }
@@ -335,7 +336,7 @@ export async function fetchRepositoryStats(owner: string, repo: string): Promise
 
     // Fallback: If GitHub stats API doesn't return data, generate from commits
     if (!commitActivity || commitActivity.length === 0) {
-      console.log(`Generating commit activity from commits for ${owner}/${repo}`)
+      logger.log(`Generating commit activity from commits for ${owner}/${repo}`)
       commitActivity = generateCommitActivityFromCommits(commits)
     }
 
@@ -354,7 +355,7 @@ export async function fetchRepositoryStats(owner: string, repo: string): Promise
       commitActivity,
     }
   } catch (error) {
-    console.error(`Error fetching repository stats for ${owner}/${repo}:`, error)
+    logger.error(`Error fetching repository stats for ${owner}/${repo}:`, error)
     return null
   }
 }
