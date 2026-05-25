@@ -12,6 +12,7 @@ import {
   fetchHistoricalNetworkActivity,
   fetchHistoricalSupplyData,
 } from '@/lib/historicalDataFetcher'
+import { logger } from '@/lib/logger'
 
 export default function ChartsPage() {
   const [tokenSupplyData, setTokenSupplyData] = useState<any[]>([])
@@ -32,7 +33,7 @@ export default function ChartsPage() {
         setError(null)
         setLoadingProgress(0)
 
-        console.log('Fetching historical data from Verana blockchain...')
+        logger.log('Fetching historical data from Verana blockchain...')
         setChartsLoaded(0)
 
         // Load charts progressively - show each as it loads
@@ -75,7 +76,7 @@ export default function ChartsPage() {
         setLoadingMessage('All charts loaded!')
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load chart data')
-        console.error('Error loading chart data:', err)
+        logger.error('Error loading chart data:', err)
       } finally {
         setIsLoading(false)
       }

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ProposalList } from '@/components/governance'
 import { LayoutWrapper } from '@/components/layout'
 import { fetchCurrentHeight, fetchProposals } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import { ProposalsResponse } from '@/types'
 
 export default function GovernancePage() {
@@ -23,7 +24,7 @@ export default function GovernancePage() {
         setProposals(proposalsData)
         setCurrentHeight(height)
       } catch (err) {
-        console.error('Error loading governance data:', err)
+        logger.error('Error loading governance data:', err)
         setError(err instanceof Error ? err.message : 'Failed to load governance data')
       } finally {
         setIsLoading(false)

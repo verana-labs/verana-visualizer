@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger'
+
 import { EcosystemMetricsDataPoint } from '@/types'
 import { fetchEcosystemMetrics } from './api'
 import { calculateHistoricalHeights, getBlockAtHeight, getCurrentBlockHeight } from './historicalDataFetcher'
@@ -19,7 +21,7 @@ export async function fetchHistoricalEcosystemData(dataPoints: number = 30): Pro
         try {
           blockInfo = await getBlockAtHeight(height)
         } catch (err) {
-          console.warn(`Block fetch at height ${height} failed, skipping:`, err instanceof Error ? err.message : err)
+          logger.warn(`Block fetch at height ${height} failed, skipping:`, err instanceof Error ? err.message : err)
           return null
         }
 
@@ -27,7 +29,7 @@ export async function fetchHistoricalEcosystemData(dataPoints: number = 30): Pro
         try {
           metrics = await fetchEcosystemMetrics(height)
         } catch (error) {
-          console.warn(`Metrics fetch at height ${height} failed:`, error instanceof Error ? error.message : error)
+          logger.warn(`Metrics fetch at height ${height} failed:`, error instanceof Error ? error.message : error)
           return null
         }
 
@@ -64,7 +66,7 @@ export async function fetchHistoricalEcosystemData(dataPoints: number = 30): Pro
   }
 
   if (failureCount > 0) {
-    console.warn(`Ecosystem historical data: ${failureCount}/${heights.length} data points failed`)
+    logger.warn(`Ecosystem historical data: ${failureCount}/${heights.length} data points failed`)
   }
 
   return data.sort((a, b) => a.height - b.height)

@@ -5,6 +5,7 @@ import { LayoutWrapper } from '@/components/layout'
 import { ResultsSection, SearchForm } from '@/components/search'
 import { TrustRegistryTable } from '@/components/tables'
 import { fetchTrustRegistryList } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import { TrustRegistry } from '@/types'
 
 export default function TrustRegistriesPage() {
@@ -25,7 +26,7 @@ export default function TrustRegistriesPage() {
         setError(null)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load trust registries')
-        console.error('Error loading trust registries:', err)
+        logger.error('Error loading trust registries:', err)
       } finally {
         setIsLoading(false)
       }

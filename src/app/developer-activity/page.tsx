@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ContributorsSection, RepositoryCard, SkeletonCard } from '@/components/developer-activity'
 import { LayoutWrapper } from '@/components/layout'
 import { aggregateContributors, fetchOrganizationRepos, fetchRepositoryStats, hasGitHubToken } from '@/lib/githubApi'
+import { logger } from '@/lib/logger'
 import { AggregatedContributor, RepositoryStats } from '@/types'
 
 const ORGANIZATION = 'verana-labs'
@@ -25,7 +26,7 @@ export default function DeveloperActivityPage() {
       setRepoStats([]) // Clear previous data
       setContributors([])
 
-      console.log(`Fetching repositories from ${ORGANIZATION} organization...`)
+      logger.log(`Fetching repositories from ${ORGANIZATION} organization...`)
 
       // Fetch all repositories
       setLoadingMessage('Fetching repositories...')
@@ -36,7 +37,7 @@ export default function DeveloperActivityPage() {
         throw new Error('No repositories found for the organization')
       }
 
-      console.log(`Found ${repos.length} repositories`)
+      logger.log(`Found ${repos.length} repositories`)
       setTotalRepos(repos.length)
       setLoadingProgress(20)
 
@@ -76,14 +77,14 @@ export default function DeveloperActivityPage() {
         setContributors(partialContributors)
       }
 
-      console.log(`Successfully fetched stats for ${validStats.length} repositories`)
+      logger.log(`Successfully fetched stats for ${validStats.length} repositories`)
 
       setLoadingProgress(100)
       setLoadingMessage('Complete!')
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load developer activity'
       setError(errorMessage)
-      console.error('Error loading developer activity:', err)
+      logger.error('Error loading developer activity:', err)
     } finally {
       setIsLoading(false)
     }
@@ -91,8 +92,8 @@ export default function DeveloperActivityPage() {
 
   useEffect(() => {
     // Log token status for debugging
-    console.log('Token configured:', hasGitHubToken())
-    console.log('Organization to fetch:', ORGANIZATION)
+    logger.log('Token configured:', hasGitHubToken())
+    logger.log('Organization to fetch:', ORGANIZATION)
     loadDeveloperActivity()
   }, [])
 

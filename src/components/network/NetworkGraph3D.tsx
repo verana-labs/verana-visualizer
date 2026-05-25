@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { convertUvnaToVna, fetchDIDList, fetchHeader, fetchTrustRegistryList } from '@/lib/api'
+import { logger } from '@/lib/logger'
 import type { DID, TrustRegistry } from '@/types'
 
 // Import the wrapper component
@@ -843,12 +844,12 @@ export default function NetworkGraph3D() {
           setPulseAnimation(false)
         }
       } catch (error) {
-        console.warn('Error fitting graph to view:', error)
+        logger.warn('Error fitting graph to view:', error)
         // Fallback: try to reset camera position
         try {
           graphRef.current.cameraPosition({ x: 0, y: 0, z: 200 }, { x: 0, y: 0, z: 0 }, 1000)
         } catch (fallbackError) {
-          console.warn('Fallback camera reset also failed:', fallbackError)
+          logger.warn('Fallback camera reset also failed:', fallbackError)
         }
       }
     }

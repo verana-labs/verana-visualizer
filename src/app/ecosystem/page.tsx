@@ -8,6 +8,7 @@ import EcosystemTrustSummary from '@/components/ecosystem/EcosystemTrustSummary'
 import { LayoutWrapper } from '@/components/layout'
 import { fetchEcosystemMetrics } from '@/lib/api'
 import { fetchHistoricalEcosystemData } from '@/lib/ecosystemDataFetcher'
+import { logger } from '@/lib/logger'
 import { EcosystemMetrics, EcosystemMetricsDataPoint } from '@/types'
 
 export default function EcosystemPage() {
@@ -47,7 +48,7 @@ export default function EcosystemPage() {
       } catch (err) {
         if (!mounted) return
         setError(err instanceof Error ? err.message : 'Failed to load ecosystem data')
-        console.error('Error loading ecosystem data:', err)
+        logger.error('Error loading ecosystem data:', err)
       } finally {
         if (mounted) {
           setIsLoading(false)
