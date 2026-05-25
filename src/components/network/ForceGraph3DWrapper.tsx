@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 interface ForceGraph3DWrapperProps {
   [key: string]: any
@@ -26,15 +26,15 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
         setIsLoading(true)
         setError(null)
         initializedRef.current = false
-        
+
         // Check if we're in production and handle potential asset loading issues
         const isProduction = process.env.NODE_ENV === 'production'
-        
+
         // Dynamic import with retry for production
-        let importedModule
+        let importedModule: typeof import('3d-force-graph') | undefined
         let importAttempts = 0
         const maxImportAttempts = isProduction ? 3 : 1
-        
+
         while (importAttempts < maxImportAttempts) {
           try {
             importedModule = await import('3d-force-graph')
@@ -42,23 +42,23 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
           } catch (importError) {
             importAttempts++
             console.warn(`Import attempt ${importAttempts} failed:`, importError)
-            
+
             if (importAttempts >= maxImportAttempts) {
               throw importError
             }
-            
+
             // Wait before retrying, longer delays for production
             const retryDelay = isProduction ? 2000 * importAttempts : 1000
-            await new Promise(resolve => setTimeout(resolve, retryDelay))
+            await new Promise((resolve) => setTimeout(resolve, retryDelay))
           }
         }
-        
+
         const ForceGraph3D = importedModule?.default || importedModule
-        
+
         if (!ForceGraph3D) {
           throw new Error('Failed to load ForceGraph3D constructor')
         }
-        
+
         if (!graphRef.current && containerRef.current) {
           // Check WebGL support in production
           if (isProduction) {
@@ -68,15 +68,15 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
               throw new Error('WebGL is not supported in this browser')
             }
           }
-          
+
           console.log('Creating ForceGraph3D instance...')
           // 3d-force-graph default export is a FACTORY function, not a class
           // Prefer constructor per docs; pass rendererConfig to ensure alpha transparency
           try {
             graphRef.current = new (ForceGraph3D as any)(containerRef.current, {
-              rendererConfig: { antialias: true, alpha: true }
+              rendererConfig: { antialias: true, alpha: true },
             })
-          } catch (e) {
+          } catch (_e) {
             // Fallback to factory invocation
             graphRef.current = (ForceGraph3D as any)(containerRef.current)
           }
@@ -89,42 +89,49 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
               canvas.style.pointerEvents = 'auto'
             }
           } catch {}
-          
+
           // Apply props immediately after creating the graph instance
-          setTimeout(() => {
-            try {
-              // Apply all props to the graph instance
-              Object.keys(props).forEach(key => {
-                if (key === 'ref' || key === 'graphData') return
-                if (typeof graphRef.current[key] === 'function') {
-                  try {
-                    graphRef.current[key](props[key])
-                  } catch (error) {
-                    console.warn(`Failed to apply prop ${key}:`, error)
+          setTimeout(
+            () => {
+              try {
+                // Apply all props to the graph instance
+                Object.keys(props).forEach((key) => {
+                  if (key === 'ref' || key === 'graphData') return
+                  if (typeof graphRef.current[key] === 'function') {
+                    try {
+                      graphRef.current[key](props[key])
+                    } catch (error) {
+                      console.warn(`Failed to apply prop ${key}:`, error)
+                    }
                   }
+                })
+                // Ensure data is applied last
+                if (props.graphData) {
+                  try {
+                    graphRef.current.graphData(props.graphData)
+                  } catch {}
                 }
-              })
-              // Ensure data is applied last
-              if (props.graphData) {
-                try { graphRef.current.graphData(props.graphData) } catch {}
+                // Force a refresh
+                try {
+                  graphRef.current.refresh()
+                } catch {}
+
+                console.log('3D graph initialized successfully')
+                initializedRef.current = true
+                setIsLoading(false)
+              } catch (error) {
+                console.error('Error applying props to graph:', error)
+                // Don't show error if graph was initialized successfully, just log it
+                if (graphRef.current) {
+                  console.warn('Graph initialized but error applying props:', error)
+                } else {
+                  setError('Failed to initialize 3D visualization')
+                }
+                setIsLoading(false)
               }
-              // Force a refresh
-              try { graphRef.current.refresh() } catch {}
-              
-              console.log('3D graph initialized successfully')
-              initializedRef.current = true
-              setIsLoading(false)
-            } catch (error) {
-              console.error('Error applying props to graph:', error)
-              // Don't show error if graph was initialized successfully, just log it
-              if (graphRef.current) {
-                console.warn('Graph initialized but error applying props:', error)
-              } else {
-                setError('Failed to initialize 3D visualization')
-              }
-              setIsLoading(false)
-            }
-          }, isProduction ? 300 : 100) // Shorter delay
+            },
+            isProduction ? 300 : 100
+          ) // Shorter delay
         } else {
           // Graph already exists, just update props
           try {
@@ -147,19 +154,22 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     // Add a delay to ensure DOM is ready, longer for production
     const delay = process.env.NODE_ENV === 'production' ? 300 : 100
     const timer = setTimeout(initGraph, delay)
-    
+
     // Add timeout for production to prevent infinite loading
-    const timeout = process.env.NODE_ENV === 'production' ? setTimeout(() => {
-      // Only show timeout error if graph is still null and hasn't been initialized
-      if (!initializedRef.current) {
-        console.error('3D graph initialization timeout')
-        setError('Initialization timeout - please try refreshing the page')
-        setIsLoading(false)
-      } else {
-        // Graph was initialized, just clear loading state
-        setIsLoading(false)
-      }
-    }, 30000) : null // 30 second timeout for production
+    const timeout =
+      process.env.NODE_ENV === 'production'
+        ? setTimeout(() => {
+            // Only show timeout error if graph is still null and hasn't been initialized
+            if (!initializedRef.current) {
+              console.error('3D graph initialization timeout')
+              setError('Initialization timeout - please try refreshing the page')
+              setIsLoading(false)
+            } else {
+              // Graph was initialized, just clear loading state
+              setIsLoading(false)
+            }
+          }, 30000)
+        : null // 30 second timeout for production
 
     return () => {
       clearTimeout(timer)
@@ -210,7 +220,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
       if (typeof ref === 'function') {
         ref(graphRef.current)
       } else if (ref && 'current' in ref) {
-        (ref as any).current = graphRef.current
+        ;(ref as any).current = graphRef.current
       }
     }
   }, [ref])
@@ -219,51 +229,51 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <div ref={containerRef} style={{ width: '100%', height: '100%', position: 'relative', zIndex: 1 }} />
       {isLoading && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          color: '#666',
-          fontSize: '14px',
-          zIndex: 3
-        }}>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: '#666',
+            fontSize: '14px',
+            zIndex: 3,
+          }}
+        >
           Loading 3D visualization...
         </div>
       )}
       {error && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          color: '#ff6b6b',
-          fontSize: '14px',
-          textAlign: 'center',
-          maxWidth: '300px',
-          padding: '20px',
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-        }}>
-          <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
-            Failed to load 3D visualization
-          </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
-            {error}
-          </div>
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: '#ff6b6b',
+            fontSize: '14px',
+            textAlign: 'center',
+            maxWidth: '300px',
+            padding: '20px',
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Failed to load 3D visualization</div>
+          <div style={{ fontSize: '12px', color: '#666' }}>{error}</div>
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <button 
+            <button
               onClick={() => {
                 setError(null)
                 setIsLoading(true)
-                setRetryCount(prev => prev + 1)
+                setRetryCount((prev) => prev + 1)
                 // Trigger a re-initialization by clearing the graph ref
                 if (graphRef.current && typeof graphRef.current._destructor === 'function') {
                   graphRef.current._destructor()
                 }
                 graphRef.current = null
-              }} 
+              }}
               style={{
                 padding: '8px 16px',
                 backgroundColor: '#007bff',
@@ -271,13 +281,13 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '12px'
+                fontSize: '12px',
               }}
             >
               Retry
             </button>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              onClick={() => window.location.reload()}
               style={{
                 padding: '8px 16px',
                 backgroundColor: '#6c757d',
@@ -285,7 +295,7 @@ const ForceGraph3DWrapper = forwardRef<any, ForceGraph3DWrapperProps>((props, re
                 border: 'none',
                 borderRadius: '4px',
                 cursor: 'pointer',
-                fontSize: '12px'
+                fontSize: '12px',
               }}
             >
               Reload Page

@@ -1,6 +1,5 @@
-import React from 'react'
-import { render } from '@testing-library/react'
 import { screen } from '@testing-library/dom'
+import { render } from '@testing-library/react'
 import { Header } from '../layout'
 
 describe('Header', () => {
@@ -10,5 +9,3 @@ describe('Header', () => {
     expect(screen.getByText('Decentralized Trust Layer')).toBeInTheDocument()
   })
 })
-
-

@@ -7,7 +7,7 @@ vi.mock('next/image', () => ({
   default: (props: any) => {
     const { priority, ...rest } = props
     return React.createElement('img', rest)
-  }
+  },
 }))
 
 // Setup localStorage mock for jsdom
@@ -24,13 +24,13 @@ if (typeof window !== 'undefined') {
       },
       clear: () => {
         store = {}
-      }
+      },
     }
   })()
-  
+
   Object.defineProperty(window, 'localStorage', {
     value: localStorageMock,
-    writable: true
+    writable: true,
   })
 }
 
@@ -46,9 +46,7 @@ if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
       removeListener: vi.fn(), // deprecated
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn()
-    }))
+      dispatchEvent: vi.fn(),
+    })),
   })
 }
-
-

@@ -1,8 +1,8 @@
 'use client'
 
-import { DID } from '@/types'
+import { useEffect, useMemo, useState } from 'react'
 import { convertUvnaToVna } from '@/lib/api'
-import { useEffect, useState, useMemo } from 'react'
+import { DID } from '@/types'
 
 type SortField = 'did' | 'controller' | 'deposit' | 'created' | 'modified' | 'exp'
 type SortDirection = 'asc' | 'desc'
@@ -24,7 +24,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
@@ -49,11 +49,16 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
     if (sortField !== field) {
       return (
         <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"
+          />
         </svg>
       )
     }
-    
+
     return sortDirection === 'asc' ? (
       <svg className="w-4 h-4 text-verana-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -118,9 +123,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
     }
 
     const tail = selectedDid.toLowerCase().split(':').pop()
-    const matches = tail
-      ? dids.filter((did) => did.did.toLowerCase().endsWith(`:${tail}`))
-      : []
+    const matches = tail ? dids.filter((did) => did.did.toLowerCase().endsWith(`:${tail}`)) : []
     setSelectedDID(matches.length === 1 ? matches[0] : null)
   }, [dids, selectedDid])
 
@@ -141,11 +144,21 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
           <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-dark-surface rounded-full flex items-center justify-center">
             {isSearchResult ? (
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             ) : (
               <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
             )}
           </div>
@@ -153,9 +166,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
             {isSearchResult ? 'No DIDs Found' : 'No DIDs Available'}
           </h3>
           <p className="text-gray-500 dark:text-gray-400">
-            {isSearchResult 
-              ? 'No DIDs match your search criteria.' 
-              : 'No DIDs are currently available.'}
+            {isSearchResult ? 'No DIDs match your search criteria.' : 'No DIDs are currently available.'}
           </p>
         </div>
       </div>
@@ -165,19 +176,15 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-dark-border">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          DID Directory ({sortedDIDs.length})
-        </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Click on any row to view detailed information
-        </p>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">DID Directory ({sortedDIDs.length})</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Click on any row to view detailed information</p>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-dark-border">
           <thead className="bg-gray-50 dark:bg-dark-surface">
             <tr>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('did')}
               >
@@ -186,7 +193,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   {getSortIcon('did')}
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('controller')}
               >
@@ -195,7 +202,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   {getSortIcon('controller')}
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('deposit')}
               >
@@ -204,7 +211,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   {getSortIcon('deposit')}
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('created')}
               >
@@ -213,7 +220,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   {getSortIcon('created')}
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('modified')}
               >
@@ -222,7 +229,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   {getSortIcon('modified')}
                 </div>
               </th>
-              <th 
+              <th
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-dark-card transition-colors"
                 onClick={() => handleSort('exp')}
               >
@@ -236,6 +243,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
           <tbody className="bg-white dark:bg-dark-card divide-y divide-gray-200 dark:divide-dark-border">
             {sortedDIDs.map((did, index) => (
               <tr
+                // biome-ignore lint/suspicious/noArrayIndexKey: composite did+index key on client-sorted table; preserving existing behavior
                 key={`${did.did}-${index}`}
                 onClick={() => setSelectedDID(did)}
                 className="hover:bg-gray-50 dark:hover:bg-dark-surface cursor-pointer transition-colors"
@@ -257,16 +265,16 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(did.exp)}
-                    </span>
-                    <span className={`text-xs px-2 py-1 rounded-full mt-1 w-fit ${
-                      isExpired(did.exp)
-                        ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                        : isExpiringSoon(did.exp)
-                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                    }`}>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">{formatDate(did.exp)}</span>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full mt-1 w-fit ${
+                        isExpired(did.exp)
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                          : isExpiringSoon(did.exp)
+                            ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      }`}
+                    >
                       {isExpired(did.exp) ? 'Expired' : isExpiringSoon(did.exp) ? 'Expiring Soon' : 'Active'}
                     </span>
                   </div>
@@ -281,9 +289,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white dark:bg-dark-card rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-dark-border flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                DID Details
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">DID Details</h3>
               <button
                 onClick={() => setSelectedDID(null)}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
@@ -293,7 +299,7 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                 </svg>
               </button>
             </div>
-            
+
             <div className="p-6 space-y-6">
               <div>
                 <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Basic Information</h4>
@@ -304,7 +310,9 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Controller</label>
-                    <p className="text-sm text-gray-900 dark:text-white font-mono break-all">{selectedDID.controller}</p>
+                    <p className="text-sm text-gray-900 dark:text-white font-mono break-all">
+                      {selectedDID.controller}
+                    </p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Deposit</label>
@@ -313,14 +321,20 @@ export default function DIDTable({ dids, isSearchResult = false, selectedDid }: 
                   <div>
                     <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
                     <div className="mt-1">
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        isExpired(selectedDID.exp)
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          isExpired(selectedDID.exp)
+                            ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                            : isExpiringSoon(selectedDID.exp)
+                              ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                              : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        }`}
+                      >
+                        {isExpired(selectedDID.exp)
+                          ? 'Expired'
                           : isExpiringSoon(selectedDID.exp)
-                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                      }`}>
-                        {isExpired(selectedDID.exp) ? 'Expired' : isExpiringSoon(selectedDID.exp) ? 'Expiring Soon' : 'Active'}
+                            ? 'Expiring Soon'
+                            : 'Active'}
                       </span>
                     </div>
                   </div>

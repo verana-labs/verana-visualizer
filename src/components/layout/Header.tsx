@@ -10,27 +10,16 @@ export default function Header() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-10 h-10 flex items-center justify-center">
-              <Image
-                src="/logo.svg"
-                alt="Verana Logo"
-                width={40}
-                height={40}
-                className="w-10 h-10"
-                priority
-              />
+              <Image src="/logo.svg" alt="Verana Logo" width={40} height={40} className="w-10 h-10" priority />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Verana Visualizer
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Decentralized Trust Layer
-              </p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Verana Visualizer</h1>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Decentralized Trust Layer</p>
             </div>
           </div>
           <ThemeToggle />
         </div>
-        
+
         <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-gray-50 dark:bg-dark-card p-3 rounded-lg">
             <p className="text-xs text-gray-500 dark:text-gray-400">Chain</p>

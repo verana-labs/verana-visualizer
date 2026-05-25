@@ -1,6 +1,6 @@
 'use client'
 
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { EcosystemMetricsDataPoint } from '@/types'
 
 interface EcosystemCredentialChartProps {
@@ -29,9 +29,7 @@ export default function EcosystemCredentialChart({ data, isLoading }: EcosystemC
     <div className="w-full bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
       <div className="mb-4">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">Credential Activity</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Credentials issued and verified over time
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Credentials issued and verified over time</p>
       </div>
 
       <ResponsiveContainer width="100%" height={320}>
@@ -47,29 +45,18 @@ export default function EcosystemCredentialChart({ data, isLoading }: EcosystemC
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.1} />
-          <XAxis
-            dataKey="timestamp"
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            stroke="#4b5563"
-          />
-          <YAxis
-            tick={{ fill: '#9ca3af', fontSize: 12 }}
-            stroke="#4b5563"
-            allowDecimals={false}
-          />
+          <XAxis dataKey="timestamp" tick={{ fill: '#9ca3af', fontSize: 12 }} stroke="#4b5563" />
+          <YAxis tick={{ fill: '#9ca3af', fontSize: 12 }} stroke="#4b5563" allowDecimals={false} />
           <Tooltip
             contentStyle={{
               backgroundColor: '#1f2937',
               border: '1px solid #374151',
               borderRadius: '0.5rem',
-              color: '#f3f4f6'
+              color: '#f3f4f6',
             }}
             labelStyle={{ color: '#9ca3af' }}
           />
-          <Legend
-            wrapperStyle={{ paddingTop: '20px' }}
-            iconType="circle"
-          />
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
           <Area
             type="monotone"
             dataKey="issued"

@@ -1,0 +1,164 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "maxSize": 10000000,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/dist",
+      "!**/.idea",
+      "!**/coverage",
+      "!**/pnpm-lock.yaml",
+      "!**/.changeset",
+      "!.taskmaster",
+      "!.cursor",
+      "!.audit-ci.json",
+      "!**/*.css",
+      "!public"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 120,
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/dist",
+      "!**/.idea",
+      "!**/coverage",
+      "!**/pnpm-lock.yaml",
+      "!**/.changeset",
+      "!.taskmaster",
+      "!.cursor",
+      "!.audit-ci.json"
+    ]
+  },
+  "javascript": {
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    },
+    "formatter": {
+      "semicolons": "asNeeded",
+      "quoteStyle": "single",
+      "trailingCommas": "es5",
+      "lineWidth": 120,
+      "indentStyle": "space"
+    }
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
+  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "linter": {
+    "rules": {
+      "style": {
+        "useImportType": "off",
+        "useNodejsImportProtocol": "off",
+        "noNonNullAssertion": "error",
+        "noRestrictedGlobals": {
+          "level": "error",
+          "options": {
+            "deniedGlobals": {
+              "Buffer": "Import Buffer explicitly from 'node:buffer' instead of relying on the global."
+            }
+          }
+        }
+      },
+      "correctness": {
+        "noUnusedVariables": {
+          "level": "error",
+          "fix": "safe"
+        },
+        "noUnusedFunctionParameters": "off",
+        "noUnusedImports": "error",
+        "noUndeclaredDependencies": "off",
+        "noInvalidUseBeforeDeclaration": "error"
+      },
+      "suspicious": {
+        "noConsole": "off"
+      },
+      "complexity": {
+        "noBannedTypes": "error"
+      },
+      "nursery": {},
+      "performance": {
+        "noDelete": {
+          "fix": "none",
+          "level": "error"
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/__tests__/**",
+        "**/vitest.*.ts",
+        "setupTests.ts",
+        "**/tests/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noNonNullAssertedOptionalChain": "off",
+            "noConsole": "off"
+          },
+          "complexity": {
+            "useArrowFunction": "off"
+          },
+          "correctness": {
+            "noUndeclaredDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/app/**", "src/components/**"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "noSvgWithoutTitle": "off",
+            "noStaticElementInteractions": "off",
+            "useKeyWithClickEvents": "off",
+            "useSemanticElements": "off",
+            "useAriaPropsSupportedByRole": "off"
+          },
+          "performance": {
+            "noImgElement": "off"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "warn",
+            "useHookAtTopLevel": "warn"
+          },
+          "suspicious": {
+            "noShadowRestrictedNames": "warn",
+            "noFallthroughSwitchClause": "warn"
+          }
+        }
+      }
+    }
+  ]
+}

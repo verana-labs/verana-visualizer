@@ -1,8 +1,8 @@
 'use client'
 
 import Image from 'next/image'
-import { AggregatedContributor } from '@/types'
 import { getContributionLevel } from '@/lib/githubApi'
+import { AggregatedContributor } from '@/types'
 
 interface ContributorCardProps {
   contributor: AggregatedContributor
@@ -45,17 +45,13 @@ export default function ContributorCard({ contributor }: ContributorCardProps) {
           {/* Total Contributions */}
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-500 dark:text-gray-400">Contributions:</span>
-            <span className="font-semibold text-gray-900 dark:text-white">
-              {contributor.totalContributions}
-            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">{contributor.totalContributions}</span>
           </div>
 
           {/* Repositories */}
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-500 dark:text-gray-400">Repositories:</span>
-            <span className="font-semibold text-gray-900 dark:text-white">
-              {contributor.repositories.length}
-            </span>
+            <span className="font-semibold text-gray-900 dark:text-white">{contributor.repositories.length}</span>
           </div>
         </div>
 
@@ -72,6 +68,7 @@ export default function ContributorCard({ contributor }: ContributorCardProps) {
                 </summary>
                 <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-left max-h-32 overflow-y-auto">
                   {contributor.repositories.map((repo, idx) => (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: read-only repository list render; preserving existing key behavior
                     <div key={idx} className="text-xs text-gray-700 dark:text-gray-300 py-0.5">
                       • {repo}
                     </div>
@@ -85,4 +82,3 @@ export default function ContributorCard({ contributor }: ContributorCardProps) {
     </a>
   )
 }
-

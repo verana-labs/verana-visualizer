@@ -1,28 +1,27 @@
+import { env } from 'next-runtime-env'
 import {
-  TrustRegistry,
-  CredentialSchema,
-  ApiResponse,
-  TrustRegistryListResponse,
   AbciInfoResponse,
+  ApiResponse,
+  BlockAtHeightResponse,
   BlockResponse,
-  GenesisResponse,
-  DID,
+  CommunityPoolResponse,
+  CredentialSchema,
+  DenomsMetadataResponse,
   DIDListResponse,
-  PermissionResponse,
-  SupplyResponse,
+  EcosystemMetrics,
+  GenesisResponse,
+  HeaderResponse,
   InflationResponse,
   MintParamsResponse,
-  StakingPoolResponse,
-  CommunityPoolResponse,
-  ValidatorsResponse,
-  ProposalsResponse,
-  DenomsMetadataResponse,
-  HeaderResponse,
+  PermissionResponse,
   ProposalResponse,
-  BlockAtHeightResponse,
-  EcosystemMetrics
+  ProposalsResponse,
+  StakingPoolResponse,
+  SupplyResponse,
+  TrustRegistry,
+  TrustRegistryListResponse,
+  ValidatorsResponse,
 } from '@/types'
-import { env } from 'next-runtime-env'
 
 const getApiEndpoint = () =>
   env('NEXT_PUBLIC_API_ENDPOINT') || process.env.NEXT_PUBLIC_API_ENDPOINT || 'https://api.testnet.verana.network'
@@ -70,10 +69,7 @@ export async function fetchCredentialSchemas(trId: string): Promise<ApiResponse<
 }
 
 export async function fetchTrustRegistryList(maxSize: number = 100): Promise<TrustRegistryListResponse> {
-  return fetchJSON(
-    `${getApiEndpoint()}/verana/tr/v1/list?response_max_size=${maxSize}`,
-    'fetch trust registry list'
-  )
+  return fetchJSON(`${getApiEndpoint()}/verana/tr/v1/list?response_max_size=${maxSize}`, 'fetch trust registry list')
 }
 
 export function convertUvnaToVna(uvna: string): string {
@@ -94,7 +90,7 @@ export function convertUvnaToVna(uvna: string): string {
 export function formatSnakeCaseToTitleCase(str: string): string {
   return str
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
 
@@ -129,10 +125,7 @@ export async function fetchDIDList(): Promise<DIDListResponse> {
 }
 
 export async function fetchPermission(permissionId: string): Promise<PermissionResponse> {
-  return fetchJSON(
-    `${getIdxEndpoint()}/verana/perm/v1/get/${permissionId}`,
-    `fetch permission ${permissionId}`
-  )
+  return fetchJSON(`${getIdxEndpoint()}/verana/perm/v1/get/${permissionId}`, `fetch permission ${permissionId}`)
 }
 
 export async function fetchSupply(): Promise<SupplyResponse> {
@@ -179,10 +172,7 @@ export async function fetchHeader(): Promise<HeaderResponse> {
  * Fetch a single proposal by ID
  */
 export async function fetchProposal(proposalId: string): Promise<ProposalResponse> {
-  return fetchJSON(
-    `${getApiEndpoint()}/cosmos/gov/v1/proposals/${proposalId}`,
-    `fetch proposal ${proposalId}`
-  )
+  return fetchJSON(`${getApiEndpoint()}/cosmos/gov/v1/proposals/${proposalId}`, `fetch proposal ${proposalId}`)
 }
 
 /**
@@ -190,10 +180,7 @@ export async function fetchProposal(proposalId: string): Promise<ProposalRespons
  * Used to get execution time for upgrade proposals
  */
 export async function fetchBlockAtHeight(height: string | number): Promise<BlockAtHeightResponse> {
-  return fetchJSON(
-    `${getRpcEndpoint()}/block?height=${height}`,
-    `fetch block at height ${height}`
-  )
+  return fetchJSON(`${getRpcEndpoint()}/block?height=${height}`, `fetch block at height ${height}`)
 }
 
 /**

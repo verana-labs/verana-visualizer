@@ -1,6 +1,6 @@
 'use client'
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 
 interface StakingDistributionChartProps {
   data: {
@@ -13,7 +13,7 @@ interface StakingDistributionChartProps {
 const COLORS = {
   bonded: '#10b981',
   unbonded: '#f59e0b',
-  notBonded: '#6b7280'
+  notBonded: '#6b7280',
 }
 
 export default function StakingDistributionChart({ data, isLoading }: StakingDistributionChartProps) {
@@ -51,7 +51,7 @@ export default function StakingDistributionChart({ data, isLoading }: StakingDis
         <h3 className="text-xl font-bold text-gray-900 dark:text-white">Staking Distribution</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Distribution of bonded vs unbonded tokens</p>
       </div>
-      
+
       <ResponsiveContainer width="100%" height={320}>
         <PieChart>
           <Pie
@@ -65,8 +65,9 @@ export default function StakingDistributionChart({ data, isLoading }: StakingDis
             dataKey="value"
           >
             {data.map((entry, index) => (
-              <Cell 
-                key={`cell-${index}`} 
+              <Cell
+                // biome-ignore lint/suspicious/noArrayIndexKey: recharts <Cell> keyed by index per library convention
+                key={`cell-${index}`}
                 fill={getColor(entry.name)}
               />
             ))}
@@ -76,18 +77,13 @@ export default function StakingDistributionChart({ data, isLoading }: StakingDis
               backgroundColor: '#1f2937',
               border: '1px solid #374151',
               borderRadius: '0.5rem',
-              color: '#f3f4f6'
+              color: '#f3f4f6',
             }}
             formatter={(value: number) => [`${(value / 1000000).toFixed(2)}M VNA`, '']}
           />
-          <Legend 
-            verticalAlign="bottom" 
-            height={36}
-            iconType="circle"
-          />
+          <Legend verticalAlign="bottom" height={36} iconType="circle" />
         </PieChart>
       </ResponsiveContainer>
     </div>
   )
 }
-

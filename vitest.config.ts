@@ -8,19 +8,17 @@ export default defineConfig({
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov']
-    }
+      reporter: ['text', 'lcov'],
+    },
   },
   resolve: {
     alias: {
-      '@': '/src'
-    }
+      '@': '/src',
+    },
   },
   esbuild: {
     jsx: 'automatic',
     jsxDev: true,
-    jsxImportSource: 'react'
-  }
+    jsxImportSource: 'react',
+  },
 })
-
-

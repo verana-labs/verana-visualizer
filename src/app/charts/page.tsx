@@ -1,16 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { LayoutWrapper } from '@/components/layout'
-import TokenSupplyChart from '@/components/charts/TokenSupplyChart'
+import { useEffect, useState } from 'react'
 import InflationChart from '@/components/charts/InflationChart'
-import ValidatorDistributionChart from '@/components/charts/ValidatorDistributionChart'
 import NetworkActivityChart from '@/components/charts/NetworkActivityChart'
-import { 
-  fetchHistoricalSupplyData,
-  fetchHistoricalInflationData,
+import TokenSupplyChart from '@/components/charts/TokenSupplyChart'
+import ValidatorDistributionChart from '@/components/charts/ValidatorDistributionChart'
+import { LayoutWrapper } from '@/components/layout'
+import {
   fetchCurrentValidatorDistribution,
-  fetchHistoricalNetworkActivity
+  fetchHistoricalInflationData,
+  fetchHistoricalNetworkActivity,
+  fetchHistoricalSupplyData,
 } from '@/lib/historicalDataFetcher'
 
 export default function ChartsPage() {
@@ -34,35 +34,35 @@ export default function ChartsPage() {
 
         console.log('Fetching historical data from Verana blockchain...')
         setChartsLoaded(0)
-        
+
         // Load charts progressively - show each as it loads
         // Group 1: Historical data (can be fetched in parallel)
         setLoadingMessage('Loading Token Supply & Inflation...')
         setLoadingProgress(10)
-        
+
         await Promise.all([
-          fetchHistoricalSupplyData(30).then(data => {
+          fetchHistoricalSupplyData(30).then((data) => {
             setTokenSupplyData(data)
-            setChartsLoaded(prev => prev + 1)
+            setChartsLoaded((prev) => prev + 1)
             setLoadingProgress(20)
             return data
           }),
-          fetchHistoricalInflationData(30).then(data => {
+          fetchHistoricalInflationData(30).then((data) => {
             setInflationData(data)
-            setChartsLoaded(prev => prev + 1)
+            setChartsLoaded((prev) => prev + 1)
             setLoadingProgress(30)
             return data
-          })
+          }),
         ])
-        
+
         setLoadingProgress(50)
 
         // Group 2: Validator data
         setLoadingMessage('Loading Validator data...')
-        
+
         const validatorDistribution = await fetchCurrentValidatorDistribution()
         setValidatorData(validatorDistribution)
-        setChartsLoaded(prev => prev + 1)
+        setChartsLoaded((prev) => prev + 1)
         setLoadingProgress(70)
 
         // Group 3: Network activity
@@ -73,7 +73,6 @@ export default function ChartsPage() {
 
         setLoadingProgress(100)
         setLoadingMessage('All charts loaded!')
-
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load chart data')
         console.error('Error loading chart data:', err)
@@ -86,16 +85,11 @@ export default function ChartsPage() {
   }, [])
 
   return (
-    <LayoutWrapper 
-      title="Analytics Charts" 
-      subtitle="Interactive Network Data Visualization"
-    >
+    <LayoutWrapper title="Analytics Charts" subtitle="Interactive Network Data Visualization">
       <div className="p-6">
         {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Network Analytics
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Network Analytics</h2>
           <p className="text-gray-500 dark:text-gray-400 mt-2">
             Historical trends and distribution charts for Verana Network
           </p>
@@ -106,17 +100,17 @@ export default function ChartsPage() {
             </div>
           )}
           {isLoading && (
-            <div className={`mt-4 rounded-lg transition-all duration-300 ${
-              chartsLoaded > 0 
-                ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50' 
-                : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-            }`}>
+            <div
+              className={`mt-4 rounded-lg transition-all duration-300 ${
+                chartsLoaded > 0
+                  ? 'p-3 bg-blue-50/80 dark:bg-blue-900/10 border border-blue-200/50 dark:border-blue-800/50'
+                  : 'p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+              }`}
+            >
               <div className="flex items-center gap-3">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 flex-shrink-0"></div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-blue-700 dark:text-blue-300 ${
-                    chartsLoaded > 0 ? 'text-sm' : 'font-medium'
-                  }`}>
+                  <p className={`text-blue-700 dark:text-blue-300 ${chartsLoaded > 0 ? 'text-sm' : 'font-medium'}`}>
                     {loadingMessage}
                   </p>
                   {chartsLoaded === 0 && (
@@ -132,7 +126,7 @@ export default function ChartsPage() {
                     </span>
                   )}
                   <div className="w-32 bg-blue-200 dark:bg-blue-800 rounded-full h-1.5">
-                    <div 
+                    <div
                       className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
                       style={{ width: `${loadingProgress}%` }}
                     ></div>
@@ -162,7 +156,10 @@ export default function ChartsPage() {
 
             {/* Network Activity */}
             <div>
-              <NetworkActivityChart data={networkActivityData} isLoading={networkActivityData.length === 0 && isLoading} />
+              <NetworkActivityChart
+                data={networkActivityData}
+                isLoading={networkActivityData.length === 0 && isLoading}
+              />
             </div>
           </div>
 
@@ -171,9 +168,7 @@ export default function ChartsPage() {
             <ValidatorDistributionChart data={validatorData} isLoading={validatorData.length === 0 && isLoading} />
           </div>
         </div>
-
       </div>
     </LayoutWrapper>
   )
 }
-
