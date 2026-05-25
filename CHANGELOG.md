@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/verana-labs/verana-visualizer/compare/v1.0.0...v1.1.0) (2026-05-25)
+
+
+### Features
+
+* **lib:** add logger module and route console.* through it ([#38](https://github.com/verana-labs/verana-visualizer/issues/38)) ([5217c05](https://github.com/verana-labs/verana-visualizer/commit/5217c05ade59da475a5d17490a54873f5b6f2c3b))
+* support permission card deep links ([#34](https://github.com/verana-labs/verana-visualizer/issues/34)) ([714ba13](https://github.com/verana-labs/verana-visualizer/commit/714ba138578bee7821bb2fd88bb5bfecac811619))
+
 ## [1.0.0](https://github.com/verana-labs/verana-visualizer/compare/v0.1.0...v1.0.0) (2026-04-10)
 
 
