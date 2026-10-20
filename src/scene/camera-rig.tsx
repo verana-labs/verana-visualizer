@@ -3,7 +3,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import { Box3, PerspectiveCamera, Vector3 } from 'three'
-import type { EntityId, EntityKind } from '@/domain/network-model'
+import type { EntityId, EntityKind, NetworkModel } from '@/domain/network-model'
 import type { Layout, LensId, Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
 import { MAX_STAR_SIZE } from './scene-data'
@@ -17,6 +17,8 @@ const REDUCED_FLIGHT_MS = 300
 const MIN_OVERVIEW_DISTANCE = 40
 const FRAME_MARGIN = 1.12
 const MAX_STAR_DEGREES = 20
+const INSPECTOR_SPAN_PX = 356
+const MIN_FOCUS_ASPECT = 0.35
 const MAX_ZOOM_FACTOR = 2.5
 const NETWORK_DIRECTION = new Vector3(0, 0.5, 1).normalize()
 const FLAT_DIRECTION = new Vector3(0, 0.05, 1).normalize()
@@ -50,26 +52,59 @@ export function focusDistance(kind: EntityKind, lens: LensId): number {
   return 30
 }
 
+function fitDistance(
+  points: readonly Vec3[],
+  target: Vector3,
+  direction: Vector3,
+  fov: number,
+  aspect: number,
+  floor: number
+): number {
+  const basis = new PerspectiveCamera(fov, aspect)
+  basis.position.copy(direction)
+  basis.lookAt(0, 0, 0)
+  basis.updateMatrixWorld()
+  const right = new Vector3().setFromMatrixColumn(basis.matrixWorld, 0)
+  const up = new Vector3().setFromMatrixColumn(basis.matrixWorld, 1)
+  const tanV = Math.tan((fov * Math.PI) / 360)
+  const tanH = tanV * aspect
+  const offset = new Vector3()
+  let distance = floor
+  for (const p of points) {
+    offset.set(...p).sub(target)
+    const needed = Math.max(Math.abs(offset.dot(right)) / tanH, Math.abs(offset.dot(up)) / tanV) * FRAME_MARGIN
+    distance = Math.max(distance, needed + offset.dot(direction))
+  }
+  return distance
+}
+
+export function unoccludedAspect(width: number, height: number): number {
+  return Math.max(MIN_FOCUS_ASPECT, (width - 2 * INSPECTOR_SPAN_PX) / Math.max(1, height))
+}
+
+export function focusFrameIds(model: NetworkModel, id: EntityId): EntityId[] {
+  return [...model.related(id)].filter((member) => member === id || model.entities.get(member)?.kind !== 'agent')
+}
+
+export function focusFrameDistance(
+  kind: EntityKind,
+  lens: LensId,
+  target: Vector3,
+  related: readonly Vec3[],
+  heading: Vector3,
+  fov: number,
+  aspect: number
+): number {
+  return fitDistance(related, target, heading, fov, aspect, focusDistance(kind, lens))
+}
+
 export function overviewOf(points: readonly Vec3[], lens: LensId, fov: number, aspect: number) {
   const bounds = new Box3()
   const point = new Vector3()
   for (const p of points) bounds.expandByPoint(point.set(...p))
   const target = bounds.isEmpty() ? new Vector3() : bounds.getCenter(new Vector3())
   const direction = lens === 'network' ? NETWORK_DIRECTION : FLAT_DIRECTION
-  const basis = new PerspectiveCamera(fov, aspect)
-  basis.position.copy(direction)
-  basis.lookAt(0, 0, 0)
-  const right = new Vector3().setFromMatrixColumn(basis.matrixWorld, 0)
-  const up = new Vector3().setFromMatrixColumn(basis.matrixWorld, 1)
-  const tanV = Math.tan((fov * Math.PI) / 360)
-  const tanH = tanV * aspect
-  let distance = MIN_OVERVIEW_DISTANCE
-  for (const p of points) {
-    const offset = point.set(...p).sub(target)
-    const depth = offset.dot(direction)
-    const needed = Math.max(Math.abs(offset.dot(right)) / tanH, Math.abs(offset.dot(up)) / tanV) * FRAME_MARGIN
-    distance = Math.max(distance, needed + depth)
-  }
+  const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE)
   return { target, position: target.clone().addScaledVector(direction, distance), distance }
 }
 
@@ -111,6 +146,8 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   const aspect = size.width / Math.max(1, size.height)
   const aspectRef = useRef(aspect)
   aspectRef.current = aspect
+  const sizeRef = useRef(size)
+  sizeRef.current = size
 
   useEffect(() => {
     if (!controls) return
@@ -139,7 +176,18 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
       toTarget = new Vector3(...focusAt)
       const heading =
         lens === 'trust' ? FLAT_DIRECTION.clone() : camera.position.clone().sub(controls.target).normalize()
-      toPosition = toTarget.clone().addScaledVector(heading, focusDistance(entity.kind, lens))
+      const model = useObservatory.getState().model
+      const related = model ? framePoints({ ...layout, rings: [] }, focusFrameIds(model, entity.id)) : []
+      const distance = focusFrameDistance(
+        entity.kind,
+        lens,
+        toTarget,
+        related,
+        heading,
+        camera.fov,
+        unoccludedAspect(sizeRef.current.width, sizeRef.current.height)
+      )
+      toPosition = toTarget.clone().addScaledVector(heading, distance)
     }
 
     const intro = !introduced.current

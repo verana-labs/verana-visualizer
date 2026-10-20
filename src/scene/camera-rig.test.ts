@@ -1,8 +1,18 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { PerspectiveCamera, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
-import type { EntityId } from '@/domain/network-model'
+import { buildNetworkModel, type EntityId, type RawNetwork } from '@/domain/network-model'
 import type { Layout, Vec3 } from '@/layouts/types'
-import { focusDistance, framePoints, overviewOf, zoomLimits } from './camera-rig'
+import {
+  focusDistance,
+  focusFrameDistance,
+  focusFrameIds,
+  framePoints,
+  overviewOf,
+  unoccludedAspect,
+  zoomLimits,
+} from './camera-rig'
 import { MAX_STAR_SIZE } from './scene-data'
 
 const FOV = 50
@@ -88,5 +98,62 @@ describe('framePoints', () => {
     expect(Math.max(...xs)).toBeCloseTo(130)
     expect(Math.min(...xs)).toBeCloseTo(70)
     expect(points).toContainEqual([104, 0, 0])
+  })
+})
+
+describe('focusFrameDistance', () => {
+  const heading = new Vector3(0, 0.5, 1).normalize()
+  const target = new Vector3(40, 0, -10)
+  const ring = (radius: number, count: number): Vec3[] =>
+    Array.from({ length: count }, (_, i) => {
+      const a = (i / count) * Math.PI * 2
+      return [target.x + Math.cos(a) * radius, target.y, target.z + Math.sin(a) * radius]
+    })
+
+  it('keeps the brief distance for a small ecosystem', () => {
+    expect(focusFrameDistance('ecosystem', 'network', target, ring(4, 6), heading, FOV, 16 / 9)).toBe(34)
+  })
+
+  it('backs off to frame a large related set with margin', () => {
+    const related = ring(45, 90)
+    for (const aspect of [16 / 9, 9 / 16]) {
+      const distance = focusFrameDistance('ecosystem', 'network', target, related, heading, FOV, aspect)
+      expect(distance).toBeGreaterThan(34)
+      const camera = new PerspectiveCamera(FOV, aspect, 0.1, 5000)
+      camera.position.copy(target).addScaledVector(heading, distance)
+      camera.lookAt(target)
+      camera.updateMatrixWorld()
+      for (const p of related) {
+        const ndc = new Vector3(...p).project(camera)
+        expect(Math.abs(ndc.x)).toBeLessThanOrEqual(0.9)
+        expect(Math.abs(ndc.y)).toBeLessThanOrEqual(0.9)
+      }
+    }
+  })
+})
+
+describe('focusFrameIds', () => {
+  const fixture = <T>(name: string): T =>
+    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
+  const raw: RawNetwork = {
+    ecosystems: fixture('ecosystems'),
+    schemas: fixture('schemas'),
+    participants: fixture('participants'),
+    corporations: fixture('corporations'),
+    dids: fixture<{ dids: string[] }>('dids').dids,
+  }
+  const model = buildNetworkModel(raw)
+
+  it('frames an ecosystem orbit system without the agents it shares with other ecosystems', () => {
+    const ids = focusFrameIds(model, 'ecosystem:2')
+    expect(ids.some((id) => id.startsWith('agent:'))).toBe(false)
+    for (const p of model.participants.filter((e) => e.ecosystemId === 2)) expect(ids).toContain(p.id)
+  })
+})
+
+describe('unoccludedAspect', () => {
+  it('narrows the view by the inspector on both sides so a centred focus stays clear of it', () => {
+    expect(unoccludedAspect(1440, 900)).toBeCloseTo((1440 - 2 * 356) / 900)
+    expect(unoccludedAspect(700, 900)).toBeGreaterThan(0.3)
   })
 })

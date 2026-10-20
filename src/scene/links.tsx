@@ -19,8 +19,7 @@ import type { PositionOf } from './use-lens-tween'
 const VALIDATOR_OPACITY = 0.38
 const AGENT_IDLE = 0.035
 const AGENT_LIT = 0.9
-const AGENT_RELATED = 0.7
-const AGENT_UNRELATED = 0.02
+const AGENT_RELATED = 0.25
 
 interface LinksProps {
   data: SceneData
@@ -36,8 +35,8 @@ function validatorStrength({ related, hover }: FocusSets, a: EntityId, b: Entity
   return 0.6
 }
 
-function agentStrength({ related, hover }: FocusSets, a: EntityId, b: EntityId): number {
-  if (related) return both(related, a, b) ? AGENT_RELATED : AGENT_UNRELATED
+export function agentStrength({ related, hover }: FocusSets, a: EntityId, b: EntityId): number {
+  if (related) return both(related, a, b) ? AGENT_RELATED : AGENT_IDLE
   return both(hover, a, b) ? AGENT_LIT : AGENT_IDLE
 }
 
