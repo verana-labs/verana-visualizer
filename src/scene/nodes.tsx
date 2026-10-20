@@ -5,6 +5,7 @@ import { type RefObject, useLayoutEffect, useMemo, useRef } from 'react'
 import { Color, type InstancedMesh, Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry, Vector3 } from 'three'
 import type { EntityId } from '@/domain/network-model'
 import { useObservatory } from '@/store/observatory-store'
+import { useLensSize } from './lens-size'
 import { MAX_STAR_SIZE, type SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
@@ -24,11 +25,12 @@ export function nodeScale(
   node: SceneNode,
   flash: number,
   hovered: EntityId | 'rocket' | null,
-  selected: EntityId | null
+  selected: EntityId | null,
+  size = node.size
 ): number {
   const id = node.entity.id
   const hoverGrowth = id === hovered && id !== selected ? HOVER_GROWTH : 1
-  const grown = node.size * (1 + flash * FLASH_GROWTH) * hoverGrowth
+  const grown = size * (1 + flash * FLASH_GROWTH) * hoverGrowth
   return node.entity.kind === 'ecosystem' ? Math.min(MAX_STAR_SIZE, grown) : grown
 }
 
@@ -38,6 +40,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
   const material = useMemo(() => new MeshBasicMaterial(), [])
   const ids = useMemo(() => nodes.map((node) => node.entity.id), [nodes])
   const picking = usePicking(ids)
+  const sizeOf = useLensSize()
   const scratch = useMemo(
     () => ({ m: new Matrix4(), q: new Quaternion(), p: new Vector3(), s: new Vector3(), c: new Color() }),
     []
@@ -68,7 +71,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     nodes.forEach((node, i) => {
       const id = node.entity.id
       const flash = flashOf(id, now)
-      const scale = nodeScale(node, flash, hovered, selected)
+      const scale = nodeScale(node, flash, hovered, selected, sizeOf(id, node.size))
       p.set(...positionOf(id))
       m.compose(p, q, s.setScalar(scale))
       instances.setMatrixAt(i, m)

@@ -149,3 +149,22 @@ describe('createIndexerClient', () => {
     expect(mock.mock.calls[0][1]?.body).toBe('{"did":"did:x"}')
   })
 })
+
+describe('exchangeRateSchema', () => {
+  it('parses a rate in the OpenAPI shape, with a boolean state and rate_scale', () => {
+    const parsed = exchangeRateSchema.safeParse({
+      id: 4,
+      base_asset_type: 'TU',
+      base_asset: 'tu',
+      quote_asset_type: 'COIN',
+      quote_asset: 'uvna',
+      rate: '2000000',
+      rate_scale: 6,
+      validity_duration: 86400,
+      updated: '2026-10-19T08:00:00Z',
+      expires: '2026-10-21T08:00:00Z',
+      state: true,
+    })
+    expect(parsed.success, parsed.success ? '' : parsed.error.message).toBe(true)
+  })
+})

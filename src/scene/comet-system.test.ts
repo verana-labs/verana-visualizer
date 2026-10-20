@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
+import { MODULE_COLORS } from '@/features/activity-feed/activity'
 import {
   bezierPoint,
   COMET_CAP,
   COMET_MS,
+  cometBrightness,
   cometLift,
   cometProgress,
   enqueueComets,
@@ -59,5 +61,11 @@ describe('comet system', () => {
     expect(bezierPoint([0, 0, 0], [100, 0, 0], 0, lift, out)).toEqual([0, 0, 0])
     expect(bezierPoint([0, 0, 0], [100, 0, 0], 1, lift, out)).toEqual([100, 0, 0])
     expect(bezierPoint([0, 0, 0], [100, 0, 0], 0.5, lift, out)).toEqual([50, 20, 0])
+  })
+
+  it('keeps only real trust-deposit comets bright in the Economics lens', () => {
+    expect(cometBrightness('economics', MODULE_COLORS.td)).toBe(1)
+    expect(cometBrightness('economics', MODULE_COLORS.pp)).toBeLessThan(0.3)
+    expect(cometBrightness('network', MODULE_COLORS.pp)).toBe(1)
   })
 })

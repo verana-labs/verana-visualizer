@@ -1,5 +1,6 @@
 import type { CometLaunch } from '@/domain/activity'
 import type { EntityId } from '@/domain/network-model'
+import { MODULE_COLORS } from '@/features/activity-feed/activity'
 import type { LensId, Vec3 } from '@/layouts/types'
 
 export const COMET_CAP = 48
@@ -8,6 +9,7 @@ export const TRAIL_POINTS = 26
 export const TRAIL_SPACING = 0.012
 export const STAGGER_MS = 140
 const LIFT = 40
+const MUTED_COMET = 0.18
 
 export interface Comet {
   target: EntityId
@@ -27,6 +29,10 @@ export function cometProgress(comet: Comet, now: number, reduced: boolean): numb
 
 export function cometLift(lens: LensId): Vec3 {
   return lens === 'network' ? [0, LIFT, 0] : [0, 0, LIFT]
+}
+
+export function cometBrightness(lens: LensId, color: string): number {
+  return lens === 'economics' && color !== MODULE_COLORS.td ? MUTED_COMET : 1
 }
 
 export function bezierPoint(

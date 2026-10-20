@@ -262,8 +262,10 @@ export const exchangeRateSchema = z
     quote_asset_type: z.string(),
     quote_asset: z.string(),
     rate: amount,
-    state: optionalText,
-    expire: optionalText,
+    rate_scale: z.number().nullish(),
+    state: z.union([z.boolean(), z.string()]).nullish(),
+    updated: optionalText,
+    expires: optionalText,
   })
   .passthrough()
 

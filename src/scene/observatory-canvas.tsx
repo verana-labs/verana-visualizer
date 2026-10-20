@@ -16,6 +16,7 @@ import { HoverMarker } from './hover-marker'
 import { Labels } from './labels'
 import { Links } from './links'
 import { Nodes } from './nodes'
+import { Reservoirs } from './reservoirs'
 import { Rings } from './rings'
 import { Ripples } from './ripples'
 import { buildSceneData } from './scene-data'
@@ -49,6 +50,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <FlowParticles data={data} positionOf={positionOf} focus={focus} />
       <Nodes nodes={data.nodes} positionOf={positionOf} focus={focus} />
       <Halos stars={data.stars} positionOf={positionOf} focus={focus} />
+      <Reservoirs stars={data.stars} positionOf={positionOf} />
       <Labels stars={data.stars} positionOf={positionOf} focus={focus} />
       <Agents agents={data.agents} positionOf={positionOf} focus={focus} />
       <HoverMarker marks={data.marks} positionOf={positionOf} />

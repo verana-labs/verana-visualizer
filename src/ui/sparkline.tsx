@@ -3,9 +3,18 @@ interface SparklineProps {
   width?: number
   height?: number
   className?: string
+  color?: string
+  drawIn?: boolean
 }
 
-export function Sparkline({ values, width = 96, height = 24, className }: SparklineProps) {
+export function Sparkline({
+  values,
+  width = 96,
+  height = 24,
+  className,
+  color = 'var(--accent)',
+  drawIn = false,
+}: SparklineProps) {
   if (values.length < 2) return null
   const min = Math.min(...values)
   const span = Math.max(...values) - min || 1
@@ -14,7 +23,14 @@ export function Sparkline({ values, width = 96, height = 24, className }: Sparkl
     .join(' ')
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={className} aria-hidden="true">
-      <polyline points={points} fill="none" stroke="var(--accent)" strokeWidth="1.5" />
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth="1.5"
+        pathLength={drawIn ? 1 : undefined}
+        className={drawIn ? 'spark-draw' : undefined}
+      />
     </svg>
   )
 }

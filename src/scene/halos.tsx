@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { type RefObject, useRef } from 'react'
 import { AdditiveBlending, type Sprite } from 'three'
 import { useGlowTexture } from './glow-texture'
+import { useLensSize } from './lens-size'
 import type { SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
@@ -22,6 +23,7 @@ interface HalosProps {
 export function Halos({ stars, positionOf, focus }: HalosProps) {
   const texture = useGlowTexture()
   const sprites = useRef<(Sprite | null)[]>([])
+  const sizeOf = useLensSize()
 
   useFrame(() => {
     const now = performance.now()
@@ -33,7 +35,7 @@ export function Halos({ stars, positionOf, focus }: HalosProps) {
       const flash = flashOf(id, now)
       const dimmed = dimOf(focus.current, id) < 0.2
       sprite.position.set(...positionOf(id))
-      sprite.scale.setScalar(star.size * (HALO_SCALE + flash * 5))
+      sprite.scale.setScalar(sizeOf(id, star.size) * (HALO_SCALE + flash * 5))
       sprite.material.opacity = (dimmed ? DIMMED_HALO_OPACITY : HALO_OPACITY) * (0.85 + 0.15 * pulse) + flash * 0.6
     })
   })

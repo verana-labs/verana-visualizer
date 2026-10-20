@@ -18,6 +18,7 @@ import {
   bezierPoint,
   COMET_CAP,
   type Comet,
+  cometBrightness,
   cometLift,
   cometProgress,
   enqueueComets,
@@ -119,7 +120,7 @@ export function Comets({ positionOf }: { positionOf: PositionOf }) {
       if (!visible || !core) return
       const target = positionOf(comet.target)
       const eased = easeInOutCubic(t)
-      color.set(comet.color)
+      color.set(comet.color).multiplyScalar(cometBrightness(lens, comet.color))
       const { positions, colors } = slot
       for (let k = 0; k < TRAIL_POINTS; k++) {
         bezierPoint(core, target, Math.max(0, eased - k * TRAIL_SPACING), lift, point)

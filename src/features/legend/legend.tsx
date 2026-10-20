@@ -1,6 +1,7 @@
 'use client'
 
 import { AGENT_COLORS, ECOSYSTEM_STAR_COLOR, ROLES, type Role } from '@/domain/roles'
+import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 
@@ -23,6 +24,8 @@ function Row({ dotClass, color, label }: { dotClass?: string; color: string; lab
 }
 
 export function Legend() {
+  const economics = useObservatory((s) => s.lens === 'economics')
+  if (economics) return null
   return (
     <GlassPanel className="fixed bottom-[66px] left-4 z-10 px-3.5 py-3 text-[11.5px]">
       <Row color={ECOSYSTEM_STAR_COLOR} label="Ecosystem (trust root)" />

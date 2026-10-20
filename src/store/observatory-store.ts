@@ -18,6 +18,11 @@ export interface TrustCheckState {
   tracedAt: number | null
 }
 
+export interface EconomicsScene {
+  sizes: Map<EntityId, number>
+  fills: Map<EntityId, number>
+}
+
 export interface ObservatoryState {
   lens: LensId
   lensFrom: LensId
@@ -35,6 +40,8 @@ export interface ObservatoryState {
   toast: string | null
   palette: PaletteMode
   trustCheck: TrustCheckState | null
+  economics: EconomicsScene | null
+  simulationOpen: boolean
   setLens(l: LensId): void
   setLayout(lens: LensId, layout: Layout): void
   select(id: EntityId | null): void
@@ -50,6 +57,8 @@ export interface ObservatoryState {
   finishTrustCheck(seq: number, result: TrustCheck): void
   clearTrustCheck(): void
   setAgentVerdict(id: EntityId, trusted: boolean): void
+  setEconomics(economics: EconomicsScene): void
+  setSimulationOpen(open: boolean): void
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined
@@ -72,6 +81,8 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   toast: null,
   palette: 'closed',
   trustCheck: null,
+  economics: null,
+  simulationOpen: false,
   setLens: (l) => set((s) => (s.lens === l ? s : { lens: l, lensFrom: s.lens, lensChangedAt: performance.now() })),
   setLayout: (lens, layout) => set((s) => ({ layouts: { ...s.layouts, [lens]: layout } })),
   select: (id) =>
@@ -112,4 +123,6 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
     }),
   clearTrustCheck: () => set({ trustCheck: null }),
   setAgentVerdict: (id, trusted) => set((s) => ({ agentVerdicts: new Map(s.agentVerdicts).set(id, trusted) })),
+  setEconomics: (economics) => set({ economics }),
+  setSimulationOpen: (open) => set({ simulationOpen: open }),
 }))
