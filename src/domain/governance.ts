@@ -420,7 +420,9 @@ export function withProposals(current: NetworkModel, proposals: readonly Governa
     entities.set(p.id, entity)
     if (!owner || !corporation) continue
     parents.set(p.id, corporation)
-    children.set(corporation, [...(children.get(corporation) ?? []), p.id])
+    const siblings = children.get(corporation)
+    if (siblings) siblings.push(p.id)
+    else children.set(corporation, [p.id])
   }
 
   const parentOf = (id: EntityId) => parents.get(id) ?? model.parentOf(id)

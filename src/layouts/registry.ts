@@ -44,7 +44,9 @@ export function registryBoard(model: NetworkModel, now: Date): RegistryBoard {
     const p = raw.get(participant.id)
     if (!p) throw new Error(`Registry layout: ${participant.id} has no participant row`)
     const key = isExpiringSoon(p, now) ? EXPIRING : p.op_state
-    groups.set(key, [...(groups.get(key) ?? []), participant])
+    const group = groups.get(key)
+    if (group) group.push(participant)
+    else groups.set(key, [participant])
   }
 
   const positions = new Map<EntityId, Vec3>()
