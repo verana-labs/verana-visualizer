@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
+import { EcsBadge } from '@/features/registry/ecs-badge'
 import { TrustResult } from '@/features/trust-check/trust-result'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { Ecosystem } from '@/lib/api/schemas'
@@ -103,6 +104,7 @@ function EcosystemPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
       <Kicker>ecosystem · trust root</Kicker>
       <Title>{entity.name}</Title>
       <Mono>{eco.did}</Mono>
+      <EcsBadge model={model} ecosystemId={eco.id} />
       <CompositionBar participants={participants} />
       <Fact label="Participants">{formatAmount(countedParticipants(model, participants))}</Fact>
       <Fact label="Credential schemas">{formatAmount(schemas.length)}</Fact>

@@ -16,6 +16,7 @@ import { HoverMarker } from './hover-marker'
 import { Labels } from './labels'
 import { Links } from './links'
 import { Nodes } from './nodes'
+import { RegistryBoard } from './registry-board'
 import { Reservoirs } from './reservoirs'
 import { Rings } from './rings'
 import { Ripples } from './ripples'
@@ -52,6 +53,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <Halos stars={data.stars} positionOf={positionOf} focus={focus} />
       <Reservoirs stars={data.stars} positionOf={positionOf} />
       <Labels stars={data.stars} positionOf={positionOf} focus={focus} />
+      <RegistryBoard />
       <Agents agents={data.agents} positionOf={positionOf} focus={focus} />
       <HoverMarker marks={data.marks} positionOf={positionOf} />
       <Ripples marks={data.marks} positionOf={positionOf} />

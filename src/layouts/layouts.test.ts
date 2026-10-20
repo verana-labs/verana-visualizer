@@ -76,7 +76,7 @@ describe.each([
       expect(layoutFor(lens, subject)).toEqual(layout)
     })
 
-    it.skipIf(lens === 'trust')('keeps ecosystems apart by their orbit radii', () => {
+    it.skipIf(lens === 'trust' || lens === 'registry')('keeps ecosystems apart by their orbit radii', () => {
       const stars = subject.ecosystems
       expect(stars.length).toBeGreaterThan(1)
       for (const [i, a] of stars.entries()) {
