@@ -3,21 +3,24 @@
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 import { countedParticipants } from '@/features/inspector/entity-facts'
+import { ViewActions } from '@/features/share/view-actions'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
+import { GrowthLine, GrowthUnavailable, WhatChanged } from './growth'
 import { NetworkSwitch } from './network-switch'
 
 const number = (n: number) => n.toLocaleString('en-US')
 
-function Figure({ label, value }: { label: string; value: string }) {
+function Figure({ label, value, growth }: { label: string; value: string; growth?: ReactNode }) {
   return (
     <div>
       <div className="text-[10px] uppercase tracking-[.09em] text-scene-mut">{label}</div>
       <div data-testid="figure" className="text-lg font-semibold tabular-nums">
         {value}
       </div>
+      {growth}
     </div>
   )
 }
@@ -56,14 +59,29 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
         <NetworkSwitch cfg={cfg} />
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-        <Figure label="ecosystems" value={model ? number(model.ecosystems.length) : '–'} />
-        <Figure label="participants" value={model ? number(countedParticipants(model, model.participants)) : '–'} />
-        <Figure label="credentials issued" value={issued === null ? '–' : number(issued)} />
+        <Figure
+          label="ecosystems"
+          value={model ? number(model.ecosystems.length) : '–'}
+          growth={<GrowthLine metric="active_ecosystems" />}
+        />
+        <Figure
+          label="participants"
+          value={model ? number(countedParticipants(model, model.participants)) : '–'}
+          growth={<GrowthLine metric="participants" />}
+        />
+        <Figure
+          label="credentials issued"
+          value={issued === null ? '–' : number(issued)}
+          growth={<GrowthLine metric="issued" />}
+        />
         <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
       </div>
+      <GrowthUnavailable />
+      <WhatChanged />
       <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
         Is this service trustworthy?
       </Button>
+      <ViewActions cfg={cfg} />
       {children}
     </GlassPanel>
   )

@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing'
 import { useMemo, useState } from 'react'
 import type { NetworkModel } from '@/domain/network-model'
+import { SceneHandle } from '@/features/share/scene-handle'
 import { useObservatory } from '@/store/observatory-store'
 import { Agents } from './agents'
 import { CameraRig } from './camera-rig'
@@ -63,6 +64,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <Comets positionOf={positionOf} />
       <TrustTrace positionOf={positionOf} />
       <CameraRig ids={ids} />
+      <SceneHandle />
     </>
   )
 }

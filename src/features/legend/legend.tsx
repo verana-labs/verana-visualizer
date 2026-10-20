@@ -1,6 +1,7 @@
 'use client'
 
 import { AGENT_COLORS, ECOSYSTEM_STAR_COLOR, ROLES, type Role } from '@/domain/roles'
+import { useTour } from '@/features/tour/tour-store'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
@@ -41,7 +42,7 @@ export function Legend() {
       <div className="mt-1 text-[10px] uppercase tracking-[0.08em] text-scene-mut">
         tilted orbit = one credential schema
       </div>
-      <Button disabled className="mt-2.5">
+      <Button className="mt-2.5" onClick={() => useTour.getState().start()}>
         ▶ 30-second tour
       </Button>
     </GlassPanel>
