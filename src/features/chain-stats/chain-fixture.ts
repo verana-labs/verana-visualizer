@@ -91,7 +91,7 @@ function defaultResponse(url: URL): Response | undefined {
   return name ? Response.json(rawBody(name)) : undefined
 }
 
-export type Override = (url: URL) => Response | undefined
+export type Override = (url: URL) => Response | Promise<Response> | undefined
 
 export function stubNetwork(...overrides: Override[]) {
   const mock = vi.fn(async (input: string | URL | Request) => {

@@ -64,7 +64,7 @@ export interface ObservatoryState {
   setEconomics(economics: EconomicsScene): void
   setSimulationOpen(open: boolean): void
   setChainBlocks(blocks: BlockSummary[]): void
-  setChainValidators(validators: ValidatorOrb[]): void
+  setChainValidators(validators: ValidatorOrb[] | null): void
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined

@@ -48,6 +48,9 @@ const skipped = (method: string, note: string): ProbeResult => ({
   note,
 })
 
+export const isHealthy = (results: readonly ProbeResult[]) =>
+  results.some((r) => r.outcome === 'pass') && results.every((r) => r.outcome !== 'fail')
+
 export async function runSanityChecks(cfg: NetworkConfig, now: () => Date = () => new Date()): Promise<SanityReport> {
   const startedAt = now().toISOString()
   const statuses = new Map<string, number>()
@@ -63,7 +66,7 @@ export async function runSanityChecks(cfg: NetworkConfig, now: () => Date = () =
       network: { ...cfg },
       startedAt,
       finishedAt: now().toISOString(),
-      ok: results.every((r) => r.outcome !== 'fail'),
+      ok: isHealthy(results),
       results,
     }
   } finally {

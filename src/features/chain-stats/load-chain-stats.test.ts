@@ -1,10 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { testnetCfg } from '@/features/trust-check/trust-fixture'
-import { blockTime, failing, HEAD, stubNetwork } from './chain-fixture'
+import { blockBody, blockTime, failing, HEAD, rawBody, stubNetwork } from './chain-fixture'
 import {
   averageBlockSeconds,
   BLOCK_TIME_WINDOW,
   type BlockSummary,
+  contiguousTail,
   loadBlockWindow,
   loadNetworkStats,
   mergeBlocks,
@@ -38,12 +39,47 @@ describe('averageBlockSeconds', () => {
     expect(averageBlockSeconds(blocks)).toBe(6.5)
   })
 
+  it('divides the time span by the height span, not by the block count', () => {
+    const blocks: BlockSummary[] = [
+      { height: 10, time: '2026-10-20T10:00:00Z', txs: 0 },
+      { height: 13, time: '2026-10-20T10:00:18Z', txs: 0 },
+    ]
+    expect(averageBlockSeconds(blocks)).toBe(6)
+  })
+
+  it('throws on an unreadable timestamp', () => {
+    expect(() =>
+      averageBlockSeconds([
+        { height: 1, time: 'not a time', txs: 0 },
+        { height: 2, time: '2026-10-20T10:00:00Z', txs: 0 },
+      ])
+    ).toThrow(/timestamp/)
+  })
+
   it('needs at least two blocks', () => {
     expect(averageBlockSeconds([{ height: 1, time: '2026-10-20T10:00:00Z', txs: 0 }])).toBeNull()
   })
 })
 
+describe('contiguousTail', () => {
+  it('keeps the newest run of consecutive heights', () => {
+    const blocks = [1, 2, 4, 5, 6].map((height) => ({ height, time: blockTime(height), txs: 0 }))
+    expect(contiguousTail(blocks).map((b) => b.height)).toEqual([4, 5, 6])
+  })
+})
+
 describe('loadBlockWindow', () => {
+  it('reports a malformed latest block instead of rejecting', async () => {
+    stubNetwork((url) =>
+      url.pathname === '/cosmos/base/tendermint/v1beta1/blocks/latest'
+        ? Response.json(blockBody(Number.NaN, '2026-10-20T10:00:00Z', 0))
+        : undefined
+    )
+    const window = await loadBlockWindow(testnetCfg)
+    expect(window.blocks).toEqual([])
+    expect(window.error).toMatch(/height/)
+  })
+
   it('reads the last 20 blocks from the chain, newest last', async () => {
     const fetchMock = stubNetwork()
     const window = await loadBlockWindow(testnetCfg)
@@ -174,12 +210,55 @@ describe('statRows', () => {
     const { rows } = await rowsFor(failing(`/cosmos/base/tendermint/v1beta1/blocks/${HEAD - 3}`))
     expect(byId(rows, 'blockHeight').value).toBe('1,000')
     expect(byId(rows, 'blockTime').state).toBe('unavailable')
-    expect(byId(rows, 'blockTime').reason).toMatch(/20 blocks/)
+    expect(byId(rows, 'blockTime').reason).toMatch(/20 consecutive blocks/)
   })
 
   it('shows the TU rate as unavailable, not hidden, when the exchange-rate call fails', async () => {
     const { rows } = await rowsFor(failing('/v4/exchange-rate/list'))
     expect(byId(rows, 'tuRate').state).toBe('unavailable')
+  })
+
+  it('shows the block time as unavailable when the window has a gap, and computes it over consecutive heights only', () => {
+    const blocks = Array.from({ length: 21 }, (_, i) => HEAD - 20 + i)
+      .filter((h) => h !== HEAD - 5)
+      .map((height) => ({ height, time: blockTime(height), txs: 0 }))
+    const rows = statRows(null, { blocks, error: null, query: null })
+    expect(byId(rows, 'blockTime').state).toBe('unavailable')
+    expect(byId(rows, 'blockTime').reason).toMatch(/20 consecutive blocks/)
+    const whole = Array.from({ length: 20 }, (_, i) => HEAD - 19 + i).map((height) => ({
+      height,
+      time: blockTime(height),
+      txs: 0,
+    }))
+    expect(byId(statRows(null, { blocks: whole, error: null, query: null }), 'blockTime').value).toBe('6 s')
+  })
+
+  it('shows a malformed field as unavailable for that stat only, without throwing', async () => {
+    const { rows } = await rowsFor(
+      (url) => {
+        if (url.pathname !== '/v4/stats/snapshot') return undefined
+        const body = structuredClone(rawBody('snapshot')) as Record<string, unknown>
+        body.weight = 'lots'
+        return Response.json(body)
+      },
+      (url) => (url.pathname === '/cosmos/mint/v1beta1/inflation' ? Response.json({ inflation: 'high' }) : undefined)
+    )
+    expect(byId(rows, 'tvl').state).toBe('unavailable')
+    expect(byId(rows, 'tvl').reason).toMatch(/weight/)
+    expect(byId(rows, 'inflation').state).toBe('unavailable')
+    expect(byId(rows, 'ecosystems').state).toBe('ok')
+    expect(byId(rows, 'supply').state).toBe('ok')
+  })
+
+  it('shows the block time as unavailable when a timestamp is unreadable', () => {
+    const blocks = Array.from({ length: 20 }, (_, i) => HEAD - 19 + i).map((height) => ({
+      height,
+      time: height === HEAD ? 'garbage' : blockTime(height),
+      txs: 0,
+    }))
+    const rows = statRows(null, { blocks, error: null, query: null })
+    expect(byId(rows, 'blockTime').state).toBe('unavailable')
+    expect(byId(rows, 'blockHeight').value).toBe('1,000')
   })
 
   it('reports loading rows before the data arrives', () => {

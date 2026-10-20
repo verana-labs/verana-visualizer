@@ -4,7 +4,7 @@ import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createChainClient } from '@/lib/api/chain'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
-import { runSanityChecks } from './sanity-checks'
+import { isHealthy, runSanityChecks } from './sanity-checks'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -86,5 +86,22 @@ describe('runSanityChecks', () => {
     const mock = stubNetwork()
     await runSanityChecks(testnetCfg)
     expect(globalThis.fetch).toBe(mock)
+  })
+})
+
+describe('isHealthy', () => {
+  const result = (outcome: 'pass' | 'fail' | 'skip') => ({
+    method: 'x',
+    outcome,
+    status: null,
+    latencyMs: null,
+    url: null,
+    note: null,
+  })
+  it('needs at least one pass and no failure', () => {
+    expect(isHealthy([result('pass'), result('skip')])).toBe(true)
+    expect(isHealthy([result('skip'), result('skip')])).toBe(false)
+    expect(isHealthy([])).toBe(false)
+    expect(isHealthy([result('pass'), result('fail')])).toBe(false)
   })
 })

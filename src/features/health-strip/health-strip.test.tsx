@@ -79,3 +79,28 @@ describe('HealthStrip', () => {
     expect(screen.getByTestId('health-checked')).toHaveTextContent('10:00:30')
   })
 })
+
+describe('HealthStrip ordering', () => {
+  it('ignores a slow earlier check that finishes after a newer one', async () => {
+    vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+    let release: (r: Response) => void = () => {}
+    let graphCalls = 0
+    stubNetwork((url) => {
+      if (url.pathname !== '/health') return undefined
+      graphCalls++
+      if (graphCalls === 1) return new Promise<Response>((resolve) => (release = resolve))
+      return undefined
+    })
+    render(<HealthStrip cfg={testnetCfg} />)
+    await act(async () => {
+      vi.advanceTimersByTime(REFRESH_MS)
+    })
+    await flush()
+    await vi.waitFor(() => expect(screen.getByTestId('health-graph')).toHaveAttribute('data-up', 'true'))
+    await act(async () => {
+      release(new Response('stale', { status: 503 }))
+    })
+    await flush()
+    expect(screen.getByTestId('health-graph')).toHaveAttribute('data-up', 'true')
+  })
+})

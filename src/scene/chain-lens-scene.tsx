@@ -1,7 +1,7 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { AdditiveBlending, type Group, type Material, type Mesh } from 'three'
 import type { ValidatorOrb } from '@/features/chain-stats/chain-scene'
 import type { BlockSummary } from '@/features/chain-stats/load-chain-stats'
@@ -29,9 +29,11 @@ interface Fadeable {
 
 function setOpacity(object: Fadeable | null, opacity: number) {
   if (!object) return
-  for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
-    material.opacity = opacity
+  if (!Array.isArray(object.material)) {
+    object.material.opacity = opacity
+    return
   }
+  for (const material of object.material) material.opacity = opacity
 }
 
 function useChainFade(): () => number {
@@ -66,12 +68,13 @@ function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
     }
     if (spin.current && !reduced) spin.current.rotation.y = (performance.now() / RING_TURN_MS) * Math.PI * 2
     setOpacity(ring.current, 0.28 * fade)
-    orbs.forEach((orb, i) => {
-      setOpacity(meshes.current[i], (orb.active ? 0.95 : 0.5) * fade)
-      setOpacity(halos.current[i], (orb.active ? 0.35 : 0.1) * fade)
+    for (let i = 0; i < orbs.length; i++) {
+      const active = orbs[i].active
+      setOpacity(meshes.current[i], (active ? 0.95 : 0.5) * fade)
+      setOpacity(halos.current[i], (active ? 0.35 : 0.1) * fade)
       const label = labels.current[i]
       if (label) label.style.opacity = String(fade)
-    })
+    }
   })
 
   return (
@@ -147,20 +150,24 @@ function BlockStream({ blocks }: { blocks: BlockSummary[] }) {
       group.current.position.set(...coreAt())
     }
     const step = Math.min(delta, 0.5) * RISE_PER_S
-    blocks.forEach((block, i) => {
+    for (let i = 0; i < blocks.length; i++) {
+      const height = blocks[i].height
       const target = blockRise(i)
-      const current = heights.current.get(block.height) ?? 0
+      const current = heights.current.get(height) ?? 0
       const next = reduced ? target : current + Math.min(step, target - current)
-      heights.current.set(block.height, next)
-      slots.current.get(block.height)?.position.set(0, next, 0)
+      heights.current.set(height, next)
+      slots.current.get(height)?.position.set(0, next, 0)
       const age = 1 - i / STREAM_SIZE
-      setOpacity(discs.current.get(block.height) ?? null, (0.12 + 0.5 * age) * fade)
-      const label = labels.current.get(block.height)
+      setOpacity(discs.current.get(height) ?? null, (0.12 + 0.5 * age) * fade)
+      const label = labels.current.get(height)
       if (label) label.style.opacity = String((0.35 + 0.65 * age) * fade)
-    })
-    for (const height of heights.current.keys())
-      if (!blocks.some((b) => b.height === height)) heights.current.delete(height)
+    }
   })
+
+  useEffect(() => {
+    const shown = new Set(blocks.map((b) => b.height))
+    for (const height of heights.current.keys()) if (!shown.has(height)) heights.current.delete(height)
+  }, [blocks])
 
   return (
     <group ref={group} visible={false}>

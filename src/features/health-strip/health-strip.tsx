@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { NetworkConfig } from '@/lib/env'
+import { logger } from '@/lib/logger'
 import { checkHealth, type HealthReport, lagTone, MAX_GREEN_LAG } from './check-health'
 
 export const REFRESH_MS = 30_000
@@ -30,10 +31,19 @@ export function HealthStrip({ cfg }: { cfg: NetworkConfig }) {
 
   useEffect(() => {
     let cancelled = false
-    const run = () =>
-      checkHealth(cfg).then((next) => {
-        if (!cancelled) setReport(next)
-      })
+    let issued = 0
+    let applied = 0
+    const run = () => {
+      const id = ++issued
+      checkHealth(cfg).then(
+        (next) => {
+          if (cancelled || id < applied) return
+          applied = id
+          setReport(next)
+        },
+        (error: unknown) => logger.error('The health check could not run', error)
+      )
+    }
     run()
     const timer = setInterval(run, REFRESH_MS)
     return () => {

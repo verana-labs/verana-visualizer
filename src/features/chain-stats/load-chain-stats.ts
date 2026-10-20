@@ -117,6 +117,19 @@ export async function loadNetworkStats(cfg: NetworkConfig, now: Date): Promise<N
   return { supply, inflation, bonded, communityPool, yieldPool, snapshot, tuRate }
 }
 
+export function unavailableStats(reason: string): NetworkStats {
+  const failed = { ok: false, reason } as const
+  return {
+    supply: failed,
+    inflation: failed,
+    bonded: failed,
+    communityPool: failed,
+    yieldPool: failed,
+    snapshot: failed,
+    tuRate: failed,
+  }
+}
+
 export function blockSummary(block: ChainBlock): BlockSummary {
   const height = Number(block.block.header.height)
   if (!Number.isSafeInteger(height)) throw new Error(`Block has a non-integer height ${block.block.header.height}`)
@@ -126,13 +139,14 @@ export function blockSummary(block: ChainBlock): BlockSummary {
 export async function loadBlockWindow(cfg: NetworkConfig, size = BLOCK_TIME_WINDOW): Promise<BlockWindow> {
   const chain = createChainClient(cfg)
   let latest: Fetched<ChainBlock>
+  let head: BlockSummary
   try {
     latest = await chain.latestBlock()
+    head = blockSummary(latest.data)
   } catch (error) {
     logger.error('Could not read the latest block', error)
     return { blocks: [], error: reasonOf(error), query: null }
   }
-  const head = blockSummary(latest.data)
   const depth = Math.min(size - 1, head.height - 1)
   try {
     const older = await Promise.all(
@@ -158,10 +172,18 @@ export function mergeBlocks(
 export function averageBlockSeconds(blocks: readonly BlockSummary[]): number | null {
   if (blocks.length < 2) return null
   const sorted = [...blocks].sort((a, b) => a.height - b.height)
-  const first = Date.parse(sorted[0].time)
-  const last = Date.parse(sorted[sorted.length - 1].time)
-  if (!Number.isFinite(first) || !Number.isFinite(last)) throw new Error('A block has an unreadable timestamp')
-  return (last - first) / (sorted.length - 1) / 1000
+  const first = sorted[0]
+  const last = sorted[sorted.length - 1]
+  const span = Date.parse(last.time) - Date.parse(first.time)
+  if (!Number.isFinite(span)) throw new Error(`Block ${first.height} or ${last.height} has an unreadable timestamp`)
+  return span / (last.height - first.height) / 1000
+}
+
+export function contiguousTail(blocks: readonly BlockSummary[]): BlockSummary[] {
+  const sorted = [...blocks].sort((a, b) => a.height - b.height)
+  let start = sorted.length - 1
+  while (start > 0 && sorted[start - 1].height === sorted[start].height - 1) start--
+  return sorted.slice(Math.max(0, start))
 }
 
 const row = (id: StatId, rest: Omit<StatRow, 'id' | 'label' | 'definition'>): StatRow => ({
@@ -176,7 +198,12 @@ const loading = (id: StatId) => row(id, { state: 'loading', value: null })
 function fromSettled<T>(id: StatId, settled: Settled<T> | undefined, show: (value: T) => string): StatRow {
   if (!settled) return loading(id)
   if (!settled.ok) return row(id, { state: 'unavailable', value: null, reason: settled.reason })
-  return row(id, { state: 'ok', value: show(settled.value), query: settled.query })
+  try {
+    return row(id, { state: 'ok', value: show(settled.value), query: settled.query })
+  } catch (error) {
+    logger.error(`Chain stat ${id} has malformed data`, error)
+    return row(id, { state: 'unavailable', value: null, reason: reasonOf(error) })
+  }
 }
 
 function participantsByRole(snapshot: StatsSnapshot): string {
@@ -189,6 +216,25 @@ function participantsByRole(snapshot: StatsSnapshot): string {
     .join(' · ')
 }
 
+function blockTimeRow(window: BlockWindow, query: QueryInfo | undefined): StatRow {
+  const tail = contiguousTail(window.blocks).slice(-BLOCK_TIME_WINDOW)
+  if (tail.length < BLOCK_TIME_WINDOW) {
+    const cause = window.error ? `: ${window.error}` : ''
+    return row('blockTime', {
+      state: 'unavailable',
+      value: null,
+      reason: `needs the last ${BLOCK_TIME_WINDOW} consecutive blocks, has ${tail.length}${cause}`,
+    })
+  }
+  try {
+    const average = averageBlockSeconds(tail)
+    if (average === null) throw new Error('not enough blocks')
+    return row('blockTime', { state: 'ok', value: `${amount(average, 2)} s`, query })
+  } catch (error) {
+    return row('blockTime', { state: 'unavailable', value: null, reason: reasonOf(error) })
+  }
+}
+
 function blockRows(window: BlockWindow | null): StatRow[] {
   if (!window) return [loading('blockHeight'), loading('blockTime')]
   const newest = window.blocks.at(-1)
@@ -196,16 +242,7 @@ function blockRows(window: BlockWindow | null): StatRow[] {
   const height = newest
     ? row('blockHeight', { state: 'ok', value: integer(newest.height), query })
     : row('blockHeight', { state: 'unavailable', value: null, reason: window.error ?? 'no block' })
-  const average = averageBlockSeconds(window.blocks)
-  const time =
-    window.blocks.length >= BLOCK_TIME_WINDOW && average !== null
-      ? row('blockTime', { state: 'ok', value: `${amount(average, 2)} s`, query })
-      : row('blockTime', {
-          state: 'unavailable',
-          value: null,
-          reason: `needs the last ${BLOCK_TIME_WINDOW} blocks, got ${window.blocks.length}${window.error ? `: ${window.error}` : ''}`,
-        })
-  return [height, time]
+  return [height, blockTimeRow(window, query)]
 }
 
 function tuRow(stats: NetworkStats | null): StatRow[] {

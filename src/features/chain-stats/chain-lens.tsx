@@ -16,7 +16,12 @@ import {
   mergeBlocks,
   type NetworkStats,
   statRows,
+  unavailableStats,
 } from './load-chain-stats'
+
+export const STATS_REFRESH_MS = 30_000
+
+const reasonOf = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
 export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
   const active = useObservatory((s) => s.lens === 'chain')
@@ -24,7 +29,8 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
   const [stats, setStats] = useState<NetworkStats | null>(null)
   const [blocks, setBlocks] = useState<BlockWindow | null>(null)
   const [validators, setValidators] = useState<ValidatorsState>({ status: 'loading' })
-  const newest = useRef<number | null>(null)
+  const blocksRef = useRef<BlockWindow | null>(null)
+  blocksRef.current = blocks
 
   useEffect(() => {
     if (active) setRequested(true)
@@ -32,32 +38,67 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
 
   useEffect(() => {
     if (!requested) return
-    let cancelled = false
-    loadNetworkStats(cfg, new Date()).then((loaded) => {
-      if (!cancelled) setStats(loaded)
-    })
-    loadBlockWindow(cfg).then((loaded) => {
-      if (cancelled) return
-      newest.current = loaded.blocks.at(-1)?.height ?? null
-      setBlocks(loaded)
-    })
-    createChainClient(cfg)
-      .validators()
-      .then(
-        (res) => {
-          if (cancelled) return
-          const orbs = validatorOrbs(res.data)
-          useObservatory.getState().setChainValidators(orbs)
-          setValidators({ status: 'ready', orbs, query: res.query })
+    let disposed = false
+    let issued = 0
+    let applied = 0
+    const refresh = (first: boolean) => {
+      if (!first && useObservatory.getState().lens !== 'chain') return
+      const id = ++issued
+      const current = () => !disposed && id > applied
+      loadNetworkStats(cfg, new Date()).then(
+        (loaded) => {
+          if (!current()) return
+          applied = id
+          setStats(loaded)
         },
         (error: unknown) => {
-          if (cancelled) return
-          logger.error('Could not load the validators', error)
-          setValidators({ status: 'error', message: error instanceof Error ? error.message : String(error) })
+          logger.error('Could not load the chain stats', error)
+          if (current()) setStats(unavailableStats(reasonOf(error)))
         }
       )
+      createChainClient(cfg)
+        .validators()
+        .then((res) => ({ orbs: validatorOrbs(res.data), query: res.query }))
+        .then(
+          ({ orbs, query }) => {
+            if (disposed) return
+            useObservatory.getState().setChainValidators(orbs)
+            setValidators({ status: 'ready', orbs, query })
+          },
+          (error: unknown) => {
+            logger.error('Could not load the validators', error)
+            if (!disposed) setValidators({ status: 'error', message: reasonOf(error) })
+          }
+        )
+    }
+    refresh(true)
+    const timer = setInterval(() => refresh(false), STATS_REFRESH_MS)
     return () => {
-      cancelled = true
+      disposed = true
+      clearInterval(timer)
+      const store = useObservatory.getState()
+      store.setChainBlocks([])
+      store.setChainValidators(null)
+      setStats(null)
+      setBlocks(null)
+      setValidators({ status: 'loading' })
+    }
+  }, [requested, cfg])
+
+  useEffect(() => {
+    if (!requested) return
+    let disposed = false
+    loadBlockWindow(cfg).then(
+      (loaded) => {
+        if (!disposed) setBlocks(loaded)
+      },
+      (error: unknown) => {
+        logger.error('Could not load the block window', error)
+        if (!disposed) setBlocks({ blocks: [], error: reasonOf(error), query: null })
+      }
+    )
+    return () => {
+      disposed = true
     }
   }, [requested, cfg])
 
@@ -68,27 +109,35 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
   useEffect(() => {
     if (!requested) return
     const chain = createChainClient(cfg)
+    const inFlight = new Set<number>()
     let disposed = false
+    const fetchBlock = (height: number) => {
+      inFlight.add(height)
+      chain
+        .block(height)
+        .then((res) => blockSummary(res.data))
+        .then(
+          (block) => {
+            if (disposed) return
+            setBlocks((current) => ({
+              blocks: mergeBlocks(current?.blocks ?? [], [block], BLOCK_TIME_WINDOW),
+              error: null,
+              query: current?.query ?? null,
+            }))
+          },
+          (error: unknown) => logger.error(`Could not read block ${height} from the chain, will retry`, error)
+        )
+        .finally(() => inFlight.delete(height))
+    }
     const unsubscribe = useObservatory.subscribe((state, previous) => {
       const height = state.blockHeight
       if (state.lens !== 'chain' || height === null || height === previous.blockHeight) return
-      if (newest.current === null || height <= newest.current) return
-      const from = Math.max(newest.current + 1, height - BLOCK_TIME_WINDOW + 1)
-      newest.current = height
-      for (let h = from; h <= height; h++) {
-        chain
-          .block(h)
-          .then((res) => blockSummary(res.data))
-          .then(
-            (block) => {
-              if (disposed) return
-              setBlocks((current) =>
-                current ? { ...current, blocks: mergeBlocks(current.blocks, [block], BLOCK_TIME_WINDOW) } : current
-              )
-            },
-            (error: unknown) => logger.error(`Could not read block ${h} from the chain`, error)
-          )
-      }
+      const current = blocksRef.current
+      if (current === null) return
+      const top = Math.max(height, current.blocks.at(-1)?.height ?? 0)
+      const known = new Set(current.blocks.map((b) => b.height))
+      for (let h = Math.max(1, top - BLOCK_TIME_WINDOW + 1); h <= top; h++)
+        if (!known.has(h) && !inFlight.has(h)) fetchBlock(h)
     })
     return () => {
       disposed = true
