@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
 import { resolveNetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
@@ -38,6 +38,9 @@ beforeEach(() => {
   useObservatory.setState({ model, blockHeight: 1234, agentVerdicts: new Map() })
 })
 
+const searchParams = vi.hoisted(() => ({ value: '' }))
+vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams(searchParams.value) }))
+
 describe('Hud', () => {
   it('shows the network, block and headline figures from the model', () => {
     render(<Hud cfg={config('testnet')} />)
@@ -45,11 +48,19 @@ describe('Hud', () => {
     expect(screen.getByText(/block 1,?234/)).toBeInTheDocument()
     expect(figure('ecosystems')).toBe(String(model.ecosystems.length))
     expect(figure('participants')).toBe(String(model.participants.length))
-    const issued = model.raw.participants
-      .filter((p) => model.entities.has(`participant:${p.id}`))
-      .reduce((sum, p) => sum + Number(p.issued), 0)
-    expect(figure('credentials issued')).toBe(issued.toLocaleString('en-US'))
+    expect(figure('credentials issued')).toBe('169')
     expect(figure('services')).toBe('0 / 0')
+  })
+
+  it('hides the live dot until the block height is known', () => {
+    useObservatory.setState({ blockHeight: null })
+    const { container, rerender } = render(<Hud cfg={config('testnet')} />)
+    expect(container.querySelector('[data-testid="live-dot"]')).toBeNull()
+    useObservatory.setState({ blockHeight: 1234 })
+    rerender(<Hud cfg={config('testnet')} />)
+    const dot = container.querySelector('[data-testid="live-dot"]')
+    expect(dot).not.toBeNull()
+    expect(dot?.className).not.toMatch(/#[0-9a-f]{6}/i)
   })
 
   it('counts trusted over resolved services from the verdicts', () => {
@@ -68,7 +79,7 @@ describe('Hud', () => {
 
 describe('NetworkSwitch', () => {
   it('links to the peer visualizer keeping the current search', () => {
-    window.history.replaceState(null, '', '/?lens=trust')
+    searchParams.value = 'lens=trust'
     render(<NetworkSwitch cfg={config('testnet')} />)
     const link = screen.getByRole('link', { name: /devnet/ })
     expect(link).toHaveAttribute('href', 'https://vis.devnet.verana.network?lens=trust')

@@ -1,25 +1,85 @@
-import type { RawNetwork } from '@/domain/network-model'
+import { buildNetworkModel, type NetworkModel, type RawNetwork } from '@/domain/network-model'
+import { layoutFor } from '@/layouts'
+import { type Layout } from '@/layouts/types'
 import type { NetworkConfig } from '../env'
 import { createIndexerClient } from './indexer'
 
-export async function loadRawNetwork(cfg: NetworkConfig): Promise<{ raw: RawNetwork; blockHeight: number }> {
+export interface LoadSink {
+  ecosystems?: RawNetwork['ecosystems']
+  schemas?: RawNetwork['schemas']
+  participants?: RawNetwork['participants']
+  corporations?: RawNetwork['corporations']
+  blockHeight?: number
+  dids?: RawNetwork['dids']
+  model?: NetworkModel
+  layout?: Layout
+}
+
+export interface LoadStep {
+  label: string
+  run: () => Promise<unknown>
+}
+
+export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[] {
   const indexer = createIndexerClient(cfg)
-  const [ecosystems, schemas, participants, corporations, dids, block] = await Promise.all([
-    indexer.ecosystems(),
-    indexer.schemas(),
-    indexer.participants(),
-    indexer.corporations(),
-    indexer.dids(),
-    indexer.blockHeight(),
-  ])
-  return {
-    raw: {
-      ecosystems: ecosystems.data,
-      schemas: schemas.data,
-      participants: participants.data,
-      corporations: corporations.data,
-      dids: dids.data.dids,
+  return [
+    {
+      label: 'Reading ecosystems…',
+      run: async () => {
+        sink.ecosystems = (await indexer.ecosystems()).data
+      },
     },
-    blockHeight: block.data.height,
+    {
+      label: 'Reading schemas…',
+      run: async () => {
+        sink.schemas = (await indexer.schemas()).data
+      },
+    },
+    {
+      label: 'Reading participants…',
+      run: async () => {
+        sink.participants = (await indexer.participants()).data
+      },
+    },
+    {
+      label: 'Reading corporations…',
+      run: async () => {
+        sink.corporations = (await indexer.corporations()).data
+      },
+    },
+    {
+      label: 'Reading block height…',
+      run: async () => {
+        sink.blockHeight = (await indexer.blockHeight()).data.height
+      },
+    },
+    {
+      label: 'Reading DIDs…',
+      run: async () => {
+        sink.dids = (await indexer.dids()).data.dids
+      },
+    },
+    {
+      label: 'Laying out the network…',
+      run: async () => {
+        sink.model = buildNetworkModel(rawFromSink(sink))
+        sink.layout = layoutFor('network', sink.model)
+      },
+    },
+  ]
+}
+
+export function rawFromSink(sink: LoadSink): RawNetwork {
+  const { ecosystems, schemas, participants, corporations, dids } = sink
+  if (!ecosystems || !schemas || !participants || !corporations || !dids) {
+    throw new Error('Cannot assemble the network: a data step has not completed')
   }
+  return { ecosystems, schemas, participants, corporations, dids }
+}
+
+export async function loadRawNetwork(cfg: NetworkConfig): Promise<{ raw: RawNetwork; blockHeight: number }> {
+  const sink: LoadSink = {}
+  for (const step of networkLoadSteps(cfg, sink).slice(0, 6)) await step.run()
+  if (sink.blockHeight === undefined) throw new Error('Cannot assemble the network: block height missing')
+  return { raw: rawFromSink(sink), blockHeight: sink.blockHeight }
 }

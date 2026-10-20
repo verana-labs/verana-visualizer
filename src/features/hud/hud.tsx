@@ -41,7 +41,12 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
             <span>{cfg.chainName}</span>
           </div>
           <div className="mt-[3px] flex items-center gap-1.5 text-[10px] uppercase tracking-[.09em] text-scene-mut">
-            <span className="inline-block size-[7px] rounded-full bg-success-500 shadow-[0_0_10px_#29C68C]" />
+            {blockHeight !== null && (
+              <span
+                data-testid="live-dot"
+                className="inline-block size-[7px] rounded-full bg-success-500 shadow-[0_0_10px_theme(colors.success.500)]"
+              />
+            )}
             <span>block {blockHeight === null ? '…' : number(blockHeight)}</span>
           </div>
         </div>

@@ -1,15 +1,15 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
-import { buildNetworkModel } from '@/domain/network-model'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Footer } from '@/features/footer/footer'
 import { Hud } from '@/features/hud/hud'
 import { Legend } from '@/features/legend/legend'
 import { LensBar } from '@/features/lens-bar/lens-bar'
+import { StardustLoader } from '@/features/loader/stardust-loader'
+import { useLoadProgress } from '@/features/loader/use-load-progress'
 import { accentFor } from '@/lib/accent'
-import { loadRawNetwork } from '@/lib/api/load-network'
+import { type LoadSink, networkLoadSteps } from '@/lib/api/load-network'
 import { useNetworkConfig } from '@/lib/env'
 import { parseViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
@@ -17,26 +17,36 @@ import { useObservatory } from '@/store/observatory-store'
 function Observatory() {
   const cfg = useNetworkConfig()
   const search = useSearchParams()
-  const model = useObservatory((s) => s.model)
-  const query = useQuery({ queryKey: ['network', cfg.indexerUrl], queryFn: () => loadRawNetwork(cfg) })
+  const [loaderGone, setLoaderGone] = useState(false)
+  const sink = useMemo<LoadSink>(() => ({}), [])
+  const steps = useMemo(() => networkLoadSteps(cfg, sink), [cfg, sink])
+  const load = useLoadProgress(steps)
 
   useEffect(() => {
     useObservatory.getState().setLens(parseViewState(search).lens)
   }, [search])
 
   useEffect(() => {
-    if (!query.data) return
-    useObservatory.setState({ model: buildNetworkModel(query.data.raw), blockHeight: query.data.blockHeight })
-  }, [query.data])
+    if (!load.done || !sink.model || sink.blockHeight === undefined) return
+    useObservatory.setState({ model: sink.model, blockHeight: sink.blockHeight })
+  }, [load.done, sink])
 
   return (
     <main data-testid="observatory" style={{ '--accent': accentFor(cfg.chainName) } as React.CSSProperties}>
-      {query.isError && <p className="p-6 text-sm">Could not read the network: {query.error.message}</p>}
-      {!query.isError && !model && <p className="p-6 text-sm">Loading the network…</p>}
       <Hud cfg={cfg} />
       <LensBar />
       <Legend />
       <Footer cfg={cfg} />
+      {!loaderGone && (
+        <StardustLoader
+          progress={load.progress}
+          label={load.label}
+          error={load.error}
+          done={load.done}
+          onExited={() => setLoaderGone(true)}
+          onRetry={load.retry}
+        />
+      )}
     </main>
   )
 }
