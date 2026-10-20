@@ -9,6 +9,7 @@ import { useObservatory } from '@/store/observatory-store'
 import { Agents } from './agents'
 import { CameraRig } from './camera-rig'
 import { ChainCore } from './chain-core'
+import { Comets } from './comets'
 import { FlowParticles } from './flow-particles'
 import { Halos } from './halos'
 import { HoverMarker } from './hover-marker'
@@ -52,6 +53,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <HoverMarker marks={data.marks} positionOf={positionOf} />
       <Ripples marks={data.marks} positionOf={positionOf} />
       <ChainCore />
+      <Comets positionOf={positionOf} />
       <CameraRig ids={ids} />
     </>
   )

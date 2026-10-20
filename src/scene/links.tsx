@@ -13,13 +13,15 @@ import {
 import type { EntityId } from '@/domain/network-model'
 import { useObservatory } from '@/store/observatory-store'
 import { agentTint, type SceneData } from './scene-data'
-import type { FocusSets } from './scene-focus'
+import { type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
 
 const VALIDATOR_OPACITY = 0.38
 const AGENT_IDLE = 0.035
 const AGENT_LIT = 0.9
 const AGENT_RELATED = 0.25
+const FLASH_BOOST = 1.6
+const AGENT_FLASH_BOOST = 0.6
 
 interface LinksProps {
   data: SceneData
@@ -62,6 +64,7 @@ export function Links({ data, positionOf, focus }: LinksProps) {
   useLayoutEffect(() => () => material.dispose(), [material])
 
   useFrame(() => {
+    const now = performance.now()
     const sets = focus.current
     const { agentVerdicts } = useObservatory.getState()
     const write = (i: number, a: EntityId, b: EntityId, ca: Color, cb: Color, ka: number, kb: number) => {
@@ -79,13 +82,13 @@ export function Links({ data, positionOf, focus }: LinksProps) {
       const ca = colorOf.get(a)
       const cb = colorOf.get(b)
       if (!ca || !cb) throw new Error(`Link ${a} → ${b} joins an unrendered node`)
-      const k = validatorStrength(sets, a, b) * VALIDATOR_OPACITY
+      const k = validatorStrength(sets, a, b) * VALIDATOR_OPACITY + flashOf(a, now) * FLASH_BOOST
       write(i, a, b, ca, cb, k, k)
     })
     const offset = data.validatorLinks.length
     data.agentLinks.forEach(([agent, anchor], i) => {
       const tint = agentTint(agentVerdicts.get(agent))
-      const k = agentStrength(sets, agent, anchor)
+      const k = agentStrength(sets, agent, anchor) + flashOf(agent, now) * AGENT_FLASH_BOOST
       write(offset + i, agent, anchor, tint, tint, k, k)
     })
     geometry.attributes.position.needsUpdate = true

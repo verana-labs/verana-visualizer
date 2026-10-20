@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
+import { ActivityFeed } from '@/features/activity-feed/activity-feed'
 import { Footer } from '@/features/footer/footer'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { Hud } from '@/features/hud/hud'
@@ -61,6 +62,7 @@ function Observatory() {
       <LensBar />
       <SearchPalette />
       <Legend />
+      {model && <ActivityFeed cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

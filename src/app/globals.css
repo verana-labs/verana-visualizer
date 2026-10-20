@@ -8,3 +8,10 @@ body {
   background: #05040a;
   color-scheme: dark;
 }
+
+@keyframes feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

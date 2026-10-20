@@ -10,7 +10,7 @@ import type { SceneMarks } from './scene-data'
 import type { PositionOf } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
-const POOL = 4
+const POOL = 12
 const RIPPLE_MS = 900
 const WHITE = new Color('#ffffff')
 const AGENT_RIPPLE = new Color(AGENT_COLORS.trusted)
@@ -52,17 +52,24 @@ export function Ripples({ marks, positionOf }: { marks: SceneMarks; positionOf: 
     [assets]
   )
 
-  useEffect(
-    () =>
-      useObservatory.subscribe((state, previous) => {
-        if (reduced || !state.selected || state.selected === previous.selected) return
-        const slot = next.current
-        next.current = (slot + 1) % POOL
-        active.current[slot] = { id: state.selected, startedAt: performance.now() }
-        assets.slots[slot].material.color.copy(state.selected.startsWith('agent:') ? AGENT_RIPPLE : WHITE)
-      }),
-    [reduced, assets]
-  )
+  useEffect(() => {
+    const start = (id: EntityId, color: Color) => {
+      const slot = next.current
+      next.current = (slot + 1) % POOL
+      active.current[slot] = { id, startedAt: performance.now() }
+      assets.slots[slot].material.color.copy(color)
+    }
+    return useObservatory.subscribe((state, previous) => {
+      if (reduced) return
+      if (state.selected && state.selected !== previous.selected)
+        start(state.selected, state.selected.startsWith('agent:') ? AGENT_RIPPLE : WHITE)
+      if (state.flashes === previous.flashes) return
+      for (const [id, at] of state.flashes) {
+        const mark = marks.get(id)
+        if (mark && previous.flashes.get(id) !== at) start(id, mark.color)
+      }
+    })
+  }, [reduced, assets, marks])
 
   useFrame(({ camera }) => {
     const now = performance.now()
