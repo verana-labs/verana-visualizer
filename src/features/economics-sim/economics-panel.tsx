@@ -7,12 +7,12 @@ import { isRole } from '@/domain/roles'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
-import type { CredentialSchema, Participant } from '@/lib/api/schemas'
+import type { Participant } from '@/lib/api/schemas'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import { Sparkline } from '@/ui/sparkline'
 import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
-import { amount, percent, vnaFromUvna } from './format'
+import { amount, percent, priced, vnaFromUvna } from './format'
 import type { EconomicsData } from './load-economics'
 
 export type EconomicsState =
@@ -46,13 +46,6 @@ function Row({ label, children }: { label: ReactNode; children: ReactNode }) {
       <b className="shrink-0 font-medium tabular-nums">{children}</b>
     </div>
   )
-}
-
-function priced(value: number | string, schema: CredentialSchema | undefined): string {
-  const n = Number(value)
-  if (schema?.pricing_asset_type === 'TU') return `${amount(n)} TU`
-  if (schema?.pricing_asset_type === 'COIN' && schema.pricing_asset === 'uvna') return vnaFromUvna(n)
-  return `${amount(n)} ${schema?.pricing_asset ?? schema?.pricing_asset_type ?? ''}`.trim()
 }
 
 const charges = (p: Participant) =>

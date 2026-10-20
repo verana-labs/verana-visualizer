@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
+import { priced, vnaFromUvna } from '@/features/economics-sim/format'
 import { ProposalPanel } from '@/features/governance/proposal-panel'
 import { EcsBadge } from '@/features/registry/ecs-badge'
 import { AbsentAtBlock, LiveTag } from '@/features/time-scrubber/live-tag'
@@ -112,7 +113,7 @@ function EcosystemPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
       <Fact label="Credential schemas">{formatAmount(schemas.length)}</Fact>
       <Fact label="Credentials issued">{formatAmount(eco.issued)}</Fact>
       <Fact label="Verifications">{formatAmount(eco.verified)}</Fact>
-      <Fact label="Trust weight">{formatAmount(eco.weight)}</Fact>
+      <Fact label="Trust weight">{vnaFromUvna(Number(eco.weight))}</Fact>
       {corporation && (
         <Section title="operated by">
           <EntityButton entity={corporation} note={`#${eco.corporation_id}`} />
@@ -148,6 +149,7 @@ function ParticipantPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
     .slice(1)
     .flatMap((id) => model.entities.get(id) ?? [])
   const schema = model.entities.get(`schema:${p.schema_id}`)
+  const pricing = rawSchema(model, `schema:${p.schema_id}`)
   return (
     <>
       <Kicker>participant · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}</Kicker>
@@ -167,9 +169,9 @@ function ParticipantPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
         <Fact label="Issued / verified">
           {formatAmount(p.issued)} / {formatAmount(p.verified)}
         </Fact>
-        <Fact label="Trust deposit">{formatAmount(p.deposit)}</Fact>
+        <Fact label="Trust deposit">{vnaFromUvna(Number(p.deposit))}</Fact>
         <Fact label="Fees (validation · issue · verify)">
-          {formatAmount(p.validation_fees)} · {formatAmount(p.issuance_fees)} · {formatAmount(p.verification_fees)}
+          {[p.validation_fees, p.issuance_fees, p.verification_fees].map((fee) => priced(fee, pricing)).join(' · ')}
         </Fact>
       </div>
       {chain.length > 0 && (
@@ -243,7 +245,7 @@ function CorporationPanel({ model, entity, chainId }: PanelProps) {
       <div className="mt-1.5">
         <Fact label="Controlled ecosystems">{formatAmount(corp.controlled_ecosystems)}</Fact>
         <Fact label="Participants">{formatAmount(corp.participants)}</Fact>
-        <Fact label="Trust deposit">{formatAmount(corp.deposit)}</Fact>
+        <Fact label="Trust deposit">{vnaFromUvna(Number(corp.deposit))}</Fact>
         <Fact label="Slashes">{formatAmount(corp.slash_count)}</Fact>
       </div>
       {ecosystems.length > 0 && (

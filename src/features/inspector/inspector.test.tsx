@@ -62,6 +62,25 @@ beforeEach(() => {
 })
 
 describe('Inspector', () => {
+  it('shows deposits and weight in VNA and fees in the schema pricing unit', () => {
+    const raw = baseRaw()
+    raw.participants = raw.participants.map((p) =>
+      p.id === 158
+        ? { ...p, deposit: '2500000', validation_fees: '1000000', issuance_fees: '0', verification_fees: '5' }
+        : p
+    )
+    raw.ecosystems = raw.ecosystems.map((e, i) => (i === 0 ? { ...e, weight: '7000000' } : e))
+    const { unmount } = show(raw, 'participant:158')
+    expect(fact('Trust deposit')).toBe('2.5 VNA')
+    expect(fact('Fees (validation · issue · verify)')).toBe('1 VNA · 0 VNA · 0.000005 VNA')
+    unmount()
+    const eco = show(raw, `ecosystem:${raw.ecosystems[0].id}`)
+    expect(fact('Trust weight')).toBe('7 VNA')
+    eco.unmount()
+    show(raw, 'corporation:2')
+    expect(fact('Trust deposit')).toBe('0.05 VNA')
+  })
+
   it('renders nothing without a selection', () => {
     useObservatory.setState({ model: buildNetworkModel(baseRaw()), selected: null })
     const { container } = render(<Inspector frontendUrl={FRONTEND} chainId="vna-testnet-1" />)
