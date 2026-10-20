@@ -3,6 +3,8 @@
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, LineBasicMaterial, type LineSegments } from 'three'
+import type { EntityId } from '@/domain/network-model'
+import { FADE_MS, useTimeStore } from '@/features/time-scrubber/time-store'
 import type { LensId, RingSpec } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
 import { ensureLayout, tweenProgress } from './use-lens-tween'
@@ -37,11 +39,29 @@ function ringGeometry(rings: readonly RingSpec[]): BufferGeometry {
   return geometry
 }
 
+export interface RingPaint {
+  absent: ReadonlySet<EntityId> | null
+  settled: boolean
+}
+
+export const isFading = (changedAt: number, now: number, reduced: boolean) => !reduced && now - changedAt < FADE_MS
+
+export function needsRingRepaint(
+  last: RingPaint | null,
+  time: { absent: ReadonlySet<EntityId> | null; changedAt: number },
+  now: number,
+  reduced: boolean
+): boolean {
+  if (!last || last.absent !== time.absent) return true
+  return isFading(time.changedAt, now, reduced) || !last.settled
+}
+
 function RingSet({ lens, fadingIn }: { lens: LensId; fadingIn: boolean }) {
   const layout = useObservatory((s) => s.layouts[lens])
   const reduced = usePrefersReducedMotion()
   const line = useRef<LineSegments>(null)
   const presenceOf = useTimePresence()
+  const painted = useRef<RingPaint | null>(null)
   const geometry = useMemo(() => (layout?.rings?.length ? ringGeometry(layout.rings) : null), [layout])
   const material = useMemo(
     () =>
@@ -58,7 +78,10 @@ function RingSet({ lens, fadingIn }: { lens: LensId; fadingIn: boolean }) {
   useEffect(() => {
     if (!layout) ensureLayout(lens)
   }, [layout, lens])
-  useLayoutEffect(() => () => geometry?.dispose(), [geometry])
+  useLayoutEffect(() => {
+    painted.current = null
+    return () => geometry?.dispose()
+  }, [geometry])
   useLayoutEffect(() => () => material.dispose(), [material])
 
   useFrame(() => {
@@ -69,6 +92,10 @@ function RingSet({ lens, fadingIn }: { lens: LensId; fadingIn: boolean }) {
     if (line.current) line.current.visible = material.opacity > 0.001
     const colors = geometry?.getAttribute('color')
     if (!colors || !layout?.rings) return
+    const time = useTimeStore.getState()
+    const now = performance.now()
+    if (!needsRingRepaint(painted.current, time, now, reduced)) return
+    painted.current = { absent: time.absent, settled: !isFading(time.changedAt, now, reduced) }
     layout.rings.forEach((ring, r) => {
       const k = ring.ecosystem ? presenceOf(ring.ecosystem) : 1
       for (let v = r * VERTICES_PER_RING; v < (r + 1) * VERTICES_PER_RING; v++)
