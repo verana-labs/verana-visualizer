@@ -15,6 +15,7 @@ import { useObservatory } from '@/store/observatory-store'
 import { agentTint, type SceneData } from './scene-data'
 import { type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
+import { useTimePresence } from './use-time-presence'
 
 const VALIDATOR_OPACITY = 0.38
 const AGENT_IDLE = 0.035
@@ -62,6 +63,7 @@ export function Links({ data, positionOf, focus }: LinksProps) {
     []
   )
   const colorOf = useMemo(() => new Map(data.nodes.map((node) => [node.entity.id, node.color])), [data.nodes])
+  const presenceOf = useTimePresence()
 
   useLayoutEffect(() => () => geometry.dispose(), [geometry])
   useLayoutEffect(() => () => material.dispose(), [material])
@@ -85,13 +87,17 @@ export function Links({ data, positionOf, focus }: LinksProps) {
       const ca = colorOf.get(a)
       const cb = colorOf.get(b)
       if (!ca || !cb) throw new Error(`Link ${a} → ${b} joins an unrendered node`)
-      const k = validatorStrength(sets, a, b) * VALIDATOR_OPACITY + flashOf(a, now) * FLASH_BOOST
+      const k =
+        (validatorStrength(sets, a, b) * VALIDATOR_OPACITY + flashOf(a, now) * FLASH_BOOST) *
+        Math.min(presenceOf(a), presenceOf(b))
       write(i, a, b, ca, cb, k, k)
     })
     const offset = data.validatorLinks.length
     data.agentLinks.forEach(([agent, anchor], i) => {
       const tint = agentTint(agentVerdicts.get(agent))
-      const k = agentStrength(sets, agent, anchor) + flashOf(agent, now) * AGENT_FLASH_BOOST
+      const k =
+        (agentStrength(sets, agent, anchor) + flashOf(agent, now) * AGENT_FLASH_BOOST) *
+        Math.min(presenceOf(agent), presenceOf(anchor))
       write(offset + i, agent, anchor, tint, tint, k, k)
     })
     geometry.attributes.position.needsUpdate = true

@@ -54,6 +54,7 @@ const indexerFixtures: Record<string, z.ZodType> = {
   'block-height': blockHeightSchema,
   events: z.array(indexerEventSchema),
   changes: changesSchema,
+  'changes-38000': changesSchema,
   stats: statsSchema,
   snapshot: statsSnapshotSchema,
   'group-proposals': z.array(groupProposalSchema),

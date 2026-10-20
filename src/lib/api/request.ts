@@ -26,11 +26,12 @@ export function requestSignal(options: RequestOptions, signal?: AbortSignal): Ab
 export async function requestJson<T>(
   query: QueryInfo,
   schema: z.ZodType<T>,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  via?: string
 ): Promise<Fetched<T>> {
   const init: RequestInit = { method: query.method, headers: query.headers }
   if (signal) init.signal = signal
   if (query.body !== undefined) init.body = JSON.stringify(query.body)
-  const data = await fetchJson(query.url, init, schema)
+  const data = await fetchJson(via ?? query.url, init, schema)
   return { data, query }
 }

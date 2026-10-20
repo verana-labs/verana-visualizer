@@ -16,6 +16,7 @@ import { ListFallback } from '@/features/list-fallback/list-fallback'
 import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
 import { SearchPalette } from '@/features/search/search-palette'
+import { TimeLens } from '@/features/time-scrubber/time-lens'
 import { Toast } from '@/features/toast/toast'
 import { useAgentResolution } from '@/features/trust-check/agent-resolution'
 import { useTrustCheckRunner } from '@/features/trust-check/use-trust-check-runner'
@@ -69,6 +70,7 @@ function Observatory() {
       <Legend />
       {model && <ActivityFeed cfg={cfg} />}
       {model && <EconomicsLens cfg={cfg} />}
+      {model && <TimeLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

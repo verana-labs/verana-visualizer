@@ -7,6 +7,7 @@ import type { SceneNode } from './scene-data'
 import { dimOf, type FocusSets } from './scene-focus'
 import { SceneHtml } from './scene-html'
 import type { PositionOf } from './use-lens-tween'
+import { useTimePresence } from './use-time-presence'
 
 interface LabelsProps {
   stars: SceneNode[]
@@ -22,13 +23,14 @@ const labelOpacity = (dim: number) => (dim >= 1 ? 1 : dim < 0.2 ? 0.15 : 0.4)
 export function Labels({ stars, positionOf, focus }: LabelsProps) {
   const anchors = useRef<(Group | null)[]>([])
   const texts = useRef<(HTMLDivElement | null)[]>([])
+  const presenceOf = useTimePresence()
 
   useFrame(() => {
     stars.forEach((star, i) => {
       const id = star.entity.id
       anchors.current[i]?.position.set(...positionOf(id))
       const text = texts.current[i]
-      if (text) text.style.opacity = String(labelOpacity(dimOf(focus.current, id)))
+      if (text) text.style.opacity = String(labelOpacity(dimOf(focus.current, id)) * presenceOf(id))
     })
   })
 

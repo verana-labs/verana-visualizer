@@ -58,6 +58,7 @@ const replays: Record<string, Replay> = {
   'block-height': (c) => c.indexer.blockHeight(),
   events: (c, r) => c.indexer.events(Number(search(r).get('after_block_height')), Number(search(r).get('limit'))),
   changes: (c, r) => c.indexer.changes(Number(r.headers['At-Block-Height'])),
+  'changes-38000': (c, r) => c.indexer.changes(Number(r.headers['At-Block-Height'])),
   stats: (c, r) => {
     const params = search(r)
     return c.indexer.stats({
