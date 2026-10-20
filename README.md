@@ -17,7 +17,7 @@ Spec: [`v4/verana-visualizer/spec.md`](https://github.com/verana-labs/verana-spe
 
 ## Run
 
-Needs Node 22 and pnpm 9.
+Needs Node 24 and pnpm 9.
 
 ```bash
 pnpm install --frozen-lockfile
