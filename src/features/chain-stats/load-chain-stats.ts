@@ -19,7 +19,6 @@ export type Settled<T> = { ok: true; value: T; query: QueryInfo } | { ok: false;
 
 export interface TuRateStat {
   rate: TuRate | null
-  published: number
 }
 
 export interface NetworkStats {
@@ -112,7 +111,7 @@ export async function loadNetworkStats(cfg: NetworkConfig, now: Date): Promise<N
       () => indexer.snapshot(),
       (d) => d
     ),
-    settle('tuRate', indexer.exchangeRates, (rates) => ({ rate: liveTuRate(rates, now), published: rates.length })),
+    settle('tuRate', indexer.exchangeRates, (rates) => ({ rate: liveTuRate(rates, now) })),
   ])
   return { supply, inflation, bonded, communityPool, yieldPool, snapshot, tuRate }
 }
@@ -247,10 +246,10 @@ function blockRows(window: BlockWindow | null): StatRow[] {
 
 function tuRow(stats: NetworkStats | null): StatRow[] {
   const settled = stats?.tuRate
-  if (!settled || (settled.ok && settled.value.published === 0)) return []
-  return [
-    fromSettled('tuRate', settled, ({ rate }) => (rate ? `1 TU = ${amount(tuInVna(1, rate), 6)} VNA` : 'no live rate')),
-  ]
+  if (!settled) return []
+  if (!settled.ok) return [fromSettled('tuRate', settled, () => '')]
+  const { rate } = settled.value
+  return rate ? [fromSettled('tuRate', settled, () => `1 TU = ${amount(tuInVna(1, rate), 6)} VNA`)] : []
 }
 
 export function statRows(stats: NetworkStats | null, window: BlockWindow | null): StatRow[] {

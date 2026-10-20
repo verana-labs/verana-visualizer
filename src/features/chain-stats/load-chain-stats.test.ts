@@ -159,6 +159,25 @@ describe('statRows', () => {
     expect(rows.some((r) => r.id === 'tuRate')).toBe(false)
   })
 
+  it('hides the TU rate row when rates are published but none is live', async () => {
+    const expired = {
+      id: 7,
+      base_asset_type: 'TU',
+      base_asset: null,
+      quote_asset_type: 'COIN',
+      quote_asset: 'uvna',
+      rate: '2500000',
+      rate_scale: 0,
+      state: true,
+      updated: '2026-10-18T11:00:00Z',
+      expires: '2026-10-19T11:00:00Z',
+    }
+    const { rows } = await rowsFor((url) =>
+      url.pathname === '/v4/exchange-rate/list' ? Response.json({ exchange_rates: [expired] }) : undefined
+    )
+    expect(rows.some((r) => r.id === 'tuRate')).toBe(false)
+  })
+
   it('shows the TU rate when a live rate is published', async () => {
     const rate = {
       id: 7,
