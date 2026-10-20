@@ -1,8 +1,9 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { hopLabel, verdictPath, verdictText } from '@/domain/trust-check'
 import { testnetModel } from '@/features/search/search-fixture'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { logger } from '@/lib/logger'
 import { runTrustCheck } from './run-trust-check'
 import { ECS_DID, PAPAPO_DID, stubTrustNetwork, testnetCfg, UNKNOWN_DID } from './trust-fixture'
 
@@ -10,7 +11,18 @@ const model = testnetModel()
 const clients = () => ({ indexer: createIndexerClient(testnetCfg), graph: createGraphClient(testnetCfg) })
 const NOW = new Date('2026-10-20T12:00:00Z')
 
-afterEach(() => vi.unstubAllGlobals())
+let warn: ReturnType<typeof vi.spyOn>
+let error: ReturnType<typeof vi.spyOn>
+
+beforeEach(() => {
+  warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+  error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 describe('runTrustCheck', () => {
   it('gives the ECS root DID a trusted verdict with the path from verana-graph G1', async () => {
@@ -55,6 +67,7 @@ describe('runTrustCheck', () => {
     expect(check.pathSource).toBe('local')
     expect(check.path).toEqual([`agent:${PAPAPO_DID}`, 'participant:158', 'participant:5', 'ecosystem:2'])
     expect(check.pathError).toMatch(/HTTP 500/)
+    expect(warn).toHaveBeenCalledTimes(1)
     expect(check.verdict).toMatchObject({ trusted: false, evaluatedAtBlock: 44200 })
   })
 
@@ -65,6 +78,22 @@ describe('runTrustCheck', () => {
     expect(check.pathSource).toBe('verana-graph G1')
     expect(verdictText(check.verdict)).toMatch(/^Could not resolve: HTTP 500 /)
     expect(verdictText(check.verdict)).not.toMatch(/Trusted/)
+    expect(error).toHaveBeenCalledTimes(1)
+  })
+
+  it('draws the deepest chain among the participants sharing a DID, then the lowest id, and counts them', async () => {
+    stubTrustNetwork()
+    const check = await runTrustCheck(ECS_DID, model, clients(), NOW)
+    expect(check.path).toEqual([`agent:${ECS_DID}`, 'participant:11', 'participant:8', 'participant:3', 'ecosystem:2'])
+    expect(check.sharedBy).toBe(8)
+    const papapo = await runTrustCheck(PAPAPO_DID, model, clients(), NOW)
+    expect(papapo.sharedBy).toBe(1)
+  })
+
+  it('rejects a verdict the indexer returned for a different DID', async () => {
+    stubTrustNetwork({ resolveDid: ECS_DID })
+    const check = await runTrustCheck(PAPAPO_DID, model, clients(), NOW)
+    expect(check.verdict).toEqual({ error: 'Indexer returned a verdict for a different DID' })
   })
 
   it('asks the indexer without waiting for the graph', async () => {
@@ -106,6 +135,12 @@ describe('verdict copy', () => {
       'Not trusted'
     )
     expect(verdictText({ error: 'HTTP 502 from POST x' })).toBe('Could not resolve: HTTP 502 from POST x')
+  })
+
+  it('always shows both parts of a hop label', () => {
+    expect(hopLabel({ id: 'participant:1', state: 'ACTIVE', opState: null })).toBe(
+      'State: ACTIVE · Onboarding: not reported'
+    )
   })
 
   it('builds a citable verdict path pinned to the evaluated block', () => {

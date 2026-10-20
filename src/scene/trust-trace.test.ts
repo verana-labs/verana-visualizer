@@ -14,6 +14,7 @@ const check = (path: EntityId[]): TrustCheck => ({
   path,
   pathSource: 'local',
   pathError: null,
+  sharedBy: 1,
   hops: [],
   verdict: { trusted: false, evaluatedAtBlock: 1, evaluatedAtTime: null, expiresAtTime: null },
   raw: { resolve: null, graph: null },

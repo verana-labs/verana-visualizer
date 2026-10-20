@@ -73,6 +73,7 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
   useLiveActivity(cfg)
   const feed = useObservatory((s) => s.feed)
   const blockHeight = useObservatory((s) => s.blockHeight)
+  const collapsed = useObservatory((s) => s.selected !== null || s.trustCheck !== null)
   const now = useNow()
   const fetchEvents = useMemo<FetchEvents>(() => {
     const indexer = createIndexerClient(cfg)
@@ -87,7 +88,7 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
       aria-label="Live activity"
       className="fixed right-4 bottom-[66px] z-10 w-[340px] max-w-[calc(100vw-32px)] px-3.5 py-3 text-scene-txt"
     >
-      <div className="mb-1 flex items-center justify-between gap-2">
+      <div className={`flex items-center justify-between gap-2 ${collapsed ? '' : 'mb-1'}`}>
         <span className="text-[10px] uppercase tracking-[.09em] text-scene-mut">live activity</span>
         <span className="flex gap-1.5">
           {busy && (
@@ -104,12 +105,12 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
           </Button>
         </span>
       </div>
-      {status && (
+      {!collapsed && status && (
         <div role="status" className="py-1 text-[10.5px] text-scene-mut">
           {status}
         </div>
       )}
-      {feed.length > 0 ? (
+      {collapsed ? null : feed.length > 0 ? (
         <ul>
           {feed.map((item) => (
             <FeedRow key={item.key} item={item} now={now} />

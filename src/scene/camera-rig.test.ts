@@ -10,8 +10,12 @@ import {
   focusFrameDistance,
   focusFrameIds,
   framePoints,
+  INTRO_ARC,
+  introEnd,
+  introPosition,
   overviewOf,
   tightFitDistance,
+  traceFrame,
   unoccludedAspect,
   zoomLimits,
 } from './camera-rig'
@@ -171,5 +175,57 @@ describe('unoccludedAspect', () => {
   it('narrows the view by the inspector on both sides so a centred focus stays clear of it', () => {
     expect(unoccludedAspect(1440, 900)).toBeCloseTo((1440 - 2 * 356) / 900)
     expect(unoccludedAspect(700, 900)).toBeGreaterThan(0.3)
+  })
+})
+
+describe('traceFrame', () => {
+  const path: Vec3[] = [
+    [60, -4, 30],
+    [52, 2, 12],
+    [40, 0, -2],
+    [36, 6, -20],
+  ]
+  const heading = new Vector3(0, 0.5, 1).normalize()
+
+  it('frames the whole traced path with 1.6 times the tight fit, clear of the side panels', () => {
+    const aspect = unoccludedAspect(1440, 900)
+    const { target, position } = traceFrame(path, heading, FOV, aspect)
+    const distance = position.distanceTo(target)
+    expect(distance).toBeCloseTo(1.6 * tightFitDistance(target, path, heading, FOV, aspect))
+    expect(visibleFrom(position, target, aspect, path)).toBe(true)
+  })
+
+  it('never comes closer than the agent focus distance for a short path', () => {
+    const { target, position } = traceFrame([path[2], path[3]], heading, FOV, 16 / 9)
+    expect(position.distanceTo(target)).toBeGreaterThanOrEqual(24)
+  })
+})
+
+describe('the intro flight', () => {
+  const from = new Vector3(0, 420, 900)
+  const points: Vec3[] = [
+    [-100, 0, -60],
+    [100, 0, 60],
+    [0, 20, 0],
+  ]
+
+  it('ends on an overview turned by about 40 degrees that still frames the network', () => {
+    const end = introEnd(points, FOV, 16 / 9)
+    const offset = end.position.clone().sub(end.target)
+    expect((Math.atan2(offset.x, offset.z) * 180) / Math.PI).toBeCloseTo((INTRO_ARC * 180) / Math.PI)
+    expect((INTRO_ARC * 180) / Math.PI).toBeCloseTo(40)
+    expect(visibleFrom(end.position, end.target, 16 / 9, points)).toBe(true)
+  })
+
+  it('starts at the fixed from-point and sweeps its azimuth monotonically to the end', () => {
+    const end = introEnd(points, FOV, 16 / 9)
+    expect(introPosition(from, end.position, end.target, 0).distanceTo(from)).toBeCloseTo(0)
+    expect(introPosition(from, end.position, end.target, 1).distanceTo(end.position)).toBeCloseTo(0)
+    const azimuth = (t: number) => {
+      const p = introPosition(from, end.position, end.target, t).sub(end.target)
+      return Math.atan2(p.x, p.z)
+    }
+    const samples = [0, 0.25, 0.5, 0.75, 1].map(azimuth)
+    for (let i = 1; i < samples.length; i++) expect(samples[i]).toBeGreaterThan(samples[i - 1])
   })
 })

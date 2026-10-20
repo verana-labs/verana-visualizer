@@ -63,4 +63,19 @@ describe('StardustLoader', () => {
     await new Promise((r) => setTimeout(r, 450))
     expect(onExited).not.toHaveBeenCalled()
   })
+
+  it('fades its opaque backdrop quickly on exit so the intro flight shows through', () => {
+    const { rerender } = render(
+      <StardustLoader progress={1} label="Ready" error={null} done={false} onExited={() => {}} />
+    )
+    const root = screen.getByTestId('stardust-loader')
+    const backdrop = screen.getByTestId('loader-backdrop')
+    expect(root).not.toHaveAttribute('data-exiting')
+    expect(backdrop.style.opacity).toBe('1')
+    rerender(<StardustLoader progress={1} label="Ready" error={null} done onExited={() => {}} />)
+    expect(root).toHaveAttribute('data-exiting')
+    expect(backdrop.style.opacity).toBe('0')
+    expect(backdrop.style.transition).toMatch(/opacity 600ms/)
+    expect(root.style.opacity).not.toBe('0')
+  })
 })

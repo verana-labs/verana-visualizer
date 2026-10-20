@@ -39,7 +39,7 @@ const item = (block: number, eventType = 'CreateNewCorporation', module = 'co') 
 
 beforeEach(() => {
   vi.stubGlobal('WebSocket', SilentSocket)
-  useObservatory.setState({ model, blockHeight: 97_497, feed: [], cometLaunch: null })
+  useObservatory.setState({ model, blockHeight: 97_497, feed: [], cometLaunch: null, selected: null, trustCheck: null })
 })
 
 afterEach(() => {
@@ -114,6 +114,20 @@ describe('ActivityFeed', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Replay recent' }))
     })
     expect(await screen.findByText('No events found')).toBeInTheDocument()
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0)
+  })
+
+  it('collapses to its header row while the inspector or a trust check holds the right column', () => {
+    useObservatory.setState({ feed: [item(44_201)] })
+    render(<ActivityFeed cfg={cfg} />)
+    expect(screen.getAllByRole('listitem')).toHaveLength(1)
+    act(() => useObservatory.setState({ selected: 'ecosystem:2' }))
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0)
+    expect(screen.getByText('live activity')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Replay recent' })).toBeInTheDocument()
+    act(() => useObservatory.setState({ selected: null }))
+    expect(screen.getAllByRole('listitem')).toHaveLength(1)
+    act(() => useObservatory.getState().requestTrustCheck('did:web:x.example.org'))
     expect(screen.queryAllByRole('listitem')).toHaveLength(0)
   })
 })

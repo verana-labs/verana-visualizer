@@ -25,6 +25,7 @@ export async function resolveAgents(
         const trusted = await resolve(did)
         if (!signal?.aborted) onResult(did, trusted)
       } catch (error) {
+        if (signal?.aborted) return
         logger.warn(`Could not resolve ${did}; it stays unresolved`, describeFailure(error))
       }
     }
@@ -40,7 +41,7 @@ export function useAgentResolution(cfg: NetworkConfig, model: NetworkModel | nul
     const dids = model.agents.flatMap((agent) => agent.did ?? [])
     void resolveAgents(
       dids,
-      async (did) => (await indexer.resolve(did)).data.trusted,
+      async (did) => (await indexer.resolve(did, {}, controller.signal)).data.trusted,
       (did, trusted) => useObservatory.getState().setAgentVerdict(`agent:${did}`, trusted),
       controller.signal
     )

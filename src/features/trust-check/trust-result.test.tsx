@@ -5,9 +5,10 @@ import type { TrustCheck } from '@/domain/trust-check'
 import { testnetModel } from '@/features/search/search-fixture'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
 import { runTrustCheck } from './run-trust-check'
-import { PAPAPO_DID, stubTrustNetwork, testnetCfg, UNKNOWN_DID } from './trust-fixture'
+import { ECS_DID, PAPAPO_DID, stubTrustNetwork, testnetCfg, UNKNOWN_DID } from './trust-fixture'
 import { TrustResult } from './trust-result'
 
 const model = testnetModel()
@@ -35,10 +36,14 @@ function showResult(check: TrustCheck | null, did = PAPAPO_DID) {
 }
 
 beforeEach(() => {
+  vi.spyOn(logger, 'error').mockImplementation(() => {})
   useObservatory.setState({ model, selected: null, trustCheck: null, agentVerdicts: new Map() })
 })
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 describe('TrustResult', () => {
   it('shows the indexer verdict, block, time and the linear chain with hop states', async () => {
@@ -62,6 +67,11 @@ describe('TrustResult', () => {
     const { container } = showResult(await checked(PAPAPO_DID, { resolveStatus: 500 }))
     expect(screen.getByTestId('trust-verdict')).toHaveTextContent(/^Could not resolve: HTTP 500 /)
     expect(container.textContent).not.toMatch(/Trusted/)
+  })
+
+  it('says which participant is drawn when several share the DID', async () => {
+    showResult(await checked(ECS_DID), ECS_DID)
+    expect(screen.getByText('8 participants share this DID · showing participant:11')).toBeInTheDocument()
   })
 
   it('shows a pending check as resolving', () => {

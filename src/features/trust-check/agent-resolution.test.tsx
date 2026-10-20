@@ -1,9 +1,11 @@
-import { act, render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, render, renderHook, screen, within } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { NetworkModel } from '@/domain/network-model'
 import { Hud } from '@/features/hud/hud'
 import { testnetModel } from '@/features/search/search-fixture'
+import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
-import { resolveAgents } from './agent-resolution'
+import { resolveAgents, useAgentResolution } from './agent-resolution'
 import { testnetCfg } from './trust-fixture'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams('') }))
@@ -40,6 +42,11 @@ const services = () => {
 
 const flush = () => act(async () => {})
 
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
+
 beforeEach(() => {
   useObservatory.setState({ model: testnetModel(), agentVerdicts: new Map(), blockHeight: 1 })
 })
@@ -74,10 +81,12 @@ describe('resolveAgents', () => {
     await flush()
     expect(services()).toBe('1 / 1')
 
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
     resolver.pending[1].settle(new Error('HTTP 500 from POST resolve'))
     await flush()
     expect(services()).toBe('1 / 1')
     expect(useObservatory.getState().agentVerdicts.has(`agent:${b}`)).toBe(false)
+    expect(warn).toHaveBeenCalledTimes(1)
 
     resolver.pending[2].settle(false)
     await run
@@ -96,5 +105,34 @@ describe('resolveAgents', () => {
     for (const p of resolver.pending) p.settle(true)
     await run
     expect(resolver.pending).toHaveLength(4)
+  })
+})
+
+describe('useAgentResolution', () => {
+  it('waits for the model, sends the abort signal with each resolve and aborts on unmount', async () => {
+    const warn = vi.spyOn(logger, 'warn')
+    const hang = vi.fn(
+      (_: string, init?: RequestInit) =>
+        new Promise<Response>((_, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(init.signal?.reason))
+        })
+    )
+    vi.stubGlobal('fetch', hang)
+    const model = useObservatory.getState().model
+    const { rerender, unmount } = renderHook(({ m }: { m: NetworkModel | null }) => useAgentResolution(testnetCfg, m), {
+      initialProps: { m: null as NetworkModel | null },
+    })
+    await flush()
+    expect(hang).not.toHaveBeenCalled()
+    rerender({ m: model })
+    await flush()
+    expect(hang).toHaveBeenCalledTimes(4)
+    const signals = hang.mock.calls.map(([, init]) => init?.signal)
+    expect(signals.every((signal) => signal instanceof AbortSignal && !signal.aborted)).toBe(true)
+    unmount()
+    await flush()
+    expect(signals.every((signal) => signal?.aborted)).toBe(true)
+    expect(useObservatory.getState().agentVerdicts.size).toBe(0)
+    expect(warn).not.toHaveBeenCalled()
   })
 })

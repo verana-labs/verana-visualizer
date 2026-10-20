@@ -24,8 +24,8 @@ export interface LoadStep {
   run: () => Promise<unknown>
 }
 
-export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink, atHeight?: number): LoadStep[] {
-  const indexer = createIndexerClient(cfg, atHeight)
+export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[] {
+  const indexer = createIndexerClient(cfg)
   const recorded = <T>(key: ListQueryKey, fetched: Fetched<T>): T => {
     sink.queries = { ...sink.queries, [key]: fetched.query }
     return fetched.data
@@ -85,12 +85,9 @@ export function rawFromSink(sink: LoadSink): RawNetwork {
   return { ecosystems, schemas, participants, corporations, dids }
 }
 
-export async function loadRawNetwork(
-  cfg: NetworkConfig,
-  atHeight?: number
-): Promise<{ raw: RawNetwork; blockHeight: number }> {
+export async function loadRawNetwork(cfg: NetworkConfig): Promise<{ raw: RawNetwork; blockHeight: number }> {
   const sink: LoadSink = {}
-  for (const step of networkLoadSteps(cfg, sink, atHeight).slice(0, 6)) await step.run()
+  for (const step of networkLoadSteps(cfg, sink).slice(0, 6)) await step.run()
   if (sink.blockHeight === undefined) throw new Error('Cannot assemble the network: block height missing')
   return { raw: rawFromSink(sink), blockHeight: sink.blockHeight }
 }

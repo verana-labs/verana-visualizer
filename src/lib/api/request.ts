@@ -13,8 +13,23 @@ export function buildUrl(base: string, path: string, params: Record<string, Para
   return `${base}${path}${query ? `?${query}` : ''}`
 }
 
-export async function requestJson<T>(query: QueryInfo, schema: z.ZodType<T>): Promise<Fetched<T>> {
+export interface RequestOptions {
+  timeoutMs?: number
+}
+
+export function requestSignal(options: RequestOptions, signal?: AbortSignal): AbortSignal | undefined {
+  const timeout = options.timeoutMs === undefined ? undefined : AbortSignal.timeout(options.timeoutMs)
+  if (timeout && signal) return AbortSignal.any([timeout, signal])
+  return timeout ?? signal
+}
+
+export async function requestJson<T>(
+  query: QueryInfo,
+  schema: z.ZodType<T>,
+  signal?: AbortSignal
+): Promise<Fetched<T>> {
   const init: RequestInit = { method: query.method, headers: query.headers }
+  if (signal) init.signal = signal
   if (query.body !== undefined) init.body = JSON.stringify(query.body)
   const data = await fetchJson(query.url, init, schema)
   return { data, query }

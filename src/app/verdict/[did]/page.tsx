@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { decodeDid, loadVerdict, parseBlock } from '@/features/verdict-card/load-verdict'
-import { VerdictCard } from '@/features/verdict-card/verdict-card'
+import { InvalidBlock, VerdictCard } from '@/features/verdict-card/verdict-card'
 import { accentFor } from '@/lib/accent'
 import { resolveNetworkConfig } from '@/lib/env'
 
@@ -15,11 +16,17 @@ interface VerdictPageProps {
 
 export default async function VerdictPage({ params, searchParams }: VerdictPageProps) {
   const [{ did: param }, search] = await Promise.all([params, searchParams])
+  const did = decodeDid(param)
+  if (!did) notFound()
   const cfg = resolveNetworkConfig(process.env)
-  const data = await loadVerdict(cfg, decodeDid(param), parseBlock(search.block))
+  const block = parseBlock(search.block)
   return (
     <div style={{ '--accent': accentFor(cfg.chainName) } as React.CSSProperties}>
-      <VerdictCard data={data} cfg={cfg} renderedAt={new Date()} />
+      {'invalid' in block ? (
+        <InvalidBlock did={did} value={block.invalid} />
+      ) : (
+        <VerdictCard data={await loadVerdict(cfg, did, block.block)} cfg={cfg} renderedAt={new Date()} />
+      )}
     </div>
   )
 }

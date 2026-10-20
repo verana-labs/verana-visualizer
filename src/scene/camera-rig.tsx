@@ -2,11 +2,12 @@
 
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
-import { Box3, PerspectiveCamera, Vector3 } from 'three'
+import { Box3, PerspectiveCamera, Spherical, Vector3 } from 'three'
 import type { EntityId, EntityKind, NetworkModel } from '@/domain/network-model'
 import type { Layout, LensId, Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
 import { MAX_STAR_SIZE } from './scene-data'
+import { traceablePath } from './trust-trace'
 import { ensureLayout } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
@@ -23,9 +24,12 @@ const MIN_FOCUS_ASPECT = 0.35
 const MAX_ZOOM_FACTOR = 2.5
 const NETWORK_DIRECTION = new Vector3(0, 0.5, 1).normalize()
 const FLAT_DIRECTION = new Vector3(0, 0.05, 1).normalize()
+const Y_AXIS = new Vector3(0, 1, 0)
+export const INTRO_ARC = (40 * Math.PI) / 180
 
 interface Flight {
-  startedAt: number
+  startedAt: number | null
+  arc?: boolean
   duration: number
   fromPosition: Vector3
   fromTarget: Vector3
@@ -138,6 +142,39 @@ export function framePoints(layout: Layout, ids: readonly EntityId[]): Vec3[] {
   return [...placed, ...ringExtents]
 }
 
+function boundsCenter(points: readonly Vec3[]): Vector3 {
+  const bounds = new Box3()
+  const point = new Vector3()
+  for (const p of points) bounds.expandByPoint(point.set(...p))
+  return bounds.isEmpty() ? new Vector3() : bounds.getCenter(new Vector3())
+}
+
+export function traceFrame(points: readonly Vec3[], heading: Vector3, fov: number, aspect: number) {
+  const target = boundsCenter(points)
+  const distance = Math.max(
+    focusDistance('agent', 'network'),
+    FOCUS_ROOM * tightFitDistance(target, points, heading, fov, aspect)
+  )
+  return { target, position: target.clone().addScaledVector(heading, distance) }
+}
+
+export function introEnd(points: readonly Vec3[], fov: number, aspect: number) {
+  const target = boundsCenter(points)
+  const direction = NETWORK_DIRECTION.clone().applyAxisAngle(Y_AXIS, INTRO_ARC)
+  const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE, FRAME_MARGIN)
+  return { target, position: target.clone().addScaledVector(direction, distance) }
+}
+
+export function introPosition(from: Vector3, to: Vector3, target: Vector3, t: number): Vector3 {
+  const a = new Spherical().setFromVector3(from.clone().sub(target))
+  const b = new Spherical().setFromVector3(to.clone().sub(target))
+  let turn = b.theta - a.theta
+  if (turn > Math.PI) turn -= 2 * Math.PI
+  if (turn < -Math.PI) turn += 2 * Math.PI
+  const at = new Spherical(a.radius + (b.radius - a.radius) * t, a.phi + (b.phi - a.phi) * t, a.theta + turn * t)
+  return new Vector3().setFromSpherical(at).add(target)
+}
+
 export function zoomLimits(overviewDistance: number, fov: number) {
   const minDistance = MAX_STAR_SIZE / Math.tan((Math.min(MAX_STAR_DEGREES, fov) * Math.PI) / 360)
   return { minDistance, maxDistance: Math.max(overviewDistance * MAX_ZOOM_FACTOR, minDistance * 2) }
@@ -149,6 +186,7 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   const controls = isRigControls(rawControls) ? rawControls : null
   const lens = useObservatory((s) => s.lens)
   const selected = useObservatory((s) => s.selected)
+  const tracedAt = useObservatory((s) => s.trustCheck?.tracedAt ?? null)
   const reduced = usePrefersReducedMotion()
   const flight = useRef<Flight | null>(null)
   const resumeAutoRotate = useRef(false)
@@ -206,8 +244,18 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
     introduced.current = true
     if (!flight.current) resumeAutoRotate.current = controls.autoRotate && !entity
     controls.autoRotate = false
+    if (intro && reduced) {
+      camera.position.copy(toPosition)
+      controls.target.copy(toTarget)
+      controls.autoRotate = resumeAutoRotate.current
+      flight.current = null
+      return
+    }
+    const arc = intro && !entity && lens === 'network'
+    if (arc) toPosition = introEnd(framePoints(layout, ids), camera.fov, aspectRef.current).position
     flight.current = {
-      startedAt: performance.now(),
+      startedAt: intro ? null : performance.now(),
+      arc,
       duration: reduced ? REDUCED_FLIGHT_MS : intro ? INTRO_MS : FLIGHT_MS,
       fromPosition: intro ? INTRO_FROM.clone() : camera.position.clone(),
       fromTarget: intro ? overview.target.clone() : controls.target.clone(),
@@ -215,6 +263,30 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
       toTarget,
     }
   }, [lens, selected, controls, camera, ids, reduced])
+
+  useEffect(() => {
+    const { model, trustCheck } = useObservatory.getState()
+    const layout = ensureLayout(lens)
+    const path = model ? traceablePath(trustCheck?.result ?? null, model) : null
+    if (tracedAt === null || !path || !layout || !controls || !(camera instanceof PerspectiveCamera)) return
+    const heading = lens === 'trust' ? FLAT_DIRECTION.clone() : camera.position.clone().sub(controls.target).normalize()
+    const frame = traceFrame(
+      framePoints({ ...layout, rings: [] }, path),
+      heading,
+      camera.fov,
+      unoccludedAspect(sizeRef.current.width, sizeRef.current.height)
+    )
+    controls.autoRotate = false
+    resumeAutoRotate.current = false
+    flight.current = {
+      startedAt: performance.now(),
+      duration: reduced ? REDUCED_FLIGHT_MS : FLIGHT_MS,
+      fromPosition: camera.position.clone(),
+      fromTarget: controls.target.clone(),
+      toPosition: frame.position,
+      toTarget: frame.target,
+    }
+  }, [tracedAt, lens, controls, camera, reduced])
 
   useEffect(() => {
     const layout = ensureLayout(lens)
@@ -235,8 +307,10 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   useFrame(() => {
     const current = flight.current
     if (!current || !controls) return
+    current.startedAt ??= performance.now()
     const t = easeInOutCubic(Math.min(1, (performance.now() - current.startedAt) / current.duration))
-    camera.position.lerpVectors(current.fromPosition, current.toPosition, t)
+    if (current.arc) camera.position.copy(introPosition(current.fromPosition, current.toPosition, current.toTarget, t))
+    else camera.position.lerpVectors(current.fromPosition, current.toPosition, t)
     controls.target.lerpVectors(current.fromTarget, current.toTarget, t)
     if (t < 1) return
     flight.current = null

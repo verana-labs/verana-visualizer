@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { NetworkConfig } from '../env'
 import type { Fetched, QueryInfo } from './query-info'
-import { buildUrl, requestJson } from './request'
+import { buildUrl, type RequestOptions, requestJson, requestSignal } from './request'
 import {
   blockHeightSchema,
   changesSchema,
@@ -59,7 +59,7 @@ function pageOf<K extends string, S extends z.ZodType>(key: K, item: S) {
   return z.object({ [key]: z.array(item) } as Record<K, z.ZodArray<S>>).passthrough()
 }
 
-export function createIndexerClient(cfg: NetworkConfig, atHeight?: number) {
+export function createIndexerClient(cfg: NetworkConfig, atHeight?: number, options: RequestOptions = {}) {
   const baseHeaders = (): Record<string, string> =>
     atHeight === undefined ? {} : { 'At-Block-Height': String(atHeight) }
 
@@ -70,7 +70,7 @@ export function createIndexerClient(cfg: NetworkConfig, atHeight?: number) {
   })
 
   async function get<T>(path: string, schema: z.ZodType<T>, params?: ListParams, headers?: Record<string, string>) {
-    return requestJson(getQuery(path, params, headers), schema)
+    return requestJson(getQuery(path, params, headers), schema, requestSignal(options))
   }
 
   async function listAll<K extends string, S extends z.ZodType<{ id: number }>>(
@@ -136,14 +136,14 @@ export function createIndexerClient(cfg: NetworkConfig, atHeight?: number) {
     entityHistory: (kind: HistoryKind, id: number) =>
       listAll(`/v4/${kind}/history/${id}`, 'activity', historyItemSchema),
 
-    resolve(did: string, opts: ResolveOptions = {}) {
+    resolve(did: string, opts: ResolveOptions = {}, signal?: AbortSignal) {
       const query: QueryInfo = {
         method: 'POST',
         url: buildUrl(cfg.indexerUrl, '/v4/verifiable-trust/resolve'),
         headers: { 'content-type': 'application/json', ...baseHeaders() },
         body: { did, ...opts },
       }
-      return requestJson(query, trustVerdictSchema)
+      return requestJson(query, trustVerdictSchema, requestSignal(options, signal))
     },
 
     async events(afterHeight: number, limit: number) {

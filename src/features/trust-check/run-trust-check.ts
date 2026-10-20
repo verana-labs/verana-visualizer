@@ -32,17 +32,16 @@ function rawParticipantOf(model: NetworkModel, id: EntityId): Participant | unde
   return model.raw.participants.find((p) => p.id === numeric)
 }
 
-function subjectParticipant(model: NetworkModel, did: string, now: Date): Participant | null {
-  const candidates = model
-    .byDid(did)
-    .flatMap((id) => rawParticipantOf(model, id) ?? [])
-    .map((p) => ({
-      p,
-      active: participantState(p, now) === 'ACTIVE' ? 0 : 1,
-      validated: p.op_state === 'VALIDATED' ? 0 : 1,
-      depth: model.chainToRoot(`participant:${p.id}`).length,
-    }))
-  candidates.sort((a, b) => a.active - b.active || a.validated - b.validated || b.depth - a.depth || a.p.id - b.p.id)
+function participantsOf(model: NetworkModel, did: string): Participant[] {
+  return model.byDid(did).flatMap((id) => rawParticipantOf(model, id) ?? [])
+}
+
+function subjectParticipant(model: NetworkModel, did: string): Participant | null {
+  const candidates = participantsOf(model, did).map((p) => ({
+    p,
+    depth: model.chainToRoot(`participant:${p.id}`).length,
+  }))
+  candidates.sort((a, b) => b.depth - a.depth || a.p.id - b.p.id)
   return candidates[0]?.p ?? null
 }
 
@@ -54,13 +53,8 @@ function localPath(model: NetworkModel | null, did: string, participant: Partici
   return [...(agent ? [agent] : []), ...(start ? model.chainToRoot(start) : [])]
 }
 
-async function findPath(
-  did: string,
-  model: NetworkModel | null,
-  graph: TrustClients['graph'],
-  now: Date
-): Promise<PathResult> {
-  const participant = model ? subjectParticipant(model, did, now) : null
+async function findPath(did: string, model: NetworkModel | null, graph: TrustClients['graph']): Promise<PathResult> {
+  const participant = model ? subjectParticipant(model, did) : null
   const local = (error: string | null): PathResult => ({
     path: localPath(model, did, participant),
     source: 'local',
@@ -94,6 +88,7 @@ async function findVerdict(
 ): Promise<{ verdict: TrustVerdictOutcome; raw: unknown }> {
   try {
     const { data } = await indexer.resolve(did)
+    if (data.did !== did) throw new Error('Indexer returned a verdict for a different DID')
     return {
       verdict: {
         trusted: data.trusted,
@@ -126,16 +121,14 @@ export async function runTrustCheck(
   clients: TrustClients,
   now: Date = new Date()
 ): Promise<TrustCheck> {
-  const [found, resolved] = await Promise.all([
-    findPath(did, model, clients.graph, now),
-    findVerdict(did, clients.indexer),
-  ])
+  const [found, resolved] = await Promise.all([findPath(did, model, clients.graph), findVerdict(did, clients.indexer)])
   return {
     did,
     path: found.path,
     pathSource: found.source,
     pathError: found.error,
     hops: hopsOf(model, found.path, found.graph, now),
+    sharedBy: model ? participantsOf(model, did).length : 0,
     verdict: resolved.verdict,
     raw: { resolve: resolved.raw, graph: found.graph },
   }

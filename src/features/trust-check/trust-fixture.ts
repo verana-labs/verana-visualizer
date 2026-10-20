@@ -60,6 +60,8 @@ export interface StubOptions {
   resolveStatus?: number
   graphStatus?: number
   holdGraph?: Promise<void>
+  hangLists?: boolean
+  resolveDid?: string
 }
 
 export interface StubCall {
@@ -67,9 +69,33 @@ export interface StubCall {
   method: string
   headers: Record<string, string>
   body: unknown
+  signal: AbortSignal | null
 }
 
-export function stubTrustNetwork({ resolveStatus = 200, graphStatus = 200, holdGraph }: StubOptions = {}) {
+const hangUntilAborted = (signal: AbortSignal | null | undefined) =>
+  new Promise<Response>((_, reject) => {
+    signal?.addEventListener('abort', () => reject(signal.reason))
+  })
+
+function listBody(url: URL): unknown {
+  const name = LIST_BODIES[url.pathname]
+  const body = rawBody(name)
+  if (url.pathname !== '/v4/participant/list') return body
+  const did = url.searchParams.get('did')
+  const id = url.searchParams.get('participant_id')
+  const all = (body as { participants: Participant[] }).participants
+  return {
+    participants: all.filter((p) => (did === null || p.did === did) && (id === null || String(p.id) === id)),
+  }
+}
+
+export function stubTrustNetwork({
+  resolveStatus = 200,
+  graphStatus = 200,
+  holdGraph,
+  hangLists = false,
+  resolveDid,
+}: StubOptions = {}) {
   const calls: StubCall[] = []
   const trusted = read<Record<string, unknown>>('resolve-trusted-root')
   const untrusted = read<Record<string, unknown>>('resolve-untrusted')
@@ -84,12 +110,13 @@ export function stubTrustNetwork({ resolveStatus = 200, graphStatus = 200, holdG
         method: init?.method ?? 'GET',
         headers: (init?.headers ?? {}) as Record<string, string>,
         body,
+        signal: init?.signal ?? null,
       })
       if (url.pathname === '/v4/verifiable-trust/resolve') {
         if (resolveStatus !== 200) return new Response('resolver exploded', { status: resolveStatus })
-        const did = body?.did
-        if (did === ECS_DID) return Response.json(trusted)
-        if (did === PAPAPO_DID) return Response.json(untrusted)
+        const did = resolveDid ?? body?.did
+        if (did === ECS_DID && !resolveDid) return Response.json(trusted)
+        if (did === PAPAPO_DID && !resolveDid) return Response.json(untrusted)
         return Response.json({ ...untrusted, did, corporationId: null })
       }
       if (url.pathname === '/v4/graph/traverse') {
@@ -98,8 +125,10 @@ export function stubTrustNetwork({ resolveStatus = 200, graphStatus = 200, holdG
         const input = body?.input as { participantId: number }
         return Response.json(input.participantId === 158 ? g1 : validatorChainOf(input.participantId))
       }
-      const list = LIST_BODIES[url.pathname]
-      if (list) return Response.json(rawBody(list))
+      if (LIST_BODIES[url.pathname]) {
+        if (hangLists) return hangUntilAborted(init?.signal)
+        return Response.json(listBody(url))
+      }
       return new Response(`no stub for ${input}`, { status: 404 })
     })
   )

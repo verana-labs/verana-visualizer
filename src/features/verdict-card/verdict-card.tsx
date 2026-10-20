@@ -1,5 +1,5 @@
 import type { EntityId } from '@/domain/network-model'
-import { formatUtc } from '@/domain/trust-check'
+import { formatUtc, isVerdictError, verdictPath } from '@/domain/trust-check'
 import { TrustChain } from '@/features/trust-check/trust-chain'
 import { VerdictSummary } from '@/features/trust-check/verdict-summary'
 import type { NetworkConfig } from '@/lib/env'
@@ -10,6 +10,36 @@ import { PageActions } from './page-actions'
 
 const KICKER = 'text-[10px] uppercase tracking-[.09em] text-scene-mut print:text-neutral-600'
 
+function BackLink({ did }: { did: string }) {
+  const agentId: EntityId = `agent:${did}`
+  return (
+    <a
+      data-testid="back-to-scene"
+      href={`/?sel=${formatSel(agentId)}`}
+      className="rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] hover:border-[var(--accent)]"
+    >
+      ← Open in the observatory
+    </a>
+  )
+}
+
+export function InvalidBlock({ did, value }: { did: string; value: string }) {
+  return (
+    <main className="mx-auto min-h-screen max-w-2xl bg-scene-bg px-4 py-8 text-scene-txt print:bg-white print:text-black">
+      <nav data-chrome className="mb-6 print:hidden">
+        <BackLink did={did} />
+      </nav>
+      <div className={KICKER}>Verana trust verdict</div>
+      <h1 className="mt-1 text-2xl font-semibold tracking-[-.01em]">Invalid block parameter</h1>
+      <p className="mt-2 break-all text-[12.5px] text-scene-mut">
+        “{value}” is not a positive whole block height. Remove ?block= for the current verdict, or use a height such as
+        ?block=44200.
+      </p>
+      <p className="mt-2 break-all font-mono text-[12px] text-scene-mut">{did}</p>
+    </main>
+  )
+}
+
 interface VerdictCardProps {
   data: VerdictCardData
   cfg: NetworkConfig
@@ -18,21 +48,15 @@ interface VerdictCardProps {
 
 export function VerdictCard({ data, cfg, renderedAt }: VerdictCardProps) {
   const { check } = data
-  const agentId: EntityId = `agent:${check.did}`
+  const pinnedPath = verdictPath(check.did, isVerdictError(check.verdict) ? data.block : check.verdict.evaluatedAtBlock)
   return (
     <main
       data-testid="verdict-card"
       className="mx-auto min-h-screen max-w-2xl bg-scene-bg px-4 py-8 text-scene-txt print:max-w-none print:bg-white print:p-0 print:text-black"
     >
-      <nav data-chrome className="mb-6 flex flex-wrap items-center gap-2 print:hidden">
-        <a
-          data-testid="back-to-scene"
-          href={`/?sel=${formatSel(agentId)}`}
-          className="rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] hover:border-[var(--accent)]"
-        >
-          ← Open in the observatory
-        </a>
-        <PageActions />
+      <nav data-chrome data-verdict-path={pinnedPath} className="mb-6 flex flex-wrap items-center gap-2 print:hidden">
+        <BackLink did={check.did} />
+        <PageActions path={pinnedPath} />
       </nav>
 
       <div className={KICKER}>

@@ -99,11 +99,16 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
     set((s) => {
       const current = s.trustCheck
       if (!current || current.seq !== seq) return s
+      const subject = current.subject ?? s.model?.byDid(current.did)[0] ?? null
       const verdicts =
-        current.subject?.startsWith('agent:') && !isVerdictError(result.verdict)
-          ? new Map(s.agentVerdicts).set(current.subject, result.verdict.trusted)
+        subject?.startsWith('agent:') && !isVerdictError(result.verdict)
+          ? new Map(s.agentVerdicts).set(subject, result.verdict.trusted)
           : s.agentVerdicts
-      return { trustCheck: { ...current, result, tracedAt: performance.now() }, agentVerdicts: verdicts }
+      return {
+        trustCheck: { ...current, subject, result, tracedAt: performance.now() },
+        selected: subject === current.subject ? s.selected : subject,
+        agentVerdicts: verdicts,
+      }
     }),
   clearTrustCheck: () => set({ trustCheck: null }),
   setAgentVerdict: (id, trusted) => set((s) => ({ agentVerdicts: new Map(s.agentVerdicts).set(id, trusted) })),

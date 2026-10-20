@@ -21,6 +21,7 @@ const RING_DOTS = 72
 const HALO_DOTS = 220
 const EXIT_MS = 1900
 const REDUCED_EXIT_MS = 300
+const BACKDROP_FADE_MS = 600
 const LOGO_SIZE = 56
 const LOGO_SCALE_MAX = 94
 const MASK_SIZE = 216
@@ -229,12 +230,9 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
     <div
       ref={rootRef}
       data-testid="stardust-loader"
-      className="fixed inset-0 z-50 overflow-hidden bg-scene-bg text-scene-txt"
-      style={{
-        opacity: exiting ? 0 : 1,
-        transition: `opacity ${exitMs}ms ${still ? 'linear' : 'cubic-bezier(.5,0,.9,.5)'}`,
-        pointerEvents: exiting ? 'none' : 'auto',
-      }}
+      data-exiting={exiting || undefined}
+      className="fixed inset-0 z-50 overflow-hidden text-scene-txt"
+      style={{ pointerEvents: exiting ? 'none' : 'auto' }}
       onPointerMove={(e) => {
         const rect = e.currentTarget.getBoundingClientRect()
         pointerRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top }
@@ -243,11 +241,20 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
         pointerRef.current = null
       }}
     >
+      <div
+        data-testid="loader-backdrop"
+        className="absolute inset-0 bg-scene-bg"
+        style={{ opacity: exiting ? 0 : 1, transition: `opacity ${Math.min(exitMs, BACKDROP_FADE_MS)}ms ease-out` }}
+      />
       <canvas ref={canvasRef} className="absolute inset-0 size-full" aria-hidden />
       <Image src="/logo.svg" alt="Verana" width={LOGO_SIZE} height={LOGO_SIZE} priority className="sr-only" />
       <div
         className="absolute left-1/2 top-[47%] flex -translate-x-1/2 flex-col items-center gap-2"
-        style={{ marginTop: '26vmin' }}
+        style={{
+          marginTop: '26vmin',
+          opacity: exiting ? 0 : 1,
+          transition: `opacity ${Math.min(exitMs, BACKDROP_FADE_MS)}ms ease-out`,
+        }}
       >
         <div className="font-mono text-3xl tabular-nums tracking-[.12em]" style={{ color: error ? ERROR_INK : INK }}>
           {counter}

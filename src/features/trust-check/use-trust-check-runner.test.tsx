@@ -32,4 +32,26 @@ describe('useTrustCheckRunner', () => {
     await vi.waitFor(() => expect(useObservatory.getState().trustCheck?.result).not.toBeNull())
     expect(useObservatory.getState().trustCheck?.result?.did).toBe(ECS_DID)
   })
+
+  it('re-runs the path once the model arrives for a check requested before it', async () => {
+    const model = useObservatory.getState().model
+    useObservatory.setState({ model: null })
+    const calls = stubTrustNetwork()
+    renderHook(() => useTrustCheckRunner(testnetCfg))
+    act(() => useObservatory.getState().requestTrustCheck(PAPAPO_DID))
+    await vi.waitFor(() => expect(useObservatory.getState().trustCheck?.result).not.toBeNull())
+    expect(useObservatory.getState().trustCheck?.result?.path).toEqual([])
+    act(() => useObservatory.setState({ model }))
+    await vi.waitFor(() =>
+      expect(useObservatory.getState().trustCheck?.result?.path).toEqual([
+        `agent:${PAPAPO_DID}`,
+        'participant:158',
+        'participant:5',
+        'ecosystem:2',
+      ])
+    )
+    expect(useObservatory.getState().trustCheck?.subject).toBe(`agent:${PAPAPO_DID}`)
+    expect(useObservatory.getState().selected).toBe(`agent:${PAPAPO_DID}`)
+    expect(calls.filter((c) => c.url.endsWith('/v4/graph/traverse'))).toHaveLength(1)
+  })
 })

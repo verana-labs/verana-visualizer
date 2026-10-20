@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PAPAPO_DID, stubTrustNetwork } from '@/features/trust-check/trust-fixture'
+import { logger } from '@/lib/logger'
 import VerdictPage from './page'
 
 const ENV = {
@@ -28,6 +29,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllEnvs()
   vi.unstubAllGlobals()
+  vi.restoreAllMocks()
 })
 
 describe('the verdict card page', () => {
@@ -78,9 +80,45 @@ describe('the verdict card page', () => {
   })
 
   it('shows a failed resolve as an error, never as trusted', async () => {
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
     stubTrustNetwork({ resolveStatus: 500 })
     const { doc } = await renderPage(PAPAPO_DID)
     expect(doc.querySelector('[data-testid="trust-verdict"]')?.textContent).toMatch(/^Could not resolve: HTTP 500 /)
     expect(doc.body.textContent).not.toMatch(/Trusted/)
+  })
+
+  it('loads only the subject, its validator chain and the ecosystems, with a timeout on every request', async () => {
+    const calls = stubTrustNetwork()
+    await renderPage(PAPAPO_DID)
+    const paths = calls.map((c) => new URL(c.url).pathname)
+    for (const path of ['/v4/credential-schema/list', '/v4/corporation/list', '/v4/verifiable-trust/dids'])
+      expect(paths).not.toContain(path)
+    const participantCalls = calls.filter((c) => c.url.includes('/v4/participant/list'))
+    expect(participantCalls.length).toBeGreaterThan(0)
+    for (const call of participantCalls) expect(call.url).toMatch(/[?&](did|participant_id)=/)
+    for (const call of calls) expect(call.signal).toBeInstanceOf(AbortSignal)
+  })
+
+  it('pins the copied verdict link to the evaluated block', async () => {
+    stubTrustNetwork()
+    const { doc } = await renderPage(PAPAPO_DID)
+    expect(doc.querySelector('[data-verdict-path]')?.getAttribute('data-verdict-path')).toBe(
+      `/verdict/${encodeURIComponent(PAPAPO_DID)}?block=44200`
+    )
+  })
+
+  it('refuses an invalid block parameter visibly instead of showing a live verdict', async () => {
+    for (const block of ['abc', '0', '-3', '1.5']) {
+      const calls = stubTrustNetwork()
+      const { doc } = await renderPage(PAPAPO_DID, { block })
+      expect(doc.body.textContent).toContain('Invalid block parameter')
+      expect(doc.querySelector('[data-testid="trust-verdict"]')).toBeNull()
+      expect(calls).toHaveLength(0)
+    }
+  })
+
+  it('is not found when the parameter is not a DID', async () => {
+    stubTrustNetwork()
+    await expect(renderPage('not-a-did')).rejects.toThrow(/NEXT_HTTP_ERROR_FALLBACK;404|NEXT_NOT_FOUND/)
   })
 })

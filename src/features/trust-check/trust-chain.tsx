@@ -1,6 +1,6 @@
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { agentColor, isRole } from '@/domain/roles'
-import { hopLabel, isVerdictError, type TrustCheck } from '@/domain/trust-check'
+import { hopLabel, isVerdictError, sharedNote, type TrustCheck } from '@/domain/trust-check'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { CopyButton } from '@/ui/copy-button'
 
@@ -49,6 +49,7 @@ interface TrustChainProps {
 
 export function TrustChain({ check, hops, copyClassName = '' }: TrustChainProps) {
   const stateOf = new Map(check.hops.map((hop) => [hop.id, hop]))
+  const shared = sharedNote(check)
   return (
     <section data-testid="trust-chain">
       <div className="flex items-center justify-between gap-2">
@@ -61,6 +62,7 @@ export function TrustChain({ check, hops, copyClassName = '' }: TrustChainProps)
           </span>
         )}
       </div>
+      {shared && <p className="mt-1 text-[11px] text-scene-mut print:text-neutral-600">{shared}</p>}
       {check.pathError && (
         <p className="mt-1 text-[11px] text-scene-mut print:text-neutral-600">
           verana-graph G1 unavailable: {check.pathError}

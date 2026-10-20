@@ -23,6 +23,7 @@ export interface TrustCheck {
   pathSource: PathSource
   pathError: string | null
   hops: TrustHop[]
+  sharedBy: number
   verdict: TrustVerdictOutcome
   raw: { resolve: unknown; graph: unknown }
 }
@@ -39,7 +40,7 @@ export function verdictText(verdict: TrustVerdictOutcome): string {
 }
 
 export function hopLabel(hop: TrustHop): string {
-  return hop.opState ? `State: ${hop.state} · Onboarding: ${hop.opState}` : `State: ${hop.state}`
+  return `State: ${hop.state} · Onboarding: ${hop.opState ?? 'not reported'}`
 }
 
 export function verdictPath(did: string, block: number | null): string {
@@ -52,4 +53,9 @@ export function formatUtc(iso: string | null): string | null {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return null
   return `${date.toISOString().slice(0, 19).replace('T', ' ')} UTC`
+}
+
+export function sharedNote(check: TrustCheck): string | null {
+  const shown = check.path.find((id) => id.startsWith('participant:'))
+  return check.sharedBy > 1 && shown ? `${check.sharedBy} participants share this DID · showing ${shown}` : null
 }
