@@ -51,6 +51,13 @@ describe('useTimeUrl', () => {
     expect(replace).toHaveBeenCalledWith('/', { scroll: false })
   })
 
+  it('drops a stale t that another lens switch carried over', () => {
+    params = new URLSearchParams('lens=governance&t=7084')
+    window.history.replaceState(null, '', '/?lens=governance&t=7084')
+    renderHook(() => useTimeUrl())
+    expect(replace).toHaveBeenCalledWith('/?lens=governance', { scroll: false })
+  })
+
   it('returns the t to restore from the shared link', () => {
     params = new URLSearchParams('lens=time&t=7070')
     const { result } = renderHook(() => useTimeUrl())

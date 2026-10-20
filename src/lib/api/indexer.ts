@@ -58,10 +58,11 @@ export const PINNED_PROXY_PATH = '/api/indexer'
 
 export function pinnedProxyUrl(query: QueryInfo, indexerUrl: string): string | undefined {
   // the deployed indexers' CORS preflight rejects At-Block-Height, so browsers go through our proxy
-  if (typeof window === 'undefined' || query.method !== 'GET' || !query.headers['At-Block-Height']) return undefined
+  const height = query.headers['At-Block-Height']
+  if (typeof window === 'undefined' || query.method !== 'GET' || !height) return undefined
   const real = new URL(query.url)
   const prefix = new URL(indexerUrl).pathname.replace(/\/$/, '')
-  return `${window.location.origin}${PINNED_PROXY_PATH}${real.pathname.slice(prefix.length)}${real.search}`
+  return `${window.location.origin}${PINNED_PROXY_PATH}/at/${height}${real.pathname.slice(prefix.length)}${real.search}`
 }
 
 function pageOf<K extends string, S extends z.ZodType>(key: K, item: S) {

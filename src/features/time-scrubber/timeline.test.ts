@@ -70,7 +70,7 @@ describe('loadModelAt', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async (input: string, init?: RequestInit) => {
-        const path = new URL(input).pathname.replace(/^\/api\/indexer/, '')
+        const path = new URL(input).pathname.replace(/^\/api\/indexer\/at\/\d+/, '')
         seen.set(path, new Headers(init?.headers).get('At-Block-Height'))
         return Response.json(rawBody(routes[path]))
       })

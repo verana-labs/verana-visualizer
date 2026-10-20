@@ -14,6 +14,13 @@ export function useTimeUrl(): number | null {
   const [restore] = useState(() => parseViewState(search).t)
 
   useEffect(() => {
+    const view = parseViewState(search)
+    if (view.t === null || view.lens === 'time' || useTimeStore.getState().height !== null) return
+    const query = serializeViewState({ ...view, t: null })
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  }, [search, router, pathname])
+
+  useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined
     const unsubscribe = useTimeStore.subscribe((state, previous) => {
       if (state.height === previous.height) return
