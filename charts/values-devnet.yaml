@@ -1,0 +1,20 @@
+ingress:
+  hosts:
+    - host: vis.devnet.verana.network
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - vis.devnet.verana.network
+      secretName: visualizer-tls-secret
+
+env:
+  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: "https://idx.devnet.verana.network"
+  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: "https://rpc.devnet.verana.network"
+  NEXT_PUBLIC_VERANA_REST_ENDPOINT: "https://api.devnet.verana.network"
+  NEXT_PUBLIC_VERANA_CHAIN_ID: "vna-devnet-1"
+  NEXT_PUBLIC_VERANA_CHAIN_NAME: "devnet"
+  NEXT_PUBLIC_VERANA_GRAPH_URL: "https://graph.devnet.verana.network"
+  NEXT_PUBLIC_VERANA_FRONTEND_URL: "https://app.devnet.verana.network"
+  NEXT_PUBLIC_VERANA_PEER_VISUALIZER_URL: "https://vis.testnet.verana.network"

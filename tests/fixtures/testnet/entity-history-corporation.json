@@ -1,0 +1,27 @@
+[
+  {
+    "id": 2,
+    "timestamp": "2026-10-14T10:06:11.546Z",
+    "block_height": 7112,
+    "entity_type": "Corporation",
+    "entity_id": "2",
+    "msg": "CreateCorporation",
+    "changes": {
+      "did": "did:web:northside-clinic.example.org",
+      "height": 7112,
+      "created": "2026-10-14T10:06:11.546Z",
+      "creator": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "doc_url": "https://raw.githubusercontent.com/verana-labs/verana-docs/54fd0a2/docs/understand/ecosystems/corporations-and-operators.md",
+      "language": "en",
+      "modified": "2026-10-14T10:06:11.546Z",
+      "corporation": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a",
+      "doc_digest_sri": "sha384-H/HuP9C/Xadcft6zLZEO8w2+LJqffXqnXOOUK2BFUHT4B97ZrKDZs9M8YNLKeBMn",
+      "policy_address": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a",
+      "decision_policy": {
+        "@type": "/cosmos.group.v1.ThresholdDecisionPolicy",
+        "value": "CgExEgYKAgg8EgA="
+      }
+    },
+    "account": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c"
+  }
+]

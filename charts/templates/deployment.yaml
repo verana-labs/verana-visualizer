@@ -1,3 +1,7 @@
+{{- $network := list "NEXT_PUBLIC_VERANA_INDEXER_BASE_URL" "NEXT_PUBLIC_VERANA_RPC_ENDPOINT" "NEXT_PUBLIC_VERANA_REST_ENDPOINT" "NEXT_PUBLIC_VERANA_CHAIN_ID" }}
+{{- range $key := $network }}
+{{- $_ := required (printf "env.%s is not set: pass values-devnet.yaml or values-testnet.yaml" $key) (index $.Values.env $key) }}
+{{- end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24,7 +28,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "verana-visualizer.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -70,6 +73,7 @@ spec:
       {{- end }}
 ---
 {{- if .Values.ingress.enabled }}
+{{- $_ := required "ingress.hosts is empty: pass values-devnet.yaml or values-testnet.yaml" (first .Values.ingress.hosts) }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

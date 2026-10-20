@@ -2,99 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-.dark {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 0, 0, 0;
-}
-
+html,
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  height: 100%;
+  background: #05040a;
+  color-scheme: dark;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@keyframes feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
 }
 
-/* Galaxy Background Effect */
-.galaxy-background {
-  background: radial-gradient(ellipse at center, #2d1b69 0%, #1a0b2e 50%, #0f0f23 100%);
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
 }
 
-.galaxy-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(3px 3px at 20px 30px, #fff, transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.9), transparent),
-    radial-gradient(2px 2px at 90px 40px, #fff, transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.8), transparent),
-    radial-gradient(2px 2px at 160px 30px, #ddd, transparent),
-    radial-gradient(1px 1px at 200px 50px, #fff, transparent),
-    radial-gradient(2px 2px at 250px 120px, rgba(255,255,255,0.7), transparent);
-  background-repeat: repeat;
-  background-size: 300px 200px;
-  animation: twinkle 4s ease-in-out infinite alternate;
-  z-index: 0;
-  pointer-events: none;
+.spark-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: spark-draw 1.6s ease-out forwards;
 }
 
-.galaxy-background::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    radial-gradient(4px 4px at 50px 50px, #8B5CF6, transparent),
-    radial-gradient(3px 3px at 100px 100px, #A855F7, transparent),
-    radial-gradient(2px 2px at 150px 50px, #7C3AED, transparent),
-    radial-gradient(3px 3px at 200px 150px, #6D28D9, transparent),
-    radial-gradient(2px 2px at 300px 80px, #8B5CF6, transparent),
-    radial-gradient(4px 4px at 350px 200px, #A855F7, transparent);
-  background-repeat: repeat;
-  background-size: 400px 300px;
-  animation: drift 8s linear infinite;
-  z-index: 0;
-  pointer-events: none;
+@keyframes spark-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
-@keyframes twinkle {
-  0% { opacity: 0.3; }
-  100% { opacity: 1; }
-}
-
-@keyframes drift {
-  0% { transform: translateX(0) translateY(0); }
-  100% { transform: translateX(-300px) translateY(-200px); }
+@media (prefers-reduced-motion: reduce) {
+  .spark-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
 }

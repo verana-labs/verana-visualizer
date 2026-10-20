@@ -1,0 +1,30 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/trust-deposit/history/2?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "entity_type": "TrustDeposit",
+    "entity_id": "2",
+    "activity": [
+      {
+        "id": 1,
+        "timestamp": "2026-10-14T10:15:14.784Z",
+        "block_height": 7206,
+        "entity_type": "TrustDeposit",
+        "entity_id": "2",
+        "msg": "ADJUST_TRUST_DEPOSIT",
+        "changes": {
+          "share": 50000,
+          "deposit": 50000,
+          "slash_count": 0,
+          "repaid_deposit": 0,
+          "slashed_deposit": 0,
+          "refunded": 0
+        }
+      }
+    ]
+  }
+}

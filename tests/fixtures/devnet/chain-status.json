@@ -1,0 +1,42 @@
+{
+  "result": {
+    "node_info": {
+      "network": "vna-devnet-1",
+      "moniker": "prime-node",
+      "version": "0.39.4",
+      "protocol_version": {
+        "p2p": "8",
+        "block": "11",
+        "app": "0"
+      },
+      "id": "c7b6a048a8642b4b6dbaca7bc915675e0736d62d",
+      "listen_addr": "node1.devnet.verana.network:26656",
+      "channels": "402021222330386061",
+      "other": {
+        "tx_index": "on",
+        "rpc_address": "tcp://0.0.0.0:26657"
+      }
+    },
+    "sync_info": {
+      "latest_block_height": "79386",
+      "latest_block_time": "2026-10-20T09:49:28.497181564Z",
+      "catching_up": false,
+      "latest_block_hash": "C7302233A2235006944E4CB3072C362EAD5F2894F92CA221AB5E721A41F66962",
+      "latest_app_hash": "E7B4306DE4899DFC05CFF8403156204A7AF7A4A8542BB813A55E325662AFD698",
+      "earliest_block_hash": "BA4099BA9B66D1FA1820C7B083ACAA628203ECB2F629735D2C5EB09085DAAEFA",
+      "earliest_app_hash": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "earliest_block_height": "1",
+      "earliest_block_time": "2026-10-15T13:09:26.01796915Z"
+    },
+    "validator_info": {
+      "address": "30E5AE3D8E7A79184199F4CB5649171CFA157903",
+      "pub_key": {
+        "type": "tendermint/PubKeyEd25519",
+        "value": "8iRvoX2solTYCwPh1sd29f87mNHSJyVprsBb9LOc7vU="
+      },
+      "voting_power": "1000"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": -1
+}

@@ -1,0 +1,61 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/participant/history/158?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "entity_type": "Participant",
+    "entity_id": "158",
+    "activity": [
+      {
+        "id": 776,
+        "timestamp": "2026-10-16T21:42:20.187Z",
+        "block_height": 44161,
+        "entity_type": "Participant",
+        "entity_id": "158",
+        "msg": "SelfCreateParticipant",
+        "changes": {
+          "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+          "role": "ISSUER",
+          "issued": 0,
+          "weight": "0",
+          "created": "2026-10-16T21:42:20.187Z",
+          "deposit": "0",
+          "modified": "2026-10-16T21:42:20.187Z",
+          "op_state": "VALIDATED",
+          "verified": 0,
+          "schema_id": 4,
+          "expire_soon": false,
+          "participants": 1,
+          "issuance_fees": "0",
+          "corporation_id": 34,
+          "effective_from": "2026-10-16T21:42:20.187Z",
+          "repaid_deposit": "0",
+          "op_current_fees": "0",
+          "slashed_deposit": "0",
+          "validation_fees": "0",
+          "verification_fees": "0",
+          "op_current_deposit": "0",
+          "network_slash_events": 0,
+          "op_last_state_change": "2026-10-16T21:42:20.187Z",
+          "op_validator_deposit": "0",
+          "issuance_fee_discount": "0",
+          "ecosystem_slash_events": 0,
+          "network_slashed_amount": "0",
+          "ecosystem_slashed_amount": "0",
+          "validator_participant_id": 5,
+          "verification_fee_discount": "0",
+          "vs_operator_authz_enabled": false,
+          "network_slashed_amount_repaid": "0",
+          "vs_operator_authz_spend_limit": [],
+          "ecosystem_slashed_amount_repaid": "0",
+          "vs_operator_authz_with_feegrant": false,
+          "vs_operator_authz_fee_spend_limit": []
+        },
+        "account": "verana1vtn3rc8xlgc3ypxnnru5mw6erkf9myclmv5kgu"
+      }
+    ]
+  }
+}

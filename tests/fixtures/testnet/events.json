@@ -1,0 +1,2679 @@
+[
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCorporation",
+    "did": "did:web:health-alliance.example.org",
+    "block_height": 7051,
+    "tx_hash": "BCB58D57AA498795C497C05E06CE2868BC48F1FAEADE725371C9952EF49B3D5B",
+    "timestamp": "2026-10-14T10:00:18Z",
+    "payload": {
+      "module": "co",
+      "action": "create_new_corporation",
+      "message_type": "MsgCreateCorporation",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:health-alliance.example.org"
+      ],
+      "entity_type": "Corporation",
+      "corporation_id": 1,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantOperatorAuthorization",
+    "did": "did:web:health-alliance.example.org",
+    "block_height": 7055,
+    "tx_hash": "77092E1C6AC4B9CAE3A451D2D7FBC4C0424CA1B95B622C77C160E0242A26F695",
+    "timestamp": "2026-10-14T10:00:42Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_operator_authorization",
+      "message_type": "grant_operator_authorization",
+      "tx_index": 0,
+      "message_index": 1,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:health-alliance.example.org"
+      ],
+      "entity_type": "OperatorAuthorization",
+      "entity_id": "1",
+      "corporation_id": 1,
+      "related_corporation_ids": [],
+      "grantee": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "with_feegrant": false
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SubmitProposal",
+    "did": "did:web:health-alliance.example.org",
+    "block_height": 7055,
+    "tx_hash": "77092E1C6AC4B9CAE3A451D2D7FBC4C0424CA1B95B622C77C160E0242A26F695",
+    "timestamp": "2026-10-14T10:00:42Z",
+    "payload": {
+      "module": "group",
+      "action": "submit_proposal",
+      "message_type": "MsgSubmitProposal",
+      "tx_index": 0,
+      "message_index": 1,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:health-alliance.example.org"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "1",
+      "corporation_id": 1,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewEcosystem",
+    "did": "did:web:ecosystem.health-alliance.example.org",
+    "block_height": 7070,
+    "tx_hash": "B3A6F4D3CF8E04D94A1DB9B6B153DE4E9A6C0C85B43ADE77CB74D3A73519C726",
+    "timestamp": "2026-10-14T10:02:08Z",
+    "payload": {
+      "module": "ec",
+      "action": "create_new_ecosystem",
+      "message_type": "MsgCreateEcosystem",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org"
+      ],
+      "entity_type": "Ecosystem",
+      "entity_id": "1",
+      "ecosystem_id": "1",
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:web:ecosystem.health-alliance.example.org",
+    "block_height": 7084,
+    "tx_hash": "1A5749BBD7A8E177B6C63BE15AA4492C206ECD841D12ACA33360EAF22D5AB109",
+    "timestamp": "2026-10-14T10:03:29Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "1",
+      "ecosystem_id": "1",
+      "schema_id": "1",
+      "corporation_id": 1,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:web:ecosystem.health-alliance.example.org",
+    "block_height": 7099,
+    "tx_hash": "46A71C6BEAC01B66473BE458D8AB06365B19CB9E588B1206F8C362366432570C",
+    "timestamp": "2026-10-14T10:04:56Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "1",
+      "ecosystem_id": "1",
+      "schema_id": "1",
+      "participant_id": "1",
+      "corporation_id": 1,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCorporation",
+    "did": "did:web:northside-clinic.example.org",
+    "block_height": 7112,
+    "tx_hash": "BFD2863B654E1C90104EF495D510F201649F8E2DE0039BDE693A105B49328F1D",
+    "timestamp": "2026-10-14T10:06:11Z",
+    "payload": {
+      "module": "co",
+      "action": "create_new_corporation",
+      "message_type": "MsgCreateCorporation",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:northside-clinic.example.org"
+      ],
+      "entity_type": "Corporation",
+      "corporation_id": 2,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantOperatorAuthorization",
+    "did": "did:web:northside-clinic.example.org",
+    "block_height": 7115,
+    "tx_hash": "CE24F87EEBD97D3021851C1B24FA5F22079800FC8EE94AA47F04C665A5FE9484",
+    "timestamp": "2026-10-14T10:06:28Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_operator_authorization",
+      "message_type": "grant_operator_authorization",
+      "tx_index": 0,
+      "message_index": 1,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:northside-clinic.example.org"
+      ],
+      "entity_type": "OperatorAuthorization",
+      "entity_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": [],
+      "grantee": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "with_feegrant": false
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SubmitProposal",
+    "did": "did:web:northside-clinic.example.org",
+    "block_height": 7115,
+    "tx_hash": "CE24F87EEBD97D3021851C1B24FA5F22079800FC8EE94AA47F04C665A5FE9484",
+    "timestamp": "2026-10-14T10:06:28Z",
+    "payload": {
+      "module": "group",
+      "action": "submit_proposal",
+      "message_type": "MsgSubmitProposal",
+      "tx_index": 0,
+      "message_index": 1,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:northside-clinic.example.org"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:web:issuer.northside-clinic.example.org",
+    "block_height": 7206,
+    "tx_hash": "DD804062BBEC65EEE63279DD2BC80CA4AD68E6E7D53E8FAFD9F4C7F5103DF6CF",
+    "timestamp": "2026-10-14T10:15:14Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org",
+        "did:web:issuer.northside-clinic.example.org"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "2",
+      "ecosystem_id": "1",
+      "schema_id": "1",
+      "participant_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": [
+        1
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:web:issuer.northside-clinic.example.org",
+    "block_height": 7206,
+    "tx_hash": "DD804062BBEC65EEE63279DD2BC80CA4AD68E6E7D53E8FAFD9F4C7F5103DF6CF",
+    "timestamp": "2026-10-14T10:15:14Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org",
+        "did:web:issuer.northside-clinic.example.org",
+        "did:web:northside-clinic.example.org"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "1",
+      "participant_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1r75hdfy7dghacyhthmuuj4ksuwe7vta73s5axw"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:web:issuer.northside-clinic.example.org",
+    "block_height": 7249,
+    "tx_hash": "A8DBE1DCA33E75881180B2DAB3772F1AD7D107F9993FF3C5C14CE117E9A35F6B",
+    "timestamp": "2026-10-14T10:19:24Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org",
+        "did:web:issuer.northside-clinic.example.org"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "2",
+      "ecosystem_id": "1",
+      "schema_id": "1",
+      "participant_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": [
+        1
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:web:issuer.northside-clinic.example.org",
+    "block_height": 7249,
+    "tx_hash": "A8DBE1DCA33E75881180B2DAB3772F1AD7D107F9993FF3C5C14CE117E9A35F6B",
+    "timestamp": "2026-10-14T10:19:24Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+      "related_dids": [
+        "did:web:ecosystem.health-alliance.example.org",
+        "did:web:issuer.northside-clinic.example.org",
+        "did:web:northside-clinic.example.org"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "1",
+      "participant_id": "2",
+      "corporation_id": 2,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1r75hdfy7dghacyhthmuuj4ksuwe7vta73s5axw"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCorporation",
+    "did": "did:example:ecs-corp-vna-testnet-1",
+    "block_height": 14765,
+    "tx_hash": "EA5342FCB1274DA5EB9DAB37B299756ABFB026D07B6CC5D186C3E5C607DF1DFA",
+    "timestamp": "2026-10-14T22:24:21Z",
+    "payload": {
+      "module": "co",
+      "action": "create_new_corporation",
+      "message_type": "MsgCreateCorporation",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1"
+      ],
+      "entity_type": "Corporation",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SubmitProposal",
+    "did": "did:example:ecs-corp-vna-testnet-1",
+    "block_height": 14767,
+    "tx_hash": "8756BDE9DCF24E1F11F6D1C1D86BBB9AB1FC303E57DA15EFA9879E6F27364B2D",
+    "timestamp": "2026-10-14T22:24:32Z",
+    "payload": {
+      "module": "group",
+      "action": "submit_proposal",
+      "message_type": "MsgSubmitProposal",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "3",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantOperatorAuthorization",
+    "did": "did:example:ecs-corp-vna-testnet-1",
+    "block_height": 14769,
+    "tx_hash": "CAFE334E7BDD65AF83DD4DFEA3F8AEFF37A9915C50A5EB5D207FD036F5694372",
+    "timestamp": "2026-10-14T22:24:44Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_operator_authorization",
+      "message_type": "grant_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1"
+      ],
+      "entity_type": "OperatorAuthorization",
+      "entity_id": "3",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "grantee": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "with_feegrant": true
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "Vote",
+    "did": "did:example:ecs-corp-vna-testnet-1",
+    "block_height": 14769,
+    "tx_hash": "CAFE334E7BDD65AF83DD4DFEA3F8AEFF37A9915C50A5EB5D207FD036F5694372",
+    "timestamp": "2026-10-14T22:24:44Z",
+    "payload": {
+      "module": "group",
+      "action": "vote",
+      "message_type": "MsgVote",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "3",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewEcosystem",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14947,
+    "tx_hash": "45A57E896429144D5C94339D95A12198D090E1C87995EB71BB1F65BB2EEB07E0",
+    "timestamp": "2026-10-14T22:41:56Z",
+    "payload": {
+      "module": "ec",
+      "action": "create_new_ecosystem",
+      "message_type": "MsgCreateEcosystem",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Ecosystem",
+      "entity_id": "2",
+      "ecosystem_id": "2",
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14948,
+    "tx_hash": "B273BAF8A1DC5C54BBC9CA900A0FFE503A72CD257916BAEC09A8923AE07D33DF",
+    "timestamp": "2026-10-14T22:42:02Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "2",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14950,
+    "tx_hash": "3B070101EC011094B5DBA8B010149C658DF12259296F8211A6287E00EAA10069",
+    "timestamp": "2026-10-14T22:42:13Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "3",
+      "ecosystem_id": "2",
+      "schema_id": "3",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14952,
+    "tx_hash": "081FD135D467DF9A3A5EBE99E85ECAB92FB142DC0B6A765F073624B59A289D77",
+    "timestamp": "2026-10-14T22:42:25Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "4",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14953,
+    "tx_hash": "4C163541A4453F6C63F6167D072120D2BC2E113271A11255E7EB93FC9128B9CA",
+    "timestamp": "2026-10-14T22:42:31Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "5",
+      "ecosystem_id": "2",
+      "schema_id": "5",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14955,
+    "tx_hash": "E208C8A1598DF95E629E5CA69AB5BC16260C09E56253997EAAF48D3C51543459",
+    "timestamp": "2026-10-14T22:42:42Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "3",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "3",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14956,
+    "tx_hash": "DF5730E0A9951841016CF144C1D449EA5226D7DA49CCE264BBFCF585B5D6B814",
+    "timestamp": "2026-10-14T22:42:48Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "4",
+      "ecosystem_id": "2",
+      "schema_id": "3",
+      "participant_id": "4",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14958,
+    "tx_hash": "546C969B7D848BED875EFD8DFE3595552B108552715BDCDF524F18DEE3B14BB1",
+    "timestamp": "2026-10-14T22:43:00Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "5",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "5",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14959,
+    "tx_hash": "FD9C99A2E62A16BC5825D639A98F9FFAD96B384C3BDAD3BFBFCDE4416B771B5F",
+    "timestamp": "2026-10-14T22:43:06Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "6",
+      "ecosystem_id": "2",
+      "schema_id": "5",
+      "participant_id": "6",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14961,
+    "tx_hash": "FBB1F448357D32BA939CE55068CB71D9DA0530CA028BCBF9DA03389B3E47A0FC",
+    "timestamp": "2026-10-14T22:43:17Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "6",
+      "ecosystem_id": "2",
+      "schema_id": "6",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 14962,
+    "tx_hash": "72EA4D667A0708642F9DDB81905B944F649F4B5C54A87B7DDF6982F0697B2781",
+    "timestamp": "2026-10-14T22:43:23Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "7",
+      "ecosystem_id": "2",
+      "schema_id": "6",
+      "participant_id": "7",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCorporation",
+    "did": "did:example:ecs-org-issuer-corp-vna-testnet-1",
+    "block_height": 14994,
+    "tx_hash": "41BEF69D0011DB38A56470ED03F006026C0906F3510B2CA6FC18322156F98288",
+    "timestamp": "2026-10-14T22:46:28Z",
+    "payload": {
+      "module": "co",
+      "action": "create_new_corporation",
+      "message_type": "MsgCreateCorporation",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1"
+      ],
+      "entity_type": "Corporation",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SubmitProposal",
+    "did": "did:example:ecs-org-issuer-corp-vna-testnet-1",
+    "block_height": 14997,
+    "tx_hash": "6A106ADBDF24F727129C8B2DEB0B0930D7DB99B90BE0750FAD5B63FDEC8506F2",
+    "timestamp": "2026-10-14T22:46:45Z",
+    "payload": {
+      "module": "group",
+      "action": "submit_proposal",
+      "message_type": "MsgSubmitProposal",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "4",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantOperatorAuthorization",
+    "did": "did:example:ecs-org-issuer-corp-vna-testnet-1",
+    "block_height": 15055,
+    "tx_hash": "DF0921AB0CFB8C88089D0ED1218E5DC6B8C9CC6C5F5EC28C8B2D86D8D29BC2BF",
+    "timestamp": "2026-10-14T22:52:21Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_operator_authorization",
+      "message_type": "grant_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1"
+      ],
+      "entity_type": "OperatorAuthorization",
+      "entity_id": "4",
+      "corporation_id": 4,
+      "related_corporation_ids": [],
+      "grantee": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "with_feegrant": true
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "Vote",
+    "did": "did:example:ecs-org-issuer-corp-vna-testnet-1",
+    "block_height": 15055,
+    "tx_hash": "DF0921AB0CFB8C88089D0ED1218E5DC6B8C9CC6C5F5EC28C8B2D86D8D29BC2BF",
+    "timestamp": "2026-10-14T22:52:21Z",
+    "payload": {
+      "module": "group",
+      "action": "vote",
+      "message_type": "MsgVote",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "4",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15089,
+    "tx_hash": "3DA65BFABA42B4267B84B18B0318F9C26B307B4B66534FB6DF83D1A3B1C7BDF1",
+    "timestamp": "2026-10-14T22:55:39Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15089,
+    "tx_hash": "3DA65BFABA42B4267B84B18B0318F9C26B307B4B66534FB6DF83D1A3B1C7BDF1",
+    "timestamp": "2026-10-14T22:55:39Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1f4cjvuefrw5pjpdfekw370xznhc9ny30n4yfgp"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SelfCreateParticipant",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15091,
+    "tx_hash": "1BE366D67643B30D4047E954BF77C6C82634643E755580457BC938DC93C680DB",
+    "timestamp": "2026-10-14T22:55:50Z",
+    "payload": {
+      "module": "pp",
+      "action": "self_create_participant",
+      "message_type": "MsgSelfCreateParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "9",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "9",
+      "corporation_id": 4,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15091,
+    "tx_hash": "1BE366D67643B30D4047E954BF77C6C82634643E755580457BC938DC93C680DB",
+    "timestamp": "2026-10-14T22:55:50Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "2",
+      "participant_id": "9",
+      "corporation_id": 4,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1f4cjvuefrw5pjpdfekw370xznhc9ny30n4yfgp"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SelfCreateParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15122,
+    "tx_hash": "B1C7EED84C99DCE1A900EAB2216007771B075A56BADA7983B62080FD69477B80",
+    "timestamp": "2026-10-14T22:58:50Z",
+    "payload": {
+      "module": "pp",
+      "action": "self_create_participant",
+      "message_type": "MsgSelfCreateParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "10",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "10",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15122,
+    "tx_hash": "B1C7EED84C99DCE1A900EAB2216007771B075A56BADA7983B62080FD69477B80",
+    "timestamp": "2026-10-14T22:58:50Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "10",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15124,
+    "tx_hash": "67284714EED3E5ED44CBD8136ED730A9344D96D4C27F110584C8C9D7D6A8DB5E",
+    "timestamp": "2026-10-14T22:59:02Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15124,
+    "tx_hash": "67284714EED3E5ED44CBD8136ED730A9344D96D4C27F110584C8C9D7D6A8DB5E",
+    "timestamp": "2026-10-14T22:59:02Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-org-issuer-corp-vna-testnet-1",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1f4cjvuefrw5pjpdfekw370xznhc9ny30n4yfgp"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15125,
+    "tx_hash": "431694DAB3A9164AF9989F9C18791ED27EFA2A22CC35232F01C86A814EBD5F17",
+    "timestamp": "2026-10-14T22:59:07Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15126,
+    "tx_hash": "8374907DDA76F10BB72E1FBDB4066863C5F476FEB2437686C2AC5D20E3A127D1",
+    "timestamp": "2026-10-14T22:59:13Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "9",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "9",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15127,
+    "tx_hash": "CFE4B3AE53D95B48B2E5B6A028DBE1B7BBD1DDA3917606C5B025E7FCA639CE62",
+    "timestamp": "2026-10-14T22:59:19Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15155,
+    "tx_hash": "2CFB203FC99EE4929BB0E7C33C18D297AAAA8F58E4B9BBBE57D9DCD82D7EC78D",
+    "timestamp": "2026-10-14T23:02:00Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "11",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15155,
+    "tx_hash": "2CFB203FC99EE4929BB0E7C33C18D297AAAA8F58E4B9BBBE57D9DCD82D7EC78D",
+    "timestamp": "2026-10-14T23:02:00Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15159,
+    "tx_hash": "85EFE6E2F7BB6986599A42ECADBC4F49A42419FDE9A1EFD79EF02F4FAFD206B3",
+    "timestamp": "2026-10-14T23:02:23Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "11",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15159,
+    "tx_hash": "85EFE6E2F7BB6986599A42ECADBC4F49A42419FDE9A1EFD79EF02F4FAFD206B3",
+    "timestamp": "2026-10-14T23:02:23Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15225,
+    "tx_hash": "E3800790C67815E75EC1E8F807413B7266C38AA834C1ED4C872557FD5B1DDC2B",
+    "timestamp": "2026-10-14T23:08:44Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+      "related_dids": [
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "10",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "10",
+      "corporation_id": 3,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15227,
+    "tx_hash": "910F63C96B7B00D20EA79DB4CAE6290AC8065F2E4D15D5951735E5509223E7D4",
+    "timestamp": "2026-10-14T23:08:56Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "11",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "RevokeParticipant",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15694,
+    "tx_hash": "E4CE4DB26EF1B609186F97E1E033E4D38BDB91B240B48B01DCEC5DF0C45514FE",
+    "timestamp": "2026-10-14T23:54:02Z",
+    "payload": {
+      "module": "pp",
+      "action": "revoke_participant",
+      "message_type": "MsgRevokeParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "11",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "RevokeVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15694,
+    "tx_hash": "E4CE4DB26EF1B609186F97E1E033E4D38BDB91B240B48B01DCEC5DF0C45514FE",
+    "timestamp": "2026-10-14T23:54:02Z",
+    "payload": {
+      "module": "de",
+      "action": "revoke_vs_operator_authorization",
+      "message_type": "revoke_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "11",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15731,
+    "tx_hash": "F1E693A5E1245F52495F439F2AE4D0FE64170AF3719FFF2394D0E16D04EA6C72",
+    "timestamp": "2026-10-14T23:57:36Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "12",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "12",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15731,
+    "tx_hash": "F1E693A5E1245F52495F439F2AE4D0FE64170AF3719FFF2394D0E16D04EA6C72",
+    "timestamp": "2026-10-14T23:57:36Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "12",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15735,
+    "tx_hash": "20864522A05CB74A2426B933F3EBA1228083EF518D1F14934D102A7B19EE0498",
+    "timestamp": "2026-10-14T23:58:00Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "12",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "12",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15735,
+    "tx_hash": "20864522A05CB74A2426B933F3EBA1228083EF518D1F14934D102A7B19EE0498",
+    "timestamp": "2026-10-14T23:58:00Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:example:ecs-corp-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "3",
+      "participant_id": "12",
+      "corporation_id": 3,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1a8nczd26ngzrzdvvegr8xef372g3pdhhfrv426"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 15737,
+    "tx_hash": "0964C2472D895AB02E29D2639D5E2B64CB9E4498053C8090FEC7739E6F267D14",
+    "timestamp": "2026-10-14T23:58:11Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "block_height": 15739,
+    "tx_hash": "62E058AF6760B80DF91F956766E942B1461C496725C6336350A2BA655D48A381",
+    "timestamp": "2026-10-14T23:58:23Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "12",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "12",
+      "corporation_id": 3,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCorporation",
+    "did": "did:example:playground-demo-vna-testnet-1",
+    "block_height": 25288,
+    "tx_hash": "94224A3ED673EBC1A8015B2A4D99EF152595711A33485CCC1F0D83D40EAF8113",
+    "timestamp": "2026-10-15T15:19:58Z",
+    "payload": {
+      "module": "co",
+      "action": "create_new_corporation",
+      "message_type": "MsgCreateCorporation",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1"
+      ],
+      "entity_type": "Corporation",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SubmitProposal",
+    "did": "did:example:playground-demo-vna-testnet-1",
+    "block_height": 25292,
+    "tx_hash": "28AA76BE7231E71D3D04B7C9E08CBEB90954B1C37AEA770F7003A6653B3B95FD",
+    "timestamp": "2026-10-15T15:20:21Z",
+    "payload": {
+      "module": "group",
+      "action": "submit_proposal",
+      "message_type": "MsgSubmitProposal",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "5",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantOperatorAuthorization",
+    "did": "did:example:playground-demo-vna-testnet-1",
+    "block_height": 25293,
+    "tx_hash": "FE3B84784099A4EDB9447A3517A96C2D2ED8EB4A3AA835E868976345718999FB",
+    "timestamp": "2026-10-15T15:20:27Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_operator_authorization",
+      "message_type": "grant_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1"
+      ],
+      "entity_type": "OperatorAuthorization",
+      "entity_id": "5",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "with_feegrant": true
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "Vote",
+    "did": "did:example:playground-demo-vna-testnet-1",
+    "block_height": 25293,
+    "tx_hash": "FE3B84784099A4EDB9447A3517A96C2D2ED8EB4A3AA835E868976345718999FB",
+    "timestamp": "2026-10-15T15:20:27Z",
+    "payload": {
+      "module": "group",
+      "action": "vote",
+      "message_type": "MsgVote",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1"
+      ],
+      "entity_type": "GroupProposal",
+      "entity_id": "5",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SelfCreateParticipant",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25307,
+    "tx_hash": "7EAAF3A0747B57DD76A0CA293C761BBB1A4471E29EDBE160F00BD8A22DACA47E",
+    "timestamp": "2026-10-15T15:21:49Z",
+    "payload": {
+      "module": "pp",
+      "action": "self_create_participant",
+      "message_type": "MsgSelfCreateParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "13",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "13",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        3
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25307,
+    "tx_hash": "7EAAF3A0747B57DD76A0CA293C761BBB1A4471E29EDBE160F00BD8A22DACA47E",
+    "timestamp": "2026-10-15T15:21:49Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "4",
+      "participant_id": "13",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1nr7sqqt3map9p2jewt2v879x4x5u47dprp4qyk"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25308,
+    "tx_hash": "F983BE54D22C3D2A82CE320F30B6C55BD2443D76D42E3967373CDD20D4F58779",
+    "timestamp": "2026-10-15T15:21:54Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "14",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25308,
+    "tx_hash": "F983BE54D22C3D2A82CE320F30B6C55BD2443D76D42E3967373CDD20D4F58779",
+    "timestamp": "2026-10-15T15:21:54Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "4",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1nr7sqqt3map9p2jewt2v879x4x5u47dprp4qyk"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25310,
+    "tx_hash": "2E08A777936639E02E8DB8A76FB03A33A30BC2A29BDA910A3733C5660424D23C",
+    "timestamp": "2026-10-15T15:22:06Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "13",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "13",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25314,
+    "tx_hash": "36FD215EDE139A6EAF3AE8779696C596BFEC93E61867A504E6E67F897595516E",
+    "timestamp": "2026-10-15T15:22:29Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "14",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25314,
+    "tx_hash": "36FD215EDE139A6EAF3AE8779696C596BFEC93E61867A504E6E67F897595516E",
+    "timestamp": "2026-10-15T15:22:29Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "4",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1nr7sqqt3map9p2jewt2v879x4x5u47dprp4qyk"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25316,
+    "tx_hash": "7AE5641AD3C83961D799BD7DA36B7EC7173DDB0F9EAE2EF576053995D7C386AD",
+    "timestamp": "2026-10-15T15:22:42Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "14",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+    "block_height": 25317,
+    "tx_hash": "F0A8A3EE9DED867129B7806D8894EBF7D59491333B27DA24F20D680F1D51A148",
+    "timestamp": "2026-10-15T15:22:48Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+      "related_dids": [
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "8",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "8",
+      "corporation_id": 4,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25320,
+    "tx_hash": "4BE7CC81C491FCB771F512DD29D3E73941C3AA291D8C75927D805ECF2C021F2C",
+    "timestamp": "2026-10-15T15:23:05Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "14",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewEcosystem",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25323,
+    "tx_hash": "59F31D71B8BC28A1572AAD0408027E0FED4BC15AE5628ED223B353119CA9B23F",
+    "timestamp": "2026-10-15T15:23:22Z",
+    "payload": {
+      "module": "ec",
+      "action": "create_new_ecosystem",
+      "message_type": "MsgCreateEcosystem",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "Ecosystem",
+      "entity_id": "3",
+      "ecosystem_id": "3",
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateNewCredentialSchema",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25324,
+    "tx_hash": "564634A4EFB0E68C993E67BA8336BAE7C254039D2615BABC2B3F6D7E3F4CF141",
+    "timestamp": "2026-10-15T15:23:28Z",
+    "payload": {
+      "module": "cs",
+      "action": "create_new_credential_schema",
+      "message_type": "MsgCreateCredentialSchema",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "CredentialSchema",
+      "entity_id": "7",
+      "ecosystem_id": "3",
+      "schema_id": "7",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateRootParticipant",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25325,
+    "tx_hash": "6E292B8064E84A64EDCD831690200A4834D8F1B5993F3BC3ECD177699F241D4F",
+    "timestamp": "2026-10-15T15:23:34Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_root_participant",
+      "message_type": "MsgCreateRootParticipant",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "15",
+      "ecosystem_id": "3",
+      "schema_id": "7",
+      "participant_id": "15",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25326,
+    "tx_hash": "6BAABA5FA6F5950930F4287C87F5AC138B836FFA9C5E2922235DC62491ADDBB0",
+    "timestamp": "2026-10-15T15:23:40Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "14",
+      "ecosystem_id": "2",
+      "schema_id": "2",
+      "participant_id": "14",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        4
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25357,
+    "tx_hash": "2E0DAC3CFCEC8AAAFF245B353E6F71B37188130D8C17D91F8F72267449ACDBC1",
+    "timestamp": "2026-10-15T15:26:39Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "16",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25357,
+    "tx_hash": "2E0DAC3CFCEC8AAAFF245B353E6F71B37188130D8C17D91F8F72267449ACDBC1",
+    "timestamp": "2026-10-15T15:26:39Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "5",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1cs0w3a96nherty9ys553xs49nngx6fxemuy7k8"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25362,
+    "tx_hash": "EB29467E7EDA1952FB5DDE0479A99F31BA60E36B389BCA397EF263D2318BD679",
+    "timestamp": "2026-10-15T15:27:08Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "16",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25362,
+    "tx_hash": "EB29467E7EDA1952FB5DDE0479A99F31BA60E36B389BCA397EF263D2318BD679",
+    "timestamp": "2026-10-15T15:27:08Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "5",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1cs0w3a96nherty9ys553xs49nngx6fxemuy7k8"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25364,
+    "tx_hash": "58A273D86B6797EF6D124DA847FFED1E47A8001888AEAED9E281C01835573AF9",
+    "timestamp": "2026-10-15T15:27:20Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "16",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25364,
+    "tx_hash": "8BFCFBA41CEEB43AE66C977430549FF597E3783A89803463E19664CBCD4EE5D4",
+    "timestamp": "2026-10-15T15:27:20Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 1,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "16",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25367,
+    "tx_hash": "61460459EB2AAFFAB40D59EA6F70636471A74FA3CC9C4AB6055C98A8528F5A30",
+    "timestamp": "2026-10-15T15:27:37Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "16",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "16",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25368,
+    "tx_hash": "7DF334AEB6E9C8B95950C378239C48CDF931056EFA52F905A031415A6EB4795D",
+    "timestamp": "2026-10-15T15:27:43Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "17",
+      "ecosystem_id": "3",
+      "schema_id": "7",
+      "participant_id": "17",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25368,
+    "tx_hash": "7DF334AEB6E9C8B95950C378239C48CDF931056EFA52F905A031415A6EB4795D",
+    "timestamp": "2026-10-15T15:27:43Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "5",
+      "participant_id": "17",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1cs0w3a96nherty9ys553xs49nngx6fxemuy7k8"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25369,
+    "tx_hash": "70F940CE8A396D40BAED62772DD8AE2620BB260F5DC4D8A1356C5FA3FEBCC30D",
+    "timestamp": "2026-10-15T15:27:49Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "17",
+      "ecosystem_id": "3",
+      "schema_id": "7",
+      "participant_id": "17",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+    "block_height": 25369,
+    "tx_hash": "70F940CE8A396D40BAED62772DD8AE2620BB260F5DC4D8A1356C5FA3FEBCC30D",
+    "timestamp": "2026-10-15T15:27:49Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmNuowztQ4vdT3mwdYTpDuUrV3wXPbLeunPh9KZQUdfgeL:demo-issuer-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "5",
+      "participant_id": "17",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1cs0w3a96nherty9ys553xs49nngx6fxemuy7k8"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25395,
+    "tx_hash": "737BE418A2ACCE4944D59AD5DCAA8E01A8597216E0EE4852FA18027950C9C83F",
+    "timestamp": "2026-10-15T15:30:21Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "18",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25395,
+    "tx_hash": "737BE418A2ACCE4944D59AD5DCAA8E01A8597216E0EE4852FA18027950C9C83F",
+    "timestamp": "2026-10-15T15:30:21Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "6",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1jfu27vs63t00mru96n7mghuzncmuzmln7ekw3w"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25400,
+    "tx_hash": "0848B3FD2B9825070AC65308F146CD6B5591057F64B7552865DC54E9A9298E90",
+    "timestamp": "2026-10-15T15:30:50Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "18",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25400,
+    "tx_hash": "0848B3FD2B9825070AC65308F146CD6B5591057F64B7552865DC54E9A9298E90",
+    "timestamp": "2026-10-15T15:30:50Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "6",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana1jfu27vs63t00mru96n7mghuzncmuzmln7ekw3w"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25402,
+    "tx_hash": "304759EE85EAD2CB28317B1F1ABE14DEF4B5AE8D93E2580AFBC7B68528AF278C",
+    "timestamp": "2026-10-15T15:31:01Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "18",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25402,
+    "tx_hash": "6D51C4D1935A112C39BB59114BA7DD7C52272914096566AAAD0609CBD3067CBE",
+    "timestamp": "2026-10-15T15:31:01Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 1,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "18",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network",
+    "block_height": 25405,
+    "tx_hash": "FF0BE21693A7A8BC23B4B80E3AFC3DA15D8C5D6F3F8CA4645A1AB4CBC59891DC",
+    "timestamp": "2026-10-15T15:31:19Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "did:webvh:QmeJKJs8HC6MWfFfBFuoFgDYWNtn984eiMDguRnZr33dUD:demo-issuer-unaccredited.playground.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "18",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "18",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "StartParticipantOP",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25429,
+    "tx_hash": "0AB1E88AC65B5DB5B100A53EA6A662B068B17B56355691F0CB93EED0807A8894",
+    "timestamp": "2026-10-15T15:33:39Z",
+    "payload": {
+      "module": "pp",
+      "action": "start_participant_op",
+      "message_type": "MsgStartParticipantOP",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "19",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "GrantVSOperatorAuthorization",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25429,
+    "tx_hash": "0AB1E88AC65B5DB5B100A53EA6A662B068B17B56355691F0CB93EED0807A8894",
+    "timestamp": "2026-10-15T15:33:39Z",
+    "payload": {
+      "module": "de",
+      "action": "grant_vs_operator_authorization",
+      "message_type": "grant_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "7",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana16phk2xertksr5v4ygtwwyydzneyhse7292z02y"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "SetParticipantOPToValidated",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25434,
+    "tx_hash": "E9B5F713E26E85E6040F80C060BF4C560CF9E031B37941DDF13A5CE67C777D5E",
+    "timestamp": "2026-10-15T15:34:08Z",
+    "payload": {
+      "module": "pp",
+      "action": "set_participant_op_to_validated",
+      "message_type": "MsgSetParticipantOPToValidated",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "19",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "UpdateVSOperatorAuthorization",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25434,
+    "tx_hash": "E9B5F713E26E85E6040F80C060BF4C560CF9E031B37941DDF13A5CE67C777D5E",
+    "timestamp": "2026-10-15T15:34:08Z",
+    "payload": {
+      "module": "de",
+      "action": "update_vs_operator_authorization",
+      "message_type": "update_vs_operator_authorization",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:example:playground-demo-vna-testnet-1",
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "VSOperatorAuthorization",
+      "entity_id": "7",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [],
+      "vs_operator": "verana16phk2xertksr5v4ygtwwyydzneyhse7292z02y"
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25436,
+    "tx_hash": "22B3C92AF1E20EEF570212FE0B1F69B9F135B9A2E9123E8CD43F4868AED74F9E",
+    "timestamp": "2026-10-15T15:34:19Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "19",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "CreateOrUpdateParticipantSession",
+    "did": "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+    "block_height": 25436,
+    "tx_hash": "DA258A8D423E810D3B862AF1E084AD8BFC9C2BF293E0D54A6CB3EDB9C5C00917",
+    "timestamp": "2026-10-15T15:34:19Z",
+    "payload": {
+      "module": "pp",
+      "action": "create_or_update_participant_session",
+      "message_type": "MsgCreateOrUpdateParticipantSession",
+      "tx_index": 1,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "ParticipantSession",
+      "entity_id": "19",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": []
+    }
+  },
+  {
+    "type": "indexer-event",
+    "event_type": "TriggerResolver",
+    "did": "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+    "block_height": 25439,
+    "tx_hash": "ED1F3D2AFAA1EA532CB8DF933882DF0DEA99CBB176CF56F194C5BD88F5EE48D3",
+    "timestamp": "2026-10-15T15:34:36Z",
+    "payload": {
+      "module": "pp",
+      "action": "trigger_resolver",
+      "message_type": "MsgTriggerResolver",
+      "tx_index": 0,
+      "message_index": 0,
+      "sender": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+      "related_dids": [
+        "did:webvh:QmQUBVgin9FtwNdchzxvMcojuyJzPd6BqF55xTqqEccne7:demo-verifier-accredited.playground.testnet.verana.network",
+        "did:webvh:QmSq7wjA8P3dcroMhuG12pXPn8GeZ129tgx2uyUyMb58as:playground-demo.playground.testnet.verana.network",
+        "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+      ],
+      "entity_type": "Participant",
+      "entity_id": "19",
+      "ecosystem_id": "2",
+      "schema_id": "4",
+      "participant_id": "19",
+      "corporation_id": 5,
+      "related_corporation_ids": [
+        5
+      ]
+    }
+  }
+]

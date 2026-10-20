@@ -1,0 +1,472 @@
+[
+  {
+    "id": 10,
+    "did": "did:web:feegrant-554.verana-test.example",
+    "policy_address": "verana1rkml5878l2daw3a7xvg48wqecnh9u9dn2dtl8g57rsctq5pnc00syzjhah",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-19T12:28:23.722Z",
+    "modified": "2026-10-19T12:28:23.722Z",
+    "controlled_ecosystems": 0,
+    "participants": 1,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 1,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 0,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 10,
+        "corporation_id": 10,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-19T12:28:23.722Z",
+        "active_since": "2026-10-19T12:28:23.722Z",
+        "gfv_id": 15,
+        "documents": [
+          {
+            "id": 10,
+            "gfv_id": 10,
+            "language": "en",
+            "url": "https://raw.githubusercontent.com/verana-labs/verana-council-gov/main/template-cgf/template-cgf.md",
+            "digest_sri": "sha384-G9Cjb9wqMHvXovVhQiC3+CzTcX33lKpFglCk9+K1nuPVr6HsaXwea4yseXoVPrNF",
+            "created": "2026-10-19T12:28:23.722Z",
+            "gfd_id": 15
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "did": "did:web:example2",
+    "policy_address": "verana1wgjpjh42cr7t5sp5hgty4yrzww496a6yaznc9u4wsv9ac3xccu8sqduynj",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-16T16:41:49.987Z",
+    "modified": "2026-10-16T16:41:49.987Z",
+    "controlled_ecosystems": 1,
+    "participants": 0,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 0,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 0,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 9,
+        "corporation_id": 9,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-16T16:41:49.987Z",
+        "active_since": "2026-10-16T16:41:49.987Z",
+        "gfv_id": 13,
+        "documents": [
+          {
+            "id": 9,
+            "gfv_id": 9,
+            "language": "en",
+            "url": "https://example.com",
+            "digest_sri": "sha384-Oo/BdRWT2dsuNNJGsNg2/YEg0Aw3Lbe3+l6haJOmpfPH+MI9Z+3mC2O0hk3McAS4",
+            "created": "2026-10-16T16:41:49.987Z",
+            "gfd_id": 13
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "did": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org",
+    "policy_address": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-16T15:19:51.709Z",
+    "modified": "2026-10-19T17:53:05.644Z",
+    "controlled_ecosystems": 0,
+    "participants": 4,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 2,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 2,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 8,
+        "corporation_id": 8,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-16T15:19:51.709Z",
+        "active_since": "2026-10-16T15:19:51.709Z",
+        "gfv_id": 12,
+        "documents": [
+          {
+            "id": 8,
+            "gfv_id": 8,
+            "language": "en",
+            "url": "https://verana.io/governance",
+            "digest_sri": "sha256-3x5KTKRsV9de//A/uBRdCSUimYN9+lYoIy9zS1RFeFA=",
+            "created": "2026-10-16T15:19:51.709Z",
+            "gfd_id": 12
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "did": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev",
+    "policy_address": "verana142498n8sya3k3s5jftp7dujuqfw3ag4tpzc2ve45ykpwx6zmng8sd40dn0",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-16T15:19:30.688Z",
+    "modified": "2026-10-16T15:19:30.688Z",
+    "controlled_ecosystems": 0,
+    "participants": 2,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 1,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 1,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 7,
+        "corporation_id": 7,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-16T15:19:30.688Z",
+        "active_since": "2026-10-16T15:19:30.688Z",
+        "gfv_id": 11,
+        "documents": [
+          {
+            "id": 7,
+            "gfv_id": 7,
+            "language": "en",
+            "url": "https://verana.io/governance",
+            "digest_sri": "sha256-3x5KTKRsV9de//A/uBRdCSUimYN9+lYoIy9zS1RFeFA=",
+            "created": "2026-10-16T15:19:30.688Z",
+            "gfd_id": 11
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "did": "did:web:example.com",
+    "policy_address": "verana1n64en27u7qckklkk4twkkun5h6v5dsur7g6l4pfmfhydvfru9upq5w4nlu",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-16T14:18:06.417Z",
+    "modified": "2026-10-16T14:18:06.417Z",
+    "controlled_ecosystems": 1,
+    "participants": 2,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 1,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 1,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 0,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 6,
+        "corporation_id": 6,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-16T14:18:06.417Z",
+        "active_since": "2026-10-16T14:18:06.417Z",
+        "gfv_id": 9,
+        "documents": [
+          {
+            "id": 6,
+            "gfv_id": 6,
+            "language": "en",
+            "url": "https://example.com",
+            "digest_sri": "sha384-Oo/BdRWT2dsuNNJGsNg2/YEg0Aw3Lbe3+l6haJOmpfPH+MI9Z+3mC2O0hk3McAS4",
+            "created": "2026-10-16T14:18:06.417Z",
+            "gfd_id": 9
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "did": "did:web:holder-join-542.verana-test.example",
+    "policy_address": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-16T10:19:14.011Z",
+    "modified": "2026-10-16T10:19:14.011Z",
+    "controlled_ecosystems": 0,
+    "participants": 4,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 3,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 1,
+    "participants_holder": 0,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 5,
+        "corporation_id": 5,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-16T10:19:14.011Z",
+        "active_since": "2026-10-16T10:19:14.011Z",
+        "gfv_id": 8,
+        "documents": [
+          {
+            "id": 5,
+            "gfv_id": 5,
+            "language": "en",
+            "url": "https://raw.githubusercontent.com/verana-labs/verana-council-gov/main/template-cgf/template-cgf.md",
+            "digest_sri": "sha384-G9Cjb9wqMHvXovVhQiC3+CzTcX33lKpFglCk9+K1nuPVr6HsaXwea4yseXoVPrNF",
+            "created": "2026-10-16T10:19:14.011Z",
+            "gfd_id": 8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "did": "did:example:transit-demo-vna-devnet-1",
+    "policy_address": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-15T22:38:14.723Z",
+    "modified": "2026-10-15T22:38:14.723Z",
+    "controlled_ecosystems": 1,
+    "participants": 10,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 2,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 3,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 1,
+    "participants_holder": 4,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 4,
+        "corporation_id": 4,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-15T22:38:14.723Z",
+        "active_since": "2026-10-15T22:38:14.723Z",
+        "gfv_id": 6,
+        "documents": [
+          {
+            "id": 4,
+            "gfv_id": 4,
+            "language": "en",
+            "url": "https://verana-labs.github.io/governance-docs/EGF/example.pdf",
+            "digest_sri": "sha384-B+nl2K+YKMw/wrNi+fE50ARjkFgXMYPB5aH77E5I2u6jM0PxIGHg5Ni+NXy9+b0S",
+            "created": "2026-10-15T22:38:14.723Z",
+            "gfd_id": 6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "did": "did:example:organization-vs-vna-devnet-1",
+    "policy_address": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-15T15:01:23.473Z",
+    "modified": "2026-10-15T15:01:23.473Z",
+    "controlled_ecosystems": 1,
+    "participants": 11,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 1,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 3,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 2,
+    "participants_holder": 5,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 3,
+        "corporation_id": 3,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-15T15:01:23.473Z",
+        "active_since": "2026-10-15T15:01:23.473Z",
+        "gfv_id": 4,
+        "documents": [
+          {
+            "id": 3,
+            "gfv_id": 3,
+            "language": "en",
+            "url": "https://verana-labs.github.io/governance-docs/EGF/example.pdf",
+            "digest_sri": "sha384-B+nl2K+YKMw/wrNi+fE50ARjkFgXMYPB5aH77E5I2u6jM0PxIGHg5Ni+NXy9+b0S",
+            "created": "2026-10-15T15:01:23.473Z",
+            "gfd_id": 4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "did": "did:example:ecs-org-issuer-corp-vna-devnet-1",
+    "policy_address": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-15T13:49:29.664Z",
+    "modified": "2026-10-15T13:49:29.664Z",
+    "controlled_ecosystems": 0,
+    "participants": 2,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 0,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 2,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 0,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 2,
+        "corporation_id": 2,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-15T13:49:29.664Z",
+        "active_since": "2026-10-15T13:49:29.664Z",
+        "gfv_id": 3,
+        "documents": [
+          {
+            "id": 2,
+            "gfv_id": 2,
+            "language": "en",
+            "url": "https://raw.githubusercontent.com/verana-labs/verana-council-gov/main/ecs-egf/v0.1/ecs-ecosystem-governance-framework.pdf",
+            "digest_sri": "sha384-k66aFCEZYQNlDCzSP6noGTjQlNN8lV9nVEjLScgO6m4vEfZxM+XFsGDxLTbaPpGU",
+            "created": "2026-10-15T13:49:29.664Z",
+            "gfd_id": 3
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "did": "did:example:ecs-corp-vna-devnet-1",
+    "policy_address": "verana1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsh3z8fv",
+    "language": "en",
+    "active_version": 1,
+    "created": "2026-10-15T13:31:31.327Z",
+    "modified": "2026-10-15T13:31:31.327Z",
+    "controlled_ecosystems": 1,
+    "participants": 7,
+    "deposit": 0,
+    "share": 0,
+    "refunded": 0,
+    "slashed_deposit": 0,
+    "repaid_deposit": 0,
+    "slash_count": 0,
+    "participants_ecosystem": 5,
+    "participants_issuer_grantor": 0,
+    "participants_issuer": 1,
+    "participants_verifier_grantor": 0,
+    "participants_verifier": 0,
+    "participants_holder": 1,
+    "last_slashed": null,
+    "last_repaid": null,
+    "versions": [
+      {
+        "id": 1,
+        "corporation_id": 1,
+        "ecosystem_id": null,
+        "version": 1,
+        "created": "2026-10-15T13:31:31.327Z",
+        "active_since": "2026-10-15T13:31:31.327Z",
+        "gfv_id": 1,
+        "documents": [
+          {
+            "id": 1,
+            "gfv_id": 1,
+            "language": "en",
+            "url": "https://raw.githubusercontent.com/verana-labs/verana-council-gov/main/ecs-egf/v0.1/ecs-ecosystem-governance-framework.pdf",
+            "digest_sri": "sha384-k66aFCEZYQNlDCzSP6noGTjQlNN8lV9nVEjLScgO6m4vEfZxM+XFsGDxLTbaPpGU",
+            "created": "2026-10-15T13:31:31.327Z",
+            "gfd_id": 1
+          }
+        ]
+      }
+    ]
+  }
+]

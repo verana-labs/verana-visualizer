@@ -1,0 +1,11 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.devnet.verana.network/v4/exchange-rate/list?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "exchange_rates": []
+  }
+}

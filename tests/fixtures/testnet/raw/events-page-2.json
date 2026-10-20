@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/indexer/events?after_block_height=25438&limit=100",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "events": [],
+    "count": 0,
+    "after_block_height": 25438
+  }
+}

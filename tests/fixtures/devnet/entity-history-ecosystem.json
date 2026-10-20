@@ -1,0 +1,57 @@
+[
+  {
+    "id": 5,
+    "timestamp": "2026-10-16T16:45:39.221Z",
+    "block_height": "18769",
+    "entity_type": "Ecosystem",
+    "entity_id": "5",
+    "msg": "CreateEcosystem",
+    "changes": {
+      "did": "did:web:example1.com",
+      "corporation_id": 9,
+      "created": "2026-10-16T16:45:32.053Z",
+      "modified": "2026-10-16T16:45:32.053Z",
+      "archived": null,
+      "language": "en",
+      "active_version": 1,
+      "participants": 0,
+      "participants_ecosystem": 0,
+      "participants_issuer_grantor": 0,
+      "participants_issuer": 0,
+      "participants_verifier_grantor": 0,
+      "participants_verifier": 0,
+      "participants_holder": 0,
+      "active_schemas": 0,
+      "archived_schemas": 0,
+      "weight": 0,
+      "issued": 0,
+      "verified": 0,
+      "ecosystem_slash_events": 0,
+      "ecosystem_slashed_amount": 0,
+      "ecosystem_slashed_amount_repaid": 0,
+      "network_slash_events": 0,
+      "network_slashed_amount": 0,
+      "network_slashed_amount_repaid": 0,
+      "versions": [
+        {
+          "id": 14,
+          "ecosystem_id": 5,
+          "created": "2026-10-16T16:45:32.053Z",
+          "version": 1,
+          "active_since": "2026-10-16T16:45:32.053Z",
+          "documents": [
+            {
+              "id": 14,
+              "url": "https://example.com",
+              "created": "2026-10-16T16:45:32.053Z",
+              "language": "en",
+              "digest_sri": "sha384-Oo/BdRWT2dsuNNJGsNg2/YEg0Aw3Lbe3+l6haJOmpfPH+MI9Z+3mC2O0hk3McAS4",
+              "version_id": 14
+            }
+          ]
+        }
+      ]
+    },
+    "created_at": "2026-10-16T16:45:39.221Z"
+  }
+]

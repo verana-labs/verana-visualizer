@@ -1,0 +1,64 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.testnet.verana.network/v4/graph/traverse",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "query": "G1",
+      "input": {
+        "participantId": 97
+      }
+    }
+  },
+  "status": 200,
+  "body": {
+    "query": "G1",
+    "evaluatedAtTime": "2026-10-20T16:17:23.915Z",
+    "output": [
+      {
+        "id": 3,
+        "didId": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "role": "ECOSYSTEM",
+        "state": "ACTIVE",
+        "credentialSchemaId": 2,
+        "ecosystemId": 2,
+        "validatorParticipantId": null,
+        "lastObservedAtTime": "2026-10-16T21:42:20.000Z",
+        "weight": "0uvna",
+        "issuedCredentials": 32,
+        "verifiedCredentials": 0
+      },
+      {
+        "id": 8,
+        "didId": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "role": "ISSUER",
+        "state": "ACTIVE",
+        "credentialSchemaId": 2,
+        "ecosystemId": 2,
+        "validatorParticipantId": 3,
+        "lastObservedAtTime": "2026-10-16T12:13:12.000Z",
+        "vsOperator": "verana1f4cjvuefrw5pjpdfekw370xznhc9ny30n4yfgp",
+        "weight": "0uvna",
+        "issuedCredentials": 32,
+        "verifiedCredentials": 0
+      },
+      {
+        "id": 97,
+        "didId": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network",
+        "role": "HOLDER",
+        "state": "ACTIVE",
+        "credentialSchemaId": 2,
+        "ecosystemId": 2,
+        "validatorParticipantId": 8,
+        "lastObservedAtTime": "2026-10-15T19:17:22.000Z",
+        "vsOperator": "verana14htjd47dx70dufltkwpeda578dm74td8ml963d",
+        "weight": "0uvna",
+        "issuedCredentials": 0,
+        "verifiedCredentials": 0
+      }
+    ],
+    "nextCursor": null
+  }
+}

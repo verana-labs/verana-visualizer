@@ -1,0 +1,137 @@
+{
+  "block_id": {
+    "hash": "xzAiM6IjUAaUTkyzByw2Lq1fKJT5LKIhq15yGkH2aWI=",
+    "part_set_header": {
+      "total": 1,
+      "hash": "mYhe4z61WRmQmsSyJdLthdt0FJd2b33qRD4ohdXaEPI="
+    }
+  },
+  "block": {
+    "header": {
+      "chain_id": "vna-devnet-1",
+      "height": "79386",
+      "time": "2026-10-20T09:49:28.497181564Z",
+      "proposer_address": "7+bRb470GSTgQmTIbjF+hNuHc+o=",
+      "version": {
+        "block": "11",
+        "app": "0"
+      },
+      "last_block_id": {
+        "hash": "hNqxOrlp1GvkiBrgC/AqAhQFXLS8fVnikmt3kjADLUo=",
+        "part_set_header": {
+          "total": 1,
+          "hash": "kQCTxVdRlEur5DQZU6N3XVz3StlBo2QkQewyw5tx4Wo="
+        }
+      },
+      "last_commit_hash": "/aMW2cQkUPiFTh0jwbznpx6cbXcCLc+wMg47673r8t8=",
+      "data_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "validators_hash": "FiCn/bF8ASs8w0Cx7XXNrAGl+3xScAtbOCxDaV5yas8=",
+      "next_validators_hash": "FiCn/bF8ASs8w0Cx7XXNrAGl+3xScAtbOCxDaV5yas8=",
+      "consensus_hash": "BICRvH3cKD93v7+R1zxE2ljD34qcvIZ0Bdi389qtoi8=",
+      "app_hash": "57QwbeSJnfwFz/hAMVYgSnr3pKhUK7gTpV4yVmKv1pg=",
+      "last_results_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "evidence_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="
+    },
+    "data": {
+      "txs": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "last_commit": {
+      "height": "79385",
+      "round": 0,
+      "block_id": {
+        "hash": "hNqxOrlp1GvkiBrgC/AqAhQFXLS8fVnikmt3kjADLUo=",
+        "part_set_header": {
+          "total": 1,
+          "hash": "kQCTxVdRlEur5DQZU6N3XVz3StlBo2QkQewyw5tx4Wo="
+        }
+      },
+      "signatures": [
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "MOWuPY56eRhBmfTLVkkXHPoVeQM=",
+          "timestamp": "2026-10-20T09:49:28.400810263Z",
+          "signature": "15lTv4LU7ghTLnDKJyPQ9HJqOG/k7E6PvzEo2qw1/hm9MZgf/5chzCRB3hQ790T/xs/bPjiGGzjFkXjYuQx3CA=="
+        },
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "czvVpk+UDpSsXAHbzZJ3lhpg+X0=",
+          "timestamp": "2026-10-20T09:49:28.497181564Z",
+          "signature": "19dbEsUOpvluBVCoPEf+cVaawc5OEq9zeUT2uuZhT9tdNSDXqfd34838Y2kYuBzVHllAKSzKGnMlxgUax4zMCw=="
+        },
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "7+bRb470GSTgQmTIbjF+hNuHc+o=",
+          "timestamp": "2026-10-20T09:49:28.499841384Z",
+          "signature": "nUd9mXFLdDmzbj8UvEVigsbjldVAQ4Fm4/LSRm+q+oTFyZc3dWxV+p+Thv445z5WzKMLORr4r2AcYVqFITqgDA=="
+        }
+      ]
+    }
+  },
+  "sdk_block": {
+    "header": {
+      "version": {
+        "block": "11",
+        "app": "0"
+      },
+      "chain_id": "vna-devnet-1",
+      "height": "79386",
+      "time": "2026-10-20T09:49:28.497181564Z",
+      "last_block_id": {
+        "hash": "hNqxOrlp1GvkiBrgC/AqAhQFXLS8fVnikmt3kjADLUo=",
+        "part_set_header": {
+          "total": 1,
+          "hash": "kQCTxVdRlEur5DQZU6N3XVz3StlBo2QkQewyw5tx4Wo="
+        }
+      },
+      "last_commit_hash": "/aMW2cQkUPiFTh0jwbznpx6cbXcCLc+wMg47673r8t8=",
+      "data_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "validators_hash": "FiCn/bF8ASs8w0Cx7XXNrAGl+3xScAtbOCxDaV5yas8=",
+      "next_validators_hash": "FiCn/bF8ASs8w0Cx7XXNrAGl+3xScAtbOCxDaV5yas8=",
+      "consensus_hash": "BICRvH3cKD93v7+R1zxE2ljD34qcvIZ0Bdi389qtoi8=",
+      "app_hash": "57QwbeSJnfwFz/hAMVYgSnr3pKhUK7gTpV4yVmKv1pg=",
+      "last_results_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "evidence_hash": "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=",
+      "proposer_address": "veranavalcons1alndzmuw7svjfczzvnyxuvt7sndcwul2thqwfp"
+    },
+    "data": {
+      "txs": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "last_commit": {
+      "height": "79385",
+      "round": 0,
+      "block_id": {
+        "hash": "hNqxOrlp1GvkiBrgC/AqAhQFXLS8fVnikmt3kjADLUo=",
+        "part_set_header": {
+          "total": 1,
+          "hash": "kQCTxVdRlEur5DQZU6N3XVz3StlBo2QkQewyw5tx4Wo="
+        }
+      },
+      "signatures": [
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "MOWuPY56eRhBmfTLVkkXHPoVeQM=",
+          "timestamp": "2026-10-20T09:49:28.400810263Z",
+          "signature": "15lTv4LU7ghTLnDKJyPQ9HJqOG/k7E6PvzEo2qw1/hm9MZgf/5chzCRB3hQ790T/xs/bPjiGGzjFkXjYuQx3CA=="
+        },
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "czvVpk+UDpSsXAHbzZJ3lhpg+X0=",
+          "timestamp": "2026-10-20T09:49:28.497181564Z",
+          "signature": "19dbEsUOpvluBVCoPEf+cVaawc5OEq9zeUT2uuZhT9tdNSDXqfd34838Y2kYuBzVHllAKSzKGnMlxgUax4zMCw=="
+        },
+        {
+          "block_id_flag": "BLOCK_ID_FLAG_COMMIT",
+          "validator_address": "7+bRb470GSTgQmTIbjF+hNuHc+o=",
+          "timestamp": "2026-10-20T09:49:28.499841384Z",
+          "signature": "nUd9mXFLdDmzbj8UvEVigsbjldVAQ4Fm4/LSRm+q+oTFyZc3dWxV+p+Thv445z5WzKMLORr4r2AcYVqFITqgDA=="
+        }
+      ]
+    }
+  }
+}

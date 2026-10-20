@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.testnet.verana.network/cosmos/protocolpool/v1/community_pool",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "pool": [
+      {
+        "denom": "uvna",
+        "amount": "40499554"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://idx.devnet.verana.network/v4/verifiable-trust/resolve",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "did": "did:example:ecs-corp-vna-devnet-1"
+    }
+  },
+  "status": 200,
+  "body": {
+    "did": "did:example:ecs-corp-vna-devnet-1",
+    "trusted": false,
+    "evaluatedAtTime": "2026-10-20T09:49:22.979Z",
+    "evaluatedAtBlock": 79385,
+    "expiresAtTime": null,
+    "corporationId": 1
+  }
+}
