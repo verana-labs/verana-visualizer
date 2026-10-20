@@ -91,7 +91,12 @@ export function ObservatoryCanvas({ model }: { model: NetworkModel }) {
       >
         <color attach="background" args={[BACKGROUND]} />
         <fogExp2 attach="fog" args={[BACKGROUND, FOG_DENSITY]} />
-        <PerformanceMonitor onDecline={stepDown} onIncline={stepUp} onFallback={() => setLevel(QUALITY.length - 1)} />
+        <PerformanceMonitor
+          flipflops={3}
+          onDecline={stepDown}
+          onIncline={stepUp}
+          onFallback={() => setLevel(QUALITY.length - 1)}
+        />
         <OrbitControls
           makeDefault
           enableDamping
