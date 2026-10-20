@@ -53,13 +53,26 @@ function windowStart(period: DigestPeriod, now: Date): number {
   return period === 'week' ? today - 6 * DAY_MS : today
 }
 
-const inWindow = (buckets: readonly StatsBucket[], period: DigestPeriod, now: Date) => {
+const isBackfill = (bucket: StatsBucket, key: string) => {
+  const delta = numberAt(bucket, `delta_${key}`)
+  return delta !== 0 && delta === numberAt(bucket, `cumulative_${key}`)
+}
+
+const backfilled = (buckets: readonly StatsBucket[]) =>
+  buckets.length > 0 && CHANGES.some(({ keys }) => keys.some((key) => isBackfill(buckets[0], key)))
+
+function deltaOf(buckets: readonly StatsBucket[], key: string, period: DigestPeriod, now: Date): number {
   const start = windowStart(period, now)
-  return buckets.filter((b) => Date.parse(b.timestamp) >= start)
+  return buckets.reduce(
+    (sum, b, i) =>
+      Date.parse(b.timestamp) < start || (i === 0 && isBackfill(b, key)) ? sum : sum + numberAt(b, `delta_${key}`),
+    0
+  )
 }
 
 export function periodLabel(buckets: readonly StatsBucket[], period: DigestPeriod, now: Date = new Date()): string {
-  const first = buckets.length > 0 ? Date.parse(buckets[0].timestamp) : Number.NaN
+  const indexed = buckets.length > 0 ? Date.parse(buckets[0].timestamp) : Number.NaN
+  const first = backfilled(buckets) ? indexed + DAY_MS : indexed
   if (Number.isFinite(first) && first > windowStart(period, now)) {
     return `since ${new Date(first).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}`
   }
@@ -67,9 +80,8 @@ export function periodLabel(buckets: readonly StatsBucket[], period: DigestPerio
 }
 
 export function whatChanged(buckets: StatsBucket[], period: DigestPeriod, now: Date = new Date()): string[] {
-  const window = inWindow(buckets, period, now)
   return CHANGES.flatMap(({ keys, one, many, net }) => {
-    const delta = window.reduce((sum, b) => sum + keys.reduce((s, key) => s + numberAt(b, `delta_${key}`), 0), 0)
+    const delta = keys.reduce((sum, key) => sum + deltaOf(buckets, key, period, now), 0)
     if (delta === 0) return []
     if (delta < 0) return [`-${formatCount(-delta)} ${net} (net)`]
     return [`+${formatCount(delta)} ${delta === 1 ? one : many}`]
@@ -85,7 +97,7 @@ export function growthOf(
   if (buckets.length === 0) return null
   const series = buckets.map((b) => numberAt(b, `cumulative_${metric}`))
   return {
-    delta: inWindow(buckets, period, now).reduce((sum, b) => sum + numberAt(b, `delta_${metric}`), 0),
+    delta: deltaOf(buckets, metric, period, now),
     total: series[series.length - 1],
     label: periodLabel(buckets, period, now),
     series,

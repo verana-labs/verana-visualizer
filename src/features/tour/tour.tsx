@@ -2,11 +2,16 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef } from 'react'
+import { useTimeStore } from '@/features/time-scrubber/time-store'
+import { createIndexerClient } from '@/lib/api/indexer'
+import type { NetworkConfig } from '@/lib/env'
 import { isTyping } from '@/lib/is-typing'
+import { logger } from '@/lib/logger'
 import { parseViewState, serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
+import { firstEcosystemBlock } from './time-step'
 import { type TourStep, tourSteps } from './tour-steps'
 import { useTour } from './tour-store'
 
@@ -17,15 +22,52 @@ function applyStep(step: TourStep) {
   else observatory.select(step.select)
 }
 
-export function Tour({ ready, chainName }: { ready: boolean; chainName: string }) {
+export function useTourSteps(chainName: string): TourStep[] | null {
+  const raw = useObservatory((s) => s.model?.raw)
+  return useMemo(() => {
+    const model = useObservatory.getState().model
+    return raw && model ? tourSteps(model, chainName) : null
+  }, [raw, chainName])
+}
+
+function openAtFirstEcosystem(cfg: NetworkConfig, step: number): () => void {
+  const model = useObservatory.getState().model
+  let cancelled = false
+  if (model) {
+    firstEcosystemBlock(createIndexerClient(cfg), model).then(
+      (first) => {
+        if (cancelled || !first || useTour.getState().step !== step) return
+        useTimeStore.getState().setHeight(first.height)
+        useTour
+          .getState()
+          .setNote(
+            `Block ${first.height.toLocaleString('en-US')}: ${first.name} was created, the first ecosystem on ${cfg.chainName}.`
+          )
+      },
+      (error: unknown) => {
+        if (cancelled) return
+        logger.warn('Could not find the block of the first ecosystem', error)
+        useTour
+          .getState()
+          .setNote(
+            `The first ecosystem’s block is unavailable: ${error instanceof Error ? error.message : String(error)}`
+          )
+      }
+    )
+  }
+  return () => {
+    cancelled = true
+  }
+}
+
+export function Tour({ ready, cfg }: { ready: boolean; cfg: NetworkConfig }) {
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearchParams()
-  const model = useObservatory((s) => s.model)
   const step = useTour((s) => s.step)
   const presenting = useTour((s) => s.presenting)
   const note = useTour((s) => s.note)
-  const steps = useMemo(() => (model ? tourSteps(model, chainName) : null), [model, chainName])
+  const steps = useTourSteps(cfg.chainName)
   const restored = useRef(false)
   const shown = useRef(false)
 
@@ -56,6 +98,7 @@ export function Tour({ ready, chainName }: { ready: boolean; chainName: string }
     const active = steps[step]
     if (!active) return
     shown.current = true
+    useTour.getState().setNote(null)
     applyStep(active)
     const query = serializeViewState({
       ...current,
@@ -65,7 +108,8 @@ export function Tour({ ready, chainName }: { ready: boolean; chainName: string }
       cam: null,
     })
     router.replace(`${pathname}?${query}`, { scroll: false })
-  }, [step, steps, router, pathname])
+    if (active.id === 'time') return openAtFirstEcosystem(cfg, step)
+  }, [step, steps, router, pathname, cfg])
 
   useEffect(() => {
     if (step === null || presenting) return

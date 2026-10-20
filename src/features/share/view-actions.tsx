@@ -7,18 +7,23 @@ import { parseViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { exportPng, pngFileName } from './export-png'
-import { sceneHandle } from './scene-handle'
+import { useSceneHandle } from './scene-handle'
 import { shareUrl } from './share-link'
 
 const REVOKE_MS = 10_000
 
 async function copyShareLink() {
   const { lens, selected, showToast } = useObservatory.getState()
+  const handle = useSceneHandle.getState().handle
+  if (!handle) {
+    showToast('Camera not ready')
+    return
+  }
   const view = {
     ...parseViewState(new URLSearchParams(window.location.search)),
     lens,
     sel: selected,
-    cam: sceneHandle.current?.camera() ?? null,
+    cam: handle.camera(),
   }
   try {
     await navigator.clipboard.writeText(shareUrl(window.location.origin, view))
@@ -31,7 +36,7 @@ async function copyShareLink() {
 
 function downloadPng(cfg: NetworkConfig, blockHeight: number) {
   const { showToast } = useObservatory.getState()
-  const handle = sceneHandle.current
+  const handle = useSceneHandle.getState().handle
   if (!handle) {
     showToast('PNG export needs the 3D view')
     return
@@ -58,13 +63,14 @@ function downloadPng(cfg: NetworkConfig, blockHeight: number) {
 export function ViewActions({ cfg }: { cfg: NetworkConfig }) {
   const ready = useObservatory((s) => s.model !== null)
   const blockHeight = useObservatory((s) => s.blockHeight)
+  const cameraReady = useSceneHandle((s) => s.handle !== null)
   const small = '!px-2 !py-1.5 flex-1 text-[11.5px]'
   return (
     <div className="flex gap-1.5">
       <Button className={small} disabled={!ready} onClick={() => useTour.getState().present()}>
         Present
       </Button>
-      <Button className={small} onClick={() => void copyShareLink()}>
+      <Button className={small} disabled={!cameraReady} onClick={() => void copyShareLink()}>
         Share
       </Button>
       <Button

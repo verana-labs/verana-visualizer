@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { growthOf, type StatsBucket, whatChanged } from './digest'
+import { growthOf, periodLabel, type StatsBucket, whatChanged } from './digest'
 
 const recorded = (
   JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/stats.json'), 'utf8')) as {
@@ -48,16 +48,39 @@ describe('whatChanged', () => {
 
   it('reads the recorded testnet buckets', () => {
     expect(whatChanged(recorded, 'week', new Date('2026-10-17T12:00:00Z'))).toEqual([
-      '+14 ecosystems created',
-      '+157 participants accredited',
-      '+21 credential schemas published',
-      '+169 credentials issued',
+      '+12 ecosystems created',
+      '+11 participants accredited',
+      '+15 credential schemas published',
+      '+65 credentials issued',
     ])
     expect(whatChanged(recorded, 'day', new Date('2026-10-17T12:00:00Z'))).toEqual([
       '+2 ecosystems created',
       '+2 credential schemas published',
       '+4 credentials issued',
     ])
+  })
+})
+
+describe('backfilled first bucket', () => {
+  const backfilled = [
+    bucket('2026-10-15', { participants: 146, issued: 104 }, { participants: 146, issued: 104 }),
+    bucket('2026-10-16', { participants: 11, issued: 61 }, { participants: 157, issued: 165 }),
+  ]
+  const at = new Date('2026-10-17T09:00:00Z')
+
+  it('is excluded from the digest because its delta is the whole indexed history', () => {
+    expect(whatChanged(backfilled, 'week', at)).toEqual(['+11 participants accredited', '+61 credentials issued'])
+  })
+
+  it('is excluded from growth, and the window starts at the end of day 1', () => {
+    expect(growthOf(backfilled, 'participants', 'week', at)).toMatchObject({ delta: 11, label: 'since Oct 16' })
+    expect(periodLabel(backfilled, 'week', at)).toBe('since Oct 16')
+  })
+
+  it('only applies when delta equals cumulative in the first bucket', () => {
+    const real = [bucket('2026-10-15', { participants: 4 }, { participants: 146 })]
+    expect(whatChanged(real, 'week', at)).toEqual(['+4 participants accredited'])
+    expect(periodLabel(real, 'week', at)).toBe('since Oct 15')
   })
 })
 
@@ -79,9 +102,9 @@ describe('growthOf', () => {
 
   it('says "since" the first bucket when the stats window is shorter than the period', () => {
     expect(growthOf(recorded, 'participants', 'week', new Date('2026-10-20T08:00:00Z'))).toEqual({
-      delta: 157,
+      delta: 11,
       total: 157,
-      label: 'since Oct 15',
+      label: 'since Oct 16',
       series: [146, 157, 157],
     })
   })

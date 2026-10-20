@@ -5,7 +5,7 @@ import { useTour } from '@/features/tour/tour-store'
 import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
-import { sceneHandle } from './scene-handle'
+import { useSceneHandle } from './scene-handle'
 import { shareUrl } from './share-link'
 import { ViewActions } from './view-actions'
 
@@ -19,11 +19,11 @@ beforeEach(() => {
   window.history.replaceState(null, '', '/?lens=trust&t=1700000000')
   useObservatory.setState({ lens: 'trust', selected: 'ecosystem:1', blockHeight: 87_600, toast: null })
   useTour.setState({ step: null, presenting: false })
-  sceneHandle.current = null
+  useSceneHandle.setState({ handle: null })
 })
 
 afterEach(() => {
-  sceneHandle.current = null
+  useSceneHandle.setState({ handle: null })
   window.history.replaceState(null, '', '/')
 })
 
@@ -43,10 +43,9 @@ describe('shareUrl', () => {
 
 describe('ViewActions', () => {
   it('copies location.origin + "/?" + the current view including the camera, and confirms with a toast', async () => {
-    sceneHandle.current = {
-      camera: () => [10.123, 20, 30, 1, 2, 3],
-      capture: () => document.createElement('canvas'),
-    }
+    useSceneHandle.setState({
+      handle: { camera: () => [10.123, 20, 30, 1, 2, 3], capture: () => document.createElement('canvas') },
+    })
     render(<ViewActions cfg={testnetCfg} />)
     await userEvent.click(screen.getByRole('button', { name: 'Share' }))
     const expected = `${location.origin}/?${serializeViewState({
@@ -62,8 +61,22 @@ describe('ViewActions', () => {
     expect(useObservatory.getState().toast).toBe('Link copied')
   })
 
+  it('keeps Share disabled until the camera is available, so a link never silently drops it', () => {
+    render(<ViewActions cfg={testnetCfg} />)
+    expect(screen.getByRole('button', { name: 'Share' })).toBeDisabled()
+    act(() =>
+      useSceneHandle.setState({
+        handle: { camera: () => [1, 2, 3, 0, 0, 0], capture: () => document.createElement('canvas') },
+      })
+    )
+    expect(screen.getByRole('button', { name: 'Share' })).toBeEnabled()
+  })
+
   it('reports a clipboard failure instead of claiming success', async () => {
     writeText.mockRejectedValue(new Error('denied'))
+    useSceneHandle.setState({
+      handle: { camera: () => [1, 2, 3, 0, 0, 0], capture: () => document.createElement('canvas') },
+    })
     render(<ViewActions cfg={testnetCfg} />)
     await userEvent.click(screen.getByRole('button', { name: 'Share' }))
     expect(useObservatory.getState().toast).toBe('Could not copy the link')
@@ -78,7 +91,7 @@ describe('ViewActions', () => {
 
   it('downloads a stamped PNG named after the chain and block', async () => {
     const canvas = document.createElement('canvas')
-    sceneHandle.current = { camera: () => null, capture: () => canvas }
+    useSceneHandle.setState({ handle: { camera: () => [0, 0, 1, 0, 0, 0], capture: () => canvas } })
     exportPng.mockReturnValue(new Blob(['x'], { type: 'image/png' }))
     const clicked: string[] = []
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {

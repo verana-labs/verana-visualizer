@@ -88,7 +88,7 @@ function Observatory() {
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}
       <Toast />
-      <Tour ready={loaderGone} chainName={cfg.chainName} />
+      <Tour ready={loaderGone} cfg={cfg} />
       <Autopilot cfg={cfg} />
       {!loaderGone && (
         <StardustLoader

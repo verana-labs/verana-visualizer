@@ -3,14 +3,16 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
+import { create } from 'zustand'
 import { type Cam, parseViewState } from '@/lib/view-state'
+import { pinCamera } from './camera-pin'
 
 export interface SceneHandleApi {
-  camera(): Cam | null
+  camera(): Cam
   capture(): HTMLCanvasElement
 }
 
-export const sceneHandle: { current: SceneHandleApi | null } = { current: null }
+export const useSceneHandle = create<{ handle: SceneHandleApi | null }>()(() => ({ handle: null }))
 
 interface CamControls {
   target: Vector3
@@ -35,11 +37,12 @@ export function SceneHandle() {
   const rawControls = useThree((s) => s.controls)
   const controls = isCamControls(rawControls) ? rawControls : null
   const framesWithControls = useRef(0)
+  const pin = useRef<ReturnType<typeof pinCamera> | null>(null)
 
   useEffect(() => {
-    sceneHandle.current = {
+    if (!controls) return
+    const handle: SceneHandleApi = {
       camera: () => {
-        if (!controls) return null
         const p = camera.position
         const t = controls.target
         return [p.x, p.y, p.z, t.x, t.y, t.z]
@@ -49,21 +52,23 @@ export function SceneHandle() {
         return gl.domElement
       },
     }
+    useSceneHandle.setState({ handle })
     return () => {
-      sceneHandle.current = null
+      if (useSceneHandle.getState().handle === handle) useSceneHandle.setState({ handle: null })
     }
   }, [camera, gl, advance, controls])
 
+  useEffect(() => () => pin.current?.release(), [])
+
   useFrame(() => {
-    if (!controls || framesWithControls.current > RESTORE_AFTER_FRAMES) return
-    framesWithControls.current++
-    if (framesWithControls.current <= RESTORE_AFTER_FRAMES) return
-    const cam = parseViewState(new URLSearchParams(window.location.search)).cam
-    if (!cam) return
-    controls.dispatchEvent({ type: 'start' })
-    camera.position.set(cam[0], cam[1], cam[2])
-    controls.target.set(cam[3], cam[4], cam[5])
-    controls.update()
+    if (!controls) return
+    if (framesWithControls.current <= RESTORE_AFTER_FRAMES) {
+      framesWithControls.current++
+      if (framesWithControls.current <= RESTORE_AFTER_FRAMES) return
+      const cam = parseViewState(new URLSearchParams(window.location.search)).cam
+      if (cam) pin.current = pinCamera(cam)
+    }
+    pin.current?.enforce(camera, controls)
   })
 
   return null

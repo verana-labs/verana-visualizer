@@ -42,13 +42,13 @@ afterEach(() => {
 })
 
 describe('HUD growth sparklines', () => {
-  it('show "+N this week · total" next to the figures', () => {
+  it('show "+N this week · total" with the same total the HUD figure prints', () => {
     vi.setSystemTime(new Date('2026-10-19T12:00:00Z'))
     useGrowth.setState({
       state: { status: 'ready', buckets: [bucket('2026-09-01', 155, 155), bucket('2026-10-18', 158, 3)] },
     })
     render(<Hud cfg={testnetCfg} />)
-    expect(growthLine('participants')).toBe('+3 this week · 158 total')
+    expect(growthLine('participants')).toBe('+3 this week · 157 total')
     expect(growthLine('ecosystems')).toBe('+0 this week · 14 total')
     expect(screen.getAllByTestId('sparkline').length).toBeGreaterThan(0)
   })
@@ -57,8 +57,9 @@ describe('HUD growth sparklines', () => {
     vi.setSystemTime(new Date('2026-10-20T08:00:00Z'))
     useGrowth.setState({ state: { status: 'ready', buckets: recorded } })
     render(<Hud cfg={testnetCfg} />)
-    expect(growthLine('participants')).toBe('+157 since Oct 15 · 157 total')
-    expect(growthLine('credentials issued')).toBe('+169 since Oct 15 · 169 total')
+    expect(growthLine('participants')).toBe('+11 since Oct 16 · 157 total')
+    expect(growthLine('credentials issued')).toBe('+65 since Oct 16 · 169 total')
+    expect(growthLine('ecosystems')).toBe('+12 since Oct 16 · 14 total')
   })
 
   it('say growth is unavailable when the stats call failed', () => {
@@ -78,8 +79,8 @@ describe('WhatChanged', () => {
     await user.click(screen.getByRole('button', { name: /what changed/i }))
     expect(screen.getByText('+4 credentials issued')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Week' }))
-    expect(screen.getByText(/since Oct 15/)).toBeInTheDocument()
-    expect(screen.getByText('+157 participants accredited')).toBeInTheDocument()
+    expect(screen.getByText(/since Oct 16/)).toBeInTheDocument()
+    expect(screen.getByText('+11 participants accredited')).toBeInTheDocument()
     act(() => vi.setSystemTime(new Date('2026-10-20T12:00:00Z')))
     await user.click(screen.getByRole('button', { name: 'Day' }))
     expect(screen.getByText('No changes recorded today')).toBeInTheDocument()

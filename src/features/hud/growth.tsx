@@ -57,18 +57,18 @@ export function useGrowthLoader(cfg: NetworkConfig) {
   }, [cfg, model])
 }
 
-export function GrowthLine({ metric }: { metric: GrowthMetric }) {
+export function GrowthLine({ metric, total }: { metric: GrowthMetric; total: number | null }) {
   const state = useGrowth((s) => s.state)
   if (state.status !== 'ready') return null
   const growth = growthOf(state.buckets, metric, 'week')
-  if (!growth) return null
+  if (!growth || total === null) return null
   return (
     <div className="relative text-[10px] text-scene-mut tabular-nums">
       <span data-testid="sparkline" className="absolute right-0 -top-[22px]">
         <Sparkline values={growth.series} width={44} height={14} />
       </span>
       <span data-testid="growth" className="whitespace-nowrap">
-        +{growth.delta.toLocaleString('en-US')} {growth.label} · {growth.total.toLocaleString('en-US')} total
+        +{growth.delta.toLocaleString('en-US')} {growth.label} · {total.toLocaleString('en-US')} total
       </span>
     </div>
   )

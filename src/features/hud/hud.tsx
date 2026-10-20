@@ -38,6 +38,8 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
       )
     : null
   const trusted = [...verdicts.values()].filter(Boolean).length
+  const ecosystems = model ? model.ecosystems.length : null
+  const participants = model ? countedParticipants(model, model.participants) : null
 
   return (
     <GlassPanel data-testid="hud" className="fixed left-4 top-4 z-10 flex flex-col gap-3 px-4 py-3">
@@ -62,18 +64,18 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
       <div className="grid grid-cols-2 gap-x-6 gap-y-2">
         <Figure
           label="ecosystems"
-          value={model ? number(model.ecosystems.length) : '–'}
-          growth={<GrowthLine metric="active_ecosystems" />}
+          value={ecosystems === null ? '–' : number(ecosystems)}
+          growth={<GrowthLine metric="active_ecosystems" total={ecosystems} />}
         />
         <Figure
           label="participants"
-          value={model ? number(countedParticipants(model, model.participants)) : '–'}
-          growth={<GrowthLine metric="participants" />}
+          value={participants === null ? '–' : number(participants)}
+          growth={<GrowthLine metric="participants" total={participants} />}
         />
         <Figure
           label="credentials issued"
           value={issued === null ? '–' : number(issued)}
-          growth={<GrowthLine metric="issued" />}
+          growth={<GrowthLine metric="issued" total={issued} />}
         />
         <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
       </div>

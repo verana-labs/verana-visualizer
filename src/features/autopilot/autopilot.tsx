@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ingestEvent } from '@/features/activity-feed/live-activity'
 import { type FetchEvents, useReplay } from '@/features/activity-feed/replay'
-import { tourSteps } from '@/features/tour/tour-steps'
+import { useTourSteps } from '@/features/tour/tour'
 import { useTour } from '@/features/tour/tour-store'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
@@ -22,7 +22,6 @@ const number = (n: number) => n.toLocaleString('en-US')
 export function Autopilot({ cfg }: { cfg: NetworkConfig }) {
   const presenting = useTour((s) => s.presenting)
   const step = useTour((s) => s.step)
-  const model = useObservatory((s) => s.model)
   const reduced = usePrefersReducedMotion()
   const [fading, setFading] = useState(false)
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
@@ -31,7 +30,7 @@ export function Autopilot({ cfg }: { cfg: NetworkConfig }) {
     return async (after, limit) => (await indexer.events(after, limit)).data
   }, [cfg])
   const replay = useReplay(fetchEvents, ingestEvent, currentHead)
-  const steps = useMemo(() => (model ? tourSteps(model, cfg.chainName) : null), [model, cfg.chainName])
+  const steps = useTourSteps(cfg.chainName)
   const liveStep = steps?.findIndex((s) => s.id === 'live-core') ?? -1
   const { start: startReplay, cancel: cancelReplay, state: replayState } = replay
 
