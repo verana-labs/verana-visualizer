@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import { PublicEnvScript } from 'next-runtime-env'
 import './globals.css'
+import { NetworkEnvScript } from './network-env-script'
 import { Providers } from './providers'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
-        <PublicEnvScript />
+        <NetworkEnvScript />
       </head>
       <body className="bg-scene-bg font-sans text-scene-txt">
         <Providers>{children}</Providers>
