@@ -6,6 +6,7 @@ import { replayWindows, touchedEntities } from './events'
 import { agentName, ecosystemName, schemaTitle } from './names'
 import { buildNetworkModel, type EntityId, type RawNetwork } from './network-model'
 import { participantState } from './participant-state'
+import { ROLES } from './roles'
 
 const fixture = <T>(name: string): T =>
   JSON.parse(readFileSync(join(__dirname, '../../tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
@@ -81,7 +82,42 @@ describe('buildNetworkModel', () => {
       ...raw,
       participants: [other, { ...base, validator_participant_id: other.id }],
     })
+    expect(custom.entities.has(`participant:${other.id}`)).toBe(true)
+    expect(custom.entities.get(`participant:${other.id}`)?.ecosystemId).not.toBe(2)
     expect(custom.parentOf('participant:158')).toBe('ecosystem:2')
+  })
+
+  it('parents a participant to its ecosystem when the validator is missing', () => {
+    const base = raw.participants.find((p) => p.id === 158) as Participant
+    const custom = buildNetworkModel({ ...raw, participants: [{ ...base, validator_participant_id: 99999 }] })
+    expect(custom.parentOf('participant:158')).toBe('ecosystem:2')
+  })
+
+  it('parents a corporation to the ecosystem it controls', () => {
+    const eco = raw.ecosystems.find((e) => e.id === 2)
+    const corpId = eco?.corporation_id as number
+    expect(model.parentOf(`corporation:${corpId}`)).toBe('ecosystem:2')
+    expect(model.entities.get(`corporation:${corpId}`)?.ecosystemId).toBe(2)
+    expect(model.chainToRoot(`corporation:${corpId}`)).toEqual([`corporation:${corpId}`, 'ecosystem:2'])
+    expect(model.childrenOf('ecosystem:2')).toContain(`corporation:${corpId}`)
+  })
+
+  it('keeps a corporation controlling no live ecosystem as a root', () => {
+    const controllers = new Set(raw.ecosystems.map((e) => e.corporation_id))
+    const free = raw.corporations.find((c) => !controllers.has(c.id)) as { id: number }
+    expect(model.parentOf(`corporation:${free.id}`)).toBeNull()
+    expect(model.entities.get(`corporation:${free.id}`)?.ecosystemId).toBeNull()
+  })
+
+  it('exposes role colors and tiers', () => {
+    expect(ROLES).toEqual({
+      ECOSYSTEM: { color: '#a855f7', tier: 0 },
+      ISSUER_GRANTOR: { color: '#3b82f6', tier: 1 },
+      VERIFIER_GRANTOR: { color: '#64748b', tier: 1 },
+      ISSUER: { color: '#22c55e', tier: 2 },
+      VERIFIER: { color: '#f97316', tier: 2 },
+      HOLDER: { color: '#ec4899', tier: 3 },
+    })
   })
 
   it('drops participants and schemas of archived ecosystems', () => {
@@ -93,11 +129,19 @@ describe('buildNetworkModel', () => {
   })
 
   it('relates the chain, descendants and anchored agents', () => {
+    const did = raw.participants.find((p) => p.id === 158)?.did as string
+    const agent: EntityId = `agent:${did}`
     const related = model.related('participant:5')
     expect(related.has('ecosystem:2')).toBe(true)
     expect(related.has('participant:158')).toBe(true)
+    expect(related.has(agent)).toBe(true)
+    expect(model.related('participant:158').has(agent)).toBe(true)
     expect(model.neighbors('participant:5').has('ecosystem:2')).toBe(true)
     expect(model.neighbors('participant:5').has('participant:158')).toBe(true)
+    expect(model.neighbors('participant:158').has(agent)).toBe(true)
+    expect(model.agentAnchors('participant:158')).toEqual([agent])
+    expect(model.agentAnchors(agent)).toContain('participant:158')
+    expect(model.childrenOf('ecosystem:2')).toContain('participant:5')
   })
 
   it('looks entities up by DID, agent first', () => {
@@ -115,6 +159,13 @@ describe('names', () => {
       'Vesta Repair'
     )
     expect(ecosystemName('did:web:health-alliance.example.org')).toBe('Health Alliance')
+  })
+
+  it('skips DID paths and decodes ports', () => {
+    expect(agentName('did:web:health-alliance.example.org:users:alice')).toBe('Health Alliance')
+    expect(agentName('did:webvh:QmSCID:vesta-repair-network.example.org:path:x')).toBe('Vesta Repair Network')
+    expect(ecosystemName('did:webvh:QmSCID:vesta-repair-network.example.org:path:x')).toBe('Vesta Repair')
+    expect(agentName('did:web:localhost%3A3000')).toBe('Localhost')
   })
 
   it('keeps suffixes in agent names', () => {

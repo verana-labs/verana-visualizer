@@ -1,7 +1,9 @@
 const MAX_ACRONYM_LENGTH = 3
 
 function hostOf(did: string): string {
-  return did.split(':').pop() ?? did
+  const parts = did.split(':')
+  const raw = (parts[1] === 'webvh' || parts[1] === 'webs' ? parts[3] : parts[2]) ?? did
+  return raw.replace(/%3A\d*$/i, '')
 }
 
 function titleCase(words: string[]): string {

@@ -100,11 +100,12 @@ export function buildNetworkModel(raw: RawNetwork): NetworkModel {
   }
 
   const ecosystemOf = (p: Participant) => p.ecosystem_id ?? schemaEcosystem.get(p.schema_id) ?? null
-  const livePeople = raw.participants.filter((p) => {
+  const livePeople = raw.participants.flatMap((p) => {
     const ecosystemId = ecosystemOf(p)
-    return ecosystemId !== null && liveEcosystemIds.has(ecosystemId) && isRole(p.role)
+    if (ecosystemId === null || !liveEcosystemIds.has(ecosystemId) || !isRole(p.role)) return []
+    return [{ p, ecosystemId, role: ROLES[p.role] }]
   })
-  const peopleById = new Map(livePeople.map((p) => [p.id, p]))
+  const peopleById = new Map(livePeople.map((live) => [live.p.id, live.p]))
 
   const validatorOf = (p: Participant): number | null => {
     const validatorId = p.validator_participant_id
@@ -120,9 +121,7 @@ export function buildNetworkModel(raw: RawNetwork): NetworkModel {
     return validatorId
   }
 
-  for (const p of livePeople) {
-    const ecosystemId = ecosystemOf(p) as number
-    const role = ROLES[p.role as keyof typeof ROLES]
+  for (const { p, ecosystemId, role } of livePeople) {
     const validatorId = validatorOf(p)
     add(
       {
@@ -142,15 +141,19 @@ export function buildNetworkModel(raw: RawNetwork): NetworkModel {
   for (const eco of liveEcosystems)
     if (!controlledBy.has(eco.corporation_id)) controlledBy.set(eco.corporation_id, eco.id)
   for (const corp of raw.corporations) {
-    add({
-      id: `corporation:${corp.id}`,
-      kind: 'corporation',
-      name: corp.did ? agentName(corp.did) : `Corporation ${corp.id}`,
-      ecosystemId: controlledBy.get(corp.id) ?? null,
-      color: CORPORATION_COLOR,
-      tier: 0,
-      did: corp.did ?? null,
-    })
+    const controlled = controlledBy.get(corp.id)
+    add(
+      {
+        id: `corporation:${corp.id}`,
+        kind: 'corporation',
+        name: corp.did ? agentName(corp.did) : `Corporation ${corp.id}`,
+        ecosystemId: controlled ?? null,
+        color: CORPORATION_COLOR,
+        tier: 0,
+        did: corp.did ?? null,
+      },
+      controlled === undefined ? undefined : `ecosystem:${controlled}`
+    )
   }
 
   for (const did of new Set(raw.dids)) {
