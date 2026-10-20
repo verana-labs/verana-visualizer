@@ -6,6 +6,7 @@ export interface RingSpec {
   center: Vec3
   radius: number
   tilt: number
+  ecosystem?: EntityId
 }
 
 export interface Layout {

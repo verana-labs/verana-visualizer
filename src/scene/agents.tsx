@@ -19,6 +19,7 @@ import { AGENT_SIZE, agentTint } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
 import { usePicking } from './use-picking'
+import { useTimePresence } from './use-time-presence'
 
 const BOB = 0.35
 const WHITE = new Color('#ffffff')
@@ -55,6 +56,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
   const count = Math.max(1, agents.length)
   const ids = useMemo(() => agents.map((agent) => agent.id), [agents])
   const picking = usePicking(ids)
+  const presenceOf = useTimePresence()
 
   useLayoutEffect(() => {
     for (const mesh of [diamonds.current, rings.current])
@@ -78,14 +80,15 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
     agents.forEach((agent, i) => {
       const id = agent.id
       const flash = flashOf(id, now)
+      const presence = presenceOf(id)
       const [x, y, z] = positionOf(id)
       p.set(x, y + Math.sin(now / 1100 + i) * BOB, z)
-      s.setScalar(AGENT_SIZE * (1 + flash) * (id === hovered && id !== selected ? 1.4 : 1))
+      s.setScalar(AGENT_SIZE * (1 + flash) * (id === hovered && id !== selected ? 1.4 : 1) * presence)
       m.compose(p, q.setFromEuler(e.set(0, now * 0.0012 + i, 0)), s)
       diamondMesh.setMatrixAt(i, m)
       m.compose(p, q.setFromEuler(e.set(Math.PI / 2 + Math.sin(now / 1500 + i) * 0.5, now * 0.0008 + i, 0)), s)
       ringMesh.setMatrixAt(i, m)
-      c.copy(agentTint(agentVerdicts.get(id))).multiplyScalar(dimOf(focus.current, id))
+      c.copy(agentTint(agentVerdicts.get(id))).multiplyScalar(dimOf(focus.current, id) * presence)
       if (flash > 0) c.lerp(WHITE, flash * 0.7)
       diamondMesh.setColorAt(i, c)
       ringMesh.setColorAt(i, c.multiplyScalar(0.7))

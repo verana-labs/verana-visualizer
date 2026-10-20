@@ -10,6 +10,7 @@ import { MAX_STAR_SIZE, type SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
 import { usePicking } from './use-picking'
+import { useTimePresence } from './use-time-presence'
 
 interface NodesProps {
   nodes: SceneNode[]
@@ -41,6 +42,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
   const ids = useMemo(() => nodes.map((node) => node.entity.id), [nodes])
   const picking = usePicking(ids)
   const sizeOf = useLensSize()
+  const presenceOf = useTimePresence()
   const scratch = useMemo(
     () => ({ m: new Matrix4(), q: new Quaternion(), p: new Vector3(), s: new Vector3(), c: new Color() }),
     []
@@ -71,11 +73,12 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     nodes.forEach((node, i) => {
       const id = node.entity.id
       const flash = flashOf(id, now)
-      const scale = nodeScale(node, flash, hovered, selected, sizeOf(id, node.size))
+      const presence = presenceOf(id)
+      const scale = nodeScale(node, flash, hovered, selected, sizeOf(id, node.size)) * presence
       p.set(...positionOf(id))
       m.compose(p, q, s.setScalar(scale))
       instances.setMatrixAt(i, m)
-      c.copy(node.color).multiplyScalar(dimOf(focus.current, id))
+      c.copy(node.color).multiplyScalar(dimOf(focus.current, id) * presence)
       if (flash > 0) c.lerp(FLASH_WHITE, flash * 0.8)
       instances.setColorAt(i, c)
     })

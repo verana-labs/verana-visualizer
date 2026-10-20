@@ -10,6 +10,7 @@ import { useGlowTexture } from './glow-texture'
 import { agentTint, type SceneData } from './scene-data'
 import type { FocusSets } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
+import { useTimePresence } from './use-time-presence'
 
 const PER_LINK = 2
 const SPEED = 0.00016
@@ -33,6 +34,7 @@ export function FlowParticles({ data, positionOf, focus }: FlowParticlesProps) {
   const texture = useGlowTexture()
   const pairs = useMemo(() => [...data.validatorLinks, ...data.agentLinks], [data])
   const colorOf = useMemo(() => new Map(data.nodes.map((node) => [node.entity.id, node.color])), [data.nodes])
+  const presenceOf = useTimePresence()
   const { geometry, positions, colors, offsets } = useMemo(() => {
     const total = Math.max(1, pairs.length * PER_LINK)
     const positions = new Float32Array(total * 3)
@@ -70,13 +72,14 @@ export function FlowParticles({ data, positionOf, focus }: FlowParticlesProps) {
       const to = positionOf(parent)
       const color: Color = colorOf.get(child) ?? agentTint(agentVerdicts.get(child))
       const { k, hot } = strength(sets, child, parent)
+      const presence = Math.min(presenceOf(child), presenceOf(parent))
       for (let q = 0; q < PER_LINK; q++) {
         const j = i * PER_LINK + q
         const f = (now * SPEED * (0.6 + offsets[j] * 0.8) * (hot ? HOT_SPEED : 1) + offsets[j] + q / PER_LINK) % 1
         positions[j * 3] = from[0] + (to[0] - from[0]) * f
         positions[j * 3 + 1] = from[1] + (to[1] - from[1]) * f
         positions[j * 3 + 2] = from[2] + (to[2] - from[2]) * f
-        const fade = Math.sin(Math.PI * f) * 0.5 * k
+        const fade = Math.sin(Math.PI * f) * 0.5 * k * presence
         colors[j * 3] = color.r * fade
         colors[j * 3 + 1] = color.g * fade
         colors[j * 3 + 2] = color.b * fade

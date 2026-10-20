@@ -19,6 +19,7 @@ import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
 import { RegistryLens } from '@/features/registry/registry-lens'
 import { SearchPalette } from '@/features/search/search-palette'
+import { TimeLens } from '@/features/time-scrubber/time-lens'
 import { Toast } from '@/features/toast/toast'
 import { useAgentResolution } from '@/features/trust-check/agent-resolution'
 import { useTrustCheckRunner } from '@/features/trust-check/use-trust-check-runner'
@@ -76,6 +77,7 @@ function Observatory() {
       {model && <EconomicsLens cfg={cfg} />}
       {model && <ChainLens cfg={cfg} />}
       {model && <RegistryLens cfg={cfg} />}
+      {model && <TimeLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

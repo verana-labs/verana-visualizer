@@ -54,6 +54,16 @@ export interface SnapshotParams {
 
 const PAGE_SIZE = 1000
 const MAX_EVENTS_LIMIT = 100
+export const PINNED_PROXY_PATH = '/api/indexer'
+
+export function pinnedProxyUrl(query: QueryInfo, indexerUrl: string): string | undefined {
+  // the deployed indexers' CORS preflight rejects At-Block-Height, so browsers go through our proxy
+  const height = query.headers['At-Block-Height']
+  if (typeof window === 'undefined' || query.method !== 'GET' || !height) return undefined
+  const real = new URL(query.url)
+  const prefix = new URL(indexerUrl).pathname.replace(/\/$/, '')
+  return `${window.location.origin}${PINNED_PROXY_PATH}/at/${height}${real.pathname.slice(prefix.length)}${real.search}`
+}
 
 function pageOf<K extends string, S extends z.ZodType>(key: K, item: S) {
   return z.object({ [key]: z.array(item) } as Record<K, z.ZodArray<S>>).passthrough()
@@ -70,7 +80,8 @@ export function createIndexerClient(cfg: NetworkConfig, atHeight?: number, optio
   })
 
   async function get<T>(path: string, schema: z.ZodType<T>, params?: ListParams, headers?: Record<string, string>) {
-    return requestJson(getQuery(path, params, headers), schema, requestSignal(options))
+    const query = getQuery(path, params, headers)
+    return requestJson(query, schema, requestSignal(options), pinnedProxyUrl(query, cfg.indexerUrl))
   }
 
   async function listAll<K extends string, S extends z.ZodType<{ id: number }>>(
