@@ -57,10 +57,10 @@ export function HealthStrip({ cfg }: { cfg: NetworkConfig }) {
       <button
         type="button"
         aria-expanded={open}
-        aria-label="Service health"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full cursor-pointer items-center gap-2 text-left hover:text-white"
       >
+        <span className="sr-only">Service health:</span>
         {report === null ? (
           <span>checking services…</span>
         ) : (
@@ -74,6 +74,7 @@ export function HealthStrip({ cfg }: { cfg: NetworkConfig }) {
               >
                 <Dot color={service.up ? TONES.green : DOWN} />
                 {service.id}
+                <span className="sr-only">{service.up ? ' up,' : ' down,'}</span>
               </span>
             ))}
             <span
@@ -85,7 +86,9 @@ export function HealthStrip({ cfg }: { cfg: NetworkConfig }) {
             </span>
           </>
         )}
-        <span className="ml-auto">{open ? '▴' : '▾'}</span>
+        <span aria-hidden="true" className="ml-auto">
+          {open ? '▴' : '▾'}
+        </span>
       </button>
       {open && report && (
         <div data-testid="health-detail" className="mt-1.5 space-y-1">

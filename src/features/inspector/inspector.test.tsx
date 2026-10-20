@@ -115,6 +115,19 @@ describe('Inspector', () => {
     )
   })
 
+  it('takes focus when it opens and gives it back when it closes', async () => {
+    const user = userEvent.setup()
+    const outside = document.createElement('button')
+    outside.textContent = 'outside'
+    document.body.append(outside)
+    outside.focus()
+    show(baseRaw(), 'participant:158')
+    expect(screen.getByTestId('inspector')).toHaveFocus()
+    await user.click(screen.getByRole('button', { name: 'Close inspector' }))
+    expect(outside).toHaveFocus()
+    outside.remove()
+  })
+
   it('renders nothing without a selection', () => {
     useObservatory.setState({ model: buildNetworkModel(baseRaw()), selected: null })
     const { container } = render(<Inspector frontendUrl={FRONTEND} chainId="vna-testnet-1" />)

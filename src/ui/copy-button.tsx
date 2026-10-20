@@ -29,14 +29,20 @@ export function CopyButton({ label, text, className = '' }: CopyButtonProps) {
     reset.current = setTimeout(() => setStatus('idle'), COPIED_MS)
   }
 
+  const result = status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : ''
   return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={copy}
-      className={`cursor-pointer rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] hover:border-[var(--accent)] ${className}`}
-    >
-      {status === 'copied' ? 'Copied' : status === 'failed' ? 'Copy failed' : label}
-    </button>
+    <>
+      <button
+        type="button"
+        aria-label={label}
+        onClick={copy}
+        className={`cursor-pointer rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] hover:border-[var(--accent)] ${className}`}
+      >
+        {result || label}
+      </button>
+      <span role="status" className="sr-only">
+        {result}
+      </span>
+    </>
   )
 }

@@ -153,7 +153,7 @@ export function TimeScrubber(props: TimeScrubberProps) {
           </Button>
         </span>
       </div>
-      <div className="relative mt-5 h-7">
+      <div className="relative mt-5 h-7 rounded-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[var(--accent)]">
         {props.historyStatus === 'success' && (
           <DensityStrip density={props.density} days={props.days} head={head} height={height} />
         )}

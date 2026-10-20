@@ -52,6 +52,12 @@ describe('TimeScrubber', () => {
     expect(screen.getByText(/157 participants/)).toBeInTheDocument()
   })
 
+  it('shows a visible focus ring around the strip while the hidden range input has keyboard focus', () => {
+    render(<TimeScrubber {...props()} />)
+    const strip = screen.getByLabelText('Block height').parentElement as HTMLElement
+    expect(strip.className).toMatch(/has-\[:focus-visible\]:ring-2/)
+  })
+
   it('offers Pause while playing and disables Next event at the head', () => {
     render(<TimeScrubber {...props({ playing: true, height: 96135 })} />)
     expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument()

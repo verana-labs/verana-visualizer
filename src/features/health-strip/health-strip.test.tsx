@@ -27,6 +27,15 @@ describe('HealthStrip', () => {
     expect(strip).not.toHaveTextContent(/last transaction/i)
   })
 
+  it('reads each service state to assistive tech, not only as a coloured dot', async () => {
+    stubNetwork(failing('/health', 502))
+    render(<HealthStrip cfg={testnetCfg} />)
+    await screen.findByText(/lag 2 blocks/)
+    expect(screen.getByRole('button', { name: /service health/i })).toHaveAccessibleName(
+      /indexer up.*graph down.*chain up.*lag 2 blocks/i
+    )
+  })
+
   it('turns the lag amber beyond 3 blocks', async () => {
     stubNetwork((url) =>
       url.pathname === '/v4/indexer/block-height'

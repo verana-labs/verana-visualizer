@@ -49,6 +49,16 @@ describe('SearchPalette', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
+  it('hands focus back to the search trigger when it closes', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    const trigger = screen.getByRole('button', { name: /search the network/i })
+    await user.click(trigger)
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+    expect(trigger).toHaveFocus()
+  })
+
   it('does not open on / while typing in an input', async () => {
     const user = userEvent.setup()
     render(

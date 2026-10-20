@@ -112,6 +112,13 @@ function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onCl
   const model = useObservatory((s) => s.model)
   const select = useObservatory((s) => s.select)
   const [query, setQuery] = useState(() => useObservatory.getState().paletteQuery)
+  const [returnTo] = useState(() => document.activeElement)
+  useEffect(
+    () => () => {
+      if (returnTo instanceof HTMLElement && returnTo.isConnected) returnTo.focus({ preventScroll: true })
+    },
+    [returnTo]
+  )
   const results = useMemo(() => {
     const found = model ? searchEntities(model, query) : []
     return mode === 'check' ? found.filter((entity) => entity.kind === 'agent') : found

@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
 import { priced, vnaFromUvna } from '@/features/economics-sim/format'
@@ -295,6 +295,17 @@ export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chain
   const queries = useObservatory((s) => s.queries)
   const checking = useObservatory((s) => s.trustCheck !== null)
   const entity = selected && model ? model.entities.get(selected) : undefined
+  const panelRef = useRef<HTMLDivElement>(null)
+  const open = selected !== null && model !== null && !checking
+
+  useEffect(() => {
+    if (!open) return
+    const previous = document.activeElement
+    panelRef.current?.focus({ preventScroll: true })
+    return () => {
+      if (previous instanceof HTMLElement && previous.isConnected) previous.focus({ preventScroll: true })
+    }
+  }, [open])
 
   useEffect(() => {
     if (!selected && !checking) return
@@ -322,10 +333,12 @@ export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chain
 
   return (
     <GlassPanel
+      ref={panelRef}
+      tabIndex={-1}
       data-testid="inspector"
       role="dialog"
       aria-label={`${entity?.name ?? selected} details`}
-      className={PANEL_CLASS}
+      className={`${PANEL_CLASS} focus:outline-none`}
     >
       <CloseButton label="Close inspector" onClose={() => useObservatory.getState().select(null)} />
       <LiveTag />
