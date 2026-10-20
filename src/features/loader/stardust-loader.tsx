@@ -3,6 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FetchError } from '@/lib/fetch-json'
+import { createLogoField, drawLogoField, type LogoField, type LogoFrame, rasteriseLogoMask } from './logo-constellation'
+import { seeded } from './logo-particles'
 
 interface StardustLoaderProps {
   progress: number
@@ -16,29 +18,19 @@ interface StardustLoaderProps {
 const INK = '#c4b5fd'
 const ERROR_INK = '#f87171'
 const RING_DOTS = 72
-const CORE_DOTS = 520
 const HALO_DOTS = 220
 const EXIT_MS = 1900
 const REDUCED_EXIT_MS = 300
 const LOGO_SIZE = 56
+const LOGO_SCALE_MAX = 94
+const MASK_SIZE = 216
 
 const clamp01 = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : x)
 
 const ringLit = (position: number, progress: number) => clamp01((progress * (31 / 30) - position) * 30)
 
-function seeded(seed: number) {
-  let s = seed >>> 0
-  return () => {
-    s = (s + 0x6d2b79f5) >>> 0
-    let t = s
-    t = Math.imul(t ^ (t >>> 15), t | 1)
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 interface Dot {
-  role: 'core' | 'halo' | 'ring'
+  role: 'halo' | 'ring'
   a: number
   b: number
   c: number
@@ -50,9 +42,6 @@ interface Dot {
 function buildDots(): Dot[] {
   const rnd = seeded(5)
   const dots: Dot[] = []
-  for (let i = 0; i < CORE_DOTS; i++) {
-    dots.push({ role: 'core', a: rnd(), b: rnd(), c: rnd(), size: 0.9 + rnd() ** 5 * 1.3, ox: 0, oy: 0 })
-  }
   for (let i = 0; i < HALO_DOTS; i++) {
     dots.push({ role: 'halo', a: rnd(), b: rnd(), c: rnd(), size: 0.9 + rnd() ** 5 * 1.3, ox: 0, oy: 0 })
   }
@@ -78,18 +67,12 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
   const dots = useMemo(buildDots, [])
   const [still] = useState(prefersReducedMotion)
   const [shown, setShown] = useState(progress)
-  const [entered, setEntered] = useState(still)
   const [exiting, setExiting] = useState(false)
   const exitMs = still ? REDUCED_EXIT_MS : EXIT_MS
 
   progressRef.current = progress
   errorRef.current = error
   onExitedRef.current = onExited
-
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setEntered(true))
-    return () => cancelAnimationFrame(id)
-  }, [])
 
   useEffect(() => {
     if (!done) return
@@ -110,6 +93,26 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
     const t0 = last
     let glide = progressRef.current
     let lastPct = Math.round(glide * 100)
+    let logo: LogoField | null = null
+    let logoStart = 0
+    const local = { x: 0, y: 0 }
+    const frame: LogoFrame = {
+      cx: 0,
+      cy: 0,
+      scale: 0,
+      elapsed: 0,
+      t: 0,
+      dt: 0,
+      exit: 0,
+      hover: 0,
+      pointer: null,
+      still,
+    }
+    const mask = rasteriseLogoMask(MASK_SIZE)
+    if (mask) {
+      logo = createLogoField(mask, root.clientWidth < 640 ? 1200 : 2400, 11)
+      logoStart = performance.now()
+    }
 
     const tick = (now: number) => {
       const dt = Math.min(64, now - last)
@@ -142,20 +145,32 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
       const ringRadius = unit * 0.2
       const pointer = pointerRef.current
       const reach = unit * 0.12
-      const spin = still ? 0 : t * 0.14
+
+      if (logo) {
+        const scale = Math.min(LOGO_SCALE_MAX, unit * 0.13)
+        let over = false
+        if (pointer && !still) {
+          local.x = pointer.x - cx
+          local.y = pointer.y - cy
+          over = Math.abs(local.x) < scale && Math.abs(local.y) < scale * 0.98
+        }
+        frame.cx = cx
+        frame.cy = cy
+        frame.scale = scale
+        frame.elapsed = now - logoStart
+        frame.t = t
+        frame.dt = dt / 1000
+        frame.exit = exit
+        frame.hover += ((over ? 1 : 0) - frame.hover) * Math.min(1, frame.dt * 3)
+        frame.pointer = pointer && !still && exit === 0 ? local : null
+        drawLogoField(ctx, logo, frame)
+      }
 
       for (const dot of dots) {
         let x: number
         let y: number
         let alpha: number
-        if (dot.role === 'core') {
-          const radius =
-            LOGO_SIZE * 0.75 + unit * 0.06 * dot.a ** 1.5 * (1 + (still ? 0 : 0.06 * Math.sin(t * 1.6 + dot.c * 9)))
-          const angle = dot.b * Math.PI * 2 + spin * (1 - dot.a)
-          x = cx + Math.cos(angle) * radius
-          y = cy + Math.sin(angle) * radius
-          alpha = (0.25 + 0.75 * (1 - dot.a)) * (0.35 + 0.65 * glide)
-        } else if (dot.role === 'halo') {
+        if (dot.role === 'halo') {
           const angle = dot.b * Math.PI * 2 + (still ? 0 : t * 0.05) * (dot.c < 0.5 ? 1 : -1)
           const radius = ringRadius * (1.08 + dot.a * 0.3)
           x = cx + Math.cos(angle) * radius
@@ -229,22 +244,7 @@ export function StardustLoader({ progress, label, error, done, onExited, onRetry
       }}
     >
       <canvas ref={canvasRef} className="absolute inset-0 size-full" aria-hidden />
-      <div className="pointer-events-none absolute left-1/2 top-[47%] -translate-x-1/2 -translate-y-1/2">
-        <Image
-          src="/logo.svg"
-          alt="Verana"
-          width={LOGO_SIZE}
-          height={LOGO_SIZE}
-          priority
-          className="block"
-          style={{
-            filter: 'drop-shadow(0 0 14px rgba(167,139,250,.65))',
-            opacity: exiting ? 0 : entered ? 1 : 0,
-            transform: exiting && !still ? 'scale(1.8)' : entered ? 'scale(1)' : 'scale(.4)',
-            transition: still ? 'none' : exiting ? `all ${exitMs}ms ease-in` : 'all 700ms cubic-bezier(.2,.8,.2,1)',
-          }}
-        />
-      </div>
+      <Image src="/logo.svg" alt="Verana" width={LOGO_SIZE} height={LOGO_SIZE} priority className="sr-only" />
       <div
         className="absolute left-1/2 top-[47%] flex -translate-x-1/2 flex-col items-center gap-2"
         style={{ marginTop: '26vmin' }}

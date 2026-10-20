@@ -24,6 +24,7 @@ describe('StardustLoader', () => {
     render(<StardustLoader progress={3 / 7} label="Reading schemas…" error={null} done={false} onExited={() => {}} />)
     const logo = screen.getByRole('img', { name: 'Verana' })
     expect(logo).toHaveAttribute('src', '/logo.svg')
+    expect(logo).toHaveClass('sr-only')
     expect(screen.getByText('Reading schemas…')).toBeInTheDocument()
     expect(screen.getByText('043')).toBeInTheDocument()
   })
@@ -40,7 +41,9 @@ describe('StardustLoader', () => {
         onRetry={onRetry}
       />
     )
-    expect(screen.getByRole('img', { name: 'Verana' })).toHaveAttribute('src', '/logo.svg')
+    const logo = screen.getByRole('img', { name: 'Verana' })
+    expect(logo).toHaveAttribute('src', '/logo.svg')
+    expect(logo).toHaveClass('sr-only')
     expect(screen.getByRole('alert')).toHaveTextContent(`Could not read the network: ${error.message}`)
     await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
     expect(onRetry).toHaveBeenCalledTimes(1)
