@@ -25,7 +25,7 @@ describe('proxyIndexer', () => {
     )
     expect(res.status).toBe(200)
     expect(res.headers.get('Cache-Control')).toBe('public, max-age=60')
-    expect(res.headers.get('Vary')).toBe('At-Block-Height')
+    expect(res.headers.get('Vary')).toBeNull()
     expect(await res.json()).toEqual({ ecosystems: [] })
     const [url, init] = upstream.mock.calls[0]
     expect(url).toBe(`${INDEXER}/v4/ecosystem/list?limit=1000&sort=-id`)
@@ -44,7 +44,7 @@ describe('proxyIndexer', () => {
     expect(res.status).toBe(404)
     expect(await res.text()).toBe('{"error":"nope"}')
     expect(res.headers.get('Cache-Control')).toBe('no-store')
-    expect(res.headers.get('Vary')).toBe('At-Block-Height')
+    expect(res.headers.get('Vary')).toBeNull()
   })
 
   it.each([

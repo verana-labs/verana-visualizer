@@ -1,7 +1,8 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import {
+  binaryLinks,
   binaryVersion,
   formatDecimal,
   formatProposalStatus,
@@ -86,7 +87,7 @@ function Upgrade({ proposal, blockHeight }: { proposal: GovernanceProposal; bloc
   const plan = proposal.upgrade
   if (!plan) return null
   const version = binaryVersion(plan, proposal.title)
-  const binaries = Object.entries(parsePlanInfo(plan.info)?.binaries ?? {})
+  const binaries = binaryLinks(parsePlanInfo(plan.info))
   const execution = upgradeExecution(proposal.status, plan.height, blockHeight)
   return (
     <Section title="Software upgrade">
@@ -98,10 +99,17 @@ function Upgrade({ proposal, blockHeight }: { proposal: GovernanceProposal; bloc
       </Fact>
       {plan.authority && <Fact label="Authority">{plan.authority}</Fact>}
       <p className="mt-1.5 text-[11.5px] text-scene-mut">{execution.message}</p>
-      {binaries.map(([platform, url]) => (
-        <ExternalLink key={platform} variant="row" href={url}>
-          <span className="truncate">{`${platform} ↗`}</span>
-        </ExternalLink>
+      {binaries.map(({ platform, onChain, corrected }) => (
+        <Fragment key={platform}>
+          <ExternalLink variant="row" href={onChain}>
+            <span className="truncate">{corrected ? `${platform} (on chain) ↗` : `${platform} ↗`}</span>
+          </ExternalLink>
+          {corrected && (
+            <ExternalLink variant="row" href={corrected}>
+              <span className="truncate">{`${platform} (corrected file name) ↗`}</span>
+            </ExternalLink>
+          )}
+        </Fragment>
       ))}
     </Section>
   )

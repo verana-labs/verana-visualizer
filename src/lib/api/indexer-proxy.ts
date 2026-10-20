@@ -62,7 +62,6 @@ export async function proxyIndexer(
     headers: {
       'content-type': response.headers.get('content-type') ?? 'application/json',
       'Cache-Control': response.ok ? 'public, max-age=60' : 'no-store',
-      Vary: 'At-Block-Height',
       ...HARDENING,
     },
   })

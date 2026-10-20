@@ -247,4 +247,36 @@ describe('ProposalDetails', () => {
       'https://github.com/verana-labs/verana/releases/download/v0.9/veranad-linux-amd64'
     )
   })
+
+  it('links the raw on-chain binary URL and labels a corrected file name separately', () => {
+    const onChain = 'https://github.com/verana-labs/verana/releases/download/v0.9/veranad-v0.9-linux-amd64'
+    const chain = fromGovProposal({
+      id: '10',
+      status: 'PROPOSAL_STATUS_PASSED',
+      title: 'Upgrade',
+      summary: '',
+      messages: [
+        {
+          '@type': '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade',
+          authority: 'verana1gov',
+          plan: { name: 'v0.9', height: '500', info: JSON.stringify({ binaries: { 'linux/amd64': onChain } }) },
+        },
+      ],
+      final_tally_result: { yes_count: '10', no_count: '0', abstain_count: '0', no_with_veto_count: '0' },
+    })
+    render(
+      <ProposalDetails
+        model={withProposals(testnetModel(), [chain])}
+        proposal={chain}
+        votes={{ status: 'idle' }}
+        query={query}
+        blockHeight={800}
+      />
+    )
+    expect(screen.getByRole('link', { name: 'linux/amd64 (on chain) ↗' })).toHaveAttribute('href', onChain)
+    expect(screen.getByRole('link', { name: 'linux/amd64 (corrected file name) ↗' })).toHaveAttribute(
+      'href',
+      'https://github.com/verana-labs/verana/releases/download/v0.9/veranad-linux-amd64'
+    )
+  })
 })

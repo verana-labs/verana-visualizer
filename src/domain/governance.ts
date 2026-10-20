@@ -135,13 +135,27 @@ export function upgradePlanOf(messages: readonly Message[]): UpgradePlan | null 
   }
 }
 
-function fixBinaryUrl(url: string): string {
+export interface BinaryLink {
+  platform: string
+  onChain: string
+  corrected: string | null
+}
+
+function correctedBinaryUrl(url: string): string | null {
   const match = url.match(/^(https:\/\/github\.com\/[^/]+\/[^/]+\/releases\/download\/)([^/]+)\/(.+)$/)
-  if (!match) return url
+  if (!match) return null
   const [, basePath, version, filename] = match
-  if (/^veranad-(linux|darwin)-/.test(filename)) return url
+  if (/^veranad-(linux|darwin)-/.test(filename)) return null
   const platform = filename.match(/^veranad-.*?(-(?:linux|darwin)-.+)$/)
-  return platform ? `${basePath}${version}/veranad-${platform[1].slice(1)}` : url
+  return platform ? `${basePath}${version}/veranad-${platform[1].slice(1)}` : null
+}
+
+export function binaryLinks(info: ParsedPlanInfo | null): BinaryLink[] {
+  return Object.entries(info?.binaries ?? {}).map(([platform, onChain]) => ({
+    platform,
+    onChain,
+    corrected: correctedBinaryUrl(onChain),
+  }))
 }
 
 export function parsePlanInfo(info: string): ParsedPlanInfo | null {
@@ -155,8 +169,7 @@ export function parsePlanInfo(info: string): ParsedPlanInfo | null {
   if (!isRecord(parsed)) return null
   if (!isRecord(parsed.binaries)) return parsed
   const binaries: Record<string, string> = {}
-  for (const [platform, url] of Object.entries(parsed.binaries))
-    if (typeof url === 'string') binaries[platform] = fixBinaryUrl(url)
+  for (const [platform, url] of Object.entries(parsed.binaries)) if (typeof url === 'string') binaries[platform] = url
   return { ...parsed, binaries }
 }
 

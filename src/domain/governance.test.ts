@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { testnetModel } from '@/features/search/search-fixture'
 import type { GovProposal, Group, GroupProposal } from '@/lib/api/schemas'
 import {
+  binaryLinks,
   binaryVersion,
   corporationConstellations,
   formatDecimal,
@@ -84,17 +85,26 @@ describe('upgrade proposal parsing', () => {
     expect(upgradePlanOf([{ '@type': '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade' }])).toBeNull()
   })
 
-  it('parses plan info JSON and fixes binary file names that embed the version', () => {
-    const info = parsePlanInfo(JSON.stringify({ binaries }))
-    expect(info?.binaries).toEqual({
-      'linux/amd64': 'https://github.com/verana-labs/verana/releases/download/v0.9-dev.7/veranad-linux-amd64',
-      'darwin/arm64': 'https://github.com/verana-labs/verana/releases/download/v0.9-dev.7/veranad-darwin-arm64',
-    })
+  it('keeps the on-chain binary URLs exactly as published', () => {
+    expect(parsePlanInfo(JSON.stringify({ binaries }))?.binaries).toEqual(binaries)
+  })
+
+  it('offers a labelled correction only for GitHub file names that embed the version', () => {
+    expect(binaryLinks(parsePlanInfo(JSON.stringify({ binaries })))).toEqual([
+      {
+        platform: 'linux/amd64',
+        onChain: binaries['linux/amd64'],
+        corrected: 'https://github.com/verana-labs/verana/releases/download/v0.9-dev.7/veranad-linux-amd64',
+      },
+      { platform: 'darwin/arm64', onChain: binaries['darwin/arm64'], corrected: null },
+    ])
   })
 
   it('keeps non GitHub binary URLs as they are', () => {
     const info = parsePlanInfo(JSON.stringify({ binaries: { 'linux/amd64': 'https://example.org/veranad' } }))
-    expect(info?.binaries).toEqual({ 'linux/amd64': 'https://example.org/veranad' })
+    expect(binaryLinks(info)).toEqual([
+      { platform: 'linux/amd64', onChain: 'https://example.org/veranad', corrected: null },
+    ])
   })
 
   it('returns null for plan info that is not a JSON object', () => {
