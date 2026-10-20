@@ -83,10 +83,14 @@ export function resolveNetworkConfig(source: EnvSource): NetworkConfig {
 
   return {
     indexerUrl,
-    graphUrl: explicitGraph ? normalizeUrl(explicitGraph) : derive(scheme, 'graph', network, indexerUrl),
+    graphUrl: explicitGraph
+      ? normalizeUrl(explicitGraph)
+      : derive(scheme, 'graph', network, indexerUrl, 'NEXT_PUBLIC_VERANA_GRAPH_URL'),
     restUrl,
     rpcUrl,
-    frontendUrl: explicitFrontend ? normalizeUrl(explicitFrontend) : derive(scheme, 'app', network, indexerUrl),
+    frontendUrl: explicitFrontend
+      ? normalizeUrl(explicitFrontend)
+      : derive(scheme, 'app', network, indexerUrl, 'NEXT_PUBLIC_VERANA_FRONTEND_URL'),
     peerVisualizerUrl: explicitPeer ? normalizeUrl(explicitPeer) : derivedPeer,
     chainId,
     chainName,
@@ -98,9 +102,12 @@ function derive(
   scheme: string | undefined,
   subdomain: string,
   network: string | undefined,
-  indexerUrl: string
+  indexerUrl: string,
+  variable: string
 ): string {
-  if (!scheme || !network) return indexerUrl
+  if (!scheme || !network) {
+    throw new Error(`${variable} is required when the indexer is not idx.<net>.verana.network (got ${indexerUrl})`)
+  }
   return `${scheme}${subdomain}.${network}.verana.network`
 }
 

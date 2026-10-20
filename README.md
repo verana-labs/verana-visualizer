@@ -71,11 +71,11 @@ Variables are read at runtime (`next-runtime-env`), so one image serves any netw
 | `NEXT_PUBLIC_VERANA_REST_ENDPOINT` | yes | chain REST API |
 | `NEXT_PUBLIC_VERANA_CHAIN_ID` | yes | e.g. `vna-testnet-1` |
 | `NEXT_PUBLIC_VERANA_CHAIN_NAME` | no | defaults to the network in the indexer host (`idx.<net>.verana.network`), required otherwise |
-| `NEXT_PUBLIC_VERANA_GRAPH_URL` | no | defaults to `https://graph.<net>.verana.network` |
-| `NEXT_PUBLIC_VERANA_FRONTEND_URL` | no | defaults to `https://app.<net>.verana.network` |
+| `NEXT_PUBLIC_VERANA_GRAPH_URL` | custom hosts only | defaults to `https://graph.<net>.verana.network` |
+| `NEXT_PUBLIC_VERANA_FRONTEND_URL` | custom hosts only | defaults to `https://app.<net>.verana.network` |
 | `NEXT_PUBLIC_VERANA_PEER_VISUALIZER_URL` | no | network switch target, defaults to `vis.testnet` for devnet and `vis.devnet` for testnet, none for other hosts |
 
-Derivations only apply when the indexer URL matches `idx.<net>.verana.network`; otherwise the optional ones fall back to the indexer URL (graph, frontend) or are hidden (peer).
+Derivations only apply when the indexer URL matches `idx.<net>.verana.network`. For any other host the graph and frontend URLs must be set explicitly (the app refuses to start without them) and the peer switch is hidden.
 
 Legacy names still work when the primary is unset:
 

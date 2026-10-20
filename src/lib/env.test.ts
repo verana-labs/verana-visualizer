@@ -28,6 +28,8 @@ describe('resolveNetworkConfig', () => {
     const c = resolveNetworkConfig({
       ...legacyTestnet,
       NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://x.example',
+      NEXT_PUBLIC_VERANA_GRAPH_URL: 'https://graph.x.example',
+      NEXT_PUBLIC_VERANA_FRONTEND_URL: 'https://app.x.example',
       NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://rest.example',
       NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.example',
       NEXT_PUBLIC_VERANA_CHAIN_ID: 'chain-x',
@@ -55,9 +57,21 @@ describe('resolveNetworkConfig', () => {
     const c = resolveNetworkConfig({
       ...legacyTestnet,
       NEXT_PUBLIC_IDX_ENDPOINT: 'http://localhost:3001',
+      NEXT_PUBLIC_VERANA_GRAPH_URL: 'http://localhost:3002',
+      NEXT_PUBLIC_VERANA_FRONTEND_URL: 'http://localhost:3003',
     })
     expect(c.peerVisualizerUrl).toBeNull()
     expect(c.indexerWsUrl).toBe('ws://localhost:3001/v4/indexer/subscribe')
+  })
+
+  it('throws naming the graph and frontend variables when a custom indexer host cannot derive them', () => {
+    const custom = { ...legacyTestnet, NEXT_PUBLIC_IDX_ENDPOINT: 'http://localhost:3001' }
+    expect(() => resolveNetworkConfig(custom)).toThrow(
+      'NEXT_PUBLIC_VERANA_GRAPH_URL is required when the indexer is not idx.<net>.verana.network (got http://localhost:3001)'
+    )
+    expect(() => resolveNetworkConfig({ ...custom, NEXT_PUBLIC_VERANA_GRAPH_URL: 'http://localhost:3002' })).toThrow(
+      'NEXT_PUBLIC_VERANA_FRONTEND_URL is required when the indexer is not idx.<net>.verana.network (got http://localhost:3001)'
+    )
   })
 
   it('lets explicit graph, frontend and peer urls win over derivation', () => {
