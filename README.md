@@ -60,6 +60,8 @@ BASE_URL=https://vis.testnet.verana.network NETWORK=testnet pnpm live
 
 `live` hits a deployed instance and also runs daily in the `Live Smoke` workflow.
 
+`pnpm perf` builds with `NEXT_PUBLIC_PERF_HARNESS=1`, which turns on a test-only `/perf` page rendering a synthetic 5,000-participant network, then asserts at least 30 fps over 10 s in Chromium with the GPU (`PERF_GL_ARGS` overrides the Chromium flags, e.g. SwiftShader). Without that variable at build time the page is a 404 and the harness is not bundled, so rebuild with `pnpm build` afterwards. It is not part of `pnpm e2e` or CI.
+
 ## Configure
 
 Variables are read at runtime (`next-runtime-env`), so one image serves any network.
