@@ -11,8 +11,9 @@
     "check-types": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test tests/e2e --pass-with-no-tests",
-    "test:live": "playwright test tests/live --pass-with-no-tests",
+    "test:coverage": "vitest run --coverage",
+    "e2e": "playwright test tests/e2e --pass-with-no-tests",
+    "live": "playwright test tests/live --pass-with-no-tests",
     "gen:api": "openapi-typescript src/lib/api/openapi/indexer.json -o src/lib/api/generated/indexer.ts && openapi-typescript src/lib/api/openapi/graph.json -o src/lib/api/generated/graph.ts",
     "record:fixtures": "tsx scripts/record-fixtures.ts"
   },

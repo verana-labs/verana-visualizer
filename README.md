@@ -53,11 +53,12 @@ The container refuses to start if the indexer, RPC or REST variable is missing.
 pnpm check-format
 pnpm check-types
 pnpm test          # unit, Vitest
-pnpm test:e2e      # Playwright against fixtures
-BASE_URL=https://vis.testnet.verana.network NETWORK=testnet pnpm test:live
+pnpm test:coverage # unit with coverage
+pnpm e2e           # Playwright against fixtures
+BASE_URL=https://vis.testnet.verana.network NETWORK=testnet pnpm live
 ```
 
-`test:live` hits a deployed instance and also runs daily in the `Live Smoke` workflow.
+`live` hits a deployed instance and also runs daily in the `Live Smoke` workflow.
 
 ## Configure
 
