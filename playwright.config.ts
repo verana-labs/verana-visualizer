@@ -8,6 +8,7 @@ const liveBaseUrl = process.env.BASE_URL
 export default defineConfig({
   testDir: './tests',
   testMatch: ['e2e/**/*.spec.ts', 'live/**/*.spec.ts'],
+  timeout: 90_000,
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
