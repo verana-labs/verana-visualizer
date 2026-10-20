@@ -93,9 +93,21 @@ function defaultResponse(url: URL): Response | undefined {
 
 export type Override = (url: URL) => Response | Promise<Response> | undefined
 
+const PROXIED = /^\/api\/indexer\/at\/\d+(\/v4\/.*)$/
+
+const unproxied = (url: URL) => {
+  const match = PROXIED.exec(url.pathname)
+  return match?.[1] ? new URL(`${match[1]}${url.search}`, 'https://idx.testnet.verana.network') : url
+}
+
 export function stubNetwork(...overrides: Override[]) {
   const mock = vi.fn(async (input: string | URL | Request) => {
-    const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url)
+    const url = unproxied(
+      new URL(
+        typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
+        'http://localhost:3000'
+      )
+    )
     for (const override of overrides) {
       const response = override(url)
       if (response) return response
