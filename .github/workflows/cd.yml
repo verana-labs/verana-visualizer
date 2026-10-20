@@ -43,6 +43,7 @@ jobs:
       - name: Compute tags
         id: compute-tags
         run: |
+          echo "APP_VERSION=${RELEASE_VERSION#v}" >> $GITHUB_ENV
           if [ "$RELEASE_TYPE" = "stable" ]; then
             echo "IMAGE_TAG=latest" >> $GITHUB_ENV
             echo "SUFFIX=" >> $GITHUB_ENV
@@ -75,6 +76,8 @@ jobs:
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}.${{ env.RELEASE_PATCH_SHORT }}${{ env.SUFFIX }}
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+          build-args: |
+            APP_VERSION=${{ env.APP_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -91,6 +94,8 @@ jobs:
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}${{ env.SUFFIX }}
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:v${{ env.RELEASE_MAJOR }}.${{ env.RELEASE_MINOR }}${{ env.SUFFIX }}
             ${{ secrets.DOCKER_HUB_LOGIN }}/${{ env.IMAGE_NAME }}:${{ env.RELEASE_VERSION }}
+          build-args: |
+            APP_VERSION=${{ env.APP_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -109,7 +114,7 @@ jobs:
             )
           fi
           for tag in "${TAGS[@]}"; do
-            helm package ./charts --version $tag -d ./charts
+            helm package ./charts --version $tag --app-version "$APP_VERSION" -d ./charts
             helm push ./charts/${CHART_NAME}-$tag.tgz oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}
           done
 

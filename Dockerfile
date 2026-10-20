@@ -12,6 +12,8 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 WORKDIR /app
+ARG APP_VERSION
+ENV APP_VERSION=$APP_VERSION
 RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
