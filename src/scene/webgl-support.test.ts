@@ -13,4 +13,12 @@ describe('hasWebGL', () => {
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
     expect(hasWebGL()).toBe(false)
   })
+
+  it('releases the probe context right away so it never counts against the browser limit', () => {
+    const loseContext = vi.fn()
+    const probe = { getExtension: (name: string) => (name === 'WEBGL_lose_context' ? { loseContext } : null) }
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(probe as unknown as RenderingContext)
+    expect(hasWebGL()).toBe(true)
+    expect(loseContext).toHaveBeenCalledTimes(1)
+  })
 })
