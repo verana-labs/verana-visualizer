@@ -11,7 +11,7 @@
 
 ## What it is
 
-A Next.js app that renders the Verana network (participants, ecosystems, schemas, permissions, governance) as an interactive 3D galaxy. Seven lenses reorganise the same entities, you can search, inspect any participant, check whether a DID is trusted, and share a link that restores lens and selection. Everything shown comes from the indexer, the REST API and the RPC of the network it is pointed at. If a call fails, the UI says so instead of showing zeros.
+A Next.js app that renders the Verana network (ecosystems, credential schemas, participants, corporations, services, governance) as an interactive 3D galaxy. Seven lenses reorganise the same entities, you can search, inspect any participant, check whether a DID is trusted, and share a link that restores lens and selection. Everything shown comes from the indexer, the REST API and the RPC of the network it is pointed at. If a call fails, the UI says so instead of showing zeros.
 
 Spec: [`v4/verana-visualizer/spec.md`](https://github.com/verana-labs/verana-spec/blob/main/v4/verana-visualizer/spec.md) in verana-spec.
 
@@ -89,7 +89,7 @@ Legacy names still work when the primary is unset:
 
 ## Health
 
-`/health` runs live sanity checks against the indexer, the chain and the websocket and shows each as pass, fail or skipped, add `?format=json` for the machine-readable report. It is the first place to look when a deployment shows an empty scene.
+`/health` runs live sanity checks against the indexer, the chain and the websocket from the browser and shows each as pass, fail or skipped. `/health?format=json` renders the same report as JSON text in the page once the checks finish; it is a client-rendered page, not a JSON API, so scripts need a browser (the report's `<pre data-testid="health-json">` carries `data-state="done"` when complete). It is the first place to look when a deployment shows an empty scene.
 
 ## Helm
 
