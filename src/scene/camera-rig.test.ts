@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { EntityId } from '@/domain/network-model'
 import type { Layout, Vec3 } from '@/layouts/types'
 import { focusDistance, framePoints, overviewOf, zoomLimits } from './camera-rig'
+import { MAX_STAR_SIZE } from './scene-data'
 
 const FOV = 50
 
@@ -58,8 +59,15 @@ describe('focusDistance', () => {
 })
 
 describe('zoomLimits', () => {
-  it('lets the user zoom past the focus distances and well beyond the overview', () => {
-    const { minDistance, maxDistance } = zoomLimits(400)
+  it.each([50, 35, 70])('keeps a capped star within 20 degrees of a %i degree view at the closest zoom', (fov) => {
+    const { minDistance } = zoomLimits(400, fov)
+    const starDegrees = (2 * Math.atan(MAX_STAR_SIZE / minDistance) * 180) / Math.PI
+    expect(starDegrees).toBeLessThanOrEqual(20 + 1e-9)
+    expect(starDegrees).toBeGreaterThan(19)
+  })
+
+  it('still reaches every focus distance and zooms well beyond the overview', () => {
+    const { minDistance, maxDistance } = zoomLimits(400, FOV)
     expect(minDistance).toBeLessThan(24)
     expect(maxDistance).toBeGreaterThanOrEqual(800)
   })

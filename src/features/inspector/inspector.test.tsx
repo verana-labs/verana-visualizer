@@ -37,9 +37,14 @@ const QUERIES = {
   dids: listQuery('/v4/verifiable-trust/dids'),
 }
 
-const show = (raw: RawNetwork, selected: EntityId) => {
+const show = (raw: RawNetwork, selected: EntityId, frontendUrl = FRONTEND) => {
   useObservatory.setState({ model: buildNetworkModel(raw), selected, queries: QUERIES, agentVerdicts: new Map() })
-  return render(<Inspector frontendUrl={FRONTEND} />)
+  return render(<Inspector frontendUrl={frontendUrl} chainId="vna-testnet-1" />)
+}
+
+const fact = (label: string) => {
+  const key = within(screen.getByTestId('inspector')).getByText(label)
+  return within(key.parentElement as HTMLElement).getByTestId('value').textContent
 }
 
 const withGovernanceUrl = (raw: RawNetwork, id: number, url: string): RawNetwork => ({
@@ -59,7 +64,7 @@ beforeEach(() => {
 describe('Inspector', () => {
   it('renders nothing without a selection', () => {
     useObservatory.setState({ model: buildNetworkModel(baseRaw()), selected: null })
-    const { container } = render(<Inspector frontendUrl={FRONTEND} />)
+    const { container } = render(<Inspector frontendUrl={FRONTEND} chainId="vna-testnet-1" />)
     expect(container.querySelector('[data-testid="inspector"]')).toBeNull()
   })
 
@@ -164,5 +169,30 @@ describe('Inspector', () => {
     act(() => useObservatory.setState({ selected: 'ecosystem:2' }))
     await userEvent.click(screen.getByRole('button', { name: 'Close inspector' }))
     expect(useObservatory.getState().selected).toBeNull()
+  })
+
+  it('counts participants that are not terminated, like the indexer', () => {
+    const raw = baseRaw()
+    const view = show(raw, 'ecosystem:2')
+    expect(fact('Participants')).toBe('90')
+    view.unmount()
+    show(raw, 'schema:4')
+    expect(fact('Participants')).toBe(String(raw.schemas.find((s) => s.id === 4)?.participants))
+    expect(fact('Participants')).toBe('46')
+  })
+
+  it('builds no link when the frontend url is not http(s)', () => {
+    const { container } = show(baseRaw(), 'ecosystem:2', 'javascript:alert(1)//')
+    for (const a of container.querySelectorAll('a')) expect(a.getAttribute('href')).not.toMatch(/^javascript:/i)
+    expect(screen.queryByRole('link', { name: /open in verana app/i })).toBeNull()
+    expect(screen.queryByRole('link', { name: /BadgeCredential/ })).toBeNull()
+  })
+
+  it('says so when the selected row is missing from the loaded data', () => {
+    const raw = baseRaw()
+    useObservatory.setState({ model: buildNetworkModel(raw), selected: 'participant:158', queries: QUERIES })
+    raw.participants = raw.participants.filter((p) => p.id !== 158)
+    render(<Inspector frontendUrl={FRONTEND} chainId="vna-testnet-1" />)
+    expect(screen.getByTestId('inspector')).toHaveTextContent('Not found on vna-testnet-1')
   })
 })

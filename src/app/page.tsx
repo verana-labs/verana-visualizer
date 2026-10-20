@@ -60,7 +60,7 @@ function Observatory() {
       <LensBar />
       <Legend />
       <Footer cfg={cfg} />
-      <Inspector frontendUrl={cfg.frontendUrl} />
+      <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}
       <Toast />
       {!loaderGone && (

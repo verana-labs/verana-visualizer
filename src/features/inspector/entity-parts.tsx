@@ -58,16 +58,23 @@ export function Mono({ children }: { children: ReactNode }) {
   return <div className="break-all font-mono text-[10.5px] text-scene-mut">{children}</div>
 }
 
-export function ExternalLink({ href, children }: { href: string | null | undefined; children: ReactNode }) {
+const LINK_CLASSES = {
+  row: 'flex justify-between gap-3 border-b border-scene-line py-[7px] text-[12.5px] last:border-b-0 hover:text-white',
+  button:
+    'flex items-center justify-between gap-2 rounded-[10px] border border-[color-mix(in_srgb,var(--accent)_40%,transparent)] bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] px-3 py-2 text-xs font-medium hover:bg-[color-mix(in_srgb,var(--accent)_32%,transparent)]',
+} as const
+
+interface ExternalLinkProps {
+  href: string | null | undefined
+  variant?: keyof typeof LINK_CLASSES
+  children: ReactNode
+}
+
+export function ExternalLink({ href, variant = 'button', children }: ExternalLinkProps) {
   const safe = safeHttpUrl(href)
   if (!safe) return null
   return (
-    <a
-      href={safe}
-      target="_blank"
-      rel="noreferrer"
-      className="flex items-center justify-between gap-2 rounded-[10px] border border-[color-mix(in_srgb,var(--accent)_40%,transparent)] bg-[color-mix(in_srgb,var(--accent)_18%,transparent)] px-3 py-2 text-xs font-medium hover:bg-[color-mix(in_srgb,var(--accent)_32%,transparent)]"
-    >
+    <a href={safe} target="_blank" rel="noreferrer" className={LINK_CLASSES[variant]}>
       {children}
     </a>
   )

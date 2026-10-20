@@ -9,6 +9,7 @@ import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 import {
   accreditationsOf,
+  countedParticipants,
   ecosystemMembers,
   ecosystemOf,
   formatAmount,
@@ -17,6 +18,7 @@ import {
   rawEcosystem,
   rawParticipant,
   rawSchema,
+  schemaParticipants,
 } from './entity-facts'
 import { ExternalLink, Fact, Kicker, Mono, RoleChip, StateChip, VerdictChip } from './entity-parts'
 import { ShowQuery } from './show-query'
@@ -25,6 +27,17 @@ interface PanelProps {
   model: NetworkModel
   entity: Entity
   frontendUrl: string
+  chainId: string
+}
+
+function NotFound({ id, chainId }: { id: string; chainId: string }) {
+  return (
+    <>
+      <Kicker>{id}</Kicker>
+      <Title>{`Not found on ${chainId}`}</Title>
+      <p className="text-[12.5px] text-scene-mut">The loaded data has no record for this entity.</p>
+    </>
+  )
 }
 
 const select = (id: EntityId) => useObservatory.getState().select(id)
@@ -77,9 +90,9 @@ function CompositionBar({ participants }: { participants: Entity[] }) {
   )
 }
 
-function EcosystemPanel({ model, entity, frontendUrl }: PanelProps) {
+function EcosystemPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   const eco = rawEcosystem(model, entity.id)
-  if (!eco) return null
+  if (!eco) return <NotFound id={entity.id} chainId={chainId} />
   const { participants, schemas } = ecosystemMembers(model, entity)
   const corporation = model.entities.get(`corporation:${eco.corporation_id}`)
   return (
@@ -88,7 +101,7 @@ function EcosystemPanel({ model, entity, frontendUrl }: PanelProps) {
       <Title>{entity.name}</Title>
       <Mono>{eco.did}</Mono>
       <CompositionBar participants={participants} />
-      <Fact label="Participants">{formatAmount(participants.length)}</Fact>
+      <Fact label="Participants">{formatAmount(countedParticipants(model, participants))}</Fact>
       <Fact label="Credential schemas">{formatAmount(schemas.length)}</Fact>
       <Fact label="Credentials issued">{formatAmount(eco.issued)}</Fact>
       <Fact label="Verifications">{formatAmount(eco.verified)}</Fact>
@@ -101,16 +114,14 @@ function EcosystemPanel({ model, entity, frontendUrl }: PanelProps) {
       {schemas.length > 0 && (
         <Section title="credential schemas">
           {schemas.map((schema) => (
-            <a
+            <ExternalLink
               key={schema.id}
+              variant="row"
               href={`${frontendUrl}/credential-schemas/${numericIdOf(schema.id)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex justify-between gap-3 border-b border-scene-line py-[7px] text-[12.5px] last:border-b-0 hover:text-white"
             >
               <span className="truncate">{schema.name}</span>
               <b className="shrink-0 font-medium">#{numericIdOf(schema.id)} ↗</b>
-            </a>
+            </ExternalLink>
           ))}
         </Section>
       )}
@@ -122,9 +133,9 @@ function EcosystemPanel({ model, entity, frontendUrl }: PanelProps) {
   )
 }
 
-function ParticipantPanel({ model, entity, frontendUrl }: PanelProps) {
+function ParticipantPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   const p = rawParticipant(model, entity.id)
-  if (!p) return null
+  if (!p) return <NotFound id={entity.id} chainId={chainId} />
   const chain = model
     .chainToRoot(entity.id)
     .slice(1)
@@ -168,14 +179,14 @@ function ParticipantPanel({ model, entity, frontendUrl }: PanelProps) {
   )
 }
 
-function SchemaPanel({ model, entity, frontendUrl }: PanelProps) {
+function SchemaPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   const schema = rawSchema(model, entity.id)
-  if (!schema) return null
+  if (!schema) return <NotFound id={entity.id} chainId={chainId} />
   return (
     <>
       <Kicker>credential schema · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}</Kicker>
       <Title>{entity.name}</Title>
-      <Fact label="Participants">{formatAmount(schema.participants)}</Fact>
+      <Fact label="Participants">{formatAmount(countedParticipants(model, schemaParticipants(model, schema.id)))}</Fact>
       <Fact label="Credentials issued">{formatAmount(schema.issued)}</Fact>
       <Fact label="Verifications">{formatAmount(schema.verified)}</Fact>
       <Fact label="Issuer onboarding">{schema.issuer_onboarding_mode}</Fact>
@@ -211,9 +222,9 @@ function AgentPanel({ model, entity }: PanelProps) {
   )
 }
 
-function CorporationPanel({ model, entity }: PanelProps) {
+function CorporationPanel({ model, entity, chainId }: PanelProps) {
   const corp = rawCorporation(model, entity.id)
-  if (!corp) return null
+  if (!corp) return <NotFound id={entity.id} chainId={chainId} />
   const ecosystems = model.ecosystems.filter((eco) => rawEcosystem(model, eco.id)?.corporation_id === corp.id)
   return (
     <>
@@ -260,7 +271,7 @@ const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
   (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
 
-export function Inspector({ frontendUrl }: { frontendUrl: string }) {
+export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chainId: string }) {
   const selected = useObservatory((s) => s.selected)
   const model = useObservatory((s) => s.model)
   const queries = useObservatory((s) => s.queries)
@@ -276,15 +287,15 @@ export function Inspector({ frontendUrl }: { frontendUrl: string }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [selected])
 
-  if (!entity || !model) return null
-  const { Panel, query: queryKey } = PANELS[entity.kind]
-  const query = queryKey ? queries[queryKey] : undefined
+  if (!selected || !model) return null
+  const panel = entity ? PANELS[entity.kind] : null
+  const query = panel?.query ? queries[panel.query] : undefined
 
   return (
     <GlassPanel
       data-testid="inspector"
       role="dialog"
-      aria-label={`${entity.name} details`}
+      aria-label={`${entity?.name ?? selected} details`}
       className="fixed top-4 right-4 z-20 max-h-[calc(100vh-150px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt"
     >
       <button
@@ -295,8 +306,12 @@ export function Inspector({ frontendUrl }: { frontendUrl: string }) {
       >
         ×
       </button>
-      <div key={entity.id}>
-        <Panel model={model} entity={entity} frontendUrl={frontendUrl} />
+      <div key={selected}>
+        {entity && panel ? (
+          <panel.Panel model={model} entity={entity} frontendUrl={frontendUrl} chainId={chainId} />
+        ) : (
+          <NotFound id={selected} chainId={chainId} />
+        )}
       </div>
       {query && <ShowQuery query={query} />}
     </GlassPanel>

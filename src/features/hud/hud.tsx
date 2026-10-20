@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import { countedParticipants } from '@/features/inspector/entity-facts'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
@@ -54,7 +55,7 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
       </div>
       <div className="grid grid-cols-2 gap-x-6 gap-y-2">
         <Figure label="ecosystems" value={model ? number(model.ecosystems.length) : '–'} />
-        <Figure label="participants" value={model ? number(model.participants.length) : '–'} />
+        <Figure label="participants" value={model ? number(countedParticipants(model, model.participants)) : '–'} />
         <Figure label="credentials issued" value={issued === null ? '–' : number(issued)} />
         <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
       </div>

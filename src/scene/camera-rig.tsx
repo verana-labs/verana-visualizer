@@ -6,6 +6,7 @@ import { Box3, PerspectiveCamera, Vector3 } from 'three'
 import type { EntityId, EntityKind } from '@/domain/network-model'
 import type { Layout, LensId, Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
+import { MAX_STAR_SIZE } from './scene-data'
 import { ensureLayout } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
@@ -15,7 +16,7 @@ const FLIGHT_MS = 1300
 const REDUCED_FLIGHT_MS = 300
 const MIN_OVERVIEW_DISTANCE = 40
 const FRAME_MARGIN = 1.12
-const MIN_ZOOM_DISTANCE = 4
+const MAX_STAR_DEGREES = 20
 const MAX_ZOOM_FACTOR = 2.5
 const NETWORK_DIRECTION = new Vector3(0, 0.5, 1).normalize()
 const FLAT_DIRECTION = new Vector3(0, 0.05, 1).normalize()
@@ -90,8 +91,9 @@ export function framePoints(layout: Layout, ids: readonly EntityId[]): Vec3[] {
   return [...placed, ...ringExtents]
 }
 
-export function zoomLimits(overviewDistance: number) {
-  return { minDistance: MIN_ZOOM_DISTANCE, maxDistance: overviewDistance * MAX_ZOOM_FACTOR }
+export function zoomLimits(overviewDistance: number, fov: number) {
+  const minDistance = MAX_STAR_SIZE / Math.tan((Math.min(MAX_STAR_DEGREES, fov) * Math.PI) / 360)
+  return { minDistance, maxDistance: Math.max(overviewDistance * MAX_ZOOM_FACTOR, minDistance * 2) }
 }
 
 export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
@@ -104,10 +106,16 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   const flight = useRef<Flight | null>(null)
   const resumeAutoRotate = useRef(false)
   const introduced = useRef(false)
+  const userMoved = useRef(false)
+  const size = useThree((s) => s.size)
+  const aspect = size.width / Math.max(1, size.height)
+  const aspectRef = useRef(aspect)
+  aspectRef.current = aspect
 
   useEffect(() => {
     if (!controls) return
     const yieldToUser = () => {
+      userMoved.current = true
       flight.current = null
       resumeAutoRotate.current = false
       controls.autoRotate = false
@@ -119,8 +127,9 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   useEffect(() => {
     const layout = ensureLayout(lens)
     if (!layout || !controls || !(camera instanceof PerspectiveCamera)) return
-    const overview = overviewOf(framePoints(layout, ids), lens, camera.fov, camera.aspect)
-    Object.assign(controls, zoomLimits(overview.distance))
+    const overview = overviewOf(framePoints(layout, ids), lens, camera.fov, aspectRef.current)
+    Object.assign(controls, zoomLimits(overview.distance, camera.fov))
+    userMoved.current = false
 
     const entity = selected ? useObservatory.getState().model?.entities.get(selected) : undefined
     const focusAt = entity ? layout.positions.get(entity.id) : undefined
@@ -146,6 +155,22 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
       toTarget,
     }
   }, [lens, selected, controls, camera, ids, reduced])
+
+  useEffect(() => {
+    const layout = ensureLayout(lens)
+    if (!layout || !controls || !(camera instanceof PerspectiveCamera) || !introduced.current) return
+    const overview = overviewOf(framePoints(layout, ids), lens, camera.fov, aspect)
+    Object.assign(controls, zoomLimits(overview.distance, camera.fov))
+    if (useObservatory.getState().selected || userMoved.current || flight.current) return
+    flight.current = {
+      startedAt: performance.now(),
+      duration: REDUCED_FLIGHT_MS,
+      fromPosition: camera.position.clone(),
+      fromTarget: controls.target.clone(),
+      toPosition: overview.position,
+      toTarget: overview.target,
+    }
+  }, [aspect, lens, controls, camera, ids])
 
   useFrame(() => {
     const current = flight.current

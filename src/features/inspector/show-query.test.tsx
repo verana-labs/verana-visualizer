@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { type QueryInfo, toCurl } from '@/lib/api/query-info'
 import { ShowQuery } from './show-query'
 
@@ -25,5 +25,32 @@ describe('ShowQuery', () => {
     await user.click(screen.getByRole('button', { name: /copy as curl/i }))
     expect(await navigator.clipboard.readText()).toBe(toCurl(QUERY))
     expect(screen.getByRole('button', { name: /copied/i })).toBeInTheDocument()
+  })
+
+  describe('copy feedback timer', () => {
+    afterEach(() => vi.useRealTimers())
+
+    it('restarts on re-click and is cleared on unmount', async () => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { writeText: vi.fn(async () => undefined) },
+      })
+      const { unmount } = render(<ShowQuery query={QUERY} />)
+      fireEvent.click(screen.getByRole('button', { name: /show the query/i }))
+      const copyButton = screen.getByRole('button', { name: /copy as curl/i })
+      await act(async () => fireEvent.click(copyButton))
+      await act(async () => vi.advanceTimersByTime(1000))
+      await act(async () => fireEvent.click(copyButton))
+      await act(async () => vi.advanceTimersByTime(1000))
+      expect(copyButton).toHaveTextContent('Copied')
+      await act(async () => vi.advanceTimersByTime(700))
+      expect(copyButton).toHaveTextContent('Copy as curl')
+      await act(async () => fireEvent.click(copyButton))
+      const clear = vi.spyOn(globalThis, 'clearTimeout')
+      unmount()
+      expect(clear).toHaveBeenCalled()
+      expect(vi.getTimerCount()).toBe(0)
+    })
   })
 })

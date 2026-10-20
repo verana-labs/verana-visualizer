@@ -1,15 +1,27 @@
 import type { ThreeEvent } from '@react-three/fiber'
 import { useMemo } from 'react'
+import { InstancedMesh, Matrix4 } from 'three'
 import type { EntityId } from '@/domain/network-model'
 import { useObservatory } from '@/store/observatory-store'
 
 const CLICK_TOLERANCE_PX = 5
+const MIN_HITTABLE_SCALE = 1e-4
+const scratch = new Matrix4()
+
+export function isHittableInstance(mesh: InstancedMesh, instanceId: number | undefined): boolean {
+  if (instanceId === undefined || instanceId >= mesh.count) return false
+  mesh.getMatrixAt(instanceId, scratch)
+  return scratch.getMaxScaleOnAxis() > MIN_HITTABLE_SCALE
+}
 
 export function usePicking(ids: readonly EntityId[]) {
   return useMemo(() => {
     const own = new Set<string>(ids)
-    const idAt = (event: ThreeEvent<PointerEvent | MouseEvent>) =>
-      event.instanceId === undefined ? undefined : ids[event.instanceId]
+    const idAt = (event: ThreeEvent<PointerEvent | MouseEvent>) => {
+      const mesh = event.object
+      if (!(mesh instanceof InstancedMesh) || !isHittableInstance(mesh, event.instanceId)) return undefined
+      return event.instanceId === undefined ? undefined : ids[event.instanceId]
+    }
     return {
       onPointerMove: (event: ThreeEvent<PointerEvent>) => {
         const id = idAt(event)

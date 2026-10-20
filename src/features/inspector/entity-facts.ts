@@ -1,5 +1,5 @@
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
-import type { ParticipantState } from '@/domain/participant-state'
+import { isCountedParticipant, type ParticipantState } from '@/domain/participant-state'
 import type { Role } from '@/domain/roles'
 import type { Corporation, CredentialSchema, Ecosystem, Participant } from '@/lib/api/schemas'
 
@@ -60,4 +60,28 @@ export function accreditationsOf(model: NetworkModel, agentId: EntityId): Entity
     .agentAnchors(agentId)
     .flatMap((anchor) => model.entities.get(anchor) ?? [])
     .filter((entity) => entity.kind === 'participant')
+}
+
+const participantRows = new WeakMap<NetworkModel, Map<EntityId, Participant>>()
+
+function participantRowsOf(model: NetworkModel): Map<EntityId, Participant> {
+  let rows = participantRows.get(model)
+  if (!rows) {
+    rows = new Map(model.raw.participants.map((p) => [`participant:${p.id}` as EntityId, p]))
+    participantRows.set(model, rows)
+  }
+  return rows
+}
+
+export function countedParticipants(model: NetworkModel, participants: readonly Entity[]): number {
+  const rows = participantRowsOf(model)
+  return participants.filter((p) => {
+    const row = rows.get(p.id)
+    return row !== undefined && isCountedParticipant(row)
+  }).length
+}
+
+export function schemaParticipants(model: NetworkModel, schemaId: number): Entity[] {
+  const rows = participantRowsOf(model)
+  return model.participants.filter((p) => rows.get(p.id)?.schema_id === schemaId)
 }

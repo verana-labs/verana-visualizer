@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type QueryInfo, toCurl } from '@/lib/api/query-info'
 import { logger } from '@/lib/logger'
 
@@ -10,7 +10,10 @@ const COPY_LABEL = { idle: 'Copy as curl', copied: 'Copied', failed: 'Copy faile
 export function ShowQuery({ query }: { query: QueryInfo }) {
   const [open, setOpen] = useState(false)
   const [copy, setCopy] = useState<keyof typeof COPY_LABEL>('idle')
+  const reset = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const curl = toCurl(query)
+
+  useEffect(() => () => clearTimeout(reset.current), [])
 
   const copyCurl = async () => {
     try {
@@ -20,7 +23,8 @@ export function ShowQuery({ query }: { query: QueryInfo }) {
       logger.error('Could not copy the query to the clipboard', error)
       setCopy('failed')
     }
-    setTimeout(() => setCopy('idle'), COPIED_MS)
+    clearTimeout(reset.current)
+    reset.current = setTimeout(() => setCopy('idle'), COPIED_MS)
   }
 
   return (

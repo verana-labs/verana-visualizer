@@ -37,7 +37,7 @@ describe('HoverCard', () => {
     useObservatory.setState({ hovered: 'ecosystem:2' })
     render(<HoverCard />)
     expect(screen.getByTestId('hover-card')).toHaveTextContent('ECS')
-    expect(row('Participants')).toBe('91')
+    expect(row('Participants')).toBe('90')
     expect(row('Credential schemas')).toBe('5')
     expect(row('Credentials issued')).toBe('73')
   })

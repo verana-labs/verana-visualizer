@@ -5,6 +5,7 @@ import type { Entity, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
 import {
   accreditationsOf,
+  countedParticipants,
   ecosystemMembers,
   ecosystemOf,
   formatAmount,
@@ -47,7 +48,7 @@ function EcosystemCard({ model, entity }: { model: NetworkModel; entity: Entity 
     <>
       <Kicker>ecosystem · trust root</Kicker>
       <Title>{`★ ${entity.name}`}</Title>
-      <Fact label="Participants">{formatAmount(participants.length)}</Fact>
+      <Fact label="Participants">{formatAmount(countedParticipants(model, participants))}</Fact>
       <Fact label="Credential schemas">{formatAmount(schemas.length)}</Fact>
       {issued !== undefined && <Fact label="Credentials issued">{formatAmount(issued)}</Fact>}
       <Hint>Click to fly in</Hint>
