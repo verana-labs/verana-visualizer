@@ -17,7 +17,7 @@ export function useSelectionUrl(chainId: string, ready: boolean) {
     if (!model || restored.current) return
     restored.current = true
     const view = parseViewState(search)
-    if (!view.sel) return
+    if (!view.sel || view.sel.startsWith('proposal:')) return
     if (model.entities.has(view.sel)) {
       useObservatory.getState().select(view.sel)
       return

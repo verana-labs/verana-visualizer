@@ -3,7 +3,9 @@
 import { type ReactNode, useEffect } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
+import { ProposalPanel } from '@/features/governance/proposal-panel'
 import { EcsBadge } from '@/features/registry/ecs-badge'
+import { AbsentAtBlock, LiveTag } from '@/features/time-scrubber/live-tag'
 import { TrustResult } from '@/features/trust-check/trust-result'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { Ecosystem } from '@/lib/api/schemas'
@@ -255,16 +257,6 @@ function CorporationPanel({ model, entity, chainId }: PanelProps) {
   )
 }
 
-function ProposalPanel({ entity }: PanelProps) {
-  return (
-    <>
-      <Kicker>proposal</Kicker>
-      <Title>{entity.name}</Title>
-      <Mono>{entity.id}</Mono>
-    </>
-  )
-}
-
 const PANELS = {
   ecosystem: { Panel: EcosystemPanel, query: 'ecosystems' },
   participant: { Panel: ParticipantPanel, query: 'participants' },
@@ -329,6 +321,8 @@ export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chain
       className={PANEL_CLASS}
     >
       <CloseButton label="Close inspector" onClose={() => useObservatory.getState().select(null)} />
+      <LiveTag />
+      <AbsentAtBlock id={selected} />
       <div key={selected}>
         {entity && panel ? (
           <panel.Panel model={model} entity={entity} frontendUrl={frontendUrl} chainId={chainId} />

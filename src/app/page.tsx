@@ -8,6 +8,7 @@ import { Autopilot } from '@/features/autopilot/autopilot'
 import { ChainLens } from '@/features/chain-stats/chain-lens'
 import { EconomicsLens } from '@/features/economics-sim/economics-lens'
 import { Footer } from '@/features/footer/footer'
+import { GovernanceLens } from '@/features/governance/governance-lens'
 import { HealthStrip } from '@/features/health-strip/health-strip'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { useGrowthLoader } from '@/features/hud/growth'
@@ -21,6 +22,7 @@ import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
 import { RegistryLens } from '@/features/registry/registry-lens'
 import { SearchPalette } from '@/features/search/search-palette'
+import { TimeLens } from '@/features/time-scrubber/time-lens'
 import { Toast } from '@/features/toast/toast'
 import { Tour } from '@/features/tour/tour'
 import { useAgentResolution } from '@/features/trust-check/agent-resolution'
@@ -80,6 +82,8 @@ function Observatory() {
       {model && <EconomicsLens cfg={cfg} />}
       {model && <ChainLens cfg={cfg} />}
       {model && <RegistryLens cfg={cfg} />}
+      {model && <TimeLens cfg={cfg} />}
+      {model && <GovernanceLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

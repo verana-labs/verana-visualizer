@@ -6,6 +6,12 @@ export const CORPORATION_DROP = 6
 export const LOOSE_CORPORATION_RING = 18
 export const LOOSE_AGENT_RING = 24
 export const LOOSE_AGENT_RISE = 6
+export const PROPOSAL_RING = 1.5
+export const PROPOSAL_RING_STEP = 0.35
+export const PROPOSALS_PER_RING = 10
+export const PROPOSAL_RISE = 1.2
+export const CHAIN_PROPOSAL_RING = 8
+export const CHAIN_PROPOSAL_RISE = 6
 
 export function ecosystemOrder(model: NetworkModel): Entity[] {
   const counts = new Map<number, number>()
@@ -57,6 +63,29 @@ export function placeAgents(
     if (anchor) positions.set(agent.id, anchored(anchor, random))
     else positions.set(agent.id, ringPoint(core, LOOSE_AGENT_RING, random() * Math.PI * 2, LOOSE_AGENT_RISE))
   }
+}
+
+export function placeProposals(model: NetworkModel, positions: Map<EntityId, Vec3>, core: Vec3) {
+  const placed = new Map<string, number>()
+  for (const proposal of ofKind(model, 'proposal').sort(compareProposals)) {
+    if (positions.has(proposal.id)) continue
+    const parent = model.parentOf(proposal.id)
+    const anchor = parent ? positions.get(parent) : undefined
+    if (parent && !anchor) throw new Error(`Proposal ${proposal.id} parent ${parent} is not placed`)
+    const key = parent ?? 'chain'
+    const index = placed.get(key) ?? 0
+    placed.set(key, index + 1)
+    const angle =
+      (index % PROPOSALS_PER_RING) * ((Math.PI * 2) / PROPOSALS_PER_RING) + Math.floor(index / PROPOSALS_PER_RING) * 0.3
+    if (anchor) {
+      const radius = PROPOSAL_RING + Math.floor(index / PROPOSALS_PER_RING) * PROPOSAL_RING_STEP
+      positions.set(proposal.id, ringPoint(anchor, radius, angle, PROPOSAL_RISE))
+    } else positions.set(proposal.id, ringPoint(core, CHAIN_PROPOSAL_RING, angle, CHAIN_PROPOSAL_RISE))
+  }
+}
+
+function compareProposals(a: Entity, b: Entity): number {
+  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0
 }
 
 function ringPoint(center: Vec3, radius: number, angle: number, rise: number): Vec3 {

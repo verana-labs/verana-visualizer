@@ -210,6 +210,12 @@ export const blockHeightSchema = z.object({ type: z.string(), height: z.number()
 
 export const indexerStatusSchema = z.object({ is_running: z.boolean(), is_crawling: z.boolean() }).passthrough()
 
+const tallySchema = z
+  .object({ yes_count: amount, no_count: amount, abstain_count: amount, no_with_veto_count: amount })
+  .partial()
+  .passthrough()
+  .nullish()
+
 export const groupProposalSchema = z
   .object({
     id: z.number(),
@@ -221,6 +227,9 @@ export const groupProposalSchema = z
     voting_period_end: z.string(),
     executor_result: optionalText,
     messages: z.array(z.record(z.string(), z.unknown())),
+    metadata: optionalText,
+    tally: tallySchema,
+    final_tally_result: tallySchema,
   })
   .passthrough()
 
@@ -390,6 +399,11 @@ export const govProposalSchema = z
     voting_end_time: z.string().nullish(),
     title: z.string().nullish(),
     summary: z.string().nullish(),
+    voting_start_time: z.string().nullish(),
+    proposer: z.string().nullish(),
+    metadata: z.string().nullish(),
+    messages: z.array(z.record(z.string(), z.unknown())).nullish(),
+    final_tally_result: tallySchema,
   })
   .passthrough()
 
@@ -397,6 +411,7 @@ export const govProposalsPageSchema = z
   .object({ proposals: z.array(govProposalSchema), pagination: chainPaginationSchema.nullish() })
   .passthrough()
 export const govProposalsSchema = z.array(govProposalSchema)
+export const govTallySchema = z.object({ tally: tallySchema }).passthrough()
 
 export const blockSchema = z
   .object({

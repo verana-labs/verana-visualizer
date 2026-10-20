@@ -24,7 +24,6 @@ export function searchEntities(model: NetworkModel, query: string): Entity[] {
   if (!needle) return []
   return [...model.entities.values()]
     .flatMap((entity) => {
-      if (entity.kind === 'proposal') return []
       const score = scoreOf(entity, needle)
       return score === null ? [] : [{ entity, score }]
     })

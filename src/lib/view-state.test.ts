@@ -26,6 +26,13 @@ describe('view state', () => {
     ).toBe('sel=participant:158')
   })
 
+  it('parses chain and corporation proposal selections', () => {
+    expect(parseViewState(new URLSearchParams('sel=proposal:12')).sel).toBe('proposal:12')
+    expect(parseViewState(new URLSearchParams('sel=proposal:group-36')).sel).toBe('proposal:group-36')
+    expect(parseViewState(new URLSearchParams('sel=proposal:group-')).sel).toBeNull()
+    expect(parseViewState(new URLSearchParams('sel=participant:group-3')).sel).toBeNull()
+  })
+
   it('falls back on unknown lens and malformed sel', () => {
     expect(parseViewState(new URLSearchParams('lens=nope')).lens).toBe('network')
     for (const bad of ['sel=participant:abc', 'sel=foo:1', 'sel=agent:x', 'sel=agent:did:', 'sel=7', 'sel=schema:']) {

@@ -1,6 +1,6 @@
 import { createChainClient } from '@/lib/api/chain'
 import { createGraphClient } from '@/lib/api/graph'
-import { createIndexerClient } from '@/lib/api/indexer'
+import { createIndexerClient, pinnedProxyUrl } from '@/lib/api/indexer'
 import type { Fetched } from '@/lib/api/query-info'
 import type { NetworkConfig } from '@/lib/env'
 import { FetchError } from '@/lib/fetch-json'
@@ -30,6 +30,7 @@ type Prerequisite<T> = { data: T } | { skip: string }
 const STATS_WINDOW_MS = 7 * 86_400_000
 const EVENTS_LOOKBACK = 100
 const EVENTS_LIMIT = 10
+const PROXIED = /^\/api\/indexer\/at\/\d+(\/v4\/.*)$/
 const UNREACHABLE = '(the browser got no response: network error or CORS refusal, it does not say which)'
 
 const reasonOf = (error: unknown) => (error instanceof Error ? error.message : String(error))
@@ -78,6 +79,10 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
   const indexer = createIndexerClient(cfg)
   const graph = createGraphClient(cfg)
   const chain = createChainClient(cfg)
+  const realUrl = (url: string) => {
+    const proxied = PROXIED.exec(new URL(url).pathname)
+    return proxied?.[1] ? `${cfg.indexerUrl.replace(/\/+$/, '')}${proxied[1]}${new URL(url).search}` : url
+  }
 
   async function probe<T>(method: string, run: () => Promise<Fetched<T>>): Promise<Probed<T>> {
     const started = performance.now()
@@ -85,8 +90,9 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
     try {
       const res = await run()
       const url = res.query.url
+      const fetched = pinnedProxyUrl(res.query, cfg.indexerUrl) ?? url
       return [
-        { method, outcome: 'pass', status: statuses.get(url) ?? null, latencyMs: latency(), url, note: null },
+        { method, outcome: 'pass', status: statuses.get(fetched) ?? null, latencyMs: latency(), url, note: null },
         res.data,
       ]
     } catch (error) {
@@ -97,7 +103,7 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
           outcome: 'fail',
           status: fetchError?.status ?? null,
           latencyMs: latency(),
-          url: fetchError?.url ?? null,
+          url: fetchError?.url ? realUrl(fetchError.url) : null,
           note: fetchError && fetchError.status === null ? `${reasonOf(error)} ${UNREACHABLE}` : reasonOf(error),
         },
         undefined,
@@ -191,6 +197,11 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
   const firstDid = needs(dids, (data) => data.dids[0], 'no DID')
   const indexed = needs(blockHeight, (data) => data.height, 'no indexed block')
   const firstProposal = needs(groupProposals, (rows) => rows[0], 'no group proposal')
+  const chainProposal = needs(
+    govProposals,
+    (rows) => (rows.find((p) => p.status === 'PROPOSAL_STATUS_VOTING_PERIOD') ?? rows[0])?.id,
+    'no chain proposals'
+  )
   const head = needs(latestBlock, (data) => Number(data.block.header.height), 'no block')
 
   const dependents = await Promise.all([
@@ -207,6 +218,7 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
     dependent('indexer.pendingFlat', anyCorporation, (id) => indexer.pendingFlat(id)),
     dependent('graph.traverse', firstParticipant, (id) => graph.traverse('G1', { participantId: id })),
     dependent('graph.validatorChain', firstParticipant, (id) => graph.validatorChain(id)),
+    dependent('chain.govTally', chainProposal, (id) => chain.govTally(Number(id))),
     dependent('chain.block', head, (height) => chain.block(Math.max(1, height - 1))),
   ])
 
