@@ -32,6 +32,7 @@ import { type LoadSink, networkLoadSteps } from '@/lib/api/load-network'
 import { useNetworkConfig } from '@/lib/env'
 import { replaceViewState } from '@/lib/replace-view-state'
 import { parseViewState } from '@/lib/view-state'
+import { SceneErrorBoundary } from '@/scene/scene-error-boundary'
 import { hasWebGL } from '@/scene/webgl-support'
 import { useObservatory } from '@/store/observatory-store'
 
@@ -79,7 +80,13 @@ function Observatory() {
 
   return (
     <main data-testid="observatory" style={{ '--accent': accentFor(cfg.chainName) } as React.CSSProperties}>
-      {model && webgl === true && <ObservatoryCanvas model={model} />}
+      {model && webgl === true && (
+        <SceneErrorBoundary
+          fallback={(message) => <ListFallback model={model} notice={`The 3D view stopped working (${message}).`} />}
+        >
+          <ObservatoryCanvas model={model} />
+        </SceneErrorBoundary>
+      )}
       {model && webgl === false && <ListFallback model={model} />}
       <Hud cfg={cfg}>
         <HealthStrip cfg={cfg} />
