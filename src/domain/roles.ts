@@ -9,6 +9,8 @@ export const ROLES = {
 
 export type Role = keyof typeof ROLES
 
+export const ECOSYSTEM_STAR_COLOR = '#d8cbff'
+
 export const AGENT_COLORS = { trusted: '#38E1FF', untrusted: '#ff6b8b', resolving: '#7dd3fc' } as const
 
 export function isRole(value: string): value is Role {
