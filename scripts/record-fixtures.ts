@@ -89,6 +89,9 @@ async function recordNetwork(network: string) {
     await record('entity-history-corporation', () => indexer.entityHistory('corporation', funded.id))
   }
   if (ecosystem) await record('entity-history-ecosystem', () => indexer.entityHistory('ecosystem', ecosystem.id))
+  const firstEcosystem = [...ecosystems.data].sort((a, b) => Date.parse(a.created) - Date.parse(b.created))[0]
+  if (firstEcosystem)
+    await record('entity-history-first-ecosystem', () => indexer.entityHistory('ecosystem', firstEcosystem.id))
   if (schema)
     await record('entity-history-credential-schema', () => indexer.entityHistory('credential-schema', schema.id))
   if (issuer) {

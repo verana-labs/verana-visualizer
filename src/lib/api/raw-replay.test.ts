@@ -48,6 +48,7 @@ const replays: Record<string, Replay> = {
   'trust-deposit-history': (c, r) => c.indexer.trustDepositHistory(lastId(r)),
   'entity-history-corporation': historyReplay('corporation'),
   'entity-history-ecosystem': historyReplay('ecosystem'),
+  'entity-history-first-ecosystem': historyReplay('ecosystem'),
   'entity-history-credential-schema': historyReplay('credential-schema'),
   'entity-history-participant': historyReplay('participant'),
   'group-members': (c, r) => c.indexer.groupMembers(lastId(r)),

@@ -46,6 +46,7 @@ const indexerFixtures: Record<string, z.ZodType> = {
   'pending-flat': pendingFlatSchema,
   'entity-history-corporation': historyActivitySchema,
   'entity-history-ecosystem': historyActivitySchema,
+  'entity-history-first-ecosystem': historyActivitySchema,
   'entity-history-credential-schema': historyActivitySchema,
   'entity-history-participant': historyActivitySchema,
   'resolve-trusted-root': trustVerdictSchema,
