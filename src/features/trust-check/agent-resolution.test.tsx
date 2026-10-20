@@ -73,25 +73,31 @@ describe('resolveAgents', () => {
     const setVerdict = (did: string, trusted: boolean) =>
       useObservatory.getState().setAgentVerdict(`agent:${did}`, trusted)
     render(<Hud cfg={testnetCfg} />)
-    expect(services()).toBe('0 / 0')
+    const total = testnetModel().agents.length
+    const pending = () => screen.getByTestId('services-pending').textContent
+    expect(services()).toBe(`0 / ${total}`)
+    expect(pending()).toBe(`${total} unresolved`)
 
     const run = resolveAgents([a, b, c], resolver.resolve, setVerdict)
     await flush()
     resolver.pending[0].settle(true)
     await flush()
-    expect(services()).toBe('1 / 1')
+    expect(services()).toBe(`1 / ${total}`)
+    expect(pending()).toBe(`${total - 1} unresolved`)
 
     const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
     resolver.pending[1].settle(new Error('HTTP 500 from POST resolve'))
     await flush()
-    expect(services()).toBe('1 / 1')
+    expect(services()).toBe(`1 / ${total}`)
+    expect(pending()).toBe(`${total - 1} unresolved`)
     expect(useObservatory.getState().agentVerdicts.has(`agent:${b}`)).toBe(false)
     expect(warn).toHaveBeenCalledTimes(1)
 
     resolver.pending[2].settle(false)
     await run
     await flush()
-    expect(services()).toBe('1 / 2')
+    expect(services()).toBe(`1 / ${total}`)
+    expect(pending()).toBe(`${total - 2} unresolved`)
     expect(useObservatory.getState().agentVerdicts.get(`agent:${c}`)).toBe(false)
   })
 
