@@ -3,15 +3,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useObservatory } from '@/store/observatory-store'
 import { LensBar } from './lens-bar'
 
-const replace = vi.fn()
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
+  useRouter: () => ({ replace: vi.fn() }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
 }))
 
 beforeEach(() => {
-  replace.mockClear()
+  window.history.replaceState(null, '', '/')
   useObservatory.setState({ lens: 'network' })
 })
 
@@ -35,6 +34,6 @@ describe('LensBar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Trust' }))
     expect(useObservatory.getState().lens).toBe('trust')
     expect(screen.getByRole('button', { name: 'Trust' })).toHaveAttribute('aria-pressed', 'true')
-    expect(replace).toHaveBeenCalledWith('/?lens=trust', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/?lens=trust')
   })
 })

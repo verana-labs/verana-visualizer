@@ -10,9 +10,8 @@ import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
 import { GovernanceLens } from './governance-lens'
 
-const replace = vi.fn()
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
+  useRouter: () => ({ replace: vi.fn() }),
   usePathname: () => '/',
 }))
 
@@ -37,9 +36,9 @@ const fetchMock = vi.fn(async (input: string) => {
 const calls = (path: string) => fetchMock.mock.calls.filter(([url]) => new URL(url).pathname === path).length
 
 beforeEach(() => {
+  window.history.replaceState(null, '', '/')
   votesStatus = 200
   fetchMock.mockClear()
-  replace.mockClear()
   vi.stubGlobal('fetch', fetchMock)
   useObservatory.setState({
     model: testnetModel(),
@@ -79,10 +78,8 @@ describe('GovernanceLens', () => {
     act(() => useObservatory.getState().setLens('network'))
     act(() => useObservatory.getState().select('proposal:group-36'))
     await waitFor(() => expect(useObservatory.getState().lens).toBe('governance'))
-    await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith(expect.stringContaining('lens=governance'), expect.anything())
-    )
-    expect(replace.mock.calls.at(-1)?.[0]).toContain('sel=proposal:group-36')
+    await waitFor(() => expect(window.location.search).toContain('lens=governance'))
+    expect(decodeURIComponent(window.location.search)).toContain('sel=proposal:group-36')
   })
 
   it('retries votes after a failed call instead of caching the failure', async () => {

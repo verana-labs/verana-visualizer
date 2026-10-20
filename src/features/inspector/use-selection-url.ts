@@ -1,13 +1,12 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { parseViewState, serializeViewState } from '@/lib/view-state'
+import { replaceViewState } from '@/lib/replace-view-state'
+import { parseViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 
 export function useSelectionUrl(chainId: string, ready: boolean) {
-  const router = useRouter()
-  const pathname = usePathname()
   const search = useSearchParams()
   const model = useObservatory((s) => s.model)
   const restored = useRef(false)
@@ -23,9 +22,8 @@ export function useSelectionUrl(chainId: string, ready: boolean) {
       return
     }
     setMissing(true)
-    const query = serializeViewState({ ...view, sel: null })
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
-  }, [model, search, router, pathname])
+    replaceViewState({ sel: null })
+  }, [model, search])
 
   useEffect(() => {
     if (!missing || !ready) return
@@ -37,11 +35,8 @@ export function useSelectionUrl(chainId: string, ready: boolean) {
     () =>
       useObservatory.subscribe((state, previous) => {
         if (state.selected === previous.selected) return
-        const current = parseViewState(new URLSearchParams(window.location.search))
-        if (current.sel === state.selected) return
-        const query = serializeViewState({ ...current, sel: state.selected })
-        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+        replaceViewState({ sel: state.selected })
       }),
-    [router, pathname]
+    []
   )
 }
