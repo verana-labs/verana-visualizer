@@ -4,6 +4,7 @@ import { type ReactNode, useState } from 'react'
 import {
   type Beneficiary,
   issuanceBeneficiaries,
+  MAX_CONVERTIBLE_TU,
   monthlyTotals,
   onboardingFee,
   type Rates,
@@ -120,6 +121,7 @@ interface MoneyProps {
 function Money({ value, sign = true, unit, tu }: MoneyProps) {
   const text = sign ? signed(value) : amount(value, unit === 'VNA' ? 6 : 4)
   if (unit === 'VNA' || !tu) return <>{`${text} ${unit}`}</>
+  if (Math.abs(value) >= MAX_CONVERTIBLE_TU) return <>{`${text} TU (too large to convert to VNA)`}</>
   const vna = Math.sign(value) * tuInVna(Math.abs(value), tu)
   return <>{`${text} TU ≈ ${sign ? signed(vna, 6) : amount(vna, 6)} VNA`}</>
 }

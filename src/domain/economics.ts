@@ -177,8 +177,13 @@ export function liveTuRate(rates: readonly ExchangeRate[], now: Date): TuRate | 
   return { id: live.id, rate: BigInt(rate), scale, updated: live.updated ?? null, expires: live.expires ?? null }
 }
 
+export const MAX_CONVERTIBLE_TU = 1e21
+
 export function tuToUvna(amount: number, tu: TuRate): bigint {
   if (!Number.isFinite(amount) || amount < 0) throw new Error(`TU amount must be non-negative, got ${amount}`)
+  if (amount >= MAX_CONVERTIBLE_TU) {
+    throw new Error(`TU amount ${amount} is too large to convert exactly (limit ${MAX_CONVERTIBLE_TU})`)
+  }
   const scaled = BigInt(amount.toFixed(TU_DECIMALS).replace('.', ''))
   return (scaled * tu.rate) / 10n ** BigInt(tu.scale + TU_DECIMALS)
 }

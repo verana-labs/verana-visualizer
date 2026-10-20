@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import type { ExchangeRate, Participant } from '@/lib/api/schemas'
+import { type ExchangeRate, exchangeRateSchema, type Participant } from '@/lib/api/schemas'
 import {
   issuanceBeneficiaries,
   liveTuRate,
@@ -176,6 +176,17 @@ describe('liveTuRate', () => {
   it('finds nothing while the exchange-rate list is empty on both networks', () => {
     expect(liveTuRate(fixture('testnet', 'exchange-rates'), now)).toBeNull()
     expect(liveTuRate(fixture('devnet', 'exchange-rates'), now)).toBeNull()
+  })
+
+  it('parses a spec TU row whose base_asset is null and uses it', () => {
+    const row = exchangeRateSchema.parse({ ...rate(), base_asset: null })
+    expect(liveTuRate([row], now)).toMatchObject({ id: 4, scale: 6 })
+  })
+
+  it('rejects TU amounts too large to convert exactly, naming the amount', () => {
+    const live = liveTuRate([rate()], now)
+    if (!live) throw new Error('expected a live rate')
+    expect(() => tuToUvna(1e21, live)).toThrow(/TU amount 1e\+21 is too large/)
   })
 
   it('uses only an active, unexpired TU to uvna rate', () => {

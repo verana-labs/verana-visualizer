@@ -267,9 +267,9 @@ export const exchangeRateSchema = z
   .object({
     id: z.number(),
     base_asset_type: z.string(),
-    base_asset: z.string(),
+    base_asset: z.string().nullish(),
     quote_asset_type: z.string(),
-    quote_asset: z.string(),
+    quote_asset: z.string().nullish(),
     rate: amount,
     rate_scale: z.number().nullish(),
     state: z.union([z.boolean(), z.string()]).nullish(),

@@ -133,4 +133,14 @@ describe('SimulationPanel', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(/non-negative number/)
     expect(screen.queryByTestId('payer-total')).toBeNull()
   })
+
+  it('keeps rendering in TU when a huge fee is beyond exact VNA conversion', async () => {
+    const user = userEvent.setup()
+    renderPanel([TU_RATE])
+    await user.click(screen.getByRole('tab', { name: 'Verification' }))
+    const issuerFee = screen.getByLabelText('Issuer fee')
+    await user.clear(issuerFee)
+    await user.type(issuerFee, '1e22')
+    expect(screen.getByTestId('payer-total')).toHaveTextContent(/too large to convert to VNA/)
+  })
 })
