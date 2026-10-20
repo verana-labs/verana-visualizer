@@ -95,11 +95,11 @@ Legacy names still work when the primary is unset:
 
 ## Helm
 
-The chart lives in `charts/` and defaults to testnet, one replica, `ClusterIP`. Override `env` in your values to point it at another network.
+The chart lives in `charts/`, see [`charts/README.md`](charts/README.md). Network values have no default: pass `values-devnet.yaml`, `values-testnet.yaml` or your own file.
 
 ```bash
 helm lint charts
-helm install vis ./charts
+helm install vis ./charts -f ./charts/values-testnet.yaml
 ```
 
 ## Releases
