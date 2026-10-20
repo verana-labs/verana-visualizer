@@ -70,6 +70,7 @@ export interface StubCall {
   headers: Record<string, string>
   body: unknown
   signal: AbortSignal | null
+  revalidate: number | null
 }
 
 const hangUntilAborted = (signal: AbortSignal | null | undefined) =>
@@ -111,6 +112,8 @@ export function stubTrustNetwork({
         headers: (init?.headers ?? {}) as Record<string, string>,
         body,
         signal: init?.signal ?? null,
+        revalidate:
+          init?.next?.revalidate === undefined || init.next.revalidate === false ? null : init.next.revalidate,
       })
       if (url.pathname === '/v4/verifiable-trust/resolve') {
         if (resolveStatus !== 200) return new Response('resolver exploded', { status: resolveStatus })

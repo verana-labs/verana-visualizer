@@ -9,6 +9,8 @@ import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
 
 export const SERVER_TIMEOUT_MS = 8000
+export const VERDICT_BUDGET_MS = 20_000
+export const PINNED_REVALIDATE_S = 86_400
 const DID_PARAM = /^did:[a-z0-9]+:\S+$/
 
 export interface VerdictCardData {
@@ -62,10 +64,11 @@ export async function loadVerdict(
   cfg: NetworkConfig,
   did: string,
   block: number | null,
-  { timeoutMs = SERVER_TIMEOUT_MS }: { timeoutMs?: number } = {}
+  { timeoutMs = SERVER_TIMEOUT_MS, budgetMs = VERDICT_BUDGET_MS }: { timeoutMs?: number; budgetMs?: number } = {}
 ): Promise<VerdictCardData> {
   const atHeight = block ?? undefined
-  const indexer = createIndexerClient(cfg, atHeight, { timeoutMs })
+  const signal = AbortSignal.timeout(budgetMs)
+  const indexer = createIndexerClient(cfg, atHeight, { timeoutMs, signal, revalidateSeconds: PINNED_REVALIDATE_S })
   const resolving = indexer.resolve(did).then(
     (value) => ({ ok: true as const, value }),
     (error: unknown) => ({ ok: false as const, error })
@@ -86,7 +89,7 @@ export async function loadVerdict(
         return settled.value
       },
     },
-    graph: block === null ? createGraphClient(cfg, { timeoutMs }) : null,
+    graph: block === null ? createGraphClient(cfg, { timeoutMs, signal }) : null,
   })
   const subject = model?.byDid(did)[0]
   return {

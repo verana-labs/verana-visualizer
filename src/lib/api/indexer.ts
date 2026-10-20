@@ -81,7 +81,13 @@ export function createIndexerClient(cfg: NetworkConfig, atHeight?: number, optio
 
   async function get<T>(path: string, schema: z.ZodType<T>, params?: ListParams, headers?: Record<string, string>) {
     const query = getQuery(path, params, headers)
-    return requestJson(query, schema, requestSignal(options), pinnedProxyUrl(query, cfg.indexerUrl))
+    return requestJson(
+      query,
+      schema,
+      requestSignal(options),
+      pinnedProxyUrl(query, cfg.indexerUrl),
+      atHeight === undefined ? undefined : options.revalidateSeconds
+    )
   }
 
   async function listAll<K extends string, S extends z.ZodType<{ id: number }>>(
