@@ -6,6 +6,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react'
 import { ActivityFeed } from '@/features/activity-feed/activity-feed'
 import { EconomicsLens } from '@/features/economics-sim/economics-lens'
 import { Footer } from '@/features/footer/footer'
+import { GovernanceLens } from '@/features/governance/governance-lens'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { Hud } from '@/features/hud/hud'
 import { Inspector } from '@/features/inspector/inspector'
@@ -69,6 +70,7 @@ function Observatory() {
       <Legend />
       {model && <ActivityFeed cfg={cfg} />}
       {model && <EconomicsLens cfg={cfg} />}
+      {model && <GovernanceLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

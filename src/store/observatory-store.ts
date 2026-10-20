@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { appendFeed, type CometLaunch, type FeedItem } from '@/domain/activity'
+import type { GovernanceScene } from '@/domain/governance'
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { isVerdictError, type TrustCheck } from '@/domain/trust-check'
 import type { Layout, LensId } from '@/layouts/types'
@@ -42,6 +43,7 @@ export interface ObservatoryState {
   trustCheck: TrustCheckState | null
   economics: EconomicsScene | null
   simulationOpen: boolean
+  governance: GovernanceScene | null
   setLens(l: LensId): void
   setLayout(lens: LensId, layout: Layout): void
   select(id: EntityId | null): void
@@ -59,6 +61,7 @@ export interface ObservatoryState {
   setAgentVerdict(id: EntityId, trusted: boolean): void
   setEconomics(economics: EconomicsScene): void
   setSimulationOpen(open: boolean): void
+  setGovernance(governance: GovernanceScene): void
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined
@@ -83,6 +86,7 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   trustCheck: null,
   economics: null,
   simulationOpen: false,
+  governance: null,
   setLens: (l) => set((s) => (s.lens === l ? s : { lens: l, lensFrom: s.lens, lensChangedAt: performance.now() })),
   setLayout: (lens, layout) => set((s) => ({ layouts: { ...s.layouts, [lens]: layout } })),
   select: (id) =>
@@ -125,4 +129,5 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   setAgentVerdict: (id, trusted) => set((s) => ({ agentVerdicts: new Map(s.agentVerdicts).set(id, trusted) })),
   setEconomics: (economics) => set({ economics }),
   setSimulationOpen: (open) => set({ simulationOpen: open }),
+  setGovernance: (governance) => set({ governance }),
 }))

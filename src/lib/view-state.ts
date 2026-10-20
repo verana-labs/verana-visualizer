@@ -25,6 +25,7 @@ function parseSel(raw: string | null): EntityId | null {
   const rest = raw.slice(i + 1)
   if (kind === 'agent') return rest.startsWith('did:') && rest.length > 4 ? (raw as EntityId) : null
   if (NUMERIC_KINDS.includes(kind as EntityKind) && /^\d+$/.test(rest)) return raw as EntityId
+  if (kind === 'proposal' && /^group-\d+$/.test(rest)) return raw as EntityId
   return null
 }
 

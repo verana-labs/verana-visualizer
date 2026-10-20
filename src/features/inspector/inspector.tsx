@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
+import { ProposalPanel } from '@/features/governance/proposal-panel'
 import { TrustResult } from '@/features/trust-check/trust-result'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { Ecosystem } from '@/lib/api/schemas'
@@ -249,16 +250,6 @@ function CorporationPanel({ model, entity, chainId }: PanelProps) {
           ))}
         </Section>
       )}
-    </>
-  )
-}
-
-function ProposalPanel({ entity }: PanelProps) {
-  return (
-    <>
-      <Kicker>proposal</Kicker>
-      <Title>{entity.name}</Title>
-      <Mono>{entity.id}</Mono>
     </>
   )
 }

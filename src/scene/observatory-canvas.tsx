@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing'
 import { useMemo, useState } from 'react'
 import type { NetworkModel } from '@/domain/network-model'
+import { GovernanceMarks } from '@/features/governance/governance-marks'
 import { useObservatory } from '@/store/observatory-store'
 import { Agents } from './agents'
 import { CameraRig } from './camera-rig'
@@ -56,6 +57,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <HoverMarker marks={data.marks} positionOf={positionOf} />
       <Ripples marks={data.marks} positionOf={positionOf} />
       <ChainCore />
+      <GovernanceMarks positionOf={positionOf} focus={focus} />
       <Comets positionOf={positionOf} />
       <TrustTrace positionOf={positionOf} />
       <CameraRig ids={ids} />
