@@ -12,7 +12,10 @@ const REQUIRED = {
 }
 
 const run = (env: Record<string, string>) =>
-  spawnSync('sh', [SCRIPT, 'echo', 'started'], { env: { PATH: process.env.PATH ?? '', ...env }, encoding: 'utf8' })
+  spawnSync('sh', [SCRIPT, 'echo', 'started'], {
+    env: { NODE_ENV: 'production', PATH: process.env.PATH ?? '', ...env },
+    encoding: 'utf8',
+  })
 
 describe('entrypoint.sh', () => {
   it('starts the command when every required variable is set', () => {
