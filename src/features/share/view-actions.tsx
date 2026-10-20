@@ -1,5 +1,6 @@
 'use client'
 
+import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { useTour } from '@/features/tour/tour-store'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
@@ -62,7 +63,10 @@ function downloadPng(cfg: NetworkConfig, blockHeight: number) {
 
 export function ViewActions({ cfg }: { cfg: NetworkConfig }) {
   const ready = useObservatory((s) => s.model !== null)
-  const blockHeight = useObservatory((s) => s.blockHeight)
+  const liveHeight = useObservatory((s) => s.blockHeight)
+  const timeLens = useObservatory((s) => s.lens === 'time')
+  const scrubbed = useTimeStore((s) => s.height)
+  const blockHeight = timeLens && scrubbed !== null ? scrubbed : liveHeight
   const cameraReady = useSceneHandle((s) => s.handle !== null)
   const small = '!px-2 !py-1.5 flex-1 text-[11.5px]'
   return (

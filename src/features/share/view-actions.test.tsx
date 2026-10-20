@@ -1,6 +1,7 @@
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { useTour } from '@/features/tour/tour-store'
 import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { serializeViewState } from '@/lib/view-state'
@@ -112,5 +113,20 @@ describe('ViewActions', () => {
       })
     )
     expect(clicked).toEqual(['verana-vna-testnet-1-block-87600.png'])
+  })
+
+  it('stamps the scrubbed block, not the live head, in the Time lens', async () => {
+    const canvas = document.createElement('canvas')
+    useSceneHandle.setState({ handle: { camera: () => [0, 0, 1, 0, 0, 0], capture: () => canvas } })
+    exportPng.mockReset().mockReturnValue(new Blob(['x'], { type: 'image/png' }))
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    URL.createObjectURL = vi.fn(() => 'blob:png')
+    URL.revokeObjectURL = vi.fn()
+    useObservatory.setState({ lens: 'time' })
+    useTimeStore.setState({ height: 38_000 })
+    render(<ViewActions cfg={testnetCfg} />)
+    await act(async () => screen.getByRole('button', { name: 'PNG' }).click())
+    expect(exportPng).toHaveBeenCalledWith(canvas, expect.objectContaining({ blockHeight: 38_000 }))
+    useTimeStore.getState().reset()
   })
 })
