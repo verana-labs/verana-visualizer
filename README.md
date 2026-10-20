@@ -45,7 +45,7 @@ docker run --rm -p 3000:3000 \
   verana-visualizer:local
 ```
 
-The container refuses to start if the indexer, RPC or REST variable is missing.
+The container refuses to start if the indexer, RPC, REST or chain id variable is missing or blank.
 
 ## Test
 
