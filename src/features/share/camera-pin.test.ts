@@ -5,7 +5,13 @@ import { pinCamera } from './camera-pin'
 
 const rig = () => {
   const camera = new PerspectiveCamera()
-  const controls = { target: new Vector3(), update: vi.fn(), dispatchEvent: vi.fn() }
+  const controls = {
+    target: new Vector3(),
+    minDistance: 0,
+    maxDistance: Number.POSITIVE_INFINITY,
+    update: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }
   return { camera, controls }
 }
 
@@ -27,6 +33,21 @@ describe('pinCamera', () => {
     expect(controls.dispatchEvent).toHaveBeenCalledWith({ type: 'start' })
     expect(camera.position.toArray()).toEqual([10, 30, 120])
     expect(controls.target.toArray()).toEqual([5, -2, 3])
+    pin.release()
+  })
+
+  it('clamps a shared camera to the zoom limits once instead of fighting the controls every frame', () => {
+    const { camera, controls } = rig()
+    controls.minDistance = 50
+    controls.update.mockImplementation(() => {
+      const offset = camera.position.clone().sub(controls.target)
+      if (offset.length() < controls.minDistance)
+        camera.position.copy(controls.target).addScaledVector(offset.normalize(), 50)
+    })
+    const pin = pinCamera([0, 0, 10, 0, 0, 0])
+    for (let frame = 0; frame < 5; frame++) pin.enforce(camera, controls)
+    expect(controls.dispatchEvent).toHaveBeenCalledTimes(1)
+    expect(camera.position.toArray()).toEqual([0, 0, 50])
     pin.release()
   })
 

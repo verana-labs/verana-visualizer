@@ -16,6 +16,8 @@ export const useSceneHandle = create<{ handle: SceneHandleApi | null }>()(() => 
 
 interface CamControls {
   target: Vector3
+  minDistance: number
+  maxDistance: number
   update(): void
   dispatchEvent(event: { type: 'start' }): void
 }
@@ -28,7 +30,11 @@ const isCamControls = (value: unknown): value is CamControls =>
   'target' in value &&
   value.target instanceof Vector3 &&
   'update' in value &&
-  'dispatchEvent' in value
+  'dispatchEvent' in value &&
+  'minDistance' in value &&
+  typeof value.minDistance === 'number' &&
+  'maxDistance' in value &&
+  typeof value.maxDistance === 'number'
 
 export function SceneHandle() {
   const camera = useThree((s) => s.camera)

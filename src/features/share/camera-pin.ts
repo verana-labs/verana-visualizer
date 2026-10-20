@@ -4,6 +4,8 @@ import { useObservatory } from '@/store/observatory-store'
 
 export interface PinnedControls {
   target: Vector3
+  minDistance: number
+  maxDistance: number
   update(): void
   dispatchEvent(event: { type: 'start' }): void
 }
@@ -11,8 +13,19 @@ export interface PinnedControls {
 const USER_INPUT = ['pointerdown', 'wheel', 'keydown', 'touchstart'] as const
 const TOLERANCE = 0.01
 
-export function pinCamera(cam: Cam) {
+function clampToZoom(cam: Cam, { minDistance, maxDistance }: PinnedControls): Cam {
+  const offset = [cam[0] - cam[3], cam[1] - cam[4], cam[2] - cam[5]]
+  const distance = Math.hypot(offset[0], offset[1], offset[2])
+  if (distance === 0) return cam
+  const clamped = Math.min(maxDistance, Math.max(minDistance, distance))
+  if (clamped === distance) return cam
+  const k = clamped / distance
+  return [cam[3] + offset[0] * k, cam[4] + offset[1] * k, cam[5] + offset[2] * k, cam[3], cam[4], cam[5]]
+}
+
+export function pinCamera(shared: Cam) {
   let held = true
+  let cam: Cam | null = null
   const release = () => {
     if (!held) return
     held = false
@@ -28,6 +41,7 @@ export function pinCamera(cam: Cam) {
     release,
     enforce(camera: Camera, controls: PinnedControls) {
       if (!held) return
+      cam ??= clampToZoom(shared, controls)
       const p = camera.position
       const t = controls.target
       const off =
