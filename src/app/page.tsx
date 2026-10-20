@@ -17,6 +17,7 @@ import { LensBar } from '@/features/lens-bar/lens-bar'
 import { ListFallback } from '@/features/list-fallback/list-fallback'
 import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
+import { RegistryLens } from '@/features/registry/registry-lens'
 import { SearchPalette } from '@/features/search/search-palette'
 import { Toast } from '@/features/toast/toast'
 import { useAgentResolution } from '@/features/trust-check/agent-resolution'
@@ -74,6 +75,7 @@ function Observatory() {
       {model && <ActivityFeed cfg={cfg} />}
       {model && <EconomicsLens cfg={cfg} />}
       {model && <ChainLens cfg={cfg} />}
+      {model && <RegistryLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

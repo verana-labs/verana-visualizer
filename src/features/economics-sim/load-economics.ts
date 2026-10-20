@@ -54,7 +54,7 @@ async function depositsOf(
   return deposits
 }
 
-function historyStart(model: NetworkModel, now: Date): string {
+export function historyStart(model: NetworkModel, now: Date): string {
   const created = [...model.raw.ecosystems, ...model.raw.corporations]
     .map((entity) => Date.parse(entity.created))
     .filter(Number.isFinite)
