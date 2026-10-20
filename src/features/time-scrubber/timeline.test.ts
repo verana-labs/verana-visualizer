@@ -44,6 +44,16 @@ describe('density strip', () => {
     expect(calls[1].after).toBe(events[99].block_height - 1)
     expect(all).toHaveLength(100)
   })
+
+  it('fails loudly when one block holds a full page, since the API cannot page within a block', async () => {
+    const crowded = Array.from({ length: 100 }, (_, i) => ({
+      ...events[0],
+      block_height: 9000,
+      payload: { ...events[0].payload, message_index: i },
+    }))
+    const fetchEvents = vi.fn(async (after: number) => (after < 9000 ? crowded : []))
+    await expect(loadEvents(fetchEvents)).rejects.toThrow(/block 9000/)
+  })
 })
 
 describe('nextChangeAfter', () => {

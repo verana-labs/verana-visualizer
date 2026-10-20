@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { countedParticipants } from '@/features/inspector/entity-facts'
+import { LiveTag } from '@/features/time-scrubber/live-tag'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
@@ -60,6 +61,7 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
         <Figure label="credentials issued" value={issued === null ? '–' : number(issued)} />
         <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
       </div>
+      <LiveTag />
       <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
         Is this service trustworthy?
       </Button>

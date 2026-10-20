@@ -35,6 +35,11 @@ export async function loadEvents(fetchPage: FetchEventsPage): Promise<IndexerEve
     }
     if (page.length < EVENTS_PAGE) break
     const last = page[page.length - 1].block_height
+    if (page[0].block_height === last) {
+      throw new Error(
+        `Indexer events: block ${last} holds at least ${EVENTS_PAGE} events and /v4/indexer/events cannot page within a block`
+      )
+    }
     const next = last - 1 > after ? last - 1 : last
     if (next <= after) throw new Error(`Indexer events did not advance past block ${after}`)
     after = next
@@ -88,6 +93,10 @@ export async function loadModelAt(cfg: NetworkConfig, height: number): Promise<S
     dids: dids.data.dids,
   })
   return { model, query: ecosystems.query }
+}
+
+export function missingFromLive(live: NetworkModel, past: NetworkModel): EntityId[] {
+  return [...past.entities.keys()].filter((id) => !live.entities.has(id))
 }
 
 export function absentAt(live: NetworkModel, past: NetworkModel): Set<EntityId> {

@@ -73,6 +73,56 @@ describe('proxyIndexer', () => {
   })
 })
 
+describe('proxyIndexer hardening', () => {
+  const pinned = ['at', '7070', 'v4', 'ecosystem', 'list']
+  const call = (upstream: (input: string, init?: RequestInit) => Promise<Response>, indexer = INDEXER) =>
+    proxyIndexer(request('http://x/api/indexer/at/7070/v4/ecosystem/list'), pinned, indexer, upstream)
+
+  it('refuses to follow upstream redirects', async () => {
+    const upstream = vi.fn(async (_input: string, _init?: RequestInit) => Response.json({}))
+    await call(upstream)
+    expect(upstream.mock.calls[0][1]?.redirect).toBe('error')
+  })
+
+  it('answers 502 with a generic uncached message when the upstream fails', async () => {
+    const res = await call(async () => {
+      throw new TypeError('connect ECONNREFUSED 10.0.0.7:443')
+    })
+    expect(res.status).toBe(502)
+    expect(res.headers.get('Cache-Control')).toBe('no-store')
+    expect(await res.text()).not.toContain('10.0.0.7')
+  })
+
+  it('sets nosniff and a sandbox CSP on every answer', async () => {
+    const ok = await call(async () => Response.json({}))
+    const bad = await proxyIndexer(request('http://x/'), ['nope'], INDEXER, vi.fn())
+    for (const res of [ok, bad]) {
+      expect(res.headers.get('X-Content-Type-Options')).toBe('nosniff')
+      expect(res.headers.get('Content-Security-Policy')).toBe('sandbox')
+    }
+  })
+
+  it('passes 204 and 304 through without a body', async () => {
+    for (const status of [204, 304]) {
+      const res = await call(async () => new Response(null, { status }))
+      expect(res.status).toBe(status)
+      expect(await res.text()).toBe('')
+    }
+  })
+
+  it('answers 502 when the upstream body is larger than the cap', async () => {
+    const res = await call(async () => new Response('x'.repeat(5 * 1024 * 1024 + 1)))
+    expect(res.status).toBe(502)
+    expect(res.headers.get('Cache-Control')).toBe('no-store')
+  })
+
+  it('trims a trailing slash on the indexer url', async () => {
+    const upstream = vi.fn(async (_input: string, _init?: RequestInit) => Response.json({}))
+    await call(upstream, `${INDEXER}/`)
+    expect(upstream.mock.calls[0][0]).toBe(`${INDEXER}/v4/ecosystem/list`)
+  })
+})
+
 describe('indexer client in the browser', () => {
   it('routes height-pinned GETs through a per-height proxy URL but reports the real indexer query', async () => {
     const mock = vi.fn(async (_input: string, _init?: RequestInit) => Response.json({ ecosystems: [] }))

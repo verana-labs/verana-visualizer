@@ -14,7 +14,7 @@ const MAX_DAY_LABELS = 8
 
 export type SnapshotView =
   | { status: 'loading'; height: number }
-  | { status: 'ready'; height: number; model: NetworkModel; time: string | null; query: QueryInfo }
+  | { status: 'ready'; height: number; model: NetworkModel; time: string | null; query: QueryInfo; missing: number }
   | { status: 'error'; height: number; message: string }
 
 export interface TimeScrubberProps {
@@ -177,6 +177,13 @@ export function TimeScrubber(props: TimeScrubberProps) {
           className="absolute inset-0 h-full w-full cursor-ew-resize opacity-0"
         />
       </div>
+      {snapshot.status === 'ready' && snapshot.missing > 0 && (
+        <p role="note" className="mt-1.5 text-[10.5px] text-[#fbbf24]">
+          {number(snapshot.missing)} {snapshot.missing === 1 ? 'entity' : 'entities'} existing at block {number(height)}{' '}
+          {snapshot.missing === 1 ? 'is' : 'are'} no longer on chain and {snapshot.missing === 1 ? "isn't" : "aren't"}{' '}
+          drawn
+        </p>
+      )}
       {snapshot.status === 'ready' && <ShowQuery query={snapshot.query} />}
     </GlassPanel>
   )

@@ -2,13 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { NetworkModel } from '@/domain/network-model'
-import { ingestEvent } from '@/features/activity-feed/live-activity'
+import type { IndexerEvent } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
+import { usePrefersReducedMotion } from '@/scene/use-reduced-motion'
 import { useObservatory } from '@/store/observatory-store'
+import { launchHistoryComets } from './history-comets'
 import { type SnapshotView, TimeScrubber } from './time-scrubber'
-import { useTimeStore } from './time-store'
-import { absentAt } from './timeline'
+import { FADE_MS, useTimeStore } from './time-store'
+import { absentAt, missingFromLive } from './timeline'
 import { useTimeUrl } from './use-time-url'
 import { useTimeline } from './use-timeline'
 
@@ -52,6 +54,11 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
   const [jumping, setJumping] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const { snapshotAt, blockTimeAt, nextEventAfter, eventsAt } = timeline
+  const reduced = usePrefersReducedMotion()
+  const pendingComets = useRef<{ height: number; events: IndexerEvent[] } | null>(null)
+  const cometTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => () => clearTimeout(cometTimer.current), [])
 
   useEffect(() => {
     if (height === null) return
@@ -66,7 +73,13 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
         ([past, blockTime]) => {
           if (cancelled) return
           useTimeStore.getState().setAbsent(absentAt(live, past.model))
-          setSnapshot({ status: 'ready', height, model: past.model, time: blockTime, query: past.query })
+          const missing = missingFromLive(live, past.model).length
+          setSnapshot({ status: 'ready', height, model: past.model, time: blockTime, query: past.query, missing })
+          const comets = pendingComets.current
+          if (comets?.height !== height) return
+          pendingComets.current = null
+          clearTimeout(cometTimer.current)
+          cometTimer.current = setTimeout(() => launchHistoryComets(comets.events, live), reduced ? 0 : FADE_MS)
         },
         (error: unknown) => {
           if (cancelled) return
@@ -80,7 +93,7 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
       cancelled = true
       clearTimeout(timer)
     }
-  }, [height, live, snapshotAt, blockTimeAt])
+  }, [height, live, snapshotAt, blockTimeAt, reduced])
 
   const jumpNext = useCallback(async () => {
     const from = useTimeStore.getState().height
@@ -94,8 +107,8 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
         setNotice('No later change on chain')
         return
       }
+      pendingComets.current = { height: next, events: eventsAt(next) }
       useTimeStore.getState().setHeight(next)
-      for (const ev of eventsAt(next)) ingestEvent(ev)
     } catch (error) {
       logger.error(`Could not find the next change after block ${from}`, error)
       useTimeStore.getState().setPlaying(false)

@@ -19,6 +19,7 @@ const props = (over: Partial<TimeScrubberProps> = {}): TimeScrubberProps => ({
     model: testnetModel(),
     time: '2026-10-14T10:02:08.784704521Z',
     query: { method: 'GET', url: 'https://idx.testnet.verana.network/v4/ecosystem/list', headers: {} },
+    missing: 0,
   },
   playing: false,
   jumping: false,
@@ -55,5 +56,14 @@ describe('TimeScrubber', () => {
   it('says the snapshot is unavailable instead of showing counts when it fails', () => {
     render(<TimeScrubber {...props({ snapshot: { status: 'error', height: 7070, message: 'GET … 503' } })} />)
     expect(screen.getByText(/Snapshot at block 7,070 unavailable/)).toBeInTheDocument()
+  })
+
+  it('says how many entities at the block are gone from the live chain', () => {
+    const p = props()
+    if (p.snapshot.status !== 'ready') throw new Error('fixture snapshot must be ready')
+    render(<TimeScrubber {...p} snapshot={{ ...p.snapshot, missing: 3 }} />)
+    expect(screen.getByRole('note')).toHaveTextContent(
+      "3 entities existing at block 7,070 are no longer on chain and aren't drawn"
+    )
   })
 })

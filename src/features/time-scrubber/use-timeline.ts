@@ -2,10 +2,8 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
-import type { NetworkModel } from '@/domain/network-model'
 import { createChainClient } from '@/lib/api/chain'
 import { createIndexerClient } from '@/lib/api/indexer'
-import type { QueryInfo } from '@/lib/api/query-info'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
 import {
@@ -27,28 +25,21 @@ export interface TimelineHistory {
   events: IndexerEvent[]
   density: DensityPoint[]
   days: DayMark[]
-  query: QueryInfo | null
 }
 
 const dayStart = (timestamp: string) => `${timestamp.slice(0, 10)}T00:00:00Z`
 
-export function useTimeline(cfg: NetworkConfig, enabled = true) {
+export function useTimeline(cfg: NetworkConfig) {
   const client = useQueryClient()
   const indexer = useMemo(() => createIndexerClient(cfg), [cfg])
   const chain = useMemo(() => createChainClient(cfg), [cfg])
 
   const history = useQuery({
     queryKey: ['time-history', cfg.indexerUrl],
-    enabled,
     staleTime: Number.POSITIVE_INFINITY,
     queryFn: async (): Promise<TimelineHistory> => {
-      let query: QueryInfo | null = null
-      const events = await loadEvents(async (after, limit) => {
-        const page = await indexer.events(after, limit)
-        query ??= page.query
-        return page.data
-      })
-      if (events.length === 0) return { events, density: [], days: [], query }
+      const events = await loadEvents(async (after, limit) => (await indexer.events(after, limit)).data)
+      if (events.length === 0) return { events, density: [], days: [] }
       const stats = await indexer.stats({
         timestamp_from: dayStart(events[0].timestamp),
         timestamp_until: dayStart(new Date(Date.now() + DAY_MS).toISOString()),
@@ -56,7 +47,7 @@ export function useTimeline(cfg: NetworkConfig, enabled = true) {
         granularity: 'DAY',
         result_type: 'BUCKETS',
       })
-      return { events, density: buildDensity(events), days: buildDays(stats.data.buckets ?? [], events), query }
+      return { events, density: buildDensity(events), days: buildDays(stats.data.buckets ?? [], events) }
     },
   })
 
@@ -68,11 +59,6 @@ export function useTimeline(cfg: NetworkConfig, enabled = true) {
         staleTime: Number.POSITIVE_INFINITY,
       }),
     [client, cfg]
-  )
-
-  const modelAt = useCallback(
-    async (height: number): Promise<NetworkModel> => (await snapshotAt(height)).model,
-    [snapshotAt]
   )
 
   const nextEventAfter = useCallback(
@@ -103,12 +89,10 @@ export function useTimeline(cfg: NetworkConfig, enabled = true) {
   return {
     status: history.status,
     error: history.error,
-    query: history.data?.query ?? null,
     density: history.data?.density ?? NO_DENSITY,
     days: history.data?.days ?? NO_DAYS,
     eventsAt,
     nextEventAfter,
-    modelAt,
     snapshotAt,
     blockTimeAt,
   }

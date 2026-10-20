@@ -10,7 +10,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ path
     return await proxyIndexer(request, path, resolveNetworkConfig(process.env).indexerUrl)
   } catch (error) {
     logger.error(`Indexer proxy failed for /${path.join('/')}`, error)
-    const message = error instanceof Error ? error.message : String(error)
-    return Response.json({ error: `Indexer unreachable: ${message}` }, { status: 502 })
+    return Response.json(
+      { error: 'The indexer proxy is unavailable' },
+      { status: 502, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } }
+    )
   }
 }

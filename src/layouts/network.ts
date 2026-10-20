@@ -87,7 +87,7 @@ export function networkLayout(model: NetworkModel): Layout {
       const x = Math.cos(angle) * radius
       const z = Math.sin(angle) * radius
       positions.set(id, [center[0] + x, center[1] - z * Math.sin(tilt), center[2] + z * Math.cos(tilt)])
-      rings.set(`${eco.id}:${schemaIndex}:${tier}`, { center, radius, tilt })
+      rings.set(`${eco.id}:${schemaIndex}:${tier}`, { center, radius, tilt, ecosystem: eco.id })
     }
   }
 
