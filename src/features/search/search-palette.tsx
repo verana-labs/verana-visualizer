@@ -70,6 +70,18 @@ function ResultRow({ entity, onPick }: { entity: Entity; onPick: (id: Entity['id
   )
 }
 
+const FOCUSABLE = 'input, button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+
+function trapTab(event: React.KeyboardEvent<HTMLElement>) {
+  if (event.key !== 'Tab') return
+  const items = [...event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE)]
+  if (items.length === 0) return
+  event.preventDefault()
+  const at = items.indexOf(document.activeElement as HTMLElement)
+  const next = event.shiftKey ? (at <= 0 ? items.length - 1 : at - 1) : at === items.length - 1 ? 0 : at + 1
+  items[next].focus()
+}
+
 function Palette({ onClose }: { onClose: () => void }) {
   const model = useObservatory((s) => s.model)
   const select = useObservatory((s) => s.select)
@@ -94,6 +106,7 @@ function Palette({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-label="Search"
         aria-modal="true"
+        onKeyDown={trapTab}
         className="fixed top-[68px] left-1/2 z-30 w-[560px] max-w-[calc(100vw-32px)] -translate-x-1/2 overflow-hidden text-scene-txt"
       >
         <Command shouldFilter={false} loop label="Search the network">

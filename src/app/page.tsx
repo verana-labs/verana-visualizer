@@ -35,7 +35,7 @@ function Observatory() {
   const load = useLoadProgress(steps)
   const model = useObservatory((s) => s.model)
   const [webgl, setWebgl] = useState<boolean | null>(null)
-  useSelectionUrl(cfg.chainId)
+  useSelectionUrl(cfg.chainId, loaderGone)
 
   useEffect(() => setWebgl(hasWebGL()), [])
 

@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { searchEntities } from './search-entities'
 import { testnetModel } from './search-fixture'
 
 const model = testnetModel()
 const ids = (query: string) => searchEntities(model, query).map((e) => e.id)
-const kinds = (query: string) => searchEntities(model, query).map((e) => e.kind)
+const _kinds = (query: string) => searchEntities(model, query).map((e) => e.kind)
 
 describe('searchEntities', () => {
   it('returns nothing for a blank query', () => {
@@ -21,10 +22,15 @@ describe('searchEntities', () => {
   })
 
   it('puts name prefix matches before substring matches', () => {
-    const results = searchEntities(model, 'ecs')
-    const firstSubstring = results.findIndex((e) => !e.name.toLowerCase().startsWith('ecs'))
-    const lastPrefix = results.findLastIndex((e) => e.name.toLowerCase().startsWith('ecs'))
-    if (firstSubstring >= 0) expect(lastPrefix).toBeLessThan(firstSubstring)
+    const make = (id: EntityId, name: string): [EntityId, Entity] => [
+      id,
+      { id, kind: 'participant', name, ecosystemId: null, color: '#fff', tier: 2, did: null },
+    ]
+    const small = { entities: new Map([make('participant:1', 'Zeta Alpha'), make('participant:2', 'Alpha Zeta')]) }
+    expect(searchEntities(small as unknown as NetworkModel, 'alpha').map((e) => e.id)).toEqual([
+      'participant:2',
+      'participant:1',
+    ])
   })
 
   it('finds the agent and every participant for a full DID', () => {
@@ -46,9 +52,40 @@ describe('searchEntities', () => {
     expect(ids('participant:157')[0]).toBe('participant:157')
   })
 
-  it('is case insensitive and caps results at 50', () => {
+  it('is case insensitive', () => {
     expect(ids('ECS')).toEqual(ids('ecs'))
-    expect(searchEntities(model, 'a').length).toBeLessThanOrEqual(50)
-    expect(kinds('a').length).toBe(50)
+  })
+
+  it('caps results at 50 on a model with more than 50 matches', () => {
+    const entities = new Map(
+      Array.from({ length: 80 }, (_, i): [EntityId, Entity] => [
+        `participant:${i}`,
+        {
+          id: `participant:${i}`,
+          kind: 'participant',
+          name: `Alpha ${i}`,
+          ecosystemId: null,
+          color: '#fff',
+          tier: 2,
+          did: null,
+        },
+      ])
+    )
+    const big = { entities } as unknown as NetworkModel
+    expect(searchEntities(big, 'alpha')).toHaveLength(50)
+  })
+
+  it('never returns proposals', () => {
+    const proposal: Entity = {
+      id: 'proposal:1',
+      kind: 'proposal',
+      name: 'Alpha proposal',
+      ecosystemId: null,
+      color: '#fff',
+      tier: 0,
+      did: null,
+    }
+    const withProposal = { entities: new Map([[proposal.id, proposal]]) } as unknown as NetworkModel
+    expect(searchEntities(withProposal, 'alpha')).toEqual([])
   })
 })

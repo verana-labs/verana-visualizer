@@ -83,6 +83,24 @@ describe('SearchPalette', () => {
     expect(screen.queryByRole('dialog')).toBeNull()
   })
 
+  it('keeps Tab focus inside the dialog', async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <button type="button">outside</button>
+        <SearchPalette />
+      </>
+    )
+    await user.keyboard('/')
+    const dialog = screen.getByRole('dialog', { name: /search/i })
+    for (let i = 0; i < 4; i++) {
+      await user.tab()
+      expect(dialog).toContainElement(document.activeElement as HTMLElement)
+    }
+    await user.tab({ shift: true })
+    expect(dialog).toContainElement(document.activeElement as HTMLElement)
+  })
+
   it('Escape closes the palette without clearing the selection', async () => {
     const user = userEvent.setup()
     useObservatory.setState({ selected: 'ecosystem:14' })
