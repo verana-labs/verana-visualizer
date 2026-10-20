@@ -1,3 +1,4 @@
+import type { CometLaunch, FeedItem } from '@/domain/activity'
 import { touchedEntities } from '@/domain/events'
 import type { EntityId, EntityKind, NetworkModel } from '@/domain/network-model'
 import type { IndexerEvent } from '@/lib/api/schemas'
@@ -16,26 +17,9 @@ export const MODULE_COLORS: Readonly<Record<string, string>> = {
 }
 
 export const COMETS_PER_EVENT = 6
-export const FEED_SIZE = 6
 
 const FALLBACK_COLOR = MODULE_COLORS.co
 const RENDERED_KINDS: ReadonlySet<EntityKind> = new Set(['ecosystem', 'participant', 'agent'])
-
-export interface CometLaunch {
-  target: EntityId
-  color: string
-}
-
-export interface FeedItem {
-  key: string
-  name: string
-  module: string
-  color: string
-  where: string
-  touched: boolean
-  block: number
-  timestamp: string
-}
 
 export function moduleColor(module: string | undefined): string {
   return (module && MODULE_COLORS[module]) || FALLBACK_COLOR
@@ -100,10 +84,6 @@ export function feedItemOf(ev: IndexerEvent, model: NetworkModel | null): FeedIt
   }
 }
 
-export function appendFeed(feed: FeedItem[], item: FeedItem): FeedItem[] {
-  return [item, ...feed].slice(0, FEED_SIZE)
-}
-
 const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ['year', 365 * 86_400],
   ['month', 30 * 86_400],
@@ -114,9 +94,9 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
 ]
 const relativeFormat = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
 
-export function relativeAge(timestamp: string, now: number): string {
+export function relativeAge(timestamp: string, now: number): string | null {
   const seconds = Math.round((Date.parse(timestamp) - now) / 1000)
-  if (Number.isNaN(seconds)) throw new Error(`Event timestamp "${timestamp}" is not a date`)
+  if (Number.isNaN(seconds)) return null
   if (Math.abs(seconds) < 10) return 'now'
   const [unit, size] = UNITS.find(([, s]) => Math.abs(seconds) >= s) ?? UNITS[UNITS.length - 1]
   return relativeFormat.format(Math.round(seconds / size), unit)

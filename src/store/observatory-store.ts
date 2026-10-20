@@ -1,6 +1,6 @@
 import { create } from 'zustand'
+import { appendFeed, type CometLaunch, type FeedItem } from '@/domain/activity'
 import type { EntityId, NetworkModel } from '@/domain/network-model'
-import { appendFeed, type CometLaunch, type FeedItem } from '@/features/activity-feed/activity'
 import type { Layout, LensId } from '@/layouts/types'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { QueryInfo } from '@/lib/api/query-info'

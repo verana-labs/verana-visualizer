@@ -161,7 +161,7 @@ export const indexerEventSchema = z
     did: optionalText,
     block_height: z.number(),
     tx_hash: optionalText,
-    timestamp: z.string(),
+    timestamp: z.string().refine((value) => !Number.isNaN(Date.parse(value)), 'timestamp is not a date'),
     payload: z.record(z.string(), z.unknown()),
   })
   .passthrough()

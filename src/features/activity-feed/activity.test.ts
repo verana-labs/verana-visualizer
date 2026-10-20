@@ -1,13 +1,12 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { appendFeed, FEED_SIZE } from '@/domain/activity'
 import { testnetModel } from '@/features/search/search-fixture'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import {
-  appendFeed,
   COMETS_PER_EVENT,
   cometsFor,
-  FEED_SIZE,
   feedItemOf,
   humanizeEventType,
   MODULE_COLORS,
@@ -125,5 +124,9 @@ describe('relativeAge', () => {
     expect(relativeAge('2026-10-17T12:00:00Z', now)).toBe('3 days ago')
     expect(relativeAge('2026-10-20T11:59:58Z', now)).toBe('now')
     expect(relativeAge('2026-10-20T11:15:00Z', now)).toBe('45 minutes ago')
+  })
+
+  it('returns null instead of throwing for an unparseable timestamp', () => {
+    expect(relativeAge('yesterday-ish', now)).toBeNull()
   })
 })

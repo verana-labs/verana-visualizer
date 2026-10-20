@@ -44,6 +44,7 @@ export function Comets({ positionOf }: { positionOf: PositionOf }) {
   const coreAt = useCoreTween()
   const glow = useGlowTexture()
   const active = useRef<Comet[]>([])
+  const scratch = useRef({ point: [0, 0, 0] as [number, number, number], color: new Color() })
   const slots = useMemo<Slot[]>(
     () =>
       Array.from({ length: COMET_CAP }, () => {
@@ -96,20 +97,18 @@ export function Comets({ positionOf }: { positionOf: PositionOf }) {
   )
 
   useFrame(() => {
+    if (active.current.length === 0 && !slots[0].line.visible) return
     const now = performance.now()
     const { lens, flash } = useObservatory.getState()
-    const core = active.current.length > 0 ? coreAt() : null
-    const lift = cometLift(lens)
-    const point: [number, number, number] = [0, 0, 0]
-    const color = new Color()
-    const flying: Comet[] = []
-
-    for (const comet of active.current) {
-      const t = cometProgress(comet, now, reduced)
-      if (t >= 1) flash(comet.target)
-      else flying.push(comet)
-    }
+    const { point, color } = scratch.current
+    const flying = active.current.filter((comet) => {
+      if (cometProgress(comet, now, reduced) < 1) return true
+      flash(comet.target)
+      return false
+    })
     active.current = flying
+    const core = flying.length > 0 ? coreAt() : null
+    const lift = cometLift(lens)
 
     slots.forEach((slot, i) => {
       const comet = flying[i]
@@ -121,15 +120,22 @@ export function Comets({ positionOf }: { positionOf: PositionOf }) {
       const target = positionOf(comet.target)
       const eased = easeInOutCubic(t)
       color.set(comet.color)
+      const { positions, colors } = slot
       for (let k = 0; k < TRAIL_POINTS; k++) {
         bezierPoint(core, target, Math.max(0, eased - k * TRAIL_SPACING), lift, point)
-        slot.positions.set(point, k * 3)
+        const o = k * 3
+        positions[o] = point[0]
+        positions[o + 1] = point[1]
+        positions[o + 2] = point[2]
         const fade = 1 - k / TRAIL_POINTS
-        slot.colors.set([color.r * fade, color.g * fade, color.b * fade], k * 3)
+        colors[o] = color.r * fade
+        colors[o + 1] = color.g * fade
+        colors[o + 2] = color.b * fade
       }
       slot.line.geometry.attributes.position.needsUpdate = true
       slot.line.geometry.attributes.color.needsUpdate = true
-      slot.head.position.set(...bezierPoint(core, target, eased, lift, point))
+      bezierPoint(core, target, eased, lift, point)
+      slot.head.position.set(point[0], point[1], point[2])
       slot.head.material.color.copy(color)
     })
   })

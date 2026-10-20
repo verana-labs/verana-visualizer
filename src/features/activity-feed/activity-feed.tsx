@@ -1,13 +1,14 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { FeedItem } from '@/domain/activity'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { Chip } from '@/ui/chip'
 import { GlassPanel } from '@/ui/glass-panel'
-import { type FeedItem, relativeAge } from './activity'
+import { relativeAge } from './activity'
 import { ingestEvent, useLiveActivity } from './live-activity'
 import { type FetchEvents, type ReplayState, useReplay } from './replay'
 
@@ -41,6 +42,7 @@ function replayStatus(state: ReplayState): string | null {
 }
 
 function FeedRow({ item, now }: { item: FeedItem; now: number }) {
+  const age = relativeAge(item.timestamp, now)
   return (
     <li className="flex items-baseline gap-2 border-b border-scene-line py-1.5 text-xs last:border-b-0 motion-safe:animate-[feed-in_.5s_ease-out]">
       <span aria-hidden style={{ color: item.touched ? item.color : 'var(--scene-mut, #8b8aa0)' }}>
@@ -61,7 +63,7 @@ function FeedRow({ item, now }: { item: FeedItem; now: number }) {
         {item.where && <span className="block truncate text-[10.5px] text-scene-mut">{item.where}</span>}
       </span>
       <span className="whitespace-nowrap text-[10.5px] text-scene-mut">
-        {`block ${number(item.block)} · ${relativeAge(item.timestamp, now)}`}
+        {age ? `block ${number(item.block)} · ${age}` : `block ${number(item.block)}`}
       </span>
     </li>
   )
@@ -79,7 +81,6 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
   const replay = useReplay(fetchEvents, ingestEvent, currentHead)
   const busy = replay.state.status === 'searching' || replay.state.status === 'running'
   const status = replayStatus(replay.state)
-  const start = useCallback(() => void replay.start(), [replay])
 
   return (
     <GlassPanel
@@ -94,7 +95,11 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
               Cancel replay
             </Button>
           )}
-          <Button className="!px-2 !py-1 text-[11px]" disabled={busy || blockHeight === null} onClick={start}>
+          <Button
+            className="!px-2 !py-1 text-[11px]"
+            disabled={busy || blockHeight === null}
+            onClick={() => void replay.start()}
+          >
             Replay recent
           </Button>
         </span>

@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resolveNetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
@@ -8,6 +9,7 @@ class MockSocket {
   static instances: MockSocket[] = []
   sent: string[] = []
   closed = false
+  readyState = 1
   onopen: (() => void) | null = null
   onmessage: ((message: { data: unknown }) => void) | null = null
   onclose: (() => void) | null = null
@@ -103,6 +105,52 @@ describe('connectIndexerSocket', () => {
     dispose()
   })
 
+  it('drops an event whose timestamp is not a date', () => {
+    vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    const onBlock = vi.fn<(b: LiveBlock) => void>()
+    const dispose = connectIndexerSocket(URL, onBlock, create)
+    latest().receive({ ...blockMessage, events: [{ ...blockMessage.events[0], timestamp: 'soon' }] })
+    expect(onBlock.mock.calls[0][0].events).toEqual([])
+    dispose()
+  })
+
+  it('keeps retrying when opening the socket throws', () => {
+    const error = vi.spyOn(logger, 'error').mockImplementation(() => {})
+    let fail = false
+    const flaky = (url: string) => {
+      if (fail) {
+        fail = false
+        throw new Error('blocked')
+      }
+      return create(url)
+    }
+    const dispose = connectIndexerSocket(URL, () => {}, flaky)
+    fail = true
+    latest().drop()
+    expect(() => vi.advanceTimersByTime(RECONNECT_MS)).not.toThrow()
+    expect(error).toHaveBeenCalledTimes(1)
+    expect(MockSocket.instances).toHaveLength(1)
+    vi.advanceTimersByTime(RECONNECT_MS)
+    expect(MockSocket.instances).toHaveLength(2)
+    dispose()
+  })
+
+  it('closes a still-connecting socket once it opens, without delivering anything', () => {
+    const onBlock = vi.fn()
+    const dispose = connectIndexerSocket(URL, onBlock, create)
+    const socket = latest()
+    socket.readyState = 0
+    dispose()
+    expect(socket.closed).toBe(false)
+    socket.readyState = 1
+    socket.onopen?.()
+    expect(socket.closed).toBe(true)
+    socket.receive(blockMessage)
+    expect(onBlock).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(10_000)
+    expect(MockSocket.instances).toHaveLength(1)
+  })
+
   it('reconnects 3 s after the socket closes, with nothing invented in between', () => {
     const onBlock = vi.fn()
     const dispose = connectIndexerSocket(URL, onBlock, create)
@@ -143,6 +191,17 @@ describe('useIndexerBlocks', () => {
     expect(onBlock).toHaveBeenCalledTimes(1)
     unmount()
     expect(latest().closed).toBe(true)
+    vi.unstubAllGlobals()
+  })
+
+  it('leaves exactly one live socket under Strict Mode double mount', () => {
+    vi.stubGlobal('WebSocket', MockSocket)
+    const { unmount } = renderHook(() => useIndexerBlocks(cfg, () => {}), { wrapper: StrictMode })
+    expect(MockSocket.instances.filter((s) => !s.closed)).toHaveLength(1)
+    vi.advanceTimersByTime(10_000)
+    expect(MockSocket.instances.filter((s) => !s.closed)).toHaveLength(1)
+    unmount()
+    expect(MockSocket.instances.filter((s) => !s.closed)).toHaveLength(0)
     vi.unstubAllGlobals()
   })
 })

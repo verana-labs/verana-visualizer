@@ -1,5 +1,5 @@
+import type { CometLaunch } from '@/domain/activity'
 import type { EntityId } from '@/domain/network-model'
-import type { CometLaunch } from '@/features/activity-feed/activity'
 import type { LensId, Vec3 } from '@/layouts/types'
 
 export const COMET_CAP = 48

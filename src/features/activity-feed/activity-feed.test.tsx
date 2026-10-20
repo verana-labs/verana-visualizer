@@ -60,6 +60,12 @@ describe('ActivityFeed', () => {
     expect(within(rows[1]).getByText('Grant VS operator authorization')).toBeInTheDocument()
   })
 
+  it('renders a row without an age when the timestamp is unreadable', () => {
+    useObservatory.setState({ feed: [{ ...item(44_201), timestamp: 'not-a-date' }] })
+    render(<ActivityFeed cfg={cfg} />)
+    expect(screen.getByText('block 44,201')).toBeInTheDocument()
+  })
+
   it('never shows a quiet-chain indicator', () => {
     render(<ActivityFeed cfg={cfg} />)
     expect(screen.queryByText(/last (tx|transaction)|quiet|no activity/i)).not.toBeInTheDocument()

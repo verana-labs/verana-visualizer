@@ -17,18 +17,41 @@ const event = (block: number): IndexerEvent => ({
 const range = (from: number, n: number) => Array.from({ length: n }, (_, i) => event(from + i))
 
 describe('findReplayEvents', () => {
-  it('tries the windows newest first with limit 100 and keeps the last 30 of the first non-empty one', async () => {
+  it('tries the windows newest first with limit 100 and stops at the first non-empty one', async () => {
     const head = 97_497
     const windows = replayWindows(head)
-    const fetchEvents = vi.fn(async (after: number) => (after === windows[3] ? range(after + 1, 100) : []))
+    const fetchEvents = vi.fn(async (after: number) => (after === windows[3] ? range(after + 1, 40) : []))
     const found = await findReplayEvents(head, fetchEvents)
     expect(REPLAY_LIMIT).toBe(100)
     expect(REPLAY_COUNT).toBe(30)
-    expect(fetchEvents.mock.calls).toEqual(windows.slice(0, 4).map((w) => [w, 100]))
-    expect(found?.after).toBe(windows[3])
+    expect(fetchEvents.mock.calls).toEqual(windows.slice(0, 4).map((w) => [w, 100, expect.anything()]))
     expect(found?.events).toHaveLength(30)
-    expect(found?.events[0].block_height).toBe(windows[3] + 71)
-    expect(found?.events[29].block_height).toBe(windows[3] + 100)
+    expect(found?.events[0].block_height).toBe(windows[3] + 11)
+    expect(found?.events[29].block_height).toBe(windows[3] + 40)
+  })
+
+  it('pages forward from the last event while pages are full, then keeps the newest 30', async () => {
+    const pages = new Map<number, IndexerEvent[]>([
+      [27_497, range(27_509, 100)],
+      [27_608, range(27_700, 100)],
+      [27_799, range(44_190, 11)],
+    ])
+    const fetchEvents = vi.fn(async (after: number) => pages.get(after) ?? [])
+    const found = await findReplayEvents(97_497, fetchEvents)
+    expect(fetchEvents.mock.calls.slice(3).map(([after]) => after)).toEqual([27_497, 27_608, 27_799])
+    expect(found?.events).toHaveLength(30)
+    expect(found?.events[0].block_height).toBe(27_781)
+    expect(found?.events[29].block_height).toBe(44_200)
+  })
+
+  it('stops paging once cancelled', async () => {
+    const controller = new AbortController()
+    const fetchEvents = vi.fn(async (after: number) => {
+      if (after === 87_497) controller.abort()
+      return range(after + 1, 100)
+    })
+    await expect(findReplayEvents(97_497, fetchEvents, controller.signal)).rejects.toThrow()
+    expect(fetchEvents).toHaveBeenCalledTimes(1)
   })
 
   it('returns null when every window is empty', async () => {
@@ -44,7 +67,7 @@ describe('useReplay', () => {
 
   it('replays the found events at 450 ms intervals, labelled by block range', async () => {
     const onEvent = vi.fn()
-    const fetchEvents = vi.fn(async () => range(1000, 40))
+    const fetchEvents = vi.fn(async (after: number) => (after === 10_000 ? range(1000, 40) : []))
     const { result } = renderHook(() => useReplay(fetchEvents, onEvent, () => 20_000))
     await act(async () => {
       await result.current.start()
@@ -95,6 +118,35 @@ describe('useReplay', () => {
     })
     expect(result.current.state).toEqual({ status: 'empty' })
     expect(onEvent).not.toHaveBeenCalled()
+  })
+
+  it('stops searching when cancelled mid-search', async () => {
+    let release: (events: IndexerEvent[]) => void = () => {}
+    const fetchEvents = vi.fn(() => new Promise<IndexerEvent[]>((resolve) => (release = resolve)))
+    const onEvent = vi.fn()
+    const { result } = renderHook(() => useReplay(fetchEvents, onEvent, () => 97_497))
+    let pending: Promise<void> = Promise.resolve()
+    act(() => {
+      pending = result.current.start()
+    })
+    act(() => result.current.cancel())
+    await act(async () => {
+      release([])
+      await pending
+    })
+    expect(fetchEvents).toHaveBeenCalledTimes(1)
+    expect(onEvent).not.toHaveBeenCalled()
+    expect(result.current.state).toEqual({ status: 'idle' })
+  })
+
+  it('resolves to an error state before the block height is known', async () => {
+    const fetchEvents = vi.fn()
+    const { result } = renderHook(() => useReplay(fetchEvents, vi.fn(), () => null))
+    await act(async () => {
+      await expect(result.current.start()).resolves.toBeUndefined()
+    })
+    expect(result.current.state).toEqual({ status: 'failed', message: 'the block height is not known yet' })
+    expect(fetchEvents).not.toHaveBeenCalled()
   })
 
   it('surfaces a failed fetch', async () => {

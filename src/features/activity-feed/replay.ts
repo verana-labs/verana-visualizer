@@ -7,7 +7,7 @@ export const REPLAY_LIMIT = 100
 export const REPLAY_COUNT = 30
 export const REPLAY_INTERVAL_MS = 450
 
-export type FetchEvents = (afterHeight: number, limit: number) => Promise<IndexerEvent[]>
+export type FetchEvents = (afterHeight: number, limit: number, signal: AbortSignal) => Promise<IndexerEvent[]>
 
 export type ReplayState =
   | { status: 'idle' }
@@ -16,51 +16,74 @@ export type ReplayState =
   | { status: 'empty' }
   | { status: 'failed'; message: string }
 
+async function newestFrom(
+  firstPage: IndexerEvent[],
+  fetchEvents: FetchEvents,
+  signal: AbortSignal
+): Promise<IndexerEvent[]> {
+  let page = firstPage
+  let tail = firstPage.slice(-REPLAY_COUNT)
+  while (page.length === REPLAY_LIMIT) {
+    signal.throwIfAborted()
+    const after = page[page.length - 1].block_height
+    page = await fetchEvents(after, REPLAY_LIMIT, signal)
+    if (page.length > 0 && page[page.length - 1].block_height <= after) break
+    tail = [...tail, ...page].slice(-REPLAY_COUNT)
+  }
+  return tail
+}
+
 export async function findReplayEvents(
   head: number,
-  fetchEvents: FetchEvents
+  fetchEvents: FetchEvents,
+  signal: AbortSignal = new AbortController().signal
 ): Promise<{ after: number; events: IndexerEvent[] } | null> {
   for (const after of replayWindows(head)) {
-    const events = await fetchEvents(after, REPLAY_LIMIT)
-    if (events.length > 0) return { after, events: events.slice(-REPLAY_COUNT) }
+    signal.throwIfAborted()
+    const page = await fetchEvents(after, REPLAY_LIMIT, signal)
+    if (page.length > 0) return { after, events: await newestFrom(page, fetchEvents, signal) }
   }
   return null
 }
 
 export function useReplay(fetchEvents: FetchEvents, onEvent: (ev: IndexerEvent) => void, head: () => number | null) {
   const [state, setState] = useState<ReplayState>({ status: 'idle' })
-  const run = useRef(0)
+  const controller = useRef<AbortController | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  const cancel = useCallback(() => {
-    run.current += 1
+  const stop = useCallback(() => {
+    controller.current?.abort()
+    controller.current = null
     clearTimeout(timer.current)
-    setState({ status: 'idle' })
   }, [])
 
-  useEffect(
-    () => () => {
-      run.current += 1
-      clearTimeout(timer.current)
-    },
-    []
-  )
+  const cancel = useCallback(() => {
+    stop()
+    setState({ status: 'idle' })
+  }, [stop])
+
+  useEffect(() => stop, [stop])
 
   const start = useCallback(async () => {
     const height = head()
-    if (height === null) throw new Error('Cannot replay before the block height is known')
-    const id = ++run.current
+    if (height === null) {
+      setState({ status: 'failed', message: 'the block height is not known yet' })
+      return
+    }
+    stop()
+    const run = new AbortController()
+    controller.current = run
     setState({ status: 'searching' })
     let found: Awaited<ReturnType<typeof findReplayEvents>>
     try {
-      found = await findReplayEvents(height, fetchEvents)
+      found = await findReplayEvents(height, fetchEvents, run.signal)
     } catch (error) {
+      if (run.signal.aborted) return
       logger.error('Replay could not fetch past events', error)
-      if (id === run.current)
-        setState({ status: 'failed', message: error instanceof Error ? error.message : String(error) })
+      setState({ status: 'failed', message: error instanceof Error ? error.message : String(error) })
       return
     }
-    if (id !== run.current) return
+    if (run.signal.aborted) return
     if (!found) {
       setState({ status: 'empty' })
       return
@@ -68,7 +91,7 @@ export function useReplay(fetchEvents: FetchEvents, onEvent: (ev: IndexerEvent) 
     const { events } = found
     setState({ status: 'running', from: events[0].block_height, to: events[events.length - 1].block_height })
     const play = (index: number) => {
-      if (id !== run.current) return
+      if (run.signal.aborted) return
       onEvent(events[index])
       if (index === events.length - 1) {
         setState({ status: 'idle' })
@@ -77,7 +100,7 @@ export function useReplay(fetchEvents: FetchEvents, onEvent: (ev: IndexerEvent) 
       timer.current = setTimeout(() => play(index + 1), REPLAY_INTERVAL_MS)
     }
     play(0)
-  }, [fetchEvents, onEvent, head])
+  }, [fetchEvents, onEvent, head, stop])
 
   return { state, start, cancel }
 }
