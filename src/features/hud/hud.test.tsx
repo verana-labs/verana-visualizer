@@ -70,9 +70,21 @@ describe('Hud', () => {
 
   it('starts the tour from the HUD actions', async () => {
     render(<Hud cfg={config('testnet')} />)
-    await userEvent.setup().click(screen.getByRole('button', { name: '▶ 30-second tour' }))
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Tour' }))
     expect(useTour.getState().step).toBe(0)
     useTour.getState().exit()
+  })
+
+  it('folds its figures behind a toggle on phones, always open from md up', async () => {
+    render(<Hud cfg={config('testnet')} />)
+    const toggle = screen.getByRole('button', { name: 'Network figures' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(toggle.className).toMatch(/md:hidden/)
+    const body = screen.getByTestId('hud-body')
+    expect(body.className).toMatch(/max-md:hidden/)
+    await userEvent.setup().click(toggle)
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(body.className).not.toMatch(/max-md:hidden/)
   })
 
   it('counts trusted services over every service, naming how many are still unresolved', () => {

@@ -1,11 +1,10 @@
 'use client'
 
 import Image from 'next/image'
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { countedParticipants } from '@/features/inspector/entity-facts'
 import { ViewActions } from '@/features/share/view-actions'
 import { LiveTag } from '@/features/time-scrubber/live-tag'
-import { useTour } from '@/features/tour/tour-store'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
@@ -31,6 +30,7 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
   const model = useObservatory((s) => s.model)
   const blockHeight = useObservatory((s) => s.blockHeight)
   const verdicts = useObservatory((s) => s.agentVerdicts)
+  const [expanded, setExpanded] = useState(false)
 
   const issued = model
     ? model.raw.participants.reduce(
@@ -45,7 +45,10 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
   const participants = model ? countedParticipants(model, model.participants) : null
 
   return (
-    <GlassPanel data-testid="hud" className="fixed left-4 top-4 z-10 flex flex-col gap-3 px-4 py-3">
+    <GlassPanel
+      data-testid="hud"
+      className="fixed left-4 top-4 z-10 flex flex-col gap-3 px-4 py-3 max-md:right-4 max-md:top-[108px] max-md:py-2.5"
+    >
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-[13px] font-semibold">
@@ -62,47 +65,57 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
             <span>block {blockHeight === null ? '…' : number(blockHeight)}</span>
           </div>
         </div>
-        <NetworkSwitch cfg={cfg} />
+        <div className="flex items-center gap-2">
+          <NetworkSwitch cfg={cfg} />
+          <button
+            type="button"
+            aria-expanded={expanded}
+            aria-controls="hud-body"
+            onClick={() => setExpanded((open) => !open)}
+            className="cursor-pointer rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] text-scene-mut hover:text-white md:hidden"
+          >
+            Network figures <span aria-hidden="true">{expanded ? '▴' : '▾'}</span>
+          </button>
+        </div>
       </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-        <Figure
-          label="ecosystems"
-          value={ecosystems === null ? '–' : number(ecosystems)}
-          growth={<GrowthLine metric="active_ecosystems" total={ecosystems} />}
-        />
-        <Figure
-          label="participants"
-          value={participants === null ? '–' : number(participants)}
-          growth={<GrowthLine metric="participants" total={participants} />}
-        />
-        <Figure
-          label="credentials issued"
-          value={issued === null ? '–' : number(issued)}
-          growth={<GrowthLine metric="issued" total={issued} />}
-        />
-        <Figure
-          label="services"
-          value={`${trusted} / ${services}`}
-          growth={
-            unresolved > 0 && (
-              <div data-testid="services-pending" className="text-[10.5px] text-scene-mut">
-                {`${number(unresolved)} unresolved`}
-              </div>
-            )
-          }
-        />
+      <div id="hud-body" data-testid="hud-body" className={`flex flex-col gap-3 ${expanded ? '' : 'max-md:hidden'}`}>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+          <Figure
+            label="ecosystems"
+            value={ecosystems === null ? '–' : number(ecosystems)}
+            growth={<GrowthLine metric="active_ecosystems" total={ecosystems} />}
+          />
+          <Figure
+            label="participants"
+            value={participants === null ? '–' : number(participants)}
+            growth={<GrowthLine metric="participants" total={participants} />}
+          />
+          <Figure
+            label="credentials issued"
+            value={issued === null ? '–' : number(issued)}
+            growth={<GrowthLine metric="issued" total={issued} />}
+          />
+          <Figure
+            label="services"
+            value={`${trusted} / ${services}`}
+            growth={
+              unresolved > 0 && (
+                <div data-testid="services-pending" className="text-[10.5px] text-scene-mut">
+                  {`${number(unresolved)} unresolved`}
+                </div>
+              )
+            }
+          />
+        </div>
+        <GrowthUnavailable />
+        <WhatChanged />
+        <LiveTag />
+        <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
+          Is this service trustworthy?
+        </Button>
+        <ViewActions cfg={cfg} />
+        {children}
       </div>
-      <GrowthUnavailable />
-      <WhatChanged />
-      <LiveTag />
-      <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
-        Is this service trustworthy?
-      </Button>
-      <ViewActions cfg={cfg} />
-      <Button onClick={() => useTour.getState().start()} className="text-[12px]">
-        ▶ 30-second tour
-      </Button>
-      {children}
     </GlassPanel>
   )
 }

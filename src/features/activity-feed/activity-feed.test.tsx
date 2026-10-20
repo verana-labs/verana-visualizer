@@ -66,6 +66,19 @@ describe('ActivityFeed', () => {
     expect(screen.getByText('block 44,201')).toBeInTheDocument()
   })
 
+  it.each([
+    'economics',
+    'chain',
+    'time',
+    'governance',
+    'registry',
+  ] as const)('steps aside on phones for the %s lens panel', (lens) => {
+    useObservatory.setState({ lens })
+    render(<ActivityFeed cfg={cfg} />)
+    expect(screen.getByRole('region', { name: 'Live activity' }).className).toMatch(/max-md:hidden/)
+    useObservatory.setState({ lens: 'network' })
+  })
+
   it('never shows a quiet-chain indicator', () => {
     render(<ActivityFeed cfg={cfg} />)
     expect(screen.queryByText(/last (tx|transaction)|quiet|no activity/i)).not.toBeInTheDocument()

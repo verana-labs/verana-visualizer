@@ -206,11 +206,11 @@ export function SearchPalette() {
 
   return (
     <>
-      <GlassPanel className="fixed top-[68px] left-1/2 z-10 -translate-x-1/2">
+      <GlassPanel className="fixed top-[68px] left-1/2 z-10 -translate-x-1/2 max-xl:left-[356px] max-xl:translate-x-0 max-md:inset-x-4 max-md:top-[62px]">
         <button
           type="button"
           onClick={() => useObservatory.getState().openPalette('search')}
-          className="flex w-[300px] max-w-[calc(100vw-32px)] cursor-pointer items-center gap-2 px-3.5 py-2 text-left text-[12.5px] text-scene-mut hover:text-white"
+          className="flex w-[300px] max-w-[calc(100vw-32px)] max-md:w-full cursor-pointer items-center gap-2 px-3.5 py-2 text-left text-[12.5px] text-scene-mut hover:text-white"
         >
           <span>Search the network</span>
           <kbd className="ml-auto rounded border border-scene-line px-1.5 text-[11px]">/</kbd>

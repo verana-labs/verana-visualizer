@@ -54,7 +54,7 @@ export function Fact({ label, children }: { label: string; children: ReactNode }
 export function Kicker({ children, spec }: { children: ReactNode; spec?: SpecLink }) {
   if (!spec) return <div className="text-[10px] uppercase tracking-[.09em] text-scene-mut">{children}</div>
   return (
-    <div className="flex items-baseline justify-between gap-2 text-[10px] uppercase tracking-[.09em] text-scene-mut">
+    <div className="flex items-baseline justify-between gap-2 pr-6 text-[10px] uppercase tracking-[.09em] text-scene-mut">
       <span className="min-w-0 truncate">{children}</span>
       <ExternalLink variant="inline" href={spec.href}>{`${spec.label} ↗`}</ExternalLink>
     </div>

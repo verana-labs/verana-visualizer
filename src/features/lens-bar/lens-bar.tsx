@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { LENSES } from '@/layouts'
 import type { LensId } from '@/layouts/types'
 import { replaceViewState } from '@/lib/replace-view-state'
@@ -19,6 +20,11 @@ const LABELS: Record<LensId, string> = {
 export function LensBar() {
   const lens = useObservatory((s) => s.lens)
   const setLens = useObservatory((s) => s.setLens)
+  const bar = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bar.current?.querySelector(`[data-lens="${lens}"]`)?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' })
+  }, [lens])
 
   const choose = (next: LensId) => {
     setLens(next)
@@ -26,14 +32,20 @@ export function LensBar() {
   }
 
   return (
-    <GlassPanel className="fixed left-1/2 top-4 z-10 flex -translate-x-1/2 gap-0.5 p-1">
+    <GlassPanel
+      ref={bar}
+      role="group"
+      aria-label="Lenses"
+      className="fixed left-1/2 top-4 z-10 flex -translate-x-1/2 gap-0.5 p-1 max-xl:left-[356px] max-xl:right-4 max-xl:w-fit max-xl:max-w-[calc(100vw-372px)] max-xl:translate-x-0 max-xl:overflow-x-auto max-xl:[scrollbar-width:none] max-md:inset-x-4 max-md:top-3 max-md:w-auto max-md:max-w-none"
+    >
       {LENSES.map((id) => (
         <button
           key={id}
+          data-lens={id}
           type="button"
           aria-pressed={lens === id}
           onClick={() => choose(id)}
-          className={`cursor-pointer rounded-[10px] px-4 py-2 text-[12.5px] font-medium transition-colors ${
+          className={`shrink-0 cursor-pointer rounded-[10px] px-3 py-2 text-[12.5px] 2xl:px-4 font-medium transition-colors ${
             lens === id ? 'bg-[var(--accent)] text-white' : 'text-scene-mut hover:text-white'
           }`}
         >

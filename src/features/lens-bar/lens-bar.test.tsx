@@ -15,6 +15,23 @@ beforeEach(() => {
 })
 
 describe('LensBar', () => {
+  it('scrolls sideways across the phone width instead of overflowing it', () => {
+    render(<LensBar />)
+    const bar = screen.getByRole('group', { name: 'Lenses' })
+    expect(bar.className).toMatch(/max-md:inset-x-4/)
+    expect(bar.className).toMatch(/max-xl:overflow-x-auto/)
+  })
+
+  it('scrolls the active lens into view on a phone-width bar', () => {
+    const scrolled: string[] = []
+    Element.prototype.scrollIntoView = function (this: Element) {
+      scrolled.push(this.textContent ?? '')
+    }
+    useObservatory.setState({ lens: 'registry' })
+    render(<LensBar />)
+    expect(scrolled).toEqual(['Registry'])
+  })
+
   it('renders exactly the 7 lenses in order', () => {
     render(<LensBar />)
     expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([

@@ -1,8 +1,10 @@
 'use client'
 
+import { type CSSProperties, useState } from 'react'
 import { AGENT_COLORS, ECOSYSTEM_STAR_COLOR, ROLES, type Role } from '@/domain/roles'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
+import { useBelowHud } from '@/ui/use-below-hud'
 
 const ROLE_LABELS: Record<Role, string> = {
   ECOSYSTEM: 'Ecosystem participant',
@@ -24,21 +26,41 @@ function Row({ dotClass, color, label }: { dotClass?: string; color: string; lab
 
 export function Legend() {
   const shown = useObservatory((s) => s.lens === 'network' || s.lens === 'trust')
+  const [open, setOpen] = useState(false)
+  const top = useBelowHud()
   if (!shown) return null
   return (
-    <GlassPanel className="fixed bottom-[66px] left-4 z-10 px-3.5 py-3 text-[11.5px]">
-      <Row color={ECOSYSTEM_STAR_COLOR} label="Ecosystem (trust root)" />
-      {(Object.keys(ROLES) as Role[]).map((role) => (
-        <Row key={role} color={ROLES[role].color} label={ROLE_LABELS[role]} />
-      ))}
-      <Row
-        dotClass="rotate-45 scale-[.85] rounded-[2px]"
-        color={AGENT_COLORS.trusted}
-        label="Verifiable service (agent)"
-      />
-      <Row dotClass="rounded-full border border-[#c4b5fd]" color="transparent" label="Chain core · comets = live tx" />
-      <div className="mt-1 text-[10px] uppercase tracking-[0.08em] text-scene-mut">
-        tilted orbit = one credential schema
+    <GlassPanel
+      style={{ '--below-hud': `${top}px` } as CSSProperties}
+      className="fixed bottom-[66px] left-4 z-10 px-3.5 py-3 text-[11.5px] max-md:bottom-auto max-md:top-[var(--below-hud)] max-md:py-2"
+    >
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="legend-rows"
+        onClick={() => setOpen((o) => !o)}
+        className="cursor-pointer text-[11px] text-scene-mut hover:text-white md:hidden"
+      >
+        Legend <span aria-hidden="true">{open ? '▴' : '▾'}</span>
+      </button>
+      <div id="legend-rows" data-testid="legend-rows" className={open ? 'max-md:mt-1.5' : 'max-md:hidden'}>
+        <Row color={ECOSYSTEM_STAR_COLOR} label="Ecosystem (trust root)" />
+        {(Object.keys(ROLES) as Role[]).map((role) => (
+          <Row key={role} color={ROLES[role].color} label={ROLE_LABELS[role]} />
+        ))}
+        <Row
+          dotClass="rotate-45 scale-[.85] rounded-[2px]"
+          color={AGENT_COLORS.trusted}
+          label="Verifiable service (agent)"
+        />
+        <Row
+          dotClass="rounded-full border border-[#c4b5fd]"
+          color="transparent"
+          label="Chain core · comets = live tx"
+        />
+        <div className="mt-1 text-[10px] uppercase tracking-[0.08em] text-scene-mut">
+          tilted orbit = one credential schema
+        </div>
       </div>
     </GlassPanel>
   )

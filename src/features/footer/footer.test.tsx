@@ -32,4 +32,10 @@ describe('Footer', () => {
       expect(link).toHaveAttribute('rel', 'noreferrer')
     }
   })
+
+  it('keeps only the icons on phones so it never wraps', () => {
+    render(<Footer cfg={cfg} />)
+    expect(screen.getByRole('navigation', { name: 'Verana links' }).className).toMatch(/max-md:hidden/)
+    expect(screen.getByText('Verana Visualizer').className).toMatch(/max-md:hidden/)
+  })
 })

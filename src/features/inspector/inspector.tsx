@@ -173,9 +173,9 @@ function ParticipantPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
           {formatAmount(p.issued)} / {formatAmount(p.verified)}
         </Fact>
         <Fact label="Trust deposit">{vnaFromUvna(Number(p.deposit))}</Fact>
-        <Fact label="Fees (validation · issue · verify)">
-          {[p.validation_fees, p.issuance_fees, p.verification_fees].map((fee) => priced(fee, pricing)).join(' · ')}
-        </Fact>
+        <Fact label="Validation fee">{priced(p.validation_fees, pricing)}</Fact>
+        <Fact label="Issuance fee">{priced(p.issuance_fees, pricing)}</Fact>
+        <Fact label="Verification fee">{priced(p.verification_fees, pricing)}</Fact>
       </div>
       {chain.length > 0 && (
         <Section title="Accredited by">
@@ -274,7 +274,7 @@ const PANELS = {
 } as const satisfies Record<Entity['kind'], { Panel: (props: PanelProps) => ReactNode; query: ListQueryKey | null }>
 
 const PANEL_CLASS =
-  'fixed top-4 right-4 z-20 max-h-[calc(100vh-150px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt'
+  'fixed top-[112px] right-4 z-20 max-h-[calc(100vh-250px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt max-md:left-4 max-md:w-auto xl:top-4 xl:max-h-[calc(100vh-150px)]'
 
 function CloseButton({ label, onClose }: { label: string; onClose: () => void }) {
   return (

@@ -84,6 +84,9 @@ export function ViewActions({ cfg }: { cfg: NetworkConfig }) {
       >
         PNG
       </Button>
+      <Button className={small} disabled={!ready} title="30-second tour" onClick={() => useTour.getState().start()}>
+        Tour
+      </Button>
     </div>
   )
 }

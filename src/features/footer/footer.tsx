@@ -20,11 +20,11 @@ export function Footer({ cfg }: { cfg: NetworkConfig }) {
     { label: 'Indexer API', href: cfg.indexerUrl },
   ]
   return (
-    <GlassPanel className="fixed inset-x-4 bottom-3 z-10 flex h-[42px] items-center justify-between rounded-xl pl-[18px] pr-2 text-xs">
-      <span className="font-semibold">
+    <GlassPanel className="fixed inset-x-4 bottom-3 z-10 flex h-[42px] items-center justify-between rounded-xl pl-[18px] pr-2 text-xs max-md:justify-center max-md:px-2">
+      <span className="font-semibold max-md:hidden">
         Verana Visualizer <span className="font-normal text-scene-mut">· {cfg.chainName}</span>
       </span>
-      <nav className="flex gap-[22px]">
+      <nav aria-label="Verana links" className="flex gap-[22px] max-md:hidden">
         {links.map((l) => (
           <a key={l.label} href={l.href} target="_blank" rel="noreferrer" className="text-scene-mut hover:text-white">
             {l.label}

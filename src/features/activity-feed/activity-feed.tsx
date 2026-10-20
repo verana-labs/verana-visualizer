@@ -74,6 +74,7 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
   const feed = useObservatory((s) => s.feed)
   const blockHeight = useObservatory((s) => s.blockHeight)
   const collapsed = useObservatory((s) => s.selected !== null || s.trustCheck !== null)
+  const besidePanel = useObservatory((s) => s.lens !== 'network' && s.lens !== 'trust')
   const now = useNow()
   const fetchEvents = useMemo<FetchEvents>(() => {
     const indexer = createIndexerClient(cfg)
@@ -85,8 +86,9 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
 
   return (
     <GlassPanel
+      role="region"
       aria-label="Live activity"
-      className="fixed right-4 bottom-[66px] z-10 w-[340px] max-w-[calc(100vw-32px)] px-3.5 py-3 text-scene-txt"
+      className={`fixed right-4 bottom-[66px] z-10 w-[340px] max-w-[calc(100vw-32px)] px-3.5 py-3 text-scene-txt ${besidePanel ? 'max-md:hidden' : ''}`}
     >
       <div className={`flex items-center justify-between gap-2 ${collapsed ? '' : 'mb-1'}`}>
         <span className="text-[10px] uppercase tracking-[.09em] text-scene-mut">live activity</span>
