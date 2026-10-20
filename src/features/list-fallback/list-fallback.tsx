@@ -30,15 +30,22 @@ function groupsOf(model: NetworkModel): Group[] {
     : groups
 }
 
+const GROUPED_KINDS = new Set(['ecosystem', 'participant', 'agent'])
+
 function narrow(groups: Group[], model: NetworkModel, query: string): Group[] {
   if (!query.trim()) return groups
-  const hits = new Set(searchEntities(model, query).map((entity) => entity.id))
-  return groups.flatMap((group) => {
+  const found = searchEntities(model, query)
+  const hits = new Set(found.map((entity) => entity.id))
+  const narrowed = groups.flatMap((group) => {
     if (group.ecosystem && hits.has(group.ecosystem.id)) return [group]
     const participants = group.participants.filter((entity) => hits.has(entity.id))
     const agents = group.agents.filter((entity) => hits.has(entity.id))
     return participants.length + agents.length > 0 ? [{ ...group, participants, agents }] : []
   })
+  const others = found.filter((entity) => !GROUPED_KINDS.has(entity.kind))
+  return others.length > 0
+    ? [...narrowed, { key: 'other', ecosystem: null, title: 'Other matches', participants: others, agents: [] }]
+    : narrowed
 }
 
 const ROW_BUTTON = 'flex w-full cursor-pointer items-center gap-2 rounded-md text-left hover:text-white'
@@ -60,7 +67,9 @@ function Row({ entity, color }: { entity: Entity; color: string }) {
   )
 }
 
-export function ListFallback({ model }: { model: NetworkModel }) {
+const UNAVAILABLE = '3D view unavailable on this device.'
+
+export function ListFallback({ model, notice = UNAVAILABLE }: { model: NetworkModel; notice?: string }) {
   const [query, setQuery] = useState('')
   const select = useObservatory((s) => s.select)
   const groups = useMemo(() => groupsOf(model), [model])
@@ -71,7 +80,7 @@ export function ListFallback({ model }: { model: NetworkModel }) {
       data-testid="list-fallback"
       className="fixed inset-x-4 top-[150px] bottom-[220px] z-[5] mx-auto flex max-w-xl flex-col gap-3 p-4 text-[12.5px]"
     >
-      <p className="text-scene-mut">3D view unavailable on this device. The same network, as a list:</p>
+      <p className="text-scene-mut">{`${notice} The same network, as a list:`}</p>
       <input
         type="search"
         aria-label="Search the network"
@@ -83,8 +92,12 @@ export function ListFallback({ model }: { model: NetworkModel }) {
       <div className="min-h-0 flex-1 overflow-y-auto pr-1">
         {shown.length === 0 && <p className="text-scene-mut">Nothing matches “{query}”.</p>}
         {shown.map((group) => (
-          <section key={group.key} className="border-b border-scene-line py-2 last:border-b-0">
-            <h2 className="text-[13px] font-semibold">
+          <section
+            key={group.key}
+            aria-labelledby={`list-group-${group.key}`}
+            className="border-b border-scene-line py-2 last:border-b-0"
+          >
+            <h2 id={`list-group-${group.key}`} className="text-[13px] font-semibold">
               {group.ecosystem ? (
                 <button type="button" onClick={() => select(group.ecosystem?.id ?? null)} className={ROW_BUTTON}>
                   {group.title}

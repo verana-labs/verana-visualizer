@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { AGENT_COLORS } from '@/domain/roles'
 import { testnetModel } from '@/features/search/search-fixture'
@@ -41,5 +42,18 @@ describe('ListFallback', () => {
     useObservatory.setState({ agentVerdicts: new Map() })
     render(<ListFallback model={model} />)
     expect(dotOf(PAPAPO?.id)).toBe(rgb(AGENT_COLORS.resolving))
+  })
+
+  it('says why when it stands in for a crashed 3D scene', () => {
+    render(<ListFallback model={model} notice="The 3D view stopped working (context lost)." />)
+    expect(screen.getByTestId('list-fallback')).toHaveTextContent('The 3D view stopped working (context lost).')
+  })
+
+  it('lists corporation, schema and proposal matches too, so search finds every kind', async () => {
+    const user = userEvent.setup()
+    render(<ListFallback model={model} />)
+    await user.type(screen.getByRole('searchbox', { name: 'Search the network' }), '#34')
+    const other = screen.getByRole('region', { name: 'Other matches' })
+    expect(within(other).getByRole('button', { name: /Papapo/ })).toHaveAttribute('data-id', 'corporation:34')
   })
 })
