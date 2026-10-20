@@ -8,6 +8,10 @@ const ids = (query: string) => searchEntities(model, query).map((e) => e.id)
 const _kinds = (query: string) => searchEntities(model, query).map((e) => e.kind)
 
 describe('searchEntities', () => {
+  it('resolves a controller account to the corporation whose policy address it is', () => {
+    expect(ids('verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj')[0]).toBe('corporation:34')
+  })
+
   it('returns nothing for a blank query', () => {
     expect(ids('   ')).toEqual([])
   })

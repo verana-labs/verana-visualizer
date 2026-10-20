@@ -111,7 +111,7 @@ const PLACEHOLDER: Record<Exclude<PaletteMode, 'closed'>, string> = {
 function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onClose: () => void }) {
   const model = useObservatory((s) => s.model)
   const select = useObservatory((s) => s.select)
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(() => useObservatory.getState().paletteQuery)
   const results = useMemo(() => {
     const found = model ? searchEntities(model, query) : []
     return mode === 'check' ? found.filter((entity) => entity.kind === 'agent') : found
@@ -184,6 +184,7 @@ function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onCl
 
 export function SearchPalette() {
   const palette = useObservatory((s) => s.palette)
+  const paletteQuery = useObservatory((s) => s.paletteQuery)
   const open = palette !== 'closed'
   const toggle = useMemo(
     () => () => {
@@ -208,7 +209,7 @@ export function SearchPalette() {
           <kbd className="ml-auto rounded border border-scene-line px-1.5 text-[11px]">/</kbd>
         </button>
       </GlassPanel>
-      {palette !== 'closed' && <Palette key={palette} mode={palette} onClose={close} />}
+      {palette !== 'closed' && <Palette key={`${palette}:${paletteQuery}`} mode={palette} onClose={close} />}
     </>
   )
 }

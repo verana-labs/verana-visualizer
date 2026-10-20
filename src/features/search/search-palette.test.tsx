@@ -20,6 +20,20 @@ beforeEach(() => {
 })
 
 describe('SearchPalette', () => {
+  it('opens prefilled with a query handed over by a legacy link', () => {
+    render(<SearchPalette />)
+    act(() =>
+      useObservatory
+        .getState()
+        .openPalette('search', 'verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj')
+    )
+    const dialog = screen.getByRole('dialog')
+    expect(within(dialog).getByRole('combobox')).toHaveValue(
+      'verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj'
+    )
+    expect(within(dialog).getAllByRole('option')[0]).toHaveTextContent('Corporation #34')
+  })
+
   it('opens with / and with Cmd+K and Ctrl+K', async () => {
     const user = userEvent.setup()
     render(<SearchPalette />)

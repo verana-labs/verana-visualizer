@@ -30,6 +30,7 @@ import { useTrustCheckRunner } from '@/features/trust-check/use-trust-check-runn
 import { accentFor } from '@/lib/accent'
 import { type LoadSink, networkLoadSteps } from '@/lib/api/load-network'
 import { useNetworkConfig } from '@/lib/env'
+import { replaceViewState } from '@/lib/replace-view-state'
 import { parseViewState } from '@/lib/view-state'
 import { hasWebGL } from '@/scene/webgl-support'
 import { useObservatory } from '@/store/observatory-store'
@@ -57,6 +58,14 @@ function Observatory() {
   useEffect(() => {
     useObservatory.getState().setLens(parseViewState(search).lens)
   }, [search])
+
+  useEffect(() => {
+    if (!loaderGone) return
+    const { q } = parseViewState(new URLSearchParams(window.location.search))
+    if (!q) return
+    replaceViewState({ q: null })
+    useObservatory.getState().openPalette('search', q)
+  }, [loaderGone])
 
   useEffect(() => {
     if (!load.done || !sink.model || sink.blockHeight === undefined) return

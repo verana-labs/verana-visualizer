@@ -36,6 +36,7 @@ describe('shareUrl', () => {
       t: null,
       panel: null,
       tour: null,
+      q: null,
     }
     expect(shareUrl('https://vis.example', view)).toBe(`https://vis.example/?${serializeViewState(view)}`)
   })
@@ -55,6 +56,7 @@ describe('ViewActions', () => {
       t: 1_700_000_000,
       panel: null,
       tour: null,
+      q: null,
     })}`
     expect(writeText).toHaveBeenCalledWith(expected)
     expect(expected).toContain('cam=10.12,20,30,1,2,3')

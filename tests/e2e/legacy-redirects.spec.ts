@@ -35,6 +35,16 @@ test('a legacy permission link lands on the participant in the observatory', asy
   await expect(page.getByTestId('inspector')).toContainText('Papapo')
 })
 
+test('a legacy controller link opens search on the corporation that account controls', async ({ page }) => {
+  const account = 'verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj'
+  await page.goto(`/did-directory?controller=${account}`)
+  await expect(page.getByTestId('stardust-loader')).toHaveCount(0, { timeout: 60_000 })
+  const dialog = page.getByRole('dialog', { name: 'Search' })
+  await expect(dialog.getByRole('combobox')).toHaveValue(account)
+  await expect(dialog.getByRole('option').first()).toContainText('Corporation #34')
+  await expect(page).not.toHaveURL(/q=/)
+})
+
 test('the indexer proxy serves a pinned-height read from the indexer', async ({ request }) => {
   const response = await request.get('/api/indexer/at/38000/v4/indexer/changes')
   expect(response.status()).toBe(200)

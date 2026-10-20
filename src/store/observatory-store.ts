@@ -42,6 +42,7 @@ export interface ObservatoryState {
   cometLaunch: CometLaunch[] | null
   toast: string | null
   palette: PaletteMode
+  paletteQuery: string
   trustCheck: TrustCheckState | null
   economics: EconomicsScene | null
   simulationOpen: boolean
@@ -57,7 +58,7 @@ export interface ObservatoryState {
   pushFeed(item: FeedItem): void
   launchComets(launches: CometLaunch[]): void
   showToast(message: string): void
-  openPalette(mode: Exclude<PaletteMode, 'closed'>): void
+  openPalette(mode: Exclude<PaletteMode, 'closed'>, query?: string): void
   closePalette(): void
   requestTrustCheck(did: string): void
   finishTrustCheck(seq: number, result: TrustCheck): void
@@ -89,6 +90,7 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   cometLaunch: null,
   toast: null,
   palette: 'closed',
+  paletteQuery: '',
   trustCheck: null,
   economics: null,
   simulationOpen: false,
@@ -110,8 +112,8 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
     set({ toast: message })
     toastTimer = setTimeout(() => set({ toast: null }), TOAST_MS)
   },
-  openPalette: (mode) => set({ palette: mode }),
-  closePalette: () => set({ palette: 'closed' }),
+  openPalette: (mode, query = '') => set({ palette: mode, paletteQuery: query }),
+  closePalette: () => set({ palette: 'closed', paletteQuery: '' }),
   requestTrustCheck: (did) =>
     set((s) => {
       const subject = s.model?.byDid(did)[0] ?? null

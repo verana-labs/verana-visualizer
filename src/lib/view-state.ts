@@ -12,9 +12,11 @@ export interface ViewState {
   t: number | null
   panel: Panel | null
   tour: number | null
+  q: string | null
 }
 
 const DEFAULT_LENS: LensId = 'network'
+const MAX_QUERY = 256
 const NUMERIC_KINDS: readonly EntityKind[] = ['ecosystem', 'participant', 'corporation', 'schema', 'proposal']
 
 function parseSel(raw: string | null): EntityId | null {
@@ -43,6 +45,11 @@ export function formatSel(id: EntityId): string {
   return `${id.slice(0, i)}:${encodeURIComponent(id.slice(i + 1))}`
 }
 
+function parseQuery(raw: string | null): string | null {
+  const q = raw?.trim() ?? ''
+  return q && q.length <= MAX_QUERY ? q : null
+}
+
 export function parseViewState(search: URLSearchParams): ViewState {
   const lens = search.get('lens')
   const t = search.get('t')
@@ -57,6 +64,7 @@ export function parseViewState(search: URLSearchParams): ViewState {
     t: Number.isFinite(tNum) ? tNum : null,
     panel: panel === 'inspector' || panel === 'verdict' ? panel : null,
     tour: Number.isInteger(tourNum) && tourNum >= 0 ? tourNum : null,
+    q: parseQuery(search.get('q')),
   }
 }
 
@@ -67,6 +75,7 @@ export function serializeViewState(v: ViewState): string {
   if (v.t !== null) parts.push(`t=${v.t}`)
   if (v.panel) parts.push(`panel=${v.panel}`)
   if (v.tour !== null) parts.push(`tour=${v.tour}`)
+  if (v.q) parts.push(`q=${encodeURIComponent(v.q)}`)
   if (v.cam) parts.push(`cam=${v.cam.map((n) => Math.round(n * 100) / 100).join(',')}`)
   return parts.join('&')
 }

@@ -8,22 +8,40 @@ const full: ViewState = {
   t: 1700000000,
   panel: 'verdict',
   tour: 2,
+  q: 'verana1abc',
 }
 
 describe('view state', () => {
   it('round-trips a full state with stable key order', () => {
     const s = serializeViewState(full)
     expect(s).toBe(
-      'lens=trust&sel=agent:did%3Aweb%3Aexample.com&t=1700000000&panel=verdict&tour=2&cam=1.25,2,3.5,0,0.1,-4'
+      'lens=trust&sel=agent:did%3Aweb%3Aexample.com&t=1700000000&panel=verdict&tour=2&q=verana1abc&cam=1.25,2,3.5,0,0.1,-4'
     )
     expect(parseViewState(new URLSearchParams(s))).toEqual(full)
   })
 
   it('omits defaults', () => {
-    expect(serializeViewState({ lens: 'network', sel: null, cam: null, t: null, panel: null, tour: null })).toBe('')
     expect(
-      serializeViewState({ lens: 'network', sel: 'participant:158', cam: null, t: null, panel: null, tour: null })
+      serializeViewState({ lens: 'network', sel: null, cam: null, t: null, panel: null, tour: null, q: null })
+    ).toBe('')
+    expect(
+      serializeViewState({
+        lens: 'network',
+        sel: 'participant:158',
+        cam: null,
+        t: null,
+        panel: null,
+        tour: null,
+        q: null,
+      })
     ).toBe('sel=participant:158')
+  })
+
+  it('reads a trimmed search query and drops a blank or oversized one', () => {
+    expect(parseViewState(new URLSearchParams('q=%20verana1abc%20')).q).toBe('verana1abc')
+    expect(parseViewState(new URLSearchParams('q=%20%20')).q).toBeNull()
+    expect(parseViewState(new URLSearchParams(`q=${'a'.repeat(257)}`)).q).toBeNull()
+    expect(serializeViewState({ ...full, cam: null, q: 'did:web:a b' })).toContain('q=did%3Aweb%3Aa%20b')
   })
 
   it('parses chain and corporation proposal selections', () => {

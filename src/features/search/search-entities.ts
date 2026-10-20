@@ -1,4 +1,4 @@
-import type { Entity, EntityKind, NetworkModel } from '@/domain/network-model'
+import type { Entity, EntityId, EntityKind, NetworkModel } from '@/domain/network-model'
 
 const MAX_RESULTS = 50
 const KIND_ORDER: readonly EntityKind[] = ['ecosystem', 'participant', 'agent', 'corporation', 'schema', 'proposal']
@@ -19,12 +19,18 @@ function scoreOf(entity: Entity, needle: string): number | null {
   return null
 }
 
+function controlledBy(model: NetworkModel, needle: string): EntityId | null {
+  const corporation = model.raw?.corporations.find((c) => c.policy_address.toLowerCase() === needle)
+  return corporation ? `corporation:${corporation.id}` : null
+}
+
 export function searchEntities(model: NetworkModel, query: string): Entity[] {
   const needle = query.trim().toLowerCase()
   if (!needle) return []
+  const controller = controlledBy(model, needle)
   return [...model.entities.values()]
     .flatMap((entity) => {
-      const score = scoreOf(entity, needle)
+      const score = entity.id === controller ? EXACT : scoreOf(entity, needle)
       return score === null ? [] : [{ entity, score }]
     })
     .sort((a, b) => a.score - b.score || KIND_ORDER.indexOf(a.entity.kind) - KIND_ORDER.indexOf(b.entity.kind))
