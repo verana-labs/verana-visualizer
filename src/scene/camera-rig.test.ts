@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { PerspectiveCamera, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type EntityId, type RawNetwork } from '@/domain/network-model'
+import { layoutFor } from '@/layouts'
 import type { Layout, Vec3 } from '@/layouts/types'
 import {
   focusDistance,
@@ -10,6 +11,7 @@ import {
   focusFrameIds,
   framePoints,
   overviewOf,
+  tightFitDistance,
   unoccludedAspect,
   zoomLimits,
 } from './camera-rig'
@@ -143,6 +145,20 @@ describe('focusFrameIds', () => {
     dids: fixture<{ dids: string[] }>('dids').dids,
   }
   const model = buildNetworkModel(raw)
+
+  it('gives ECS 1.6 times its tight fit', () => {
+    const layout = layoutFor('network', model)
+    const center = layout.positions.get('ecosystem:2')
+    if (!center) throw new Error('ECS has no position')
+    const target = new Vector3(...center)
+    const heading = new Vector3(0, 0.5, 1).normalize()
+    const points = framePoints({ ...layout, rings: [] }, focusFrameIds(model, 'ecosystem:2'))
+    const aspect = unoccludedAspect(1440, 900)
+    const tight = tightFitDistance(target, points, heading, FOV, aspect)
+    const distance = focusFrameDistance('ecosystem', 'network', target, points, heading, FOV, aspect)
+    expect(distance).toBeCloseTo(1.6 * tight)
+    expect(distance).toBeGreaterThan(45)
+  })
 
   it('frames an ecosystem orbit system without the agents it shares with other ecosystems', () => {
     const ids = focusFrameIds(model, 'ecosystem:2')

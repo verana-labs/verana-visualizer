@@ -3,6 +3,7 @@
 import { useFrame } from '@react-three/fiber'
 import { type RefObject, useLayoutEffect, useMemo, useRef } from 'react'
 import { Color, type InstancedMesh, Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry, Vector3 } from 'three'
+import type { EntityId } from '@/domain/network-model'
 import { useObservatory } from '@/store/observatory-store'
 import { MAX_STAR_SIZE, type SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
@@ -15,7 +16,21 @@ interface NodesProps {
   focus: RefObject<FocusSets>
 }
 
+const HOVER_GROWTH = 1.35
+const FLASH_GROWTH = 1.4
 const FLASH_WHITE = new Color('#ffffff').multiplyScalar(1.5)
+
+export function nodeScale(
+  node: SceneNode,
+  flash: number,
+  hovered: EntityId | 'rocket' | null,
+  selected: EntityId | null
+): number {
+  const id = node.entity.id
+  const hoverGrowth = id === hovered && id !== selected ? HOVER_GROWTH : 1
+  const grown = node.size * (1 + flash * FLASH_GROWTH) * hoverGrowth
+  return node.entity.kind === 'ecosystem' ? Math.min(MAX_STAR_SIZE, grown) : grown
+}
 
 export function Nodes({ nodes, positionOf, focus }: NodesProps) {
   const mesh = useRef<InstancedMesh>(null)
@@ -49,14 +64,11 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     if (!instances?.instanceColor) return
     const now = performance.now()
     const { hovered, selected } = useObservatory.getState()
-    const pulse = 0.5 + 0.5 * Math.sin(now / 420)
     const { m, q, p, s, c } = scratch
     nodes.forEach((node, i) => {
       const id = node.entity.id
       const flash = flashOf(id, now)
-      const grown =
-        node.size * (1 + flash * 1.4) * (id === hovered ? 1.35 : 1) * (id === selected ? 1.25 + 0.15 * pulse : 1)
-      const scale = node.entity.kind === 'ecosystem' ? Math.min(MAX_STAR_SIZE, grown) : grown
+      const scale = nodeScale(node, flash, hovered, selected)
       p.set(...positionOf(id))
       m.compose(p, q, s.setScalar(scale))
       instances.setMatrixAt(i, m)

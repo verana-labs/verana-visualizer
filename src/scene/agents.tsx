@@ -80,7 +80,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
       const flash = flashOf(id, now)
       const [x, y, z] = positionOf(id)
       p.set(x, y + Math.sin(now / 1100 + i) * BOB, z)
-      s.setScalar(AGENT_SIZE * (1 + flash) * (id === hovered ? 1.4 : 1) * (id === selected ? 1.3 : 1))
+      s.setScalar(AGENT_SIZE * (1 + flash) * (id === hovered && id !== selected ? 1.4 : 1))
       m.compose(p, q.setFromEuler(e.set(0, now * 0.0012 + i, 0)), s)
       diamondMesh.setMatrixAt(i, m)
       m.compose(p, q.setFromEuler(e.set(Math.PI / 2 + Math.sin(now / 1500 + i) * 0.5, now * 0.0008 + i, 0)), s)

@@ -16,6 +16,7 @@ const FLIGHT_MS = 1300
 const REDUCED_FLIGHT_MS = 300
 const MIN_OVERVIEW_DISTANCE = 40
 const FRAME_MARGIN = 1.12
+const FOCUS_ROOM = 1.6
 const MAX_STAR_DEGREES = 20
 const INSPECTOR_SPAN_PX = 356
 const MIN_FOCUS_ASPECT = 0.35
@@ -58,7 +59,8 @@ function fitDistance(
   direction: Vector3,
   fov: number,
   aspect: number,
-  floor: number
+  floor: number,
+  margin: number
 ): number {
   const basis = new PerspectiveCamera(fov, aspect)
   basis.position.copy(direction)
@@ -72,7 +74,7 @@ function fitDistance(
   let distance = floor
   for (const p of points) {
     offset.set(...p).sub(target)
-    const needed = Math.max(Math.abs(offset.dot(right)) / tanH, Math.abs(offset.dot(up)) / tanV) * FRAME_MARGIN
+    const needed = Math.max(Math.abs(offset.dot(right)) / tanH, Math.abs(offset.dot(up)) / tanV) * margin
     distance = Math.max(distance, needed + offset.dot(direction))
   }
   return distance
@@ -95,7 +97,17 @@ export function focusFrameDistance(
   fov: number,
   aspect: number
 ): number {
-  return fitDistance(related, target, heading, fov, aspect, focusDistance(kind, lens))
+  return Math.max(focusDistance(kind, lens), FOCUS_ROOM * tightFitDistance(target, related, heading, fov, aspect))
+}
+
+export function tightFitDistance(
+  target: Vector3,
+  points: readonly Vec3[],
+  heading: Vector3,
+  fov: number,
+  aspect: number
+): number {
+  return fitDistance(points, target, heading, fov, aspect, 0, 1)
 }
 
 export function overviewOf(points: readonly Vec3[], lens: LensId, fov: number, aspect: number) {
@@ -104,7 +116,7 @@ export function overviewOf(points: readonly Vec3[], lens: LensId, fov: number, a
   for (const p of points) bounds.expandByPoint(point.set(...p))
   const target = bounds.isEmpty() ? new Vector3() : bounds.getCenter(new Vector3())
   const direction = lens === 'network' ? NETWORK_DIRECTION : FLAT_DIRECTION
-  const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE)
+  const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE, FRAME_MARGIN)
   return { target, position: target.clone().addScaledVector(direction, distance), distance }
 }
 
