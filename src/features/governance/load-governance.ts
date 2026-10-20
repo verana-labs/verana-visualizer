@@ -1,4 +1,5 @@
 import {
+  bareStatus,
   type Constellation,
   corporationConstellations,
   fromGovProposal,
@@ -55,7 +56,9 @@ async function chainSection(chain: ChainReader) {
   const res = await chain.govProposals()
   const proposals = res.data.map(fromGovProposal).sort((a, b) => b.number - a.number)
   const tallied = await Promise.all(
-    proposals.map(async (p) => (p.open ? { ...p, tally: await liveTally(chain, p.number) } : p))
+    proposals.map(async (p) =>
+      bareStatus(p.status) === 'VOTING_PERIOD' ? { ...p, tally: await liveTally(chain, p.number) } : p
+    )
   )
   return { proposals: tallied, query: res.query }
 }

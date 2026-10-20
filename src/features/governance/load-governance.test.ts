@@ -141,6 +141,15 @@ describe('chain proposal tallies', () => {
     })
   })
 
+  it('never calls a deposit-period proposal a live tally, since voting has not started', async () => {
+    const deposit = { ...open, status: 'PROPOSAL_STATUS_DEPOSIT_PERIOD' }
+    const mock = stub({ gov: () => Response.json({ proposals: [deposit], pagination: { next_key: null } }) })
+    const { indexer, chain } = clients()
+    const data = await loadGovernance(indexer, chain, [])
+    expect(paths(mock)).not.toContain('/cosmos/gov/v1/proposals/4/tally')
+    expect(data.proposals.find((p) => p.id === 'proposal:4')?.tally).toEqual({ status: 'none' })
+  })
+
   it('marks the tally unavailable when the live tally call fails, keeping the proposal', async () => {
     stub({
       gov: () => Response.json({ proposals: [open], pagination: { next_key: null } }),
