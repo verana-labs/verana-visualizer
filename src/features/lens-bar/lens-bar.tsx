@@ -1,9 +1,8 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LENSES } from '@/layouts'
 import type { LensId } from '@/layouts/types'
-import { parseViewState, serializeViewState } from '@/lib/view-state'
+import { replaceViewState } from '@/lib/replace-view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 
@@ -20,14 +19,10 @@ const LABELS: Record<LensId, string> = {
 export function LensBar() {
   const lens = useObservatory((s) => s.lens)
   const setLens = useObservatory((s) => s.setLens)
-  const router = useRouter()
-  const pathname = usePathname()
-  const search = useSearchParams()
 
   const choose = (next: LensId) => {
     setLens(next)
-    const query = serializeViewState({ ...parseViewState(search), lens: next })
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+    replaceViewState({ lens: next })
   }
 
   return (

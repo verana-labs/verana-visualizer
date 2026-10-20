@@ -5,16 +5,14 @@ import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
 import { useSelectionUrl } from './use-selection-url'
 
-const replace = vi.fn()
 let params = new URLSearchParams()
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
+  useRouter: () => ({ replace: vi.fn() }),
   usePathname: () => '/',
   useSearchParams: () => params,
 }))
 
 beforeEach(() => {
-  replace.mockClear()
   useObservatory.setState({ model: null, selected: null, toast: null })
   window.history.replaceState(null, '', '/')
 })
@@ -35,7 +33,7 @@ describe('useSelectionUrl', () => {
     act(() => useObservatory.setState({ model: testnetModel() }))
     expect(useObservatory.getState().toast).toBe('Not found on vna-testnet-1')
     expect(useObservatory.getState().selected).toBeNull()
-    expect(replace).toHaveBeenCalledWith('/?lens=trust', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/?lens=trust')
   })
 
   it('holds the toast until the app is ready but still drops sel immediately', () => {
@@ -45,7 +43,7 @@ describe('useSelectionUrl', () => {
       initialProps: { ready: false },
     })
     act(() => useObservatory.setState({ model: testnetModel() }))
-    expect(replace).toHaveBeenCalledWith('/', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/')
     expect(useObservatory.getState().toast).toBeNull()
     rerender({ ready: true })
     expect(useObservatory.getState().toast).toBe('Not found on vna-testnet-1')
@@ -55,6 +53,6 @@ describe('useSelectionUrl', () => {
     params = new URLSearchParams()
     renderHook(() => useSelectionUrl('vna-testnet-1', true))
     act(() => useObservatory.getState().select('ecosystem:14'))
-    expect(replace).toHaveBeenCalledWith('/?sel=ecosystem:14', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/?sel=ecosystem:14')
   })
 })

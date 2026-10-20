@@ -4,17 +4,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useTimeStore } from './time-store'
 import { T_DEBOUNCE_MS, useTimeUrl } from './use-time-url'
 
-const replace = vi.fn()
 let params = new URLSearchParams()
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace }),
+  useRouter: () => ({ replace: vi.fn() }),
   usePathname: () => '/',
   useSearchParams: () => params,
 }))
 
 beforeEach(() => {
   vi.useFakeTimers()
-  replace.mockClear()
   useTimeStore.getState().reset()
   params = new URLSearchParams('lens=time')
   window.history.replaceState(null, '', '/?lens=time')
@@ -34,10 +32,9 @@ describe('useTimeUrl', () => {
     })
     expect(T_DEBOUNCE_MS).toBe(250)
     act(() => vi.advanceTimersByTime(249))
-    expect(replace).not.toHaveBeenCalled()
+    expect(window.location.search).toBe('?lens=time')
     act(() => vi.advanceTimersByTime(1))
-    expect(replace).toHaveBeenCalledTimes(1)
-    expect(replace).toHaveBeenCalledWith('/?lens=time&t=7070', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/?lens=time&t=7070')
   })
 
   it('drops t when the lens returns to live', () => {
@@ -48,14 +45,14 @@ describe('useTimeUrl', () => {
       useTimeStore.getState().setHeight(null)
       vi.advanceTimersByTime(250)
     })
-    expect(replace).toHaveBeenCalledWith('/', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/')
   })
 
   it('drops a stale t that another lens switch carried over', () => {
     params = new URLSearchParams('lens=governance&t=7084')
     window.history.replaceState(null, '', '/?lens=governance&t=7084')
     renderHook(() => useTimeUrl())
-    expect(replace).toHaveBeenCalledWith('/?lens=governance', { scroll: false })
+    expect(`${window.location.pathname}${window.location.search}`).toBe('/?lens=governance')
   })
 
   it('returns the t to restore from the shared link', () => {

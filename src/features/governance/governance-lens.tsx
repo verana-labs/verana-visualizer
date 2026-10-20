@@ -1,6 +1,5 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { type GovernanceScene, withProposals } from '@/domain/governance'
 import type { EntityId } from '@/domain/network-model'
@@ -8,7 +7,8 @@ import { createChainClient } from '@/lib/api/chain'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
-import { parseViewState, serializeViewState } from '@/lib/view-state'
+import { replaceViewState } from '@/lib/replace-view-state'
+import { parseViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { GovernancePanel, type GovernanceState } from './governance-panel'
 import { loadGovernance, loadVotes } from './load-governance'
@@ -22,15 +22,7 @@ function initialProposalSel(): EntityId | null {
   return sel?.startsWith('proposal:') ? sel : null
 }
 
-function currentView() {
-  return parseViewState(new URLSearchParams(window.location.search))
-}
-
 export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const navigation = useRef({ router, pathname })
-  navigation.current = { router, pathname }
   const active = useObservatory((s) => s.lens === 'governance')
   const raw = useObservatory((s) => s.model?.raw ?? null)
   const model = useObservatory((s) => s.model)
@@ -55,11 +47,6 @@ export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
     if (!requested || !raw || started.current === raw) return
     started.current = raw
     setState({ status: 'loading' })
-    const replaceSel = (sel: EntityId | null) => {
-      const { router: r, pathname: path } = navigation.current
-      const query = serializeViewState({ ...currentView(), sel })
-      r.replace(query ? `${path}?${query}` : path, { scroll: false })
-    }
     loadGovernance(
       createIndexerClient(cfg),
       createChainClient(cfg),
@@ -84,7 +71,7 @@ export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
           return
         }
         useObservatory.getState().showToast(`Not found on ${cfg.chainId}`)
-        replaceSel(null)
+        replaceViewState({ sel: null })
       },
       (error: unknown) => {
         if (useObservatory.getState().model?.raw !== raw) return
@@ -117,8 +104,7 @@ export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
           const latest = useObservatory.getState()
           if (latest.selected !== sel || latest.lens === 'governance') return
           latest.setLens('governance')
-          const { router: r, pathname: path } = navigation.current
-          r.replace(`${path}?${serializeViewState({ ...currentView(), lens: 'governance', sel })}`, { scroll: false })
+          replaceViewState({ lens: 'governance', sel })
         }, 0)
       }),
     []

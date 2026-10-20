@@ -1,6 +1,5 @@
 import { expect, openScene, test } from './support/test'
 
-const SETTLE_MS = 750
 const LENSES = ['Network', 'Trust', 'Economics', 'Chain', 'Time', 'Governance', 'Registry'] as const
 
 const button = (page: Parameters<typeof openScene>[0], label: string) =>
@@ -18,11 +17,10 @@ test('each of the 7 lenses switches and updates the URL', async ({ page }) => {
   await openScene(page)
   for (const label of LENSES) {
     await switchTo(page, label)
-    await page.waitForTimeout(SETTLE_MS)
   }
 })
 
-test.fixme('switching from Chain to Time straight away keeps lens=time in the URL', async ({ page }) => {
+test('switching from Chain to Time straight away keeps lens=time in the URL', async ({ page }) => {
   await openScene(page)
   await switchTo(page, 'Chain')
   await switchTo(page, 'Time')
