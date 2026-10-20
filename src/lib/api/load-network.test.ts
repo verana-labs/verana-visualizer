@@ -78,6 +78,33 @@ describe('networkLoadSteps', () => {
     ])
   })
 
+  it('bounds every loader request with a timeout so a hanging endpoint fails by name', async () => {
+    const signals: (AbortSignal | null | undefined)[] = []
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        signals.push(init?.signal)
+        const fixture = routes[new URL(String(input)).pathname]
+        return fixture ? Response.json(rawBody(fixture)) : new Response('nope', { status: 404 })
+      })
+    )
+    for (const step of networkLoadSteps(cfg, {} as LoadSink)) await step.run()
+    expect(signals.length).toBeGreaterThanOrEqual(6)
+    expect(signals.every((signal) => signal instanceof AbortSignal)).toBe(true)
+  })
+
+  it('marks only the layout step as waiting for the data steps', () => {
+    expect(networkLoadSteps(cfg, {} as LoadSink).map((s) => s.barrier === true)).toEqual([
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true,
+    ])
+  })
+
   it('stores each result in the sink and builds the model and layout in the last step', async () => {
     okFetch()
     const sink = {} as LoadSink

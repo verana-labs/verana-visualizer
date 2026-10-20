@@ -5,6 +5,7 @@ import { FetchError } from '@/lib/fetch-json'
 
 export interface LoadStepSpec {
   label: string
+  barrier?: boolean
   run: () => Promise<unknown>
 }
 
@@ -25,7 +26,7 @@ export function useLoadProgress(steps: readonly LoadStepSpec[]): LoadProgress {
   const stepsRef = useRef(steps)
   stepsRef.current = steps
   const cancelRef = useRef<() => void>(() => {})
-  const [completed, setCompleted] = useState(0)
+  const [finished, setFinished] = useState<ReadonlySet<number>>(() => new Set())
   const [error, setError] = useState<FetchError | null>(null)
 
   const start = useCallback(() => {
@@ -34,22 +35,32 @@ export function useLoadProgress(steps: readonly LoadStepSpec[]): LoadProgress {
     cancelRef.current = () => {
       cancelled = true
     }
-    setCompleted(0)
+    setFinished(new Set())
     setError(null)
-    const run = async () => {
-      const current = stepsRef.current
-      for (let i = 0; i < current.length; i++) {
-        try {
-          await current[i].run()
-        } catch (cause) {
-          if (!cancelled) setError(toFetchError(cause))
-          return
-        }
-        if (cancelled) return
-        setCompleted(i + 1)
+    let failed = false
+    const runStep = async (step: LoadStepSpec, index: number) => {
+      try {
+        await step.run()
+      } catch (cause) {
+        if (!cancelled && !failed) setError(toFetchError(cause))
+        failed = true
+        throw cause
       }
+      if (!cancelled && !failed) setFinished((done) => new Set(done).add(index))
     }
-    void run()
+    const run = async () => {
+      let pending: Promise<void>[] = []
+      for (const [index, step] of stepsRef.current.entries()) {
+        if (step.barrier) {
+          await Promise.all(pending)
+          if (cancelled) return
+          pending = []
+        }
+        pending.push(runStep(step, index))
+      }
+      await Promise.all(pending)
+    }
+    run().catch(() => undefined)
   }, [])
 
   useEffect(() => {
@@ -58,9 +69,11 @@ export function useLoadProgress(steps: readonly LoadStepSpec[]): LoadProgress {
   }, [start])
 
   const total = steps.length
+  const completed = finished.size
+  const nextPending = steps.findIndex((_, i) => !finished.has(i))
   return {
     progress: total === 0 ? 0 : completed / total,
-    label: steps[Math.min(completed, total - 1)]?.label ?? '',
+    label: steps[nextPending === -1 ? total - 1 : nextPending]?.label ?? '',
     error,
     done: total > 0 && completed === total && error === null,
     retry: start,

@@ -25,6 +25,7 @@ function deferredSteps() {
   })
   const steps = LABELS.map((label, i) => ({
     label,
+    barrier: i === LABELS.length - 1,
     run: () => {
       gates[i].started()
       return gates[i].promise
@@ -47,13 +48,23 @@ describe('useLoadProgress', () => {
     }
   })
 
-  it('runs steps sequentially', async () => {
+  it('starts the data steps together and the barrier step only once they all resolved', async () => {
     const { gates, steps } = deferredSteps()
     renderHook(() => useLoadProgress(steps))
-    await waitFor(() => expect(gates[0].started).toHaveBeenCalledTimes(1))
-    expect(gates[1].started).not.toHaveBeenCalled()
-    await act(async () => gates[0].resolve())
-    await waitFor(() => expect(gates[1].started).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(gates[5].started).toHaveBeenCalledTimes(1))
+    for (const gate of gates.slice(0, 6)) expect(gate.started).toHaveBeenCalledTimes(1)
+    expect(gates[6].started).not.toHaveBeenCalled()
+    for (const gate of gates.slice(0, 6).reverse()) await act(async () => gate.resolve())
+    await waitFor(() => expect(gates[6].started).toHaveBeenCalledTimes(1))
+  })
+
+  it('counts completions in any order and labels the first step still pending', async () => {
+    const { gates, steps } = deferredSteps()
+    const { result } = renderHook(() => useLoadProgress(steps))
+    await act(async () => gates[3].resolve())
+    await act(async () => gates[1].resolve())
+    await waitFor(() => expect(result.current.progress).toBeCloseTo(2 / 7))
+    expect(result.current.label).toBe(LABELS[0])
   })
 
   it('is done at 1 once every step resolved', async () => {
@@ -74,7 +85,11 @@ describe('useLoadProgress', () => {
     expect(result.current.error?.message).toBe('boom')
     expect(result.current.progress).toBeCloseTo(1 / 7)
     expect(result.current.done).toBe(false)
-    expect(gates[2].started).not.toHaveBeenCalled()
+    await act(async () => {
+      for (const gate of gates.slice(2, 6)) gate.resolve()
+    })
+    expect(gates[6].started).not.toHaveBeenCalled()
+    expect(result.current.progress).toBeCloseTo(1 / 7)
   })
 
   it('wraps a non-FetchError rejection keeping its message', async () => {

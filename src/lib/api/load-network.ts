@@ -21,11 +21,14 @@ export interface LoadSink {
 
 export interface LoadStep {
   label: string
+  barrier?: boolean
   run: () => Promise<unknown>
 }
 
+export const LOADER_TIMEOUT_MS = 15_000
+
 export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[] {
-  const indexer = createIndexerClient(cfg)
+  const indexer = createIndexerClient(cfg, undefined, { timeoutMs: LOADER_TIMEOUT_MS })
   const recorded = <T>(key: ListQueryKey, fetched: Fetched<T>): T => {
     sink.queries = { ...sink.queries, [key]: fetched.query }
     return fetched.data
@@ -69,6 +72,7 @@ export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[]
     },
     {
       label: 'Laying out the network…',
+      barrier: true,
       run: async () => {
         sink.model = buildNetworkModel(rawFromSink(sink))
         sink.layout = layoutFor('network', sink.model)
