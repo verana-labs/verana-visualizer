@@ -1,0 +1,12 @@
+{
+  "corporation_id": 2,
+  "share": 50000,
+  "deposit": 50000,
+  "refunded": 0,
+  "claimable": 0,
+  "slashed_deposit": 0,
+  "repaid_deposit": 0,
+  "slash_count": 0,
+  "last_slashed": null,
+  "last_repaid": null
+}

@@ -1,0 +1,10 @@
+{
+  "params": {
+    "trust_deposit_rate": 0.05,
+    "trust_deposit_share_value": 1,
+    "trust_deposit_max_yield_rate": 0.2,
+    "user_agent_reward_rate": 0.1,
+    "wallet_user_agent_reward_rate": 0.1,
+    "trust_deposit_block_reward_share": 0.2
+  }
+}

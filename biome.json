@@ -19,6 +19,9 @@
       "!.audit-ci.json",
       "!**/*.css",
       "!public",
+      "!src/lib/api/generated",
+      "!src/lib/api/openapi",
+      "!tests/fixtures",
       "!.superpowers",
       "!.claude"
     ]

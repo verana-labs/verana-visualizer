@@ -1,0 +1,95 @@
+[
+  {
+    "operator_address": "veranavaloper1z2epxhjn6qrg0uca6j0rq7llupe3n0nlw8e6zd",
+    "jailed": false,
+    "status": "BOND_STATUS_BONDED",
+    "tokens": "1000000000",
+    "delegator_shares": "1000000000.000000000000000000",
+    "description": {
+      "moniker": "prime-node",
+      "identity": "",
+      "website": "",
+      "security_contact": "",
+      "details": ""
+    },
+    "commission": {
+      "commission_rates": {
+        "rate": "0.100000000000000000",
+        "max_rate": "0.200000000000000000",
+        "max_change_rate": "0.010000000000000000"
+      },
+      "update_time": "2026-10-15T13:09:26.017969150Z"
+    },
+    "consensus_pubkey": {
+      "@type": "/cosmos.crypto.ed25519.PubKey",
+      "key": "8iRvoX2solTYCwPh1sd29f87mNHSJyVprsBb9LOc7vU="
+    },
+    "unbonding_height": "0",
+    "unbonding_time": "1970-01-01T00:00:00Z",
+    "min_self_delegation": "1",
+    "unbonding_on_hold_ref_count": "0",
+    "unbonding_ids": []
+  },
+  {
+    "operator_address": "veranavaloper19ywhwwycdunw9yluwsefxe2ehs2d6nnuj905n3",
+    "jailed": false,
+    "status": "BOND_STATUS_BONDED",
+    "tokens": "990000000",
+    "delegator_shares": "990000000.000000000000000000",
+    "description": {
+      "moniker": "validator2",
+      "identity": "",
+      "website": "",
+      "security_contact": "",
+      "details": ""
+    },
+    "commission": {
+      "commission_rates": {
+        "rate": "0.100000000000000000",
+        "max_rate": "0.200000000000000000",
+        "max_change_rate": "0.010000000000000000"
+      },
+      "update_time": "2026-10-15T13:13:33.629606571Z"
+    },
+    "consensus_pubkey": {
+      "@type": "/cosmos.crypto.ed25519.PubKey",
+      "key": "FQvQ8Di/wjonf3dbTdjIno7xfGl/KWnzjxw0HhmyTbw="
+    },
+    "unbonding_height": "0",
+    "unbonding_time": "1970-01-01T00:00:00Z",
+    "min_self_delegation": "1",
+    "unbonding_on_hold_ref_count": "0",
+    "unbonding_ids": []
+  },
+  {
+    "operator_address": "veranavaloper16j9qracmadh977cp0zq2mam48zuyk7ql2mcl78",
+    "jailed": false,
+    "status": "BOND_STATUS_BONDED",
+    "tokens": "990000000",
+    "delegator_shares": "990000000.000000000000000000",
+    "description": {
+      "moniker": "validator3",
+      "identity": "",
+      "website": "",
+      "security_contact": "",
+      "details": ""
+    },
+    "commission": {
+      "commission_rates": {
+        "rate": "0.100000000000000000",
+        "max_rate": "0.200000000000000000",
+        "max_change_rate": "0.010000000000000000"
+      },
+      "update_time": "2026-10-15T13:13:38.642527686Z"
+    },
+    "consensus_pubkey": {
+      "@type": "/cosmos.crypto.ed25519.PubKey",
+      "key": "VsA5W0DHbKNXTUmmXg5aQtViUs3I3gLHb+DvK2WH8gk="
+    },
+    "unbonding_height": "0",
+    "unbonding_time": "1970-01-01T00:00:00Z",
+    "min_self_delegation": "1",
+    "unbonding_on_hold_ref_count": "0",
+    "unbonding_ids": []
+  }
+]

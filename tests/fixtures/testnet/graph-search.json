@@ -1,0 +1,1270 @@
+{
+  "totalCount": 40,
+  "hits": [
+    {
+      "type": "Did",
+      "id": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+      "score": 0.00179218694,
+      "snippet": {
+        "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T21:42:20.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "ECS Ecosystem (Testnet)",
+          "type": "WEB_PORTAL",
+          "description": "Essential Credential Schema authority of the Verana testnet",
+          "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+          "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Verana ECS Ecosystem",
+          "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+          "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO",
+          "countryCode": "CH",
+          "registryId": "VERANA-ECS-001",
+          "address": "Geneva, Switzerland"
+        },
+        "corporation": {
+          "id": 3,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://ecs-ecosystem.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://ecs-ecosystem.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://ecs-ecosystem.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmYdXVVgL4aJci8CUeV5vYCk6jz3yrHPvoRsfZ1iVFGweM:rental.intexus-dl.testnet.verana.network",
+      "score": 0.001792153694,
+      "snippet": {
+        "did": "did:webvh:QmYdXVVgL4aJci8CUeV5vYCk6jz3yrHPvoRsfZ1iVFGweM:rental.intexus-dl.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T12:28:14.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "B",
+          "name": "Alquiladora de prueba",
+          "type": "WEB_PORTAL",
+          "description": "Alquiladora de vehículos que verifica licencias de conducción. Demostración sin validez oficial.",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Ecosistema de tránsito de prueba",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+          "countryCode": "CO",
+          "registryId": "CO-DEMO-000001",
+          "address": "Bogotá, Colombia (demo)"
+        },
+        "corporation": {
+          "id": 33,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmYdXVVgL4aJci8CUeV5vYCk6jz3yrHPvoRsfZ1iVFGweM:rental.intexus-dl.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://rental.intexus-dl.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmYdXVVgL4aJci8CUeV5vYCk6jz3yrHPvoRsfZ1iVFGweM:rental.intexus-dl.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://rental.intexus-dl.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmYdXVVgL4aJci8CUeV5vYCk6jz3yrHPvoRsfZ1iVFGweM:rental.intexus-dl.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://rental.intexus-dl.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmNWqy567Y6NXH5oAmgUbno49Z9YKLdxELup2KAd4uAHgE:license-issuer.intexus-dl.testnet.verana.network",
+      "score": 0.001792153636,
+      "snippet": {
+        "did": "did:webvh:QmNWqy567Y6NXH5oAmgUbno49Z9YKLdxELup2KAd4uAHgE:license-issuer.intexus-dl.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T12:27:16.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "B",
+          "name": "Entidad emisora de prueba",
+          "type": "WEB_PORTAL",
+          "description": "Emisor de licencias de conducción verificables. Demostración sin validez oficial.",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Ecosistema de tránsito de prueba",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+          "countryCode": "CO",
+          "registryId": "CO-DEMO-000001",
+          "address": "Bogotá, Colombia (demo)"
+        },
+        "corporation": {
+          "id": 33,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmNWqy567Y6NXH5oAmgUbno49Z9YKLdxELup2KAd4uAHgE:license-issuer.intexus-dl.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://license-issuer.intexus-dl.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmNWqy567Y6NXH5oAmgUbno49Z9YKLdxELup2KAd4uAHgE:license-issuer.intexus-dl.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://license-issuer.intexus-dl.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmNWqy567Y6NXH5oAmgUbno49Z9YKLdxELup2KAd4uAHgE:license-issuer.intexus-dl.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://license-issuer.intexus-dl.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmQvUkNDiifx4sdeBaDH8kXmbkWGmvCGzurhPEg5GUXLw9:ecosystem.intexus-dl.testnet.verana.network",
+      "score": 0.001792153543,
+      "snippet": {
+        "did": "did:webvh:QmQvUkNDiifx4sdeBaDH8kXmbkWGmvCGzurhPEg5GUXLw9:ecosystem.intexus-dl.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T12:25:43.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Gobernanza del ecosistema de tránsito (demo)",
+          "type": "WEB_PORTAL",
+          "description": "Controlador del ecosistema de licencias de conducción verificables. Demostración sin validez oficial.",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Ecosistema de tránsito de prueba",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+          "countryCode": "CO",
+          "registryId": "CO-DEMO-000001",
+          "address": "Bogotá, Colombia (demo)"
+        },
+        "corporation": {
+          "id": 33,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmQvUkNDiifx4sdeBaDH8kXmbkWGmvCGzurhPEg5GUXLw9:ecosystem.intexus-dl.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://ecosystem.intexus-dl.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmQvUkNDiifx4sdeBaDH8kXmbkWGmvCGzurhPEg5GUXLw9:ecosystem.intexus-dl.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://ecosystem.intexus-dl.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmQvUkNDiifx4sdeBaDH8kXmbkWGmvCGzurhPEg5GUXLw9:ecosystem.intexus-dl.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://ecosystem.intexus-dl.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmZEmt1vdECHBDXvGTnrku8PYcQaK9iGyLNMNt7hTfHZU1:traffic-authority.intexus-dl.testnet.verana.network",
+      "score": 0.001792153543,
+      "snippet": {
+        "did": "did:webvh:QmZEmt1vdECHBDXvGTnrku8PYcQaK9iGyLNMNt7hTfHZU1:traffic-authority.intexus-dl.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T12:25:43.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "B",
+          "name": "Autoridad de tránsito de prueba",
+          "type": "WEB_PORTAL",
+          "description": "Entidad competente que acredita a los agentes de tránsito. Demostración sin validez oficial.",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Ecosistema de tránsito de prueba",
+          "logoUri": "https://verana.io/logo.svg",
+          "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+          "countryCode": "CO",
+          "registryId": "CO-DEMO-000001",
+          "address": "Bogotá, Colombia (demo)"
+        },
+        "corporation": {
+          "id": 33,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmZEmt1vdECHBDXvGTnrku8PYcQaK9iGyLNMNt7hTfHZU1:traffic-authority.intexus-dl.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://traffic-authority.intexus-dl.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmZEmt1vdECHBDXvGTnrku8PYcQaK9iGyLNMNt7hTfHZU1:traffic-authority.intexus-dl.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://traffic-authority.intexus-dl.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmZEmt1vdECHBDXvGTnrku8PYcQaK9iGyLNMNt7hTfHZU1:traffic-authority.intexus-dl.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://traffic-authority.intexus-dl.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+      "score": 0.001792152792,
+      "snippet": {
+        "did": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-16T12:13:12.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "ECS Organization Issuer (Testnet)",
+          "type": "WEB_PORTAL",
+          "description": "Issues the ECS Organization credentials of the Verana testnet ECS Ecosystem",
+          "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+          "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Verana ECS Organization Issuer",
+          "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+          "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO",
+          "countryCode": "CH",
+          "registryId": "VERANA-ECS-ISSUER-001",
+          "address": "Geneva, Switzerland"
+        },
+        "corporation": {
+          "id": 4,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://ecs-org-issuer.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://ecs-org-issuer.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmV4PhoNCF3hbdN4migcWeQ7P7otkn1AgDSf9fyijRKSPS:ecs-org-issuer.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://ecs-org-issuer.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmbF5zKooefaMCd8ZbGgGRmme95jRMx8TJCpMDahA7MFcN:halcyon.bhi.playground.testnet.verana.network",
+      "score": 0.00179209252,
+      "snippet": {
+        "did": "did:webvh:QmbF5zKooefaMCd8ZbGgGRmme95jRMx8TJCpMDahA7MFcN:halcyon.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:28:40.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Halcyon Talent (demo)",
+          "type": "VerifierService",
+          "description": "Recruitment agency (demo): a verifiable organisation with no Verified Employer credential and no verifier permissions",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/halcyon.svg",
+          "logoDigestSri": "sha384-OK5lZX14s7EMHPYL8mYznQLEqRFqjTtOIzEoIZPIF2Yr9fG6HTL22W5+REuFQVkV"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Halcyon Talent (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/halcyon.svg",
+          "logoDigestSri": "sha384-OK5lZX14s7EMHPYL8mYznQLEqRFqjTtOIzEoIZPIF2Yr9fG6HTL22W5+REuFQVkV",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00998877",
+          "address": "99 Fast Lane, Birmingham, United Kingdom"
+        },
+        "corporation": {
+          "id": 32,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmbF5zKooefaMCd8ZbGgGRmme95jRMx8TJCpMDahA7MFcN:halcyon.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://halcyon.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmbF5zKooefaMCd8ZbGgGRmme95jRMx8TJCpMDahA7MFcN:halcyon.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://halcyon.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmbF5zKooefaMCd8ZbGgGRmme95jRMx8TJCpMDahA7MFcN:halcyon.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://halcyon.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmWqoGdPmZz7pLSAXiucy52k4dW1rFJLAZmdbexSRD2kkt:caledonian.bhi.playground.testnet.verana.network",
+      "score": 0.001792092277,
+      "snippet": {
+        "did": "did:webvh:QmWqoGdPmZz7pLSAXiucy52k4dW1rFJLAZmdbexSRD2kkt:caledonian.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:24:37.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Caledonian University (demo)",
+          "type": "IssuerService",
+          "description": "Awarding body (demo): issues Qualification credentials and governs the Qualification Ecosystem",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/caledonian.svg",
+          "logoDigestSri": "sha384-lBPdBxKLdEeS8ZvfLNw53tboHrQ9Y00ZcYbaUX7sE3RthPwNPGYPwiYsB3bb/HyF"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Caledonian University (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/caledonian.svg",
+          "logoDigestSri": "sha384-lBPdBxKLdEeS8ZvfLNw53tboHrQ9Y00ZcYbaUX7sE3RthPwNPGYPwiYsB3bb/HyF",
+          "countryCode": "GB",
+          "registryId": "UK-EDU-000123",
+          "address": "University Avenue, Glasgow, United Kingdom"
+        },
+        "corporation": {
+          "id": 28,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmWqoGdPmZz7pLSAXiucy52k4dW1rFJLAZmdbexSRD2kkt:caledonian.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://caledonian.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmWqoGdPmZz7pLSAXiucy52k4dW1rFJLAZmdbexSRD2kkt:caledonian.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://caledonian.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmWqoGdPmZz7pLSAXiucy52k4dW1rFJLAZmdbexSRD2kkt:caledonian.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://caledonian.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmYmDb6doyA6HA5WUkYZYxpFbGc3mxwBXtum2RSxZBwGwN:jobsearch.bhi.playground.testnet.verana.network",
+      "score": 0.001792092277,
+      "snippet": {
+        "did": "did:webvh:QmYmDb6doyA6HA5WUkYZYxpFbGc3mxwBXtum2RSxZBwGwN:jobsearch.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:24:37.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "JobSearch (demo)",
+          "type": "VerifierService",
+          "description": "Job board and credential-request service (demo): a recognised RecTech provider that asks only what it may",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/jobsearch.svg",
+          "logoDigestSri": "sha384-3ERW8M3tWdXhT+HNMv3zPSjal0RtP5xjF6WXhk7JwN1aS5Alz9/AO2IXiCLgjHeL"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "JobSearch Ltd (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/jobsearch.svg",
+          "logoDigestSri": "sha384-3ERW8M3tWdXhT+HNMv3zPSjal0RtP5xjF6WXhk7JwN1aS5Alz9/AO2IXiCLgjHeL",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00113355",
+          "address": "Board Walk 4, Leeds, United Kingdom"
+        },
+        "corporation": {
+          "id": 31,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmYmDb6doyA6HA5WUkYZYxpFbGc3mxwBXtum2RSxZBwGwN:jobsearch.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://jobsearch.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmYmDb6doyA6HA5WUkYZYxpFbGc3mxwBXtum2RSxZBwGwN:jobsearch.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://jobsearch.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmYmDb6doyA6HA5WUkYZYxpFbGc3mxwBXtum2RSxZBwGwN:jobsearch.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://jobsearch.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmYuhm7w9q3g61iwwHcUMdJGuJ7WupKD6aUcTdJbtqesyz:tvs.bhi.playground.testnet.verana.network",
+      "score": 0.001792092277,
+      "snippet": {
+        "did": "did:webvh:QmYuhm7w9q3g61iwwHcUMdJGuJ7WupKD6aUcTdJbtqesyz:tvs.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:24:37.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Trustworthy Verification Services (demo)",
+          "type": "IssuerService",
+          "description": "A second certified DVS provider (demo): grantor in the Recruitment Trust Network - same schemas, same rules, same verdict",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/tvs.svg",
+          "logoDigestSri": "sha384-pq7jgq8WWaCe67sboXyqIzC5M9AGE3cM+DIpiAER4FZmAt5Kwq2dHabb0Ikk5vQR"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Trustworthy Verification Services (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/tvs.svg",
+          "logoDigestSri": "sha384-pq7jgq8WWaCe67sboXyqIzC5M9AGE3cM+DIpiAER4FZmAt5Kwq2dHabb0Ikk5vQR",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00990011",
+          "address": "12 Verification Row, Manchester, United Kingdom"
+        },
+        "corporation": {
+          "id": 25,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmYuhm7w9q3g61iwwHcUMdJGuJ7WupKD6aUcTdJbtqesyz:tvs.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://tvs.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmYuhm7w9q3g61iwwHcUMdJGuJ7WupKD6aUcTdJbtqesyz:tvs.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://tvs.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmYuhm7w9q3g61iwwHcUMdJGuJ7WupKD6aUcTdJbtqesyz:tvs.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://tvs.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmRJf5Y8E24tbGdmjUNSUZ7CbEiiPwkq39FyJxKWZvc7pu:northbank.bhi.playground.testnet.verana.network",
+      "score": 0.001792092242,
+      "snippet": {
+        "did": "did:webvh:QmRJf5Y8E24tbGdmjUNSUZ7CbEiiPwkq39FyJxKWZvc7pu:northbank.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:24:02.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Northbank Identity (demo)",
+          "type": "IssuerService",
+          "description": "Certified DVS provider (demo): issues the right-to-work and employment credentials, from HMRC payroll data under the DUAA 2025 gateway",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/northbank.svg",
+          "logoDigestSri": "sha384-NFINZoy+SeD+LbQk1ytko5g71jUC+aFwN3WF8wfieCENO3wfeh/CXTmgxD4N1KVx"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Northbank Identity (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/northbank.svg",
+          "logoDigestSri": "sha384-NFINZoy+SeD+LbQk1ytko5g71jUC+aFwN3WF8wfieCENO3wfeh/CXTmgxD4N1KVx",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00775533",
+          "address": "1 Embankment Place, London, United Kingdom"
+        },
+        "corporation": {
+          "id": 27,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmRJf5Y8E24tbGdmjUNSUZ7CbEiiPwkq39FyJxKWZvc7pu:northbank.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://northbank.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmRJf5Y8E24tbGdmjUNSUZ7CbEiiPwkq39FyJxKWZvc7pu:northbank.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://northbank.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmRJf5Y8E24tbGdmjUNSUZ7CbEiiPwkq39FyJxKWZvc7pu:northbank.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://northbank.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmPhmJ2z5KSySHZ378ktUytpWhxDjF9pxwdPLfswh7u619:institute.bhi.playground.testnet.verana.network",
+      "score": 0.001792092154,
+      "snippet": {
+        "did": "did:webvh:QmPhmJ2z5KSySHZ378ktUytpWhxDjF9pxwdPLfswh7u619:institute.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:22:34.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Better Hiring Institute",
+          "type": "EcosystemService",
+          "description": "Sector body for faster, fairer, safer hiring in the UK: governs the Recruitment Trust Network (demo network on the Verana devnet)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/institute.svg",
+          "logoDigestSri": "sha384-5fMnvNMEpti6zGDAy/XIq6LmocUwJp6DrGCpqmclkB8bbErJnytFepRps0OFK9DK"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Better Hiring Institute",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/institute.svg",
+          "logoDigestSri": "sha384-5fMnvNMEpti6zGDAy/XIq6LmocUwJp6DrGCpqmclkB8bbErJnytFepRps0OFK9DK",
+          "countryCode": "GB",
+          "registryId": "CIC-104403",
+          "address": "London, United Kingdom"
+        },
+        "corporation": {
+          "id": 26,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmPhmJ2z5KSySHZ378ktUytpWhxDjF9pxwdPLfswh7u619:institute.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://institute.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmPhmJ2z5KSySHZ378ktUytpWhxDjF9pxwdPLfswh7u619:institute.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://institute.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmPhmJ2z5KSySHZ378ktUytpWhxDjF9pxwdPLfswh7u619:institute.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://institute.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network",
+      "score": 0.001792091842,
+      "snippet": {
+        "did": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:17:22.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Orchestrating Identity",
+          "type": "IssuerService",
+          "description": "Certified Orchestration Service Provider: onboards organisations onto the Recruitment Trust Network and operates the DVS-Aligned Provider Ecosystem (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/orchestrating-identity.svg",
+          "logoDigestSri": "sha384-xgWe06ljO7T8RoE7dySqb86YoWZgTrKjHyz/XsryTQmxM/i6ui2EQfcXq7p1qa7u"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Orchestrating Identity",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/orchestrating-identity.svg",
+          "logoDigestSri": "sha384-xgWe06ljO7T8RoE7dySqb86YoWZgTrKjHyz/XsryTQmxM/i6ui2EQfcXq7p1qa7u",
+          "countryCode": "GB",
+          "registryId": "UK-CH-PENDING-CONFIRMATION",
+          "address": "London, United Kingdom"
+        },
+        "corporation": {
+          "id": 24,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://orchestrating-identity.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://orchestrating-identity.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmZcQ7KmGsHRARn4ynCAtnUVry39BWqH7DuaePVbXhnW6p:orchestrating-identity.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://orchestrating-identity.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmaE9gmuCjLhZuRiLXN24UC3xyXUjmEaakth5EtDxpeJtr:meridian.bhi.playground.testnet.verana.network",
+      "score": 0.001792091842,
+      "snippet": {
+        "did": "did:webvh:QmaE9gmuCjLhZuRiLXN24UC3xyXUjmEaakth5EtDxpeJtr:meridian.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:17:22.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Meridian Technologies (demo)",
+          "type": "VerifierService",
+          "description": "Employer (demo): careers portal and ATS - Apply with Verifiable Credentials, backed by a resolvable credential chain",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/meridian-tech.svg",
+          "logoDigestSri": "sha384-udno00d5KlX9qlRsSxNlDbWVX73/S6PP8RrpvCZNjg3yqzVqOaigyCT2sl7CO14t"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Meridian Technologies (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/meridian-tech.svg",
+          "logoDigestSri": "sha384-udno00d5KlX9qlRsSxNlDbWVX73/S6PP8RrpvCZNjg3yqzVqOaigyCT2sl7CO14t",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00224466",
+          "address": "1 Silicon Roundabout, London, United Kingdom"
+        },
+        "corporation": {
+          "id": 30,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmaE9gmuCjLhZuRiLXN24UC3xyXUjmEaakth5EtDxpeJtr:meridian.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://meridian.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmaE9gmuCjLhZuRiLXN24UC3xyXUjmEaakth5EtDxpeJtr:meridian.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://meridian.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmaE9gmuCjLhZuRiLXN24UC3xyXUjmEaakth5EtDxpeJtr:meridian.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://meridian.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:Qmd9E6EvCpqDER1DZSJr68aHs6F84UzyAjJqXhBXewAUNN:cirrus.bhi.playground.testnet.verana.network",
+      "score": 0.0017920911,
+      "snippet": {
+        "did": "did:webvh:Qmd9E6EvCpqDER1DZSJr68aHs6F84UzyAjJqXhBXewAUNN:cirrus.bhi.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T19:05:00.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Cirrus Certification (demo)",
+          "type": "IssuerService",
+          "description": "Cloud certification body (demo): issues professional certifications as Qualification credentials",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cirrus.svg",
+          "logoDigestSri": "sha384-THLD7mUvlzfaF3130JWxKk2Z7HGVz2HO2saIixCehhcpq8aL3YsMxiQjznVdNWle"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Cirrus Certification (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cirrus.svg",
+          "logoDigestSri": "sha384-THLD7mUvlzfaF3130JWxKk2Z7HGVz2HO2saIixCehhcpq8aL3YsMxiQjznVdNWle",
+          "countryCode": "GB",
+          "registryId": "UK-CH-00446688",
+          "address": "Cloud House, Reading, United Kingdom"
+        },
+        "corporation": {
+          "id": 29,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:Qmd9E6EvCpqDER1DZSJr68aHs6F84UzyAjJqXhBXewAUNN:cirrus.bhi.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://cirrus.bhi.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:Qmd9E6EvCpqDER1DZSJr68aHs6F84UzyAjJqXhBXewAUNN:cirrus.bhi.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://cirrus.bhi.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:Qmd9E6EvCpqDER1DZSJr68aHs6F84UzyAjJqXhBXewAUNN:cirrus.bhi.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://cirrus.bhi.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmXqVzVoq6NLUdygRkSBzxUYdPuSRbr1zYfAgiyz1R1yCD:darkpool.cexa.playground.testnet.verana.network",
+      "score": 0.001792088601,
+      "snippet": {
+        "did": "did:webvh:QmXqVzVoq6NLUdygRkSBzxUYdPuSRbr1zYfAgiyz1R1yCD:darkpool.cexa.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T18:23:21.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "DarkPool Exchange (demo)",
+          "type": "VerifierService",
+          "description": "A real crypto exchange (demo) outside the Crypto Exchange Association: verifiable, but not accredited to ask for the CEXAKycCredential",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-darkpool.svg",
+          "logoDigestSri": "sha384-D/J1enoMXY6wugQfGQDjw1At/X0v0cYVUORTBvys90SGZRyZJ+Qk7y5EetwqG69/"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "DarkPool Exchange Ltd (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-darkpool.svg",
+          "logoDigestSri": "sha384-D/J1enoMXY6wugQfGQDjw1At/X0v0cYVUORTBvys90SGZRyZJ+Qk7y5EetwqG69/",
+          "countryCode": "KY",
+          "registryId": "KY-338291",
+          "address": "Harbour Place, George Town, Grand Cayman, Cayman Islands"
+        },
+        "corporation": {
+          "id": 23,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmXqVzVoq6NLUdygRkSBzxUYdPuSRbr1zYfAgiyz1R1yCD:darkpool.cexa.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://darkpool.cexa.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmXqVzVoq6NLUdygRkSBzxUYdPuSRbr1zYfAgiyz1R1yCD:darkpool.cexa.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://darkpool.cexa.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmXqVzVoq6NLUdygRkSBzxUYdPuSRbr1zYfAgiyz1R1yCD:darkpool.cexa.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://darkpool.cexa.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmWxW6i2ebhCAJVecER7NXe2WogY2GbDdwbob9qJRCimEF:borealis.cexa.playground.testnet.verana.network",
+      "score": 0.00179208834,
+      "snippet": {
+        "did": "did:webvh:QmWxW6i2ebhCAJVecER7NXe2WogY2GbDdwbob9qJRCimEF:borealis.cexa.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T18:19:00.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Borealis Markets (demo)",
+          "type": "VerifierService",
+          "description": "CEXA member exchange (demo), accredited to verify the CEXAKycCredential - open an account by presenting it",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-borealis.svg",
+          "logoDigestSri": "sha384-i3hsRHMGMaCNoJaOJ4E/GVWFEAPp4DakP96nRYUnYovS+yeQsJpVIwBhvOPoY80l"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Borealis Markets (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-borealis.svg",
+          "logoDigestSri": "sha384-i3hsRHMGMaCNoJaOJ4E/GVWFEAPp4DakP96nRYUnYovS+yeQsJpVIwBhvOPoY80l",
+          "countryCode": "EE",
+          "registryId": "16294901",
+          "address": "Tornimäe 5, 10145 Tallinn, Estonia"
+        },
+        "corporation": {
+          "id": 22,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmWxW6i2ebhCAJVecER7NXe2WogY2GbDdwbob9qJRCimEF:borealis.cexa.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://borealis.cexa.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmWxW6i2ebhCAJVecER7NXe2WogY2GbDdwbob9qJRCimEF:borealis.cexa.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://borealis.cexa.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmWxW6i2ebhCAJVecER7NXe2WogY2GbDdwbob9qJRCimEF:borealis.cexa.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://borealis.cexa.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmYHeUjqdzzC3PC6fAsXAjjR99LqtBV1uY4dj62EWG1vzP:association.cexa.playground.testnet.verana.network",
+      "score": 0.00179208834,
+      "snippet": {
+        "did": "did:webvh:QmYHeUjqdzzC3PC6fAsXAjjR99LqtBV1uY4dj62EWG1vzP:association.cexa.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T18:19:00.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": true,
+        "service": {
+          "pattern": "A",
+          "name": "Crypto Exchange Association (demo)",
+          "type": "TrustRegistryService",
+          "description": "Agent of the Crypto Exchange Association (demo): controls the CEXA Ecosystem, its CEXAKycCredential and CEXAVerifiedCounterpartyCredential schemas, and anchors the example EGF",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-association.svg",
+          "logoDigestSri": "sha384-A6mvEMshBB+MPZMU2PoWxNSGT8GWROrlLsmG3snmmvZT/Sv7S+oCw3X5fMMsFR4H"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Crypto Exchange Association (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-association.svg",
+          "logoDigestSri": "sha384-A6mvEMshBB+MPZMU2PoWxNSGT8GWROrlLsmG3snmmvZT/Sv7S+oCw3X5fMMsFR4H",
+          "countryCode": "CH",
+          "registryId": "CHE-300.100.100",
+          "address": "Trust Plaza 1, 6300 Zug, Switzerland"
+        },
+        "corporation": {
+          "id": 19,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmYHeUjqdzzC3PC6fAsXAjjR99LqtBV1uY4dj62EWG1vzP:association.cexa.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://association.cexa.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmYHeUjqdzzC3PC6fAsXAjjR99LqtBV1uY4dj62EWG1vzP:association.cexa.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://association.cexa.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmYHeUjqdzzC3PC6fAsXAjjR99LqtBV1uY4dj62EWG1vzP:association.cexa.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://association.cexa.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmeJ2wZYxrKPv6M18Muc8JkzackYNoBFQNBfEkDrgQxBF3:novara.cexa.playground.testnet.verana.network",
+      "score": 0.001792088039,
+      "snippet": {
+        "did": "did:webvh:QmeJ2wZYxrKPv6M18Muc8JkzackYNoBFQNBfEkDrgQxBF3:novara.cexa.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T18:13:59.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Novara Bank (demo)",
+          "type": "IssuerService",
+          "description": "CEXA bank member (demo), accredited to issue and verify the CEXAKycCredential - the bank-exchange corridor",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-novara.svg",
+          "logoDigestSri": "sha384-+18qnWMBvRlBmy2ttYrYbdFwXWcLnkUHWxqoF16PoQRV8kWqYrmsHNk8G0Xea3Cq"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Novara Bank (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-novara.svg",
+          "logoDigestSri": "sha384-+18qnWMBvRlBmy2ttYrYbdFwXWcLnkUHWxqoF16PoQRV8kWqYrmsHNk8G0Xea3Cq",
+          "countryCode": "IT",
+          "registryId": "MI-2534891",
+          "address": "Via Manzoni 12, 20121 Milano, Italy"
+        },
+        "corporation": {
+          "id": 21,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmeJ2wZYxrKPv6M18Muc8JkzackYNoBFQNBfEkDrgQxBF3:novara.cexa.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://novara.cexa.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmeJ2wZYxrKPv6M18Muc8JkzackYNoBFQNBfEkDrgQxBF3:novara.cexa.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://novara.cexa.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmeJ2wZYxrKPv6M18Muc8JkzackYNoBFQNBfEkDrgQxBF3:novara.cexa.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://novara.cexa.playground.testnet.verana.network"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Did",
+      "id": "did:webvh:QmXcNPosYitWLzk2Bc2BYt7nKhjkqdsaPDZNiYhpvZqEn4:aurum.cexa.playground.testnet.verana.network",
+      "score": 0.001792087658,
+      "snippet": {
+        "did": "did:webvh:QmXcNPosYitWLzk2Bc2BYt7nKhjkqdsaPDZNiYhpvZqEn4:aurum.cexa.playground.testnet.verana.network",
+        "lastObservedAtTime": "2026-10-15T18:07:38.000Z",
+        "isTrustExpired": false,
+        "trusted": true,
+        "isCorporation": false,
+        "isEcosystem": false,
+        "service": {
+          "pattern": "A",
+          "name": "Aurum Exchange (demo)",
+          "type": "IssuerService",
+          "description": "CEXA member exchange (demo), accredited to issue and verify the CEXAKycCredential - one full check, reused everywhere",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-aurum.svg",
+          "logoDigestSri": "sha384-NO5D68OQo/uua9JG0wsLSMz1nlxEup8fkGmlnPubUK65TyNQLC2BuKqSzt487KBI"
+        },
+        "operator": {
+          "kind": "Organization",
+          "name": "Aurum Exchange (demo)",
+          "logoUri": "https://raw.githubusercontent.com/verana-labs/playground/main/public/images/cast/cexa-aurum.svg",
+          "logoDigestSri": "sha384-NO5D68OQo/uua9JG0wsLSMz1nlxEup8fkGmlnPubUK65TyNQLC2BuKqSzt487KBI",
+          "countryCode": "CH",
+          "registryId": "CHE-310.200.300",
+          "address": "Bahnhofstrasse 21, 6300 Zug, Switzerland"
+        },
+        "corporation": {
+          "id": 20,
+          "deposit": "0uvna",
+          "slashedEvents": 0,
+          "lastSlashedAtTime": null,
+          "slashedValue": null
+        },
+        "endpoints": [
+          {
+            "id": "did:webvh:QmXcNPosYitWLzk2Bc2BYt7nKhjkqdsaPDZNiYhpvZqEn4:aurum.cexa.playground.testnet.verana.network#did-communication",
+            "type": "did-communication",
+            "serviceEndpoint": "wss://aurum.cexa.playground.testnet.verana.network"
+          },
+          {
+            "id": "did:webvh:QmXcNPosYitWLzk2Bc2BYt7nKhjkqdsaPDZNiYhpvZqEn4:aurum.cexa.playground.testnet.verana.network#didcomm-messaging-0",
+            "type": "DIDCommMessaging",
+            "serviceEndpoint": {
+              "uri": "wss://aurum.cexa.playground.testnet.verana.network",
+              "accept": [
+                "didcomm/v2"
+              ]
+            }
+          },
+          {
+            "id": "did:webvh:QmXcNPosYitWLzk2Bc2BYt7nKhjkqdsaPDZNiYhpvZqEn4:aurum.cexa.playground.testnet.verana.network#files",
+            "type": "relativeRef",
+            "serviceEndpoint": "https://aurum.cexa.playground.testnet.verana.network"
+          }
+        ]
+      }
+    }
+  ],
+  "query": {
+    "surface": "Did",
+    "limit": 20
+  },
+  "facets": {
+    "Did.operatorKind": [
+      {
+        "value": "Organization",
+        "count": 40
+      }
+    ],
+    "EcsCredential.ServiceCredential.type": [
+      {
+        "value": "IssuerService",
+        "count": 18
+      },
+      {
+        "value": "VerifierService",
+        "count": 11
+      },
+      {
+        "value": "WEB_PORTAL",
+        "count": 6
+      },
+      {
+        "value": "TrustRegistryService",
+        "count": 4
+      },
+      {
+        "value": "EcosystemService",
+        "count": 1
+      }
+    ],
+    "OrganizationCredential.countryCode": [
+      {
+        "value": "CH",
+        "count": 14
+      },
+      {
+        "value": "GB",
+        "count": 9
+      },
+      {
+        "value": "VD",
+        "count": 5
+      },
+      {
+        "value": "CO",
+        "count": 4
+      },
+      {
+        "value": "BE",
+        "count": 1
+      },
+      {
+        "value": "FR",
+        "count": 1
+      },
+      {
+        "value": "IT",
+        "count": 1
+      },
+      {
+        "value": "SE",
+        "count": 1
+      },
+      {
+        "value": "KY",
+        "count": 1
+      },
+      {
+        "value": "EE",
+        "count": 1
+      },
+      {
+        "value": "ES",
+        "count": 1
+      },
+      {
+        "value": "PT",
+        "count": 1
+      }
+    ]
+  },
+  "cursor": "eyJzIjowLjAwMTc5MjA4NzY1OCwiayI6ImRpZDp3ZWJ2aDpRbVhjTlBvc1lpdFdMemsyQmMyQll0N25LaGprcWRzYVBEWk5pWWhwdlpxRW40OmF1cnVtLmNleGEucGxheWdyb3VuZC50ZXN0bmV0LnZlcmFuYS5uZXR3b3JrIiwiaCI6ImQ5N2YwNTY5NzQ0MWM3ODYifQ"
+}

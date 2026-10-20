@@ -1,0 +1,8 @@
+{
+  "did": "did:example:ecs-corp-vna-devnet-1",
+  "trusted": false,
+  "evaluatedAtTime": "2026-10-20T09:46:05.834Z",
+  "evaluatedAtBlock": 79348,
+  "expiresAtTime": null,
+  "corporationId": 1
+}

@@ -1,0 +1,33 @@
+{
+  "query": "G1",
+  "evaluatedAtTime": "2026-10-20T09:46:05.761Z",
+  "output": [
+    {
+      "id": 5,
+      "didId": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+      "role": "ECOSYSTEM",
+      "state": "ACTIVE",
+      "credentialSchemaId": 4,
+      "ecosystemId": 2,
+      "validatorParticipantId": null,
+      "lastObservedAtTime": "2026-10-16T21:42:20.000Z",
+      "weight": "0uvna",
+      "issuedCredentials": 44,
+      "verifiedCredentials": 0
+    },
+    {
+      "id": 158,
+      "didId": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+      "role": "ISSUER",
+      "state": "ACTIVE",
+      "credentialSchemaId": 4,
+      "ecosystemId": 2,
+      "validatorParticipantId": 5,
+      "lastObservedAtTime": "2026-10-16T21:46:05.000Z",
+      "weight": "0uvna",
+      "issuedCredentials": 0,
+      "verifiedCredentials": 0
+    }
+  ],
+  "nextCursor": null
+}
