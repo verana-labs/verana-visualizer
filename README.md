@@ -5,7 +5,7 @@
 
   <p>A 3D view of the Verana trust network, built on the Verana indexer.</p>
 
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-9D2A6D?style=flat-square"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache--2.0-9D2A6D?style=flat-square"></a>
   <a href="https://discord.gg/edjaFn252q"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?logo=discord&logoColor=white&style=flat-square"></a>
 </div>
 
@@ -106,6 +106,14 @@ helm install vis ./charts
 
 release-please opens the release PR from conventional commits. `cd.yml` builds and pushes the image and the chart to Docker Hub on release.
 
-## License
+## License and community
 
-MIT, see [LICENSE](LICENSE).
+This project is licensed under Apache-2.0 (see `LICENSE`).
+
+- Docs: https://docs.verana.io/
+- GitHub: https://github.com/verana-labs
+- Repo: https://github.com/verana-labs/verana-visualizer
+- Discord: https://discord.gg/edjaFn252q
+- X: https://x.com/Verana_io
+
+Don't trust. Verify.
