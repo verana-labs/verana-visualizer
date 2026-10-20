@@ -22,7 +22,7 @@ const history = vi.hoisted(() => vi.fn())
 vi.mock('@/lib/api/indexer', () => ({ createIndexerClient: () => ({ entityHistory: history }) }))
 
 const model = testnetModel()
-const lastUrl = () => nav.replace.mock.calls.at(-1)?.[0] ?? ''
+const lastUrl = () => `${window.location.pathname}${window.location.search}`
 
 beforeEach(() => {
   nav.search = ''
@@ -72,8 +72,8 @@ describe('Tour', () => {
     nav.search = 'tour=2'
     const { rerender } = render(<Tour ready cfg={testnetCfg} />)
     act(() => useTour.getState().exit())
-    nav.replace.mockReset()
     nav.search = 'lens=trust&tour=2'
+    window.history.replaceState(null, '', '/?lens=trust&tour=2')
     rerender(<Tour ready cfg={testnetCfg} />)
     expect(lastUrl()).toBe('/?lens=trust')
   })
@@ -93,10 +93,10 @@ describe('Tour', () => {
     act(() => useTour.getState().start(6))
     const picked = model.ecosystems[model.ecosystems.length - 1].id
     act(() => useObservatory.getState().select(picked))
-    nav.replace.mockReset()
+    const before = lastUrl()
     act(() => useObservatory.setState({ model: { ...model, entities: new Map(model.entities) } }))
     expect(useObservatory.getState().selected).toBe(picked)
-    expect(nav.replace).not.toHaveBeenCalled()
+    expect(lastUrl()).toBe(before)
   })
 
   it('opens the time scrubber at the block where the first ecosystem was created', async () => {
@@ -138,5 +138,13 @@ describe('Tour', () => {
     act(() => useTour.getState().start(5))
     await waitFor(() => expect(useTour.getState().note).toBe('The first ecosystem’s block is unavailable: HTTP 503'))
     expect(useTimeStore.getState().height).toBeNull()
+  })
+
+  it('moves the caption above the scene on the time step so it never covers the scrubber', () => {
+    render(<Tour ready cfg={testnetCfg} />)
+    act(() => useTour.getState().start(4))
+    expect(screen.getByRole('dialog', { name: 'Guided tour' }).className).toMatch(/bottom-\[80px\]/)
+    act(() => useTour.getState().go(5))
+    expect(screen.getByRole('dialog', { name: 'Guided tour' }).className).toMatch(/top-\[120px\]/)
   })
 })

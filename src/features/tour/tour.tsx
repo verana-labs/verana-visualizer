@@ -1,13 +1,14 @@
 'use client'
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef } from 'react'
 import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { isTyping } from '@/lib/is-typing'
 import { logger } from '@/lib/logger'
-import { parseViewState, serializeViewState } from '@/lib/view-state'
+import { replaceViewState } from '@/lib/replace-view-state'
+import { parseViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
@@ -61,8 +62,6 @@ function openAtFirstEcosystem(cfg: NetworkConfig, step: number): () => void {
 }
 
 export function Tour({ ready, cfg }: { ready: boolean; cfg: NetworkConfig }) {
-  const router = useRouter()
-  const pathname = usePathname()
   const search = useSearchParams()
   const step = useTour((s) => s.step)
   const presenting = useTour((s) => s.presenting)
@@ -79,20 +78,16 @@ export function Tour({ ready, cfg }: { ready: boolean; cfg: NetworkConfig }) {
   }, [ready, steps, search])
 
   useEffect(() => {
-    const view = parseViewState(search)
-    if (!restored.current || useTour.getState().step !== null || view.tour === null) return
-    const query = serializeViewState({ ...view, tour: null })
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
-  }, [search, router, pathname])
+    if (!restored.current || useTour.getState().step !== null || parseViewState(search).tour === null) return
+    replaceViewState({ tour: null })
+  }, [search])
 
   useEffect(() => {
     if (!steps) return
-    const current = parseViewState(new URLSearchParams(window.location.search))
     if (step === null) {
       if (!shown.current) return
       shown.current = false
-      const query = serializeViewState({ ...current, tour: null })
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+      replaceViewState({ tour: null })
       return
     }
     const active = steps[step]
@@ -100,16 +95,9 @@ export function Tour({ ready, cfg }: { ready: boolean; cfg: NetworkConfig }) {
     shown.current = true
     useTour.getState().setNote(null)
     applyStep(active)
-    const query = serializeViewState({
-      ...current,
-      lens: active.lens,
-      sel: useObservatory.getState().selected,
-      tour: step,
-      cam: null,
-    })
-    router.replace(`${pathname}?${query}`, { scroll: false })
+    replaceViewState({ lens: active.lens, sel: useObservatory.getState().selected, tour: step, cam: null })
     if (active.id === 'time') return openAtFirstEcosystem(cfg, step)
-  }, [step, steps, router, pathname, cfg])
+  }, [step, steps, cfg])
 
   useEffect(() => {
     if (step === null || presenting) return
@@ -128,7 +116,7 @@ export function Tour({ ready, cfg }: { ready: boolean; cfg: NetworkConfig }) {
     <GlassPanel
       role="dialog"
       aria-label="Guided tour"
-      className="fixed bottom-[80px] left-1/2 z-20 w-[min(560px,calc(100vw-32px))] -translate-x-1/2 px-5 py-4 text-center lg:w-[min(560px,calc(100vw-760px))] lg:min-w-[380px]"
+      className={`fixed ${steps[step].lens === 'time' ? 'top-[120px]' : 'bottom-[80px]'} left-1/2 z-20 w-[min(560px,calc(100vw-32px))] -translate-x-1/2 px-5 py-4 text-center lg:w-[min(560px,calc(100vw-760px))] lg:min-w-[380px]`}
     >
       <div className="mb-1.5 flex items-center justify-between text-[10px] uppercase tracking-[.09em] text-scene-mut">
         <span>
