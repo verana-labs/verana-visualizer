@@ -4,6 +4,7 @@ import type { Entity, NetworkModel } from '@/domain/network-model'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { useObservatory } from '@/store/observatory-store'
 import { ProposalDetails } from './proposal-details'
+import { setProposalVotes } from './proposal-votes'
 
 const IDLE = { status: 'idle' } as const
 
@@ -25,6 +26,7 @@ export function ProposalPanel({ model, entity, chainId }: { model: NetworkModel;
       votes={governance.votes.get(entity.id) ?? IDLE}
       query={proposal.source === 'group' ? governance.queries.groupProposals : governance.queries.govProposals}
       blockHeight={blockHeight}
+      onRetryVotes={() => setProposalVotes(entity.id, IDLE)}
     />
   )
 }

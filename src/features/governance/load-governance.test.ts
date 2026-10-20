@@ -30,15 +30,27 @@ const upgrade = {
 interface Stub {
   gov?: () => Response
   group?: (id: number) => Response
+  tally?: (id: string) => Response
 }
 
-function stub({ gov, group }: Stub = {}) {
+const open = { ...upgrade, id: '4', status: 'PROPOSAL_STATUS_VOTING_PERIOD', final_tally_result: zeros() }
+
+function zeros() {
+  return { yes_count: '0', no_count: '0', abstain_count: '0', no_with_veto_count: '0' }
+}
+
+function stub({ gov, group, tally }: Stub = {}) {
   const mock = vi.fn(async (input: string) => {
     const url = new URL(input)
     if (url.pathname === '/v4/group/proposals') return Response.json(raw('group-proposals').body)
     if (url.pathname === '/v4/group/votes') return Response.json(raw('group-votes').body)
     const member = url.pathname.match(/^\/v4\/group\/get\/(\d+)$/)
     if (member) return group ? group(Number(member[1])) : Response.json(raw('group-members').body)
+    const live = url.pathname.match(/^\/cosmos\/gov\/v1\/proposals\/(\d+)\/tally$/)
+    if (live)
+      return tally
+        ? tally(live[1])
+        : Response.json({ tally: { yes_count: '7', no_count: '1', abstain_count: '0', no_with_veto_count: '0' } })
     if (url.pathname === '/cosmos/gov/v1/proposals')
       return gov ? gov() : Response.json({ proposals: [upgrade], pagination: { next_key: null } })
     return new Response('unexpected', { status: 500 })
@@ -112,6 +124,39 @@ describe('loadGovernance', () => {
     expect(data.proposals.every((p) => p.source === 'group')).toBe(true)
     expect(data.chain.status).toBe('error')
     expect(data.queries.govProposals).toBeNull()
+  })
+})
+
+describe('chain proposal tallies', () => {
+  it('reads the live tally of an open chain proposal instead of its zeroed final tally', async () => {
+    const mock = stub({ gov: () => Response.json({ proposals: [open, upgrade], pagination: { next_key: null } }) })
+    const { indexer, chain } = clients()
+    const data = await loadGovernance(indexer, chain, [])
+    expect(paths(mock)).toContain('/cosmos/gov/v1/proposals/4/tally')
+    expect(paths(mock)).not.toContain('/cosmos/gov/v1/proposals/3/tally')
+    expect(data.proposals.find((p) => p.id === 'proposal:4')?.tally).toEqual({
+      status: 'ready',
+      live: true,
+      tally: { yes: '7', no: '1', abstain: '0', veto: '0' },
+    })
+  })
+
+  it('marks the tally unavailable when the live tally call fails, keeping the proposal', async () => {
+    stub({
+      gov: () => Response.json({ proposals: [open], pagination: { next_key: null } }),
+      tally: () => new Response('down', { status: 500 }),
+    })
+    const { indexer, chain } = clients()
+    const data = await loadGovernance(indexer, chain, [])
+    expect(data.proposals.find((p) => p.id === 'proposal:4')?.tally).toEqual({ status: 'unavailable' })
+  })
+
+  it('fails only the chain section when a chain row cannot be read', async () => {
+    stub({ gov: () => Response.json({ proposals: [{ ...upgrade, id: 'abc' }], pagination: { next_key: null } }) })
+    const { indexer, chain } = clients()
+    const data = await loadGovernance(indexer, chain, [2])
+    expect(data.chain.status).toBe('error')
+    expect(data.proposals.filter((p) => p.source === 'group')).toHaveLength(36)
   })
 })
 

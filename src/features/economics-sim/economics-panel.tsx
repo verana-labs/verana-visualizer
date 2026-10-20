@@ -187,7 +187,7 @@ const HUD_GAP = 12
 const FOOTER_SPACE = 66
 const FALLBACK_TOP = 248
 
-export function useBelowHud(): number {
+function useBelowHud(): number {
   const [top, setTop] = useState(FALLBACK_TOP)
   useLayoutEffect(() => {
     const hud = document.querySelector<HTMLElement>('[data-testid="hud"]')

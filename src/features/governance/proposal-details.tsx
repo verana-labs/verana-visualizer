@@ -3,13 +3,15 @@
 import type { ReactNode } from 'react'
 import {
   binaryVersion,
+  formatDecimal,
   formatProposalStatus,
   type GovernanceProposal,
   metadataLinks,
   parsePlanInfo,
   proposalColor,
   type Tally,
-  totalVotingPower,
+  type TallyState,
+  tallyShares,
   upgradeExecution,
   type VotesState,
 } from '@/domain/governance'
@@ -26,6 +28,7 @@ interface ProposalDetailsProps {
   votes: VotesState
   query: QueryInfo | null
   blockHeight: number | null
+  onRetryVotes?: () => void
 }
 
 const TALLY = [
@@ -38,7 +41,6 @@ const TALLY = [
 const UNSCHEDULED = '0001-01-01T00:00:00Z'
 
 export const formatTime = (iso: string | null) => (iso ? `${iso.slice(0, 16).replace('T', ' ')} UTC` : 'unknown')
-const count = (value: string) => BigInt(value || '0').toLocaleString('en-US')
 const voteOption = (option: string) =>
   option
     .replace(/^VOTE_OPTION_/, '')
@@ -54,29 +56,25 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
-function TallyBar({ tally }: { tally: Tally }) {
-  const total = BigInt(
-    totalVotingPower({
-      yes_count: tally.yes,
-      no_count: tally.no,
-      abstain_count: tally.abstain,
-      no_with_veto_count: tally.veto,
-    })
-  )
+function TallyView({ state }: { state: TallyState }) {
+  if (state.status === 'none') return <p className="my-1.5 text-[12px] text-scene-mut">Tally available after voting</p>
+  if (state.status === 'unavailable') return <p className="my-1.5 text-[12px] text-[#ff8a8a]">Tally unavailable</p>
+  const { tally, live } = state
+  const shares = tallyShares(tally)
   return (
     <div data-testid="tally">
-      {total > BigInt(0) && (
+      {live && <Kicker>live tally</Kicker>}
+      {shares && (
         <div className="my-2 flex h-1.5 overflow-hidden rounded-full bg-white/5" aria-hidden="true">
-          {TALLY.map(({ key, color }) => {
-            const share = Number((BigInt(tally[key] || '0') * BigInt(1000)) / total) / 10
-            return share > 0 ? <span key={key} style={{ width: `${share}%`, background: color }} /> : null
-          })}
+          {TALLY.map(({ key, color }) =>
+            shares[key] > 0 ? <span key={key} style={{ width: `${shares[key]}%`, background: color }} /> : null
+          )}
         </div>
       )}
       <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
         {TALLY.map(({ key, label, color }) => (
           <span key={key} className="tabular-nums">
-            <span style={{ color }}>●</span> {`${label} ${count(tally[key])}`}
+            <span style={{ color }}>●</span> {`${label} ${formatDecimal(tally[key])}`}
           </span>
         ))}
       </div>
@@ -109,14 +107,25 @@ function Upgrade({ proposal, blockHeight }: { proposal: GovernanceProposal; bloc
   )
 }
 
-function Votes({ votes }: { votes: VotesState }) {
+function Votes({ votes, onRetry }: { votes: VotesState; onRetry?: () => void }) {
   return (
     <Section title="votes">
       {(votes.status === 'idle' || votes.status === 'loading') && (
         <p className="text-[12px] text-scene-mut">Reading votes…</p>
       )}
       {votes.status === 'error' && (
-        <p className="text-[12px] text-[#ff8a8a]">{`Votes unavailable: ${votes.message}`}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[12px] text-[#ff8a8a]">{`Votes unavailable: ${votes.message}`}</p>
+          {onRetry && (
+            <button
+              type="button"
+              onClick={onRetry}
+              className="shrink-0 cursor-pointer rounded-[10px] border border-scene-line px-2.5 py-1 text-[11px] hover:border-[var(--accent)]"
+            >
+              Retry
+            </button>
+          )}
+        </div>
       )}
       {votes.status === 'ready' && (
         <>
@@ -137,7 +146,7 @@ function Votes({ votes }: { votes: VotesState }) {
   )
 }
 
-export function ProposalDetails({ model, proposal, votes, query, blockHeight }: ProposalDetailsProps) {
+export function ProposalDetails({ model, proposal, votes, query, blockHeight, onRetryVotes }: ProposalDetailsProps) {
   const corporation =
     proposal.corporationId === null ? undefined : model.entities.get(`corporation:${proposal.corporationId}`)
   const links = metadataLinks(proposal.metadata)
@@ -149,7 +158,12 @@ export function ProposalDetails({ model, proposal, votes, query, blockHeight }: 
           ? `corporation proposal #${proposal.number}`
           : `chain proposal #${proposal.number}`}
       </Kicker>
-      <h2 className="mt-1 mb-0.5 break-words text-lg font-semibold tracking-[-.01em]">{proposal.title}</h2>
+      <h2
+        className="mt-1 mb-0.5 line-clamp-3 break-words text-lg font-semibold tracking-[-.01em]"
+        title={proposal.title}
+      >
+        {proposal.title}
+      </h2>
       <div className="my-2 flex flex-wrap gap-1.5">
         <Chip style={{ background: `${color}22`, color }}>{formatProposalStatus(proposal.status)}</Chip>
         {proposal.executorResult && (
@@ -157,7 +171,7 @@ export function ProposalDetails({ model, proposal, votes, query, blockHeight }: 
         )}
       </div>
       {proposal.summary && <p className="mb-1.5 whitespace-pre-wrap break-words text-[12.5px]">{proposal.summary}</p>}
-      {proposal.tally && <TallyBar tally={proposal.tally} />}
+      <TallyView state={proposal.tally} />
       <div className="mt-1.5">
         {corporation && (
           <Fact label="Corporation">
@@ -197,14 +211,15 @@ export function ProposalDetails({ model, proposal, votes, query, blockHeight }: 
           >
             {proposal.metadata.raw}
           </pre>
-          {links.map(({ key, url }) => (
+          {links.map(({ key, url, host }) => (
             <ExternalLink key={key} variant="row" href={url}>
-              <span className="truncate">{`${key} ↗`}</span>
+              <span className="truncate">{key}</span>
+              <b className="shrink-0 font-mono text-[10.5px] font-medium text-scene-mut">{`${host} ↗`}</b>
             </ExternalLink>
           ))}
         </Section>
       )}
-      {proposal.source === 'group' && <Votes votes={votes} />}
+      {proposal.source === 'group' && <Votes votes={votes} onRetry={onRetryVotes} />}
       {query && <ShowQuery query={query} />}
     </>
   )

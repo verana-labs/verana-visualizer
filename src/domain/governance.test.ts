@@ -6,13 +6,17 @@ import type { GovProposal, Group, GroupProposal } from '@/lib/api/schemas'
 import {
   binaryVersion,
   corporationConstellations,
+  formatDecimal,
   formatProposalStatus,
   fromGovProposal,
   fromGroupProposal,
   isUpgradeMessage,
+  metadataLinks,
   parsePlanInfo,
   parseProposalMetadata,
   proposalEntityId,
+  tallyOf,
+  tallyShares,
   totalVotingPower,
   turnoutPercent,
   upgradeExecution,
@@ -178,6 +182,15 @@ describe('parseProposalMetadata', () => {
     })
   })
 
+  it('lists only http(s) links with their destination host', () => {
+    const metadata = parseProposalMetadata(
+      JSON.stringify({ forum: 'https://forum.verana.io/t/1', bad: 'javascript:alert(1)', n: 3 })
+    )
+    expect(metadataLinks(metadata)).toEqual([
+      { key: 'forum', url: 'https://forum.verana.io/t/1', host: 'forum.verana.io' },
+    ])
+  })
+
   it('ignores non string title fields and empty metadata', () => {
     expect(parseProposalMetadata('{"title":42}').title).toBeNull()
     expect(parseProposalMetadata('')).toEqual({ title: null, summary: null, json: null, raw: null })
@@ -223,7 +236,7 @@ describe('proposal records', () => {
       tally: { yes_count: '2', no_count: '1', abstain_count: '0', no_with_veto_count: '0' },
     })
     expect(p.open).toBe(true)
-    expect(p.tally).toEqual({ yes: '2', no: '1', abstain: '0', veto: '0' })
+    expect(p.tally).toEqual({ status: 'ready', live: true, tally: { yes: '2', no: '1', abstain: '0', veto: '0' } })
   })
 
   it('builds a chain proposal with its upgrade plan and final tally', () => {
@@ -237,13 +250,68 @@ describe('proposal records', () => {
       summary: 'Moves the chain to v0.9',
       open: true,
       proposers: ['verana1proposer'],
-      tally: { yes: '600', no: '100', abstain: '200', veto: '100' },
     })
     expect(p.upgrade?.height).toBe('120000')
   })
 
+  it('never shows the zeroed final tally of an open chain proposal as a real tally', () => {
+    expect(
+      fromGovProposal(
+        govProposal({
+          final_tally_result: { yes_count: '0', no_count: '0', abstain_count: '0', no_with_veto_count: '0' },
+        })
+      ).tally
+    ).toEqual({ status: 'none' })
+  })
+
+  it('uses the final tally once a chain proposal has closed', () => {
+    expect(fromGovProposal(govProposal({ status: 'PROPOSAL_STATUS_PASSED' })).tally).toEqual({
+      status: 'ready',
+      live: false,
+      tally: { yes: '600', no: '100', abstain: '200', veto: '100' },
+    })
+  })
+
   it('falls back to a numbered title when a chain proposal has none', () => {
     expect(fromGovProposal(govProposal({ title: '', messages: [] })).title).toBe('Chain proposal #12')
+  })
+})
+
+describe('tallies', () => {
+  const counts = (yes: unknown) => ({ yes_count: yes, no_count: '0.5', abstain_count: 0, no_with_veto_count: '0' })
+
+  it('keeps decimal group weights exactly', () => {
+    expect(tallyOf(counts('1.5') as never, false)).toEqual({
+      status: 'ready',
+      live: false,
+      tally: { yes: '1.5', no: '0.5', abstain: '0', veto: '0' },
+    })
+  })
+
+  it('marks exponent, garbage and negative counts as unavailable instead of throwing', () => {
+    for (const bad of ['1e+21', 1e21, 'abc', '-1', '', Number.NaN])
+      expect(tallyOf(counts(bad) as never, false), String(bad)).toEqual({ status: 'unavailable' })
+  })
+
+  it('returns none when there is no tally at all', () => {
+    expect(tallyOf(null, false)).toEqual({ status: 'none' })
+  })
+
+  it('computes exact shares across mixed decimal scales', () => {
+    expect(tallyShares({ yes: '1.5', no: '0.25', abstain: '0.25', veto: '0' })).toEqual({
+      yes: 75,
+      no: 12.5,
+      abstain: 12.5,
+      veto: 0,
+    })
+    expect(tallyShares({ yes: '0', no: '0', abstain: '0', veto: '0' })).toBeNull()
+    expect(tallyShares({ yes: '900000000000000000000001', no: '0', abstain: '0', veto: '0' })?.yes).toBe(100)
+  })
+
+  it('formats decimal counts with grouping and keeps every fraction digit', () => {
+    expect(formatDecimal('1234567.50')).toBe('1,234,567.50')
+    expect(formatDecimal('900000000000000000000001')).toBe('900,000,000,000,000,000,000,001')
+    expect(formatDecimal('3')).toBe('3')
   })
 })
 
@@ -267,6 +335,21 @@ describe('withProposals', () => {
     expect(next.chainToRoot('proposal:group-36')).toEqual(['proposal:group-36', ...model.chainToRoot('corporation:4')])
     expect(next.neighbors('proposal:group-36').has('corporation:4')).toBe(true)
     expect(next.related('proposal:group-36').has('corporation:4')).toBe(true)
+  })
+
+  it('is idempotent: applying it to its own result never nests or doubles children', () => {
+    const twice = withProposals(next, proposals)
+    expect(twice.childrenOf('corporation:4')).toEqual(next.childrenOf('corporation:4'))
+    expect(twice.entities.size).toBe(next.entities.size)
+    expect(twice.chainToRoot('proposal:group-36')).toEqual(next.chainToRoot('proposal:group-36'))
+    expect(withProposals(next, []).entities.has('proposal:group-36')).toBe(false)
+  })
+
+  it('clamps very long titles in the entity name', () => {
+    const long = fromGroupProposal({ ...groupProposals[0], metadata: 'x'.repeat(5000) })
+    const name = withProposals(model, [long]).entities.get(long.id)?.name ?? ''
+    expect(name.length).toBeLessThanOrEqual(121)
+    expect(name.endsWith('…')).toBe(true)
   })
 
   it('leaves chain proposals without a parent', () => {

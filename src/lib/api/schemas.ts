@@ -405,6 +405,7 @@ export const govProposalsPageSchema = z
   .object({ proposals: z.array(govProposalSchema), pagination: chainPaginationSchema.nullish() })
   .passthrough()
 export const govProposalsSchema = z.array(govProposalSchema)
+export const govTallySchema = z.object({ tally: tallySchema }).passthrough()
 
 export const blockSchema = z
   .object({

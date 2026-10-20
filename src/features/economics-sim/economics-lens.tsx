@@ -14,6 +14,7 @@ import { SimulationPanel } from './simulation-panel'
 export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   const active = useObservatory((s) => s.lens === 'economics')
   const model = useObservatory((s) => s.model)
+  const raw = useObservatory((s) => s.model?.raw ?? null)
   const simulationOpen = useObservatory((s) => s.simulationOpen)
   const setSimulationOpen = useObservatory((s) => s.setSimulationOpen)
   const [requested, setRequested] = useState(false)
@@ -24,7 +25,8 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   }, [active])
 
   useEffect(() => {
-    if (!requested || !model) return
+    const model = useObservatory.getState().model
+    if (!requested || !raw || !model) return
     let cancelled = false
     setState({ status: 'loading' })
     loadEconomics(createIndexerClient(cfg), model, new Date()).then(
@@ -42,7 +44,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
     return () => {
       cancelled = true
     }
-  }, [requested, model, cfg])
+  }, [requested, raw, cfg])
 
   useEffect(() => {
     if (!simulationOpen) return

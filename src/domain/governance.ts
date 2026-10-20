@@ -1,5 +1,6 @@
 import type { QueryInfo } from '@/lib/api/query-info'
 import type { GovProposal, Group, GroupProposal, GroupVote } from '@/lib/api/schemas'
+import { logger } from '@/lib/logger'
 import { safeHttpUrl } from '@/lib/safe-url'
 import type { Entity, EntityId, NetworkModel } from './network-model'
 
@@ -11,6 +12,13 @@ export interface Tally {
   abstain: string
   veto: string
 }
+
+export type TallyState =
+  | { status: 'ready'; live: boolean; tally: Tally }
+  | { status: 'unavailable' }
+  | { status: 'none' }
+
+export type TallyCounts = Partial<Record<'yes_count' | 'no_count' | 'abstain_count' | 'no_with_veto_count', unknown>>
 
 export interface UpgradePlan {
   name: string
@@ -48,7 +56,7 @@ export interface GovernanceProposal {
   votingStart: string | null
   votingEnd: string | null
   proposers: string[]
-  tally: Tally | null
+  tally: TallyState
   messageTypes: string[]
   upgrade: UpgradePlan | null
   executorResult: string | null
@@ -86,6 +94,9 @@ const UPGRADE_MESSAGE_TYPE = '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade'
 const PASSED = 'PROPOSAL_STATUS_PASSED'
 const OPEN_STATUSES = new Set(['SUBMITTED', 'VOTING_PERIOD', 'DEPOSIT_PERIOD'])
 const PROPOSAL_TIER = 3
+const MAX_NAME = 120
+const DECIMAL = /^\d+(\.\d+)?$/
+const SHARE_SCALE = BigInt(1_000_000)
 
 export const PROPOSAL_COLORS = {
   open: '#38E1FF',
@@ -235,13 +246,56 @@ export function parseProposalMetadata(metadata: string | null | undefined): Prop
   }
 }
 
-export function metadataLinks(metadata: ProposalMetadata): { key: string; url: string }[] {
+export function metadataLinks(metadata: ProposalMetadata): { key: string; url: string; host: string }[] {
   if (!metadata.json) return []
   return Object.entries(metadata.json).flatMap(([key, value]) => {
     const url = safeHttpUrl(value)
-    return url ? [{ key, url }] : []
+    return url ? [{ key, url, host: new URL(url).host }] : []
   })
 }
+
+function decimalOf(value: unknown): string | null {
+  if (value === undefined || value === null) return '0'
+  const s = typeof value === 'number' ? String(value) : value
+  return typeof s === 'string' && DECIMAL.test(s) ? s : null
+}
+
+export function tallyOf(raw: TallyCounts | null | undefined, live: boolean): TallyState {
+  if (!raw) return { status: 'none' }
+  const yes = decimalOf(raw.yes_count)
+  const no = decimalOf(raw.no_count)
+  const abstain = decimalOf(raw.abstain_count)
+  const veto = decimalOf(raw.no_with_veto_count)
+  if (yes === null || no === null || abstain === null || veto === null) {
+    logger.warn('Proposal tally has counts that are not plain decimals; showing it as unavailable', raw)
+    return { status: 'unavailable' }
+  }
+  return { status: 'ready', live, tally: { yes, no, abstain, veto } }
+}
+
+const TALLY_KEYS = ['yes', 'no', 'abstain', 'veto'] as const satisfies readonly (keyof Tally)[]
+
+function scaled(value: string, scale: number): bigint {
+  const [whole, fraction = ''] = value.split('.')
+  return BigInt(whole + fraction.padEnd(scale, '0'))
+}
+
+export function tallyShares(tally: Tally): Record<keyof Tally, number> | null {
+  const scale = Math.max(...TALLY_KEYS.map((key) => tally[key].split('.')[1]?.length ?? 0))
+  const units = TALLY_KEYS.map((key) => scaled(tally[key], scale))
+  const total = units.reduce((sum, unit) => sum + unit, BigInt(0))
+  if (total === BigInt(0)) return null
+  const share = (unit: bigint) => Number((unit * BigInt(100) * SHARE_SCALE) / total) / Number(SHARE_SCALE)
+  return { yes: share(units[0]), no: share(units[1]), abstain: share(units[2]), veto: share(units[3]) }
+}
+
+export function formatDecimal(value: string): string {
+  const [whole, fraction] = value.split('.')
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return fraction === undefined ? grouped : `${grouped}.${fraction}`
+}
+
+export const clampTitle = (title: string) => (title.length > MAX_NAME ? `${title.slice(0, MAX_NAME)}…` : title)
 
 export function proposalEntityId(source: ProposalSource, n: number): EntityId {
   return source === 'group' ? `proposal:group-${n}` : `proposal:${n}`
@@ -251,17 +305,6 @@ function messageTitle(type: string): string {
   const name = type.slice(type.lastIndexOf('.') + 1).replace(/^Msg/, '')
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase()
   return words.charAt(0).toUpperCase() + words.slice(1)
-}
-
-function tallyOf(raw: GroupProposal['tally']): Tally | null {
-  if (!raw) return null
-  const count = (value: string | number | undefined) => String(value ?? '0')
-  return {
-    yes: count(raw.yes_count),
-    no: count(raw.no_count),
-    abstain: count(raw.abstain_count),
-    veto: count(raw.no_with_veto_count),
-  }
 }
 
 const messageTypes = (messages: readonly Message[]) => messages.flatMap((m) => text(m['@type']) || [])
@@ -284,7 +327,7 @@ export function fromGroupProposal(p: GroupProposal): GovernanceProposal {
     votingStart: null,
     votingEnd: p.voting_period_end,
     proposers: p.proposers,
-    tally: tallyOf(p.tally ?? p.final_tally_result),
+    tally: tallyOf(p.tally ?? p.final_tally_result, OPEN_STATUSES.has(bareStatus(p.status))),
     messageTypes: types,
     upgrade: upgradePlanOf(p.messages),
     executorResult: p.executor_result ?? null,
@@ -296,6 +339,7 @@ export function fromGovProposal(p: GovProposal): GovernanceProposal {
   if (!Number.isInteger(n)) throw new Error(`Chain proposal id ${p.id} is not an integer`)
   const metadata = parseProposalMetadata(p.metadata)
   const messages = p.messages ?? []
+  const open = OPEN_STATUSES.has(bareStatus(p.status))
   return {
     id: proposalEntityId('chain', n),
     source: 'chain',
@@ -305,12 +349,12 @@ export function fromGovProposal(p: GovProposal): GovernanceProposal {
     summary: p.summary || metadata.summary,
     metadata,
     status: p.status,
-    open: OPEN_STATUSES.has(bareStatus(p.status)),
+    open,
     submitTime: p.submit_time ?? null,
     votingStart: p.voting_start_time ?? null,
     votingEnd: p.voting_end_time ?? null,
     proposers: p.proposer ? [p.proposer] : [],
-    tally: tallyOf(p.final_tally_result),
+    tally: open ? { status: 'none' } : tallyOf(p.final_tally_result, false),
     messageTypes: messageTypes(messages),
     upgrade: upgradePlanOf(messages),
     executorResult: null,
@@ -341,7 +385,10 @@ export function corporationConstellations(groups: readonly Group[]): Constellati
   })
 }
 
-export function withProposals(model: NetworkModel, proposals: readonly GovernanceProposal[]): NetworkModel {
+const BASES = new WeakMap<NetworkModel, NetworkModel>()
+
+export function withProposals(current: NetworkModel, proposals: readonly GovernanceProposal[]): NetworkModel {
+  const model = BASES.get(current) ?? current
   const entities = new Map(model.entities)
   const parents = new Map<EntityId, EntityId>()
   const children = new Map<EntityId, EntityId[]>()
@@ -351,7 +398,7 @@ export function withProposals(model: NetworkModel, proposals: readonly Governanc
     const entity: Entity = {
       id: p.id,
       kind: 'proposal',
-      name: p.title,
+      name: clampTitle(p.title),
       ecosystemId: owner?.ecosystemId ?? null,
       color: proposalColor(p),
       tier: PROPOSAL_TIER,
@@ -380,5 +427,7 @@ export function withProposals(model: NetworkModel, proposals: readonly Governanc
     return new Set<EntityId>([...model.related(id), ...(children.get(id) ?? [])])
   }
 
-  return { ...model, entities, parentOf, childrenOf, chainToRoot, neighbors, related }
+  const result: NetworkModel = { ...model, entities, parentOf, childrenOf, chainToRoot, neighbors, related }
+  BASES.set(result, model)
+  return result
 }

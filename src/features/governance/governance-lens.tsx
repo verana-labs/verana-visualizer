@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { type GovernanceScene, type VotesState, withProposals } from '@/domain/governance'
+import { type GovernanceScene, withProposals } from '@/domain/governance'
 import type { EntityId } from '@/domain/network-model'
 import { createChainClient } from '@/lib/api/chain'
 import { createIndexerClient } from '@/lib/api/indexer'
@@ -12,6 +12,7 @@ import { parseViewState, serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { GovernancePanel, type GovernanceState } from './governance-panel'
 import { loadGovernance, loadVotes } from './load-governance'
+import { setProposalVotes } from './proposal-votes'
 
 const message = (error: unknown) => (error instanceof Error ? error.message : String(error))
 
@@ -21,47 +22,59 @@ function initialProposalSel(): EntityId | null {
   return sel?.startsWith('proposal:') ? sel : null
 }
 
-function setVotes(id: EntityId, votes: VotesState) {
-  const { governance, setGovernance } = useObservatory.getState()
-  if (governance) setGovernance({ ...governance, votes: new Map(governance.votes).set(id, votes) })
+function currentView() {
+  return parseViewState(new URLSearchParams(window.location.search))
 }
 
 export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
   const router = useRouter()
   const pathname = usePathname()
+  const navigation = useRef({ router, pathname })
+  navigation.current = { router, pathname }
   const active = useObservatory((s) => s.lens === 'governance')
-  const hasModel = useObservatory((s) => s.model !== null)
+  const raw = useObservatory((s) => s.model?.raw ?? null)
   const model = useObservatory((s) => s.model)
   const selected = useObservatory((s) => s.selected)
   const loaded = useObservatory((s) => s.governance !== null)
-  const pending = useRef<EntityId | null>(initialProposalSel())
-  const [requested, setRequested] = useState(pending.current !== null)
+  const votesStatus = useObservatory((s) => (selected ? s.governance?.votes.get(selected)?.status : undefined))
+  const pending = useRef<EntityId | null>(null)
+  const started = useRef<object | null>(null)
+  const [requested, setRequested] = useState(false)
   const [state, setState] = useState<GovernanceState>({ status: 'loading' })
+
+  useEffect(() => {
+    pending.current = initialProposalSel()
+    if (pending.current) setRequested(true)
+  }, [])
 
   useEffect(() => {
     if (active) setRequested(true)
   }, [active])
 
   useEffect(() => {
-    if (!requested || !hasModel) return
-    const base = useObservatory.getState().model
-    if (!base) return
-    let cancelled = false
+    if (!requested || !raw || started.current === raw) return
+    started.current = raw
     setState({ status: 'loading' })
+    const replaceSel = (sel: EntityId | null) => {
+      const { router: r, pathname: path } = navigation.current
+      const query = serializeViewState({ ...currentView(), sel })
+      r.replace(query ? `${path}?${query}` : path, { scroll: false })
+    }
     loadGovernance(
       createIndexerClient(cfg),
       createChainClient(cfg),
-      base.raw.corporations.map((c) => c.id)
+      raw.corporations.map((c) => c.id)
     ).then(
       (data) => {
-        if (cancelled) return
+        const current = useObservatory.getState().model
+        if (!current || current.raw !== raw) return
         const scene: GovernanceScene = {
           proposals: new Map(data.proposals.map((p) => [p.id, p])),
           constellations: data.constellations,
           votes: new Map(),
           queries: data.queries,
         }
-        useObservatory.setState({ model: withProposals(base, data.proposals), layouts: {}, governance: scene })
+        useObservatory.setState({ model: withProposals(current, data.proposals), layouts: {}, governance: scene })
         setState({ status: 'ready', data })
         const sel = pending.current
         pending.current = null
@@ -71,37 +84,45 @@ export function GovernanceLens({ cfg }: { cfg: NetworkConfig }) {
           return
         }
         useObservatory.getState().showToast(`Not found on ${cfg.chainId}`)
-        const query = serializeViewState({
-          ...parseViewState(new URLSearchParams(window.location.search)),
-          sel: null,
-        })
-        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+        replaceSel(null)
       },
       (error: unknown) => {
-        if (cancelled) return
+        if (useObservatory.getState().model?.raw !== raw) return
         logger.error('Could not load the governance lens data', error)
         setState({ status: 'error', message: message(error) })
       }
     )
-    return () => {
-      cancelled = true
-    }
-  }, [requested, hasModel, cfg, router, pathname])
+  }, [requested, raw, cfg])
 
   useEffect(() => {
-    if (!loaded || !selected) return
+    if (!loaded || !selected || (votesStatus !== undefined && votesStatus !== 'idle')) return
     const proposal = useObservatory.getState().governance?.proposals.get(selected)
     if (!proposal || proposal.source !== 'group') return
-    if (useObservatory.getState().governance?.votes.has(selected)) return
-    setVotes(selected, { status: 'loading' })
+    setProposalVotes(selected, { status: 'loading' })
     loadVotes(createIndexerClient(cfg), proposal.number).then(
-      ({ votes, query }) => setVotes(selected, { status: 'ready', votes, query }),
+      ({ votes, query }) => setProposalVotes(selected, { status: 'ready', votes, query }),
       (error: unknown) => {
         logger.error(`Could not load the votes of ${selected}`, error)
-        setVotes(selected, { status: 'error', message: message(error) })
+        setProposalVotes(selected, { status: 'error', message: message(error) })
       }
     )
-  }, [loaded, selected, cfg])
+  }, [loaded, selected, votesStatus, cfg])
+
+  useEffect(
+    () =>
+      useObservatory.subscribe((now, before) => {
+        const sel = now.selected
+        if (sel === before.selected || !sel?.startsWith('proposal:') || now.lens === 'governance') return
+        setTimeout(() => {
+          const latest = useObservatory.getState()
+          if (latest.selected !== sel || latest.lens === 'governance') return
+          latest.setLens('governance')
+          const { router: r, pathname: path } = navigation.current
+          r.replace(`${path}?${serializeViewState({ ...currentView(), lens: 'governance', sel })}`, { scroll: false })
+        }, 0)
+      }),
+    []
+  )
 
   if (!active || !model) return null
   return <GovernancePanel chainId={cfg.chainId} model={model} state={state} />

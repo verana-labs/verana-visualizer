@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
 import { fromGovProposal, fromGroupProposal, withProposals } from '@/domain/governance'
 import { testnetModel } from '@/features/search/search-fixture'
 import type { GroupProposal } from '@/lib/api/schemas'
@@ -62,6 +63,8 @@ describe('ProposalDetails', () => {
     )
     const links = screen.getAllByRole('link')
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['https://forum.verana.io/t/1'])
+    expect(links[0]).toHaveTextContent('forum')
+    expect(links[0]).toHaveTextContent('forum.verana.io')
   })
 
   it('lists the votes once they are loaded, with the votes query', () => {
@@ -91,7 +94,8 @@ describe('ProposalDetails', () => {
     expect(screen.getAllByTestId('show-query')).toHaveLength(2)
   })
 
-  it('shows votes as unavailable when the votes call failed', () => {
+  it('shows votes as unavailable when the votes call failed, with a retry', async () => {
+    const onRetryVotes = vi.fn()
     render(
       <ProposalDetails
         model={model}
@@ -99,9 +103,106 @@ describe('ProposalDetails', () => {
         votes={{ status: 'error', message: 'HTTP 500' }}
         query={query}
         blockHeight={null}
+        onRetryVotes={onRetryVotes}
       />
     )
     expect(screen.getByText('Votes unavailable: HTTP 500')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+    expect(onRetryVotes).toHaveBeenCalledOnce()
+  })
+
+  it('renders decimal group weights exactly', () => {
+    const decimal = fromGroupProposal({
+      ...groupProposals[0],
+      tally: { yes_count: '1.5', no_count: '0.25', abstain_count: '0', no_with_veto_count: '0' },
+    })
+    render(
+      <ProposalDetails model={model} proposal={decimal} votes={{ status: 'idle' }} query={query} blockHeight={null} />
+    )
+    expect(screen.getByTestId('tally')).toHaveTextContent('Yes 1.5')
+    expect(screen.getByTestId('tally')).toHaveTextContent('No 0.25')
+  })
+
+  it('says the tally is unavailable instead of throwing on malformed counts', () => {
+    const broken = fromGroupProposal({
+      ...groupProposals[0],
+      tally: { yes_count: '1e+21', no_count: 'abc', abstain_count: '0', no_with_veto_count: '0' },
+    })
+    render(
+      <ProposalDetails model={model} proposal={broken} votes={{ status: 'idle' }} query={query} blockHeight={null} />
+    )
+    expect(screen.getByText('Tally unavailable')).toBeInTheDocument()
+    expect(screen.queryByTestId('tally')).toBeNull()
+  })
+
+  it('never shows zeros for an open chain proposal without a live tally', () => {
+    const open = fromGovProposal({
+      id: '11',
+      status: 'PROPOSAL_STATUS_VOTING_PERIOD',
+      title: 'Open',
+      summary: null,
+      final_tally_result: { yes_count: '0', no_count: '0', abstain_count: '0', no_with_veto_count: '0' },
+    })
+    render(
+      <ProposalDetails
+        model={withProposals(testnetModel(), [open])}
+        proposal={open}
+        votes={{ status: 'idle' }}
+        query={query}
+        blockHeight={null}
+      />
+    )
+    expect(screen.getByText('Tally available after voting')).toBeInTheDocument()
+    expect(screen.queryByText(/Yes 0/)).toBeNull()
+  })
+
+  it('labels a live tally as live', () => {
+    const live = {
+      ...fromGovProposal({ id: '12', status: 'PROPOSAL_STATUS_VOTING_PERIOD', title: 'Open', summary: null }),
+      tally: { status: 'ready' as const, live: true, tally: { yes: '7', no: '1', abstain: '0', veto: '0' } },
+    }
+    render(
+      <ProposalDetails
+        model={withProposals(testnetModel(), [live])}
+        proposal={live}
+        votes={{ status: 'idle' }}
+        query={query}
+        blockHeight={null}
+      />
+    )
+    expect(screen.getByText('live tally')).toBeInTheDocument()
+    expect(screen.getByTestId('tally')).toHaveTextContent('Yes 7')
+  })
+
+  it('drops binary links that are not http(s)', () => {
+    const chain = fromGovProposal({
+      id: '10',
+      status: 'PROPOSAL_STATUS_PASSED',
+      title: 'Upgrade',
+      summary: null,
+      messages: [
+        {
+          '@type': '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade',
+          plan: {
+            name: 'v1',
+            height: '5',
+            info: JSON.stringify({
+              binaries: { 'linux/amd64': 'javascript:alert(1)', 'darwin/arm64': 'data:text/html,hi' },
+            }),
+          },
+        },
+      ],
+    })
+    render(
+      <ProposalDetails
+        model={withProposals(testnetModel(), [chain])}
+        proposal={chain}
+        votes={{ status: 'idle' }}
+        query={query}
+        blockHeight={null}
+      />
+    )
+    expect(screen.queryAllByRole('link')).toEqual([])
   })
 
   it('shows the upgrade plan of a chain software upgrade proposal', () => {

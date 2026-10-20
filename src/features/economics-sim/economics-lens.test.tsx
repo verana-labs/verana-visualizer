@@ -36,6 +36,17 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('EconomicsLens', () => {
+  it('does not refetch or flash loading when the model is swapped over the same raw data', async () => {
+    render(<EconomicsLens cfg={testnetCfg} />)
+    act(() => useObservatory.getState().setLens('economics'))
+    await screen.findByTestId('deposit-total')
+    const before = vi.mocked(fetch).mock.calls.length
+    act(() => useObservatory.setState({ model: { ...model } }))
+    expect(screen.queryByText(/Reading trust deposits/)).toBeNull()
+    expect(screen.getByTestId('deposit-total')).toBeInTheDocument()
+    expect(vi.mocked(fetch).mock.calls.length).toBe(before)
+  })
+
   it('stays out of the way and fetches nothing until the Economics lens is chosen', () => {
     render(<EconomicsLens cfg={testnetCfg} />)
     expect(screen.queryByLabelText('Economics')).toBeNull()

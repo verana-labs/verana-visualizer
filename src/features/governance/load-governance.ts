@@ -4,12 +4,15 @@ import {
   fromGovProposal,
   fromGroupProposal,
   type GovernanceProposal,
+  type TallyState,
+  tallyOf,
 } from '@/domain/governance'
 import type { ChainClient } from '@/lib/api/chain'
 import type { IndexerClient } from '@/lib/api/indexer'
 import type { QueryInfo } from '@/lib/api/query-info'
 import type { Group, GroupVote } from '@/lib/api/schemas'
 import { FetchError } from '@/lib/fetch-json'
+import { logger } from '@/lib/logger'
 
 export interface GovernanceData {
   proposals: GovernanceProposal[]
@@ -37,22 +40,41 @@ async function groupsOf(indexer: Pick<IndexerClient, 'groupMembers'>, corporatio
   return corporationIds.flatMap((id) => groups.get(id) ?? [])
 }
 
+type ChainReader = Pick<ChainClient, 'govProposals' | 'govTally'>
+
+async function liveTally(chain: ChainReader, n: number): Promise<TallyState> {
+  try {
+    return tallyOf((await chain.govTally(n)).data.tally, true)
+  } catch (error) {
+    logger.warn(`Could not read the live tally of chain proposal ${n}`, error)
+    return { status: 'unavailable' }
+  }
+}
+
+async function chainSection(chain: ChainReader) {
+  const res = await chain.govProposals()
+  const proposals = res.data.map(fromGovProposal).sort((a, b) => b.number - a.number)
+  const tallied = await Promise.all(
+    proposals.map(async (p) => (p.open ? { ...p, tally: await liveTally(chain, p.number) } : p))
+  )
+  return { proposals: tallied, query: res.query }
+}
+
 export async function loadGovernance(
   indexer: Pick<IndexerClient, 'groupProposals' | 'groupMembers'>,
-  chain: Pick<ChainClient, 'govProposals'>,
+  chain: ChainReader,
   corporationIds: readonly number[]
 ): Promise<GovernanceData> {
   const [group, gov, groups] = await Promise.all([
     indexer.groupProposals(),
-    chain.govProposals().then(
+    chainSection(chain).then(
       (res) => ({ ok: true as const, res }),
       (error: unknown) => ({ ok: false as const, message: error instanceof Error ? error.message : String(error) })
     ),
     groupsOf(indexer, corporationIds),
   ])
-  const chainProposals = gov.ok ? gov.res.data.map(fromGovProposal).sort((a, b) => b.number - a.number) : []
   return {
-    proposals: [...chainProposals, ...group.data.map(fromGroupProposal)],
+    proposals: [...(gov.ok ? gov.res.proposals : []), ...group.data.map(fromGroupProposal)],
     constellations: corporationConstellations(groups),
     chain: gov.ok ? { status: 'ready' } : { status: 'error', message: gov.message },
     queries: { groupProposals: group.query, govProposals: gov.ok ? gov.res.query : null },

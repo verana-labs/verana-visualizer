@@ -3,11 +3,11 @@
 import type { ReactNode } from 'react'
 import { type Constellation, formatProposalStatus, type GovernanceProposal, proposalColor } from '@/domain/governance'
 import type { NetworkModel } from '@/domain/network-model'
-import { useBelowHud } from '@/features/economics-sim/economics-panel'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
+import { useBelowHud } from '@/ui/use-below-hud'
 import type { GovernanceData } from './load-governance'
 
 export type GovernanceState =

@@ -41,12 +41,13 @@ interface CorporationMarks {
   members: MemberMark[]
 }
 
-function useVisibility() {
-  const reduced = usePrefersReducedMotion()
-  return () => {
-    const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
-    return governanceVisibility(lens, lensFrom, tweenProgress(performance.now(), lensChangedAt, 0, reduced))
-  }
+function visibilityAt(now: number, reduced: boolean): number {
+  const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
+  return governanceVisibility(lens, lensFrom, tweenProgress(now, lensChangedAt, 0, reduced))
+}
+
+function dimFactor(focus: RefObject<FocusSets>, id: EntityId): number {
+  return dimOf(focus.current, id) < DIMMED ? 0.25 : 1
 }
 
 function ProposalHits({ proposals, positionOf }: { proposals: GovernanceProposal[]; positionOf: PositionOf }) {
@@ -68,13 +69,14 @@ function ProposalHits({ proposals, positionOf }: { proposals: GovernanceProposal
     if (!instances) return
     const hittable = useObservatory.getState().lens === 'governance'
     const { m, p, q, s } = scratch
-    ids.forEach((id, i) => {
-      p.set(...positionOf(id))
-      m.compose(p, q, s.setScalar(hittable ? 1 : 0))
+    s.setScalar(hittable ? 1 : 0)
+    for (let i = 0; i < ids.length; i++) {
+      const at = positionOf(ids[i])
+      p.set(at[0], at[1], at[2])
+      m.compose(p, q, s)
       instances.setMatrixAt(i, m)
-    })
+    }
     instances.instanceMatrix.needsUpdate = true
-    instances.computeBoundingSphere()
   })
   return (
     <instancedMesh
@@ -92,7 +94,6 @@ export function GovernanceMarks({ positionOf, focus }: MarksProps) {
   const governance = useObservatory((s) => s.governance)
   const model = useObservatory((s) => s.model)
   const reduced = usePrefersReducedMotion()
-  const visibility = useVisibility()
   const texture = useGlowTexture()
   const root = useRef<Group>(null)
   const corporationSprites = useRef<(Sprite | null)[]>([])
@@ -116,35 +117,40 @@ export function GovernanceMarks({ positionOf, focus }: MarksProps) {
   )
 
   useFrame(() => {
-    const alpha = visibility()
-    if (!root.current) return
-    root.current.visible = alpha > 0.01
-    if (!root.current.visible) return
     const now = performance.now()
-    const dim = (id: EntityId) => (dimOf(focus.current, id) < DIMMED ? 0.25 : 1)
-    constellations.forEach((c, i) => {
+    const alpha = visibilityAt(now, reduced)
+    const group = root.current
+    if (!group) return
+    group.visible = alpha > 0.01
+    if (!group.visible) return
+    for (let i = 0; i < constellations.length; i++) {
       const sprite = corporationSprites.current[i]
-      if (!sprite) return
-      sprite.position.set(...positionOf(c.corporation))
-      sprite.scale.setScalar(CORPORATION_SCALE * (1 + flashOf(c.corporation, now)))
-      sprite.material.opacity = 0.75 * alpha * dim(c.corporation)
-    })
-    members.forEach((mark, i) => {
+      if (!sprite) continue
+      const id = constellations[i].corporation
+      const at = positionOf(id)
+      sprite.position.set(at[0], at[1], at[2])
+      sprite.scale.setScalar(CORPORATION_SCALE * (1 + flashOf(id, now)))
+      sprite.material.opacity = 0.75 * alpha * dimFactor(focus, id)
+    }
+    for (let i = 0; i < members.length; i++) {
       const sprite = memberSprites.current[i]
-      if (!sprite) return
-      const [x, y, z] = positionOf(mark.corporation)
-      sprite.position.set(x + mark.offset[0], y + mark.offset[1], z + mark.offset[2])
+      if (!sprite) continue
+      const mark = members[i]
+      const at = positionOf(mark.corporation)
+      sprite.position.set(at[0] + mark.offset[0], at[1] + mark.offset[1], at[2] + mark.offset[2])
       sprite.scale.setScalar(mark.size * MEMBER_SCALE)
-      sprite.material.opacity = 0.85 * alpha * dim(mark.corporation)
-    })
-    proposals.forEach((p, i) => {
+      sprite.material.opacity = 0.85 * alpha * dimFactor(focus, mark.corporation)
+    }
+    for (let i = 0; i < proposals.length; i++) {
       const sprite = proposalSprites.current[i]
-      if (!sprite) return
-      sprite.position.set(...positionOf(p.id))
+      if (!sprite) continue
+      const p = proposals[i]
+      const at = positionOf(p.id)
+      sprite.position.set(at[0], at[1], at[2])
       const flash = flashOf(p.id, now)
       sprite.scale.setScalar(PROPOSAL_SCALE * proposalPulse(p.open, now, reduced) * (1 + flash))
-      sprite.material.opacity = (p.open ? 0.95 : 0.55) * alpha * dim(p.id) + flash * 0.4
-    })
+      sprite.material.opacity = (p.open ? 0.95 : 0.55) * alpha * dimFactor(focus, p.id) + flash * 0.4
+    }
   })
 
   if (!governance) return null
