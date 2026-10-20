@@ -1,4 +1,4 @@
-replicaCount: 3
+replicaCount: 1
 
 image:
   repository: verana/verana-visualizer
@@ -21,7 +21,7 @@ podSecurityContext: {}
 securityContext: {}
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
   port: 80
   targetPort: 3000
 
@@ -65,11 +65,8 @@ affinity: {}
 
 env:
   NODE_ENV: "production"
-  NEXT_PUBLIC_API_ENDPOINT: "https://api.testnet.verana.network"
-  NEXT_PUBLIC_RPC_ENDPOINT: "https://rpc.testnet.verana.network"
-  NEXT_PUBLIC_IDX_ENDPOINT: "https://idx.testnet.verana.network"
-  NEXT_PUBLIC_RESOLVER_ENDPOINT: "https://resolver.testnet.verana.network"
-  NEXT_PUBLIC_CHAIN_ID: "vna-testnet-1"
-  NEXT_PUBLIC_CHAIN_NAME: "Testnet"
-  NEXT_PUBLIC_APP_NAME: "Verana Visualizer"
-  NEXT_PUBLIC_APP_LOGO: "logo.svg"
+  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: "https://idx.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: "https://rpc.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_REST_ENDPOINT: "https://api.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_CHAIN_ID: "vna-testnet-1"
+  NEXT_PUBLIC_VERANA_CHAIN_NAME: "testnet"
