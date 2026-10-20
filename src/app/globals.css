@@ -15,3 +15,11 @@ body {
     transform: translateY(-6px);
   }
 }
+
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

@@ -237,6 +237,15 @@ describe('trust layout', () => {
     }
   })
 
+  it('leaves room for the labels of neighbouring ecosystem roots on a row', () => {
+    const roots = model.ecosystems.map((eco) => at(eco.id))
+    for (const a of roots)
+      for (const b of roots) {
+        if (a === b || a[1] !== b[1]) continue
+        expect(Math.abs(a[0] - b[0])).toBeGreaterThanOrEqual(22)
+      }
+  })
+
   it('stacks schemas on their ecosystem root', () => {
     for (const entity of model.entities.values()) {
       if (entity.kind !== 'schema') continue

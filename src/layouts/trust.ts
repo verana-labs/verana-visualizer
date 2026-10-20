@@ -6,6 +6,7 @@ const LEAF_SPACING = 2.5
 const DEPTH_SPACING = 11
 const ROW_WIDTH = 230
 const TREE_GAP = 12
+const MIN_TREE_WIDTH = 14
 const ROW_PITCH = 52
 const CORE_DROP = 30
 
@@ -13,6 +14,9 @@ interface Tree {
   nodes: Map<EntityId, { tx: number; depth: number }>
   leaves: number
 }
+
+const treeWidth = (tree: Tree) => tree.leaves * LEAF_SPACING
+const slotWidth = (tree: Tree) => Math.max(treeWidth(tree), MIN_TREE_WIDTH)
 
 function buildTree(model: NetworkModel, root: Entity, schemaOf: Map<EntityId, number>): Tree {
   const entityOf = (id: EntityId): Entity => {
@@ -47,7 +51,7 @@ export function trustLayout(model: NetworkModel): Layout {
   let row = 0
   for (const eco of ecosystemOrder(model)) {
     const tree = buildTree(model, eco, schemaOf)
-    const width = tree.leaves * LEAF_SPACING
+    const width = slotWidth(tree)
     if (x + width > ROW_WIDTH && x > 0) {
       x = 0
       row++
@@ -58,13 +62,13 @@ export function trustLayout(model: NetworkModel): Layout {
 
   const rowWidths = new Map<number, number>()
   for (const column of columns)
-    rowWidths.set(column.row, Math.max(rowWidths.get(column.row) ?? 0, column.x + column.tree.leaves * LEAF_SPACING))
+    rowWidths.set(column.row, Math.max(rowWidths.get(column.row) ?? 0, column.x + slotWidth(column.tree)))
   const rowCount = columns.length === 0 ? 1 : Math.max(...columns.map((c) => c.row)) + 1
 
   const positions = new Map<EntityId, Vec3>()
   let lowest = 0
   for (const { tree, x: offset, row: r } of columns) {
-    const left = -(rowWidths.get(r) ?? 0) / 2 + offset
+    const left = -(rowWidths.get(r) ?? 0) / 2 + offset + (slotWidth(tree) - treeWidth(tree)) / 2
     const top = (rowCount - 1) * (ROW_PITCH / 2) - r * ROW_PITCH + 18
     for (const [id, { tx, depth }] of tree.nodes) {
       const y = top - depth * DEPTH_SPACING

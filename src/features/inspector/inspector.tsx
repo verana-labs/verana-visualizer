@@ -3,10 +3,12 @@
 import { type ReactNode, useEffect } from 'react'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
+import { TrustResult } from '@/features/trust-check/trust-result'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { Ecosystem } from '@/lib/api/schemas'
 import { isTyping } from '@/lib/is-typing'
 import { useObservatory } from '@/store/observatory-store'
+import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import {
   accreditationsOf,
@@ -203,12 +205,14 @@ function AgentPanel({ model, entity }: PanelProps) {
   const verdict = useObservatory((s) => s.agentVerdicts.get(entity.id))
   const accreditations = accreditationsOf(model, entity.id)
   const anchors = model.agentAnchors(entity.id).flatMap((id) => model.entities.get(id) ?? [])
+  const did = entity.did
   return (
     <>
       <Kicker>verifiable service · agent</Kicker>
       <Title>{entity.name}</Title>
-      <div className="my-2">
+      <div className="my-2 flex items-center justify-between gap-2">
         <VerdictChip verdict={verdict} />
+        {did && <Button onClick={() => useObservatory.getState().requestTrustCheck(did)}>Check trust</Button>}
       </div>
       <Mono>{entity.did}</Mono>
       <Section title={`operates ${accreditations.length} accreditation${accreditations.length === 1 ? '' : 's'}`}>
@@ -268,21 +272,48 @@ const PANELS = {
   proposal: { Panel: ProposalPanel, query: null },
 } as const satisfies Record<Entity['kind'], { Panel: (props: PanelProps) => ReactNode; query: ListQueryKey | null }>
 
+const PANEL_CLASS =
+  'fixed top-4 right-4 z-20 max-h-[calc(100vh-150px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt'
+
+function CloseButton({ label, onClose }: { label: string; onClose: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClose}
+      className="absolute top-3 right-3.5 cursor-pointer text-lg leading-none text-scene-mut hover:text-white"
+    >
+      ×
+    </button>
+  )
+}
+
 export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chainId: string }) {
   const selected = useObservatory((s) => s.selected)
   const model = useObservatory((s) => s.model)
   const queries = useObservatory((s) => s.queries)
+  const checking = useObservatory((s) => s.trustCheck !== null)
   const entity = selected && model ? model.entities.get(selected) : undefined
 
   useEffect(() => {
-    if (!selected) return
+    if (!selected && !checking) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || isTyping(event.target)) return
-      useObservatory.getState().select(null)
+      const state = useObservatory.getState()
+      if (state.trustCheck) state.clearTrustCheck()
+      else state.select(null)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [selected])
+  }, [selected, checking])
+
+  if (checking)
+    return (
+      <GlassPanel data-testid="inspector" role="dialog" aria-label="Trust check" className={PANEL_CLASS}>
+        <CloseButton label="Close trust check" onClose={() => useObservatory.getState().clearTrustCheck()} />
+        <TrustResult />
+      </GlassPanel>
+    )
 
   if (!selected || !model) return null
   const panel = entity ? PANELS[entity.kind] : null
@@ -293,16 +324,9 @@ export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chain
       data-testid="inspector"
       role="dialog"
       aria-label={`${entity?.name ?? selected} details`}
-      className="fixed top-4 right-4 z-20 max-h-[calc(100vh-150px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt"
+      className={PANEL_CLASS}
     >
-      <button
-        type="button"
-        aria-label="Close inspector"
-        onClick={() => useObservatory.getState().select(null)}
-        className="absolute top-3 right-3.5 cursor-pointer text-lg leading-none text-scene-mut hover:text-white"
-      >
-        ×
-      </button>
+      <CloseButton label="Close inspector" onClose={() => useObservatory.getState().select(null)} />
       <div key={selected}>
         {entity && panel ? (
           <panel.Panel model={model} entity={entity} frontendUrl={frontendUrl} chainId={chainId} />

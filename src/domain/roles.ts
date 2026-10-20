@@ -16,3 +16,8 @@ export const AGENT_COLORS = { trusted: '#38E1FF', untrusted: '#ff6b8b', resolvin
 export function isRole(value: string): value is Role {
   return Object.hasOwn(ROLES, value)
 }
+
+export function agentColor(verdict: boolean | undefined): string {
+  if (verdict === undefined) return AGENT_COLORS.resolving
+  return verdict ? AGENT_COLORS.trusted : AGENT_COLORS.untrusted
+}

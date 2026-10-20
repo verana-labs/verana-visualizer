@@ -16,6 +16,8 @@ import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
 import { SearchPalette } from '@/features/search/search-palette'
 import { Toast } from '@/features/toast/toast'
+import { useAgentResolution } from '@/features/trust-check/agent-resolution'
+import { useTrustCheckRunner } from '@/features/trust-check/use-trust-check-runner'
 import { accentFor } from '@/lib/accent'
 import { type LoadSink, networkLoadSteps } from '@/lib/api/load-network'
 import { useNetworkConfig } from '@/lib/env'
@@ -37,6 +39,8 @@ function Observatory() {
   const model = useObservatory((s) => s.model)
   const [webgl, setWebgl] = useState<boolean | null>(null)
   useSelectionUrl(cfg.chainId, loaderGone)
+  useTrustCheckRunner(cfg)
+  useAgentResolution(cfg, loaderGone ? model : null)
 
   useEffect(() => setWebgl(hasWebGL()), [])
 

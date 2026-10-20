@@ -21,7 +21,8 @@ interface FlowParticlesProps {
   focus: RefObject<FocusSets>
 }
 
-function strength({ related, hover }: FocusSets, a: EntityId, b: EntityId): { k: number; hot: boolean } {
+function strength({ related, hover, trace }: FocusSets, a: EntityId, b: EntityId): { k: number; hot: boolean } {
+  if (trace) return trace.has(a) && trace.has(b) ? { k: 2.4, hot: true } : { k: 0.03, hot: false }
   const hot = !!hover && hover.has(a) && hover.has(b)
   if (related) return { k: related.has(a) && related.has(b) ? 1 : 0.04, hot }
   if (hover) return { k: hot ? 2.4 : 0.35, hot }

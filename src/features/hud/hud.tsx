@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { countedParticipants } from '@/features/inspector/entity-facts'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
+import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import { NetworkSwitch } from './network-switch'
 
@@ -59,6 +60,9 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
         <Figure label="credentials issued" value={issued === null ? '–' : number(issued)} />
         <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
       </div>
+      <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
+        Is this service trustworthy?
+      </Button>
     </GlassPanel>
   )
 }

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import type { Entity, NetworkModel } from '@/domain/network-model'
-import { AGENT_COLORS } from '@/domain/roles'
+import { agentColor } from '@/domain/roles'
 import { searchEntities } from '@/features/search/search-entities'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
@@ -43,11 +43,16 @@ function narrow(groups: Group[], model: NetworkModel, query: string): Group[] {
 
 const ROW_BUTTON = 'flex w-full cursor-pointer items-center gap-2 rounded-md text-left hover:text-white'
 
+function AgentRow({ entity }: { entity: Entity }) {
+  const verdict = useObservatory((s) => s.agentVerdicts.get(entity.id))
+  return <Row entity={entity} color={agentColor(verdict)} />
+}
+
 function Row({ entity, color }: { entity: Entity; color: string }) {
   const select = useObservatory((s) => s.select)
   return (
     <li className="py-0.5">
-      <button type="button" onClick={() => select(entity.id)} className={ROW_BUTTON}>
+      <button type="button" data-id={entity.id} onClick={() => select(entity.id)} className={ROW_BUTTON}>
         <span className="size-2 shrink-0 rounded-full" style={{ background: color }} />
         <span className="truncate">{entity.name}</span>
       </button>
@@ -93,7 +98,7 @@ export function ListFallback({ model }: { model: NetworkModel }) {
                 <Row key={p.id} entity={p} color={p.color} />
               ))}
               {group.agents.map((a) => (
-                <Row key={a.id} entity={a} color={AGENT_COLORS.resolving} />
+                <AgentRow key={a.id} entity={a} />
               ))}
             </ul>
           </section>

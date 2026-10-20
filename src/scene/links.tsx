@@ -22,6 +22,7 @@ const AGENT_LIT = 0.9
 const AGENT_RELATED = 0.25
 const FLASH_BOOST = 1.6
 const AGENT_FLASH_BOOST = 0.6
+const TRACE_VALIDATOR = 2.2
 
 interface LinksProps {
   data: SceneData
@@ -31,13 +32,15 @@ interface LinksProps {
 
 const both = (set: Set<EntityId> | null, a: EntityId, b: EntityId) => !!set && set.has(a) && set.has(b)
 
-function validatorStrength({ related, hover }: FocusSets, a: EntityId, b: EntityId): number {
+function validatorStrength({ related, hover, trace }: FocusSets, a: EntityId, b: EntityId): number {
+  if (trace) return both(trace, a, b) ? TRACE_VALIDATOR : 0.03
   if (related) return both(related, a, b) ? 0.6 : 0.05
   if (hover) return both(hover, a, b) ? 1.5 : 0.25
   return 0.6
 }
 
-export function agentStrength({ related, hover }: FocusSets, a: EntityId, b: EntityId): number {
+export function agentStrength({ related, hover, trace }: FocusSets, a: EntityId, b: EntityId): number {
+  if (trace) return both(trace, a, b) ? AGENT_LIT : AGENT_IDLE / 2
   if (related) return both(related, a, b) ? AGENT_RELATED : AGENT_IDLE
   return both(hover, a, b) ? AGENT_LIT : AGENT_IDLE
 }

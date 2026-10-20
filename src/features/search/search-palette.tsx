@@ -3,8 +3,9 @@
 import { Command } from 'cmdk'
 import { useEffect, useMemo, useState } from 'react'
 import type { Entity, EntityKind } from '@/domain/network-model'
+import { agentColor } from '@/domain/roles'
 import { isTyping } from '@/lib/is-typing'
-import { useObservatory } from '@/store/observatory-store'
+import { type PaletteMode, useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 import { searchEntities } from './search-entities'
 
@@ -54,14 +55,29 @@ function useOpenShortcuts(toggle: () => void, close: () => void, open: boolean) 
   }, [toggle, close, open])
 }
 
-function ResultRow({ entity, onPick }: { entity: Entity; onPick: (id: Entity['id']) => void }) {
+const ROW_CLASS =
+  'flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] data-[selected=true]:bg-white/10'
+
+const looksLikeDid = (query: string) => /^did:[a-z0-9]+:\S+$/i.test(query.trim())
+
+function CheckDidRow({ did, onCheck }: { did: string; onCheck: (did: string) => void }) {
   return (
-    <Command.Item
-      value={entity.id}
-      onSelect={() => onPick(entity.id)}
-      className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] data-[selected=true]:bg-white/10"
-    >
-      <span className="size-2 shrink-0 rounded-full" style={{ background: entity.color }} />
+    <Command.Item value={`check:${did}`} onSelect={() => onCheck(did)} className={ROW_CLASS}>
+      <span className="size-2 shrink-0 rounded-full bg-[var(--accent)]" />
+      <span className="shrink-0 font-medium text-scene-txt">Is this service trustworthy?</span>
+      <span className="ml-auto truncate font-mono text-[11px] text-scene-mut">{did}</span>
+    </Command.Item>
+  )
+}
+
+function ResultRow({ entity, onPick }: { entity: Entity; onPick: (id: Entity['id']) => void }) {
+  const verdict = useObservatory((s) => (entity.kind === 'agent' ? s.agentVerdicts.get(entity.id) : undefined))
+  return (
+    <Command.Item value={entity.id} onSelect={() => onPick(entity.id)} className={ROW_CLASS}>
+      <span
+        className="size-2 shrink-0 rounded-full"
+        style={{ background: entity.kind === 'agent' ? agentColor(verdict) : entity.color }}
+      />
       <span className="truncate font-medium text-scene-txt">{entity.name}</span>
       <span className="ml-auto max-w-[45%] shrink-0 truncate text-[11px] text-scene-mut">
         {KIND_LABEL[entity.kind]} {detailOf(entity)}
@@ -82,13 +98,29 @@ function trapTab(event: React.KeyboardEvent<HTMLElement>) {
   items[next].focus()
 }
 
-function Palette({ onClose }: { onClose: () => void }) {
+const PLACEHOLDER: Record<Exclude<PaletteMode, 'closed'>, string> = {
+  search: 'Search ecosystems, participants, services, corporations',
+  check: 'Paste a DID, or search for a service to check',
+}
+
+function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onClose: () => void }) {
   const model = useObservatory((s) => s.model)
   const select = useObservatory((s) => s.select)
   const [query, setQuery] = useState('')
-  const results = useMemo(() => (model ? searchEntities(model, query) : []), [model, query])
+  const results = useMemo(() => {
+    const found = model ? searchEntities(model, query) : []
+    return mode === 'check' ? found.filter((entity) => entity.kind === 'agent') : found
+  }, [model, query, mode])
+  const did = looksLikeDid(query) ? query.trim() : null
+
+  const check = (target: string) => {
+    useObservatory.getState().requestTrustCheck(target)
+    onClose()
+  }
 
   const pick = (id: Entity['id']) => {
+    const entity = model?.entities.get(id)
+    if (mode === 'check' && entity?.did) return check(entity.did)
     select(id)
     onClose()
   }
@@ -104,7 +136,7 @@ function Palette({ onClose }: { onClose: () => void }) {
       />
       <GlassPanel
         role="dialog"
-        aria-label="Search"
+        aria-label={mode === 'check' ? 'Check a service' : 'Search'}
         aria-modal="true"
         onKeyDown={trapTab}
         className="fixed top-[68px] left-1/2 z-30 w-[560px] max-w-[calc(100vw-32px)] -translate-x-1/2 overflow-hidden text-scene-txt"
@@ -114,11 +146,12 @@ function Palette({ onClose }: { onClose: () => void }) {
             autoFocus
             value={query}
             onValueChange={setQuery}
-            placeholder="Search ecosystems, participants, services, corporations"
+            placeholder={PLACEHOLDER[mode]}
             className="w-full border-b border-scene-line bg-transparent px-4 py-3 text-[13px] outline-none placeholder:text-scene-mut"
           />
           <Command.List className="max-h-[min(380px,60vh)] overflow-y-auto p-1.5">
-            {query.trim() !== '' && results.length === 0 && (
+            {did && <CheckDidRow did={did} onCheck={check} />}
+            {query.trim() !== '' && results.length === 0 && !did && (
               <p className="px-3 py-6 text-center text-[12.5px] text-scene-mut">Nothing matches “{query.trim()}”.</p>
             )}
             {GROUPS.map(({ kind, label }) => {
@@ -145,9 +178,17 @@ function Palette({ onClose }: { onClose: () => void }) {
 }
 
 export function SearchPalette() {
-  const [open, setOpen] = useState(false)
-  const toggle = useMemo(() => () => setOpen((value) => !value), [])
-  const close = useMemo(() => () => setOpen(false), [])
+  const palette = useObservatory((s) => s.palette)
+  const open = palette !== 'closed'
+  const toggle = useMemo(
+    () => () => {
+      const state = useObservatory.getState()
+      if (state.palette === 'closed') state.openPalette('search')
+      else state.closePalette()
+    },
+    []
+  )
+  const close = useMemo(() => () => useObservatory.getState().closePalette(), [])
   useOpenShortcuts(toggle, close, open)
 
   return (
@@ -155,14 +196,14 @@ export function SearchPalette() {
       <GlassPanel className="fixed top-[68px] left-1/2 z-10 -translate-x-1/2">
         <button
           type="button"
-          onClick={() => setOpen(true)}
+          onClick={() => useObservatory.getState().openPalette('search')}
           className="flex w-[300px] max-w-[calc(100vw-32px)] cursor-pointer items-center gap-2 px-3.5 py-2 text-left text-[12.5px] text-scene-mut hover:text-white"
         >
           <span>Search the network</span>
           <kbd className="ml-auto rounded border border-scene-line px-1.5 text-[11px]">/</kbd>
         </button>
       </GlassPanel>
-      {open && <Palette onClose={close} />}
+      {palette !== 'closed' && <Palette key={palette} mode={palette} onClose={close} />}
     </>
   )
 }

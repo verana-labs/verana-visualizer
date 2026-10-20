@@ -15,7 +15,7 @@ class ResizeObserverStub {
 beforeEach(() => {
   globalThis.ResizeObserver = ResizeObserverStub
   Element.prototype.scrollIntoView = () => {}
-  useObservatory.setState({ model: testnetModel(), selected: null })
+  useObservatory.setState({ model: testnetModel(), selected: null, palette: 'closed' })
 })
 
 describe('SearchPalette', () => {

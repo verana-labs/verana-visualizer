@@ -21,6 +21,7 @@ import { Ripples } from './ripples'
 import { buildSceneData } from './scene-data'
 import { useFocusSets } from './scene-focus'
 import { Sky } from './sky'
+import { TrustTrace } from './trust-trace'
 import { useLensTween } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
@@ -54,6 +55,7 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <Ripples marks={data.marks} positionOf={positionOf} />
       <ChainCore />
       <Comets positionOf={positionOf} />
+      <TrustTrace positionOf={positionOf} />
       <CameraRig ids={ids} />
     </>
   )
