@@ -1,0 +1,47 @@
+import { renderHook } from '@testing-library/react'
+import { act } from 'react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { testnetModel } from '@/features/search/search-fixture'
+import { useObservatory } from '@/store/observatory-store'
+import { useSelectionUrl } from './use-selection-url'
+
+const replace = vi.fn()
+let params = new URLSearchParams()
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ replace }),
+  usePathname: () => '/',
+  useSearchParams: () => params,
+}))
+
+beforeEach(() => {
+  replace.mockClear()
+  useObservatory.setState({ model: null, selected: null, toast: null })
+  window.history.replaceState(null, '', '/')
+})
+
+describe('useSelectionUrl', () => {
+  it('restores an existing sel once the model loads', () => {
+    params = new URLSearchParams('sel=participant:157')
+    renderHook(() => useSelectionUrl('vna-testnet-1'))
+    act(() => useObservatory.setState({ model: testnetModel() }))
+    expect(useObservatory.getState().selected).toBe('participant:157')
+    expect(useObservatory.getState().toast).toBeNull()
+  })
+
+  it('toasts Not found, keeps the overview and drops sel from the URL for a missing id', () => {
+    params = new URLSearchParams('sel=participant:999999&lens=trust')
+    window.history.replaceState(null, '', '/?sel=participant:999999&lens=trust')
+    renderHook(() => useSelectionUrl('vna-testnet-1'))
+    act(() => useObservatory.setState({ model: testnetModel() }))
+    expect(useObservatory.getState().toast).toBe('Not found on vna-testnet-1')
+    expect(useObservatory.getState().selected).toBeNull()
+    expect(replace).toHaveBeenCalledWith('/?lens=trust', { scroll: false })
+  })
+
+  it('writes sel to the URL when a result is selected', () => {
+    params = new URLSearchParams()
+    renderHook(() => useSelectionUrl('vna-testnet-1'))
+    act(() => useObservatory.getState().select('ecosystem:14'))
+    expect(replace).toHaveBeenCalledWith('/?sel=ecosystem:14', { scroll: false })
+  })
+})

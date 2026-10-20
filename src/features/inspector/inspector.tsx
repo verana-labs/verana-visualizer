@@ -5,6 +5,7 @@ import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { participantState } from '@/domain/participant-state'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { Ecosystem } from '@/lib/api/schemas'
+import { isTyping } from '@/lib/is-typing'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 import {
@@ -266,10 +267,6 @@ const PANELS = {
   corporation: { Panel: CorporationPanel, query: 'corporations' },
   proposal: { Panel: ProposalPanel, query: null },
 } as const satisfies Record<Entity['kind'], { Panel: (props: PanelProps) => ReactNode; query: ListQueryKey | null }>
-
-const isTyping = (target: EventTarget | null) =>
-  target instanceof HTMLElement &&
-  (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
 
 export function Inspector({ frontendUrl, chainId }: { frontendUrl: string; chainId: string }) {
   const selected = useObservatory((s) => s.selected)

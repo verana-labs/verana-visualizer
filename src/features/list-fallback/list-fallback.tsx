@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import type { Entity, NetworkModel } from '@/domain/network-model'
 import { AGENT_COLORS } from '@/domain/roles'
+import { searchEntities } from '@/features/search/search-entities'
 import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 
@@ -29,14 +30,13 @@ function groupsOf(model: NetworkModel): Group[] {
     : groups
 }
 
-function narrow(groups: Group[], query: string): Group[] {
-  const needle = query.trim().toLowerCase()
-  if (!needle) return groups
-  const hit = (entity: Entity) => entity.name.toLowerCase().includes(needle)
+function narrow(groups: Group[], model: NetworkModel, query: string): Group[] {
+  if (!query.trim()) return groups
+  const hits = new Set(searchEntities(model, query).map((entity) => entity.id))
   return groups.flatMap((group) => {
-    if (group.title.toLowerCase().includes(needle)) return [group]
-    const participants = group.participants.filter(hit)
-    const agents = group.agents.filter(hit)
+    if (group.ecosystem && hits.has(group.ecosystem.id)) return [group]
+    const participants = group.participants.filter((entity) => hits.has(entity.id))
+    const agents = group.agents.filter((entity) => hits.has(entity.id))
     return participants.length + agents.length > 0 ? [{ ...group, participants, agents }] : []
   })
 }
@@ -59,7 +59,7 @@ export function ListFallback({ model }: { model: NetworkModel }) {
   const [query, setQuery] = useState('')
   const select = useObservatory((s) => s.select)
   const groups = useMemo(() => groupsOf(model), [model])
-  const shown = useMemo(() => narrow(groups, query), [groups, query])
+  const shown = useMemo(() => narrow(groups, model, query), [groups, model, query])
 
   return (
     <GlassPanel
@@ -69,8 +69,8 @@ export function ListFallback({ model }: { model: NetworkModel }) {
       <p className="text-scene-mut">3D view unavailable on this device. The same network, as a list:</p>
       <input
         type="search"
-        aria-label="Filter by name"
-        placeholder="Filter by name"
+        aria-label="Search the network"
+        placeholder="Search the network"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         className="rounded-[10px] border border-scene-line bg-transparent px-3 py-2 outline-none focus:border-[var(--accent)]"

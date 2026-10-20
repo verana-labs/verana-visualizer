@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 import { parseViewState, serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 
-export function useSelectionUrl() {
+export function useSelectionUrl(chainId: string) {
   const router = useRouter()
   const pathname = usePathname()
   const search = useSearchParams()
@@ -15,9 +15,16 @@ export function useSelectionUrl() {
   useEffect(() => {
     if (!model || restored.current) return
     restored.current = true
-    const sel = parseViewState(search).sel
-    if (sel && model.entities.has(sel)) useObservatory.getState().select(sel)
-  }, [model, search])
+    const view = parseViewState(search)
+    if (!view.sel) return
+    if (model.entities.has(view.sel)) {
+      useObservatory.getState().select(view.sel)
+      return
+    }
+    useObservatory.getState().showToast(`Not found on ${chainId}`)
+    const query = serializeViewState({ ...view, sel: null })
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false })
+  }, [model, search, chainId, router, pathname])
 
   useEffect(
     () =>

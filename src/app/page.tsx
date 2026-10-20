@@ -13,6 +13,7 @@ import { LensBar } from '@/features/lens-bar/lens-bar'
 import { ListFallback } from '@/features/list-fallback/list-fallback'
 import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
+import { SearchPalette } from '@/features/search/search-palette'
 import { Toast } from '@/features/toast/toast'
 import { accentFor } from '@/lib/accent'
 import { type LoadSink, networkLoadSteps } from '@/lib/api/load-network'
@@ -34,7 +35,7 @@ function Observatory() {
   const load = useLoadProgress(steps)
   const model = useObservatory((s) => s.model)
   const [webgl, setWebgl] = useState<boolean | null>(null)
-  useSelectionUrl()
+  useSelectionUrl(cfg.chainId)
 
   useEffect(() => setWebgl(hasWebGL()), [])
 
@@ -58,6 +59,7 @@ function Observatory() {
       {model && webgl === false && <ListFallback model={model} />}
       <Hud cfg={cfg} />
       <LensBar />
+      <SearchPalette />
       <Legend />
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />

@@ -1,0 +1,102 @@
+import { act, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { Inspector } from '@/features/inspector/inspector'
+import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from './search-fixture'
+import { SearchPalette } from './search-palette'
+
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+beforeEach(() => {
+  globalThis.ResizeObserver = ResizeObserverStub
+  Element.prototype.scrollIntoView = () => {}
+  useObservatory.setState({ model: testnetModel(), selected: null })
+})
+
+describe('SearchPalette', () => {
+  it('opens with / and with Cmd+K and Ctrl+K', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    expect(screen.queryByRole('dialog')).toBeNull()
+    await user.keyboard('/')
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog')).toBeNull()
+    await user.keyboard('{Meta>}k{/Meta}')
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    await user.keyboard('{Escape}')
+    await user.keyboard('{Control>}k{/Control}')
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('does not open on / while typing in an input', async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <input aria-label="other" />
+        <SearchPalette />
+      </>
+    )
+    await user.click(screen.getByLabelText('other'))
+    await user.keyboard('/')
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('opens from the trigger button', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    await user.click(screen.getByRole('button', { name: /search/i }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('lists ECS first under the ecosystem group', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'ecs')
+    const options = screen.getAllByRole('option')
+    expect(options[0]).toHaveTextContent('ECS')
+    const groups = screen.getAllByTestId('search-group').map((g) => g.getAttribute('data-kind'))
+    expect(groups[0]).toBe('ecosystem')
+  })
+
+  it('finds a corporation by #34', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), '#34')
+    expect(within(screen.getByRole('listbox')).getAllByRole('option')[0]).toHaveTextContent(/corporation/i)
+  })
+
+  it('selects the highlighted result on Enter and closes', async () => {
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'ecs')
+    await user.keyboard('{Enter}')
+    expect(useObservatory.getState().selected).toMatch(/^ecosystem:/)
+    expect(screen.queryByRole('dialog')).toBeNull()
+  })
+
+  it('Escape closes the palette without clearing the selection', async () => {
+    const user = userEvent.setup()
+    useObservatory.setState({ selected: 'ecosystem:14' })
+    render(
+      <>
+        <Inspector frontendUrl="https://app.testnet.verana.network" chainId="vna-testnet-1" />
+        <SearchPalette />
+      </>
+    )
+    await user.keyboard('/')
+    await act(async () => {
+      await user.keyboard('{Escape}')
+    })
+    expect(screen.queryByRole('dialog', { name: /search/i })).toBeNull()
+    expect(useObservatory.getState().selected).toBe('ecosystem:14')
+  })
+})

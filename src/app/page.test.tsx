@@ -59,7 +59,7 @@ describe('Page without WebGL', () => {
     expect(within(list).getByRole('heading', { name: 'Civil Registry' })).toBeInTheDocument()
     expect(within(list).getByText('Playground BHI Caledonian VNA Testnet 1')).toBeInTheDocument()
 
-    await userEvent.type(within(list).getByRole('searchbox', { name: 'Filter by name' }), 'caledon')
+    await userEvent.type(within(list).getByRole('searchbox', { name: 'Search the network' }), 'caledon')
 
     expect(within(list).getByRole('heading', { name: 'Caledonian' })).toBeInTheDocument()
     expect(within(list).queryByRole('heading', { name: 'Civil Registry' })).not.toBeInTheDocument()
