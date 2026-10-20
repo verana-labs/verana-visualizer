@@ -5,6 +5,7 @@ import { logger } from '../logger'
 import { type IndexerEvent, indexerEventSchema } from './schemas'
 
 export const RECONNECT_MS = 3000
+export const MAX_RECONNECT_MS = 30_000
 const CONNECTING = 0
 
 export interface LiveBlock {
@@ -65,9 +66,11 @@ export function connectIndexerSocket(
   let socket: WebSocket | null = null
   let retry: ReturnType<typeof setTimeout> | undefined
   let disposed = false
+  let failures = 0
 
   const scheduleRetry = () => {
-    retry = setTimeout(connect, RECONNECT_MS)
+    retry = setTimeout(connect, Math.min(RECONNECT_MS * 2 ** failures, MAX_RECONNECT_MS))
+    failures++
   }
 
   function connect() {
@@ -83,6 +86,7 @@ export function connectIndexerSocket(
     current.onmessage = (message) => {
       if (disposed) return
       const parsed = parseMessage(url, message.data)
+      if (parsed.kind === 'ready' || parsed.kind === 'block') failures = 0
       if (parsed.kind === 'ready') current.send(JSON.stringify({ action: 'subscribe' }))
       if (parsed.kind === 'block') onBlock(parsed.block)
     }

@@ -3,7 +3,13 @@ import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resolveNetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
-import { connectIndexerSocket, type LiveBlock, RECONNECT_MS, useIndexerBlocks } from './indexer-socket'
+import {
+  connectIndexerSocket,
+  type LiveBlock,
+  MAX_RECONNECT_MS,
+  RECONNECT_MS,
+  useIndexerBlocks,
+} from './indexer-socket'
 
 class MockSocket {
   static instances: MockSocket[] = []
@@ -130,7 +136,7 @@ describe('connectIndexerSocket', () => {
     expect(() => vi.advanceTimersByTime(RECONNECT_MS)).not.toThrow()
     expect(error).toHaveBeenCalledTimes(1)
     expect(MockSocket.instances).toHaveLength(1)
-    vi.advanceTimersByTime(RECONNECT_MS)
+    vi.advanceTimersByTime(2 * RECONNECT_MS)
     expect(MockSocket.instances).toHaveLength(2)
     dispose()
   })
@@ -161,6 +167,27 @@ describe('connectIndexerSocket', () => {
     vi.advanceTimersByTime(1)
     expect(MockSocket.instances).toHaveLength(2)
     expect(onBlock).not.toHaveBeenCalled()
+    dispose()
+  })
+
+  it('backs off exponentially up to a cap while the indexer stays down, and resets once it answers', () => {
+    const dispose = connectIndexerSocket(URL, () => {}, create)
+    const delays: number[] = []
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const before = MockSocket.instances.length
+      latest().drop()
+      let waited = 0
+      while (MockSocket.instances.length === before) {
+        vi.advanceTimersByTime(1000)
+        waited += 1000
+      }
+      delays.push(waited)
+    }
+    expect(delays).toEqual([3000, 6000, 12000, 24000, MAX_RECONNECT_MS, MAX_RECONNECT_MS])
+    latest().receive({ type: 'ready' })
+    latest().drop()
+    vi.advanceTimersByTime(RECONNECT_MS)
+    expect(MockSocket.instances).toHaveLength(8)
     dispose()
   })
 
