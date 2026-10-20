@@ -17,7 +17,6 @@ import type { FocusSets } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
 
 const VALIDATOR_OPACITY = 0.38
-const AGENT_OPACITY = 0.5
 const AGENT_IDLE = 0.035
 const AGENT_LIT = 0.9
 const AGENT_RELATED = 0.7
@@ -69,7 +68,13 @@ export function Links({ data, positionOf, focus }: LinksProps) {
     const write = (i: number, a: EntityId, b: EntityId, ca: Color, cb: Color, ka: number, kb: number) => {
       positions.set(positionOf(a), i * 6)
       positions.set(positionOf(b), i * 6 + 3)
-      colors.set([ca.r * ka, ca.g * ka, ca.b * ka, cb.r * kb, cb.g * kb, cb.b * kb], i * 6)
+      const o = i * 6
+      colors[o] = ca.r * ka
+      colors[o + 1] = ca.g * ka
+      colors[o + 2] = ca.b * ka
+      colors[o + 3] = cb.r * kb
+      colors[o + 4] = cb.g * kb
+      colors[o + 5] = cb.b * kb
     }
     data.validatorLinks.forEach(([a, b], i) => {
       const ca = colorOf.get(a)
@@ -81,8 +86,8 @@ export function Links({ data, positionOf, focus }: LinksProps) {
     const offset = data.validatorLinks.length
     data.agentLinks.forEach(([agent, anchor], i) => {
       const tint = agentTint(agentVerdicts.get(agent))
-      const k = agentStrength(sets, agent, anchor) * AGENT_OPACITY
-      write(offset + i, agent, anchor, tint, tint, k, k * 0.3)
+      const k = agentStrength(sets, agent, anchor)
+      write(offset + i, agent, anchor, tint, tint, k, k)
     })
     geometry.attributes.position.needsUpdate = true
     geometry.attributes.color.needsUpdate = true

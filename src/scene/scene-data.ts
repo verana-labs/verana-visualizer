@@ -3,7 +3,7 @@ import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { AGENT_COLORS, ECOSYSTEM_STAR_COLOR } from '@/domain/roles'
 
 export const AGENT_SIZE = 0.62
-const MAX_STAR_SIZE = 2.4
+export const MAX_STAR_SIZE = 2.4
 const PARTICIPANT_SIZE = 0.42
 const ECOSYSTEM_ROLE_BONUS = 0.2
 

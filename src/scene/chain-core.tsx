@@ -4,13 +4,12 @@ import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { AdditiveBlending, Color, DoubleSide, type Group, type Mesh, MeshBasicMaterial, RingGeometry } from 'three'
 import { useObservatory } from '@/store/observatory-store'
+import { blockChange, waveRadius } from './chain-pulse'
 import { LABEL_CLASS } from './labels'
 import { SceneHtml } from './scene-html'
 import { useCoreTween } from './use-lens-tween'
 
 const WAVE_MS = 4200
-const WAVE_REACH = 170
-const WAVE_START = 8
 const WAVE_OPACITY = 0.1
 const WAVE_POOL = 4
 const PULSE_DECAY_PER_S = 1.2
@@ -63,9 +62,12 @@ export function ChainCore() {
   useFrame((_, delta) => {
     const now = performance.now()
     const { blockHeight, lens } = useObservatory.getState()
-    if (blockHeight !== null && blockHeight !== shownHeight.current) {
+    const change = blockChange(shownHeight.current, blockHeight)
+    if (change.record && blockHeight !== null) {
       shownHeight.current = blockHeight
       if (label.current) label.current.textContent = formatHeight(blockHeight)
+    }
+    if (change.pulse) {
       pulse.current = Math.max(pulse.current, 0.5)
       const free = waves.current.reduce((oldest, wave) => (wave.startedAt < oldest.startedAt ? wave : oldest))
       free.startedAt = now
@@ -85,7 +87,7 @@ export function ChainCore() {
       const t = (now - wave.startedAt) / WAVE_MS
       wave.mesh.visible = t >= 0 && t < 1
       if (!wave.mesh.visible) continue
-      wave.mesh.scale.setScalar(WAVE_START + t * WAVE_REACH)
+      wave.mesh.scale.setScalar(waveRadius(t))
       wave.mesh.material.opacity = WAVE_OPACITY * (1 - t) * (1 - t)
     }
   })

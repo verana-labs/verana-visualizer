@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import { type RefObject, useLayoutEffect, useMemo, useRef } from 'react'
 import { Color, type InstancedMesh, Matrix4, MeshBasicMaterial, Quaternion, SphereGeometry, Vector3 } from 'three'
 import { useObservatory } from '@/store/observatory-store'
-import type { SceneNode } from './scene-data'
+import { MAX_STAR_SIZE, type SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
 
@@ -51,8 +51,9 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     nodes.forEach((node, i) => {
       const id = node.entity.id
       const flash = flashOf(id, now)
-      const scale =
+      const grown =
         node.size * (1 + flash * 1.4) * (id === hovered ? 1.35 : 1) * (id === selected ? 1.25 + 0.15 * pulse : 1)
+      const scale = node.entity.kind === 'ecosystem' ? Math.min(MAX_STAR_SIZE, grown) : grown
       p.set(...positionOf(id))
       m.compose(p, q, s.setScalar(scale))
       instances.setMatrixAt(i, m)

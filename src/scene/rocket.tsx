@@ -35,7 +35,10 @@ export function Rocket() {
   const flame = useRef<Mesh>(null)
   const run = useRef<Run | null>(null)
   const nextAt = useRef(performance.now() + FIRST_PASS_MS)
-  const history = useRef<Vector3[]>([])
+  const history = useMemo(
+    () => ({ points: Array.from({ length: TRAIL }, () => new Vector3()), head: 0, length: 0 }),
+    []
+  )
   const scratch = useMemo(() => ({ point: new Vector3(), direction: new Vector3() }), [])
   const trail = useMemo(() => {
     const positions = new Float32Array(TRAIL * 3)
@@ -75,7 +78,7 @@ export function Rocket() {
         from: new Vector3(-480 * side, 40 + Math.random() * 60, z),
         to: new Vector3(480 * side, 150 + Math.random() * 80, z - 120),
       }
-      history.current = []
+      history.length = 0
       rocket.visible = true
     }
     const current = run.current
@@ -89,14 +92,21 @@ export function Rocket() {
     rocket.position.copy(point)
     flame.current?.scale.set(1, 0.8 + Math.random() * 0.6, 1)
 
-    history.current.unshift(point.clone().addScaledVector(direction, -4))
-    if (history.current.length > TRAIL) history.current.pop()
-    history.current.forEach((h, k) => {
-      trail.positions.set([h.x + (Math.random() - 0.5), h.y + (Math.random() - 0.5), h.z], k * 3)
+    history.head = (history.head + TRAIL - 1) % TRAIL
+    history.points[history.head].copy(point).addScaledVector(direction, -4)
+    history.length = Math.min(history.length + 1, TRAIL)
+    for (let k = 0; k < history.length; k++) {
+      const h = history.points[(history.head + k) % TRAIL]
       const f = 1 - k / TRAIL
-      trail.colors.set([f, 0.55 * f * f, 0.2 * f * f], k * 3)
-    })
-    trail.geometry.setDrawRange(0, history.current.length)
+      const o = k * 3
+      trail.positions[o] = h.x + (Math.random() - 0.5)
+      trail.positions[o + 1] = h.y + (Math.random() - 0.5)
+      trail.positions[o + 2] = h.z
+      trail.colors[o] = f
+      trail.colors[o + 1] = 0.55 * f * f
+      trail.colors[o + 2] = 0.2 * f * f
+    }
+    trail.geometry.setDrawRange(0, history.length)
     trail.geometry.attributes.position.needsUpdate = true
     trail.geometry.attributes.color.needsUpdate = true
 
