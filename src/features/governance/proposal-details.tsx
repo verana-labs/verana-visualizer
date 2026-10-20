@@ -19,6 +19,7 @@ import {
 import type { NetworkModel } from '@/domain/network-model'
 import { ExternalLink, Fact, Kicker, Mono } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
+import { ENTITY_SPECS, GROUP_PROPOSAL_SPEC } from '@/features/inspector/spec-links'
 import type { QueryInfo } from '@/lib/api/query-info'
 import { useObservatory } from '@/store/observatory-store'
 import { Chip } from '@/ui/chip'
@@ -161,7 +162,7 @@ export function ProposalDetails({ model, proposal, votes, query, blockHeight, on
   const color = proposalColor(proposal)
   return (
     <>
-      <Kicker>
+      <Kicker spec={proposal.source === 'group' ? GROUP_PROPOSAL_SPEC : ENTITY_SPECS.proposal}>
         {proposal.source === 'group'
           ? `corporation proposal #${proposal.number}`
           : `chain proposal #${proposal.number}`}

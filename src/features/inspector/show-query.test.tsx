@@ -12,6 +12,24 @@ const QUERY: QueryInfo = {
 }
 
 describe('ShowQuery', () => {
+  it('links the indexer or graph spec behind the request', () => {
+    const { unmount } = render(<ShowQuery query={QUERY} />)
+    expect(screen.getByRole('link', { name: 'indexer spec ↗' })).toHaveAttribute(
+      'href',
+      'https://github.com/verana-labs/verana-spec/blob/main/v4/verana-indexer/spec.md'
+    )
+    unmount()
+    render(
+      <ShowQuery
+        query={{ method: 'POST', url: 'https://graph.testnet.verana.network/v4/graph/traverse', headers: {} }}
+      />
+    )
+    expect(screen.getByRole('link', { name: 'graph spec ↗' })).toHaveAttribute(
+      'href',
+      'https://github.com/verana-labs/verana-spec/blob/main/v4/verana-graph/spec.md'
+    )
+  })
+
   it('renders the curl for the request', async () => {
     render(<ShowQuery query={QUERY} />)
     await userEvent.click(screen.getByRole('button', { name: /show the query/i }))

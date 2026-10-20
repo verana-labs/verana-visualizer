@@ -61,7 +61,7 @@ describe('ProposalDetails', () => {
         blockHeight={null}
       />
     )
-    const links = screen.getAllByRole('link')
+    const links = screen.getAllByRole('link').filter((a) => !a.textContent?.endsWith('spec ↗'))
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['https://forum.verana.io/t/1'])
     expect(links[0]).toHaveTextContent('forum')
     expect(links[0]).toHaveTextContent('forum.verana.io')
@@ -202,7 +202,7 @@ describe('ProposalDetails', () => {
         blockHeight={null}
       />
     )
-    expect(screen.queryAllByRole('link')).toEqual([])
+    expect(screen.queryAllByRole('link').filter((a) => !a.textContent?.endsWith('spec ↗'))).toEqual([])
   })
 
   it('shows the upgrade plan of a chain software upgrade proposal', () => {

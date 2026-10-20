@@ -81,6 +81,40 @@ describe('Inspector', () => {
     expect(fact('Trust deposit')).toBe('0.05 VNA')
   })
 
+  it.each([
+    ['ecosystem:1', 'VPR spec ↗', 'https://verana-labs.github.io/verifiable-trust-vpr-spec/versions/v4/#ecosystem'],
+    [
+      'participant:158',
+      'VPR spec ↗',
+      'https://verana-labs.github.io/verifiable-trust-vpr-spec/versions/v4/#participant',
+    ],
+    [
+      'corporation:34',
+      'VPR spec ↗',
+      'https://verana-labs.github.io/verifiable-trust-vpr-spec/versions/v4/#corporation',
+    ],
+  ] as [EntityId, string, string][])('links %s to its section of the published spec', (id, name, href) => {
+    show(baseRaw(), id)
+    expect(within(screen.getByTestId('inspector')).getByRole('link', { name })).toHaveAttribute('href', href)
+  })
+
+  it('links schemas and services to their specs', () => {
+    const raw = baseRaw()
+    const schemaId = raw.schemas[0].id
+    const { unmount } = show(raw, `schema:${schemaId}`)
+    expect(screen.getByRole('link', { name: 'VPR spec ↗' })).toHaveAttribute(
+      'href',
+      'https://verana-labs.github.io/verifiable-trust-vpr-spec/versions/v4/#credentialschema'
+    )
+    unmount()
+    const agent = buildNetworkModel(raw).agents[0]
+    show(raw, agent.id)
+    expect(screen.getByRole('link', { name: 'Verifiable Trust spec ↗' })).toHaveAttribute(
+      'href',
+      'https://verana-labs.github.io/verifiable-trust-spec/versions/v4/#what-is-a-verifiable-service-vs'
+    )
+  })
+
   it('renders nothing without a selection', () => {
     useObservatory.setState({ model: buildNetworkModel(baseRaw()), selected: null })
     const { container } = render(<Inspector frontendUrl={FRONTEND} chainId="vna-testnet-1" />)

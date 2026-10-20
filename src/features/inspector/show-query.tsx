@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { type QueryInfo, toCurl } from '@/lib/api/query-info'
 import { logger } from '@/lib/logger'
+import { ExternalLink } from './entity-parts'
+import { apiSpecOf } from './spec-links'
 
 const COPIED_MS = 1600
 const COPY_LABEL = { idle: 'Copy as curl', copied: 'Copied', failed: 'Copy failed' } as const
@@ -12,6 +14,7 @@ export function ShowQuery({ query }: { query: QueryInfo }) {
   const [copy, setCopy] = useState<keyof typeof COPY_LABEL>('idle')
   const reset = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const curl = toCurl(query)
+  const spec = apiSpecOf(query.url)
 
   useEffect(() => () => clearTimeout(reset.current), [])
 
@@ -43,6 +46,11 @@ export function ShowQuery({ query }: { query: QueryInfo }) {
         </span>
       </div>
       <p className="mt-1 break-all font-mono text-[10.5px] text-scene-mut">{query.url}</p>
+      {spec && (
+        <ExternalLink variant="inline" href={spec.href}>
+          <span className="text-[10.5px] text-scene-mut">{`${spec.label} ↗`}</span>
+        </ExternalLink>
+      )}
       {open && (
         <div className="mt-2 flex flex-col gap-2">
           <pre

@@ -29,6 +29,7 @@ import {
 } from './entity-facts'
 import { ExternalLink, Fact, Kicker, Mono, RoleChip, StateChip, VerdictChip } from './entity-parts'
 import { ShowQuery } from './show-query'
+import { ENTITY_SPECS } from './spec-links'
 
 interface PanelProps {
   model: NetworkModel
@@ -104,7 +105,7 @@ function EcosystemPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   const corporation = model.entities.get(`corporation:${eco.corporation_id}`)
   return (
     <>
-      <Kicker>ecosystem · trust root</Kicker>
+      <Kicker spec={ENTITY_SPECS.ecosystem}>ecosystem · trust root</Kicker>
       <Title>{entity.name}</Title>
       <Mono>{eco.did}</Mono>
       <EcsBadge model={model} ecosystemId={eco.id} />
@@ -152,7 +153,9 @@ function ParticipantPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   const pricing = rawSchema(model, `schema:${p.schema_id}`)
   return (
     <>
-      <Kicker>participant · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}</Kicker>
+      <Kicker spec={ENTITY_SPECS.participant}>
+        participant · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}
+      </Kicker>
       <Title>
         {entity.name} <span className="font-normal text-scene-mut">#{p.id}</span>
       </Title>
@@ -193,7 +196,9 @@ function SchemaPanel({ model, entity, frontendUrl, chainId }: PanelProps) {
   if (!schema) return <NotFound id={entity.id} chainId={chainId} />
   return (
     <>
-      <Kicker>credential schema · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}</Kicker>
+      <Kicker spec={ENTITY_SPECS.schema}>
+        credential schema · {ecosystemOf(model, entity)?.name ?? 'no ecosystem'}
+      </Kicker>
       <Title>{entity.name}</Title>
       <Fact label="Participants">{formatAmount(countedParticipants(model, schemaParticipants(model, schema.id)))}</Fact>
       <Fact label="Credentials issued">{formatAmount(schema.issued)}</Fact>
@@ -214,7 +219,7 @@ function AgentPanel({ model, entity }: PanelProps) {
   const did = entity.did
   return (
     <>
-      <Kicker>verifiable service · agent</Kicker>
+      <Kicker spec={ENTITY_SPECS.agent}>verifiable service · agent</Kicker>
       <Title>{entity.name}</Title>
       <div className="my-2 flex items-center justify-between gap-2">
         <VerdictChip verdict={verdict} />
@@ -239,7 +244,7 @@ function CorporationPanel({ model, entity, chainId }: PanelProps) {
   const ecosystems = model.ecosystems.filter((eco) => rawEcosystem(model, eco.id)?.corporation_id === corp.id)
   return (
     <>
-      <Kicker>corporation #{corp.id}</Kicker>
+      <Kicker spec={ENTITY_SPECS.corporation}>corporation #{corp.id}</Kicker>
       <Title>{entity.name}</Title>
       <Mono>{corp.did ?? 'no DID'}</Mono>
       <div className="mt-1.5">
