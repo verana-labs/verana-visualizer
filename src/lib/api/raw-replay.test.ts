@@ -58,6 +58,8 @@ const replays: Record<string, Replay> = {
   'resolve-first-did': (c, r) => c.indexer.resolve(bodyOf(r).did as string),
   'block-height': (c) => c.indexer.blockHeight(),
   events: (c, r) => c.indexer.events(Number(search(r).get('after_block_height')), Number(search(r).get('limit'))),
+  'events-page-2': (c, r) =>
+    c.indexer.events(Number(search(r).get('after_block_height')), Number(search(r).get('limit'))),
   changes: (c, r) => c.indexer.changes(Number(r.headers['At-Block-Height'])),
   'changes-38000': (c, r) => c.indexer.changes(Number(r.headers['At-Block-Height'])),
   stats: (c, r) => {
@@ -76,6 +78,8 @@ const replays: Record<string, Replay> = {
   'td-params': (c) => c.indexer.tdParams(),
   'indexer-health': (c) => c.indexer.health(),
   'graph-traverse-g1': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
+  'graph-traverse-g1-11': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
+  'graph-traverse-g1-97': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
   'graph-search': (c, r) => c.graph.search(r.body as Parameters<Calls['graph']['search']>[0]),
   'graph-health': (c) => c.graph.health(),
   'chain-supply': (c) => c.chain.supply(),
@@ -105,15 +109,20 @@ describe.each(['testnet', 'devnet'])('raw response replay (%s)', (network) => {
   it.each(files)('replays %s through the matching client method', async (file) => {
     const name = file.replace(/\.json$/, '')
     const raw = JSON.parse(readFileSync(join(dir, file), 'utf8')) as RawFixture
-    expect(raw.status).toBe(200)
-    const mock = vi.fn(async () => Response.json(raw.body))
+    const mock = vi.fn(async () => Response.json(raw.body, { status: raw.status }))
     vi.stubGlobal('fetch', mock)
     const calls: Calls = {
       indexer: createIndexerClient(cfg),
       graph: createGraphClient(cfg),
       chain: createChainClient(cfg),
     }
-    const result = await replays[name](calls, raw.request)
+    const replay = replays[name](calls, raw.request)
+    if (raw.status !== 200) {
+      await expect(replay).rejects.toThrow(`failed with status ${raw.status}`)
+      expect(mock).toHaveBeenCalled()
+      return
+    }
+    const result = await replay
     expect(result.query).toEqual(raw.request)
     expect(mock).toHaveBeenCalled()
   })

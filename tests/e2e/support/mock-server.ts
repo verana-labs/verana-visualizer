@@ -35,7 +35,7 @@ createServer((req, res) => {
     const body = text ? JSON.parse(text) : null
     const match = matchFixture(req.method ?? 'GET', url, req.headers, body)
     if (!match) {
-      if (isTolerated404(url)) {
+      if (isTolerated404(req.method ?? 'GET', url, body)) {
         json(res, 404, { error: 'no fixture' })
         return
       }

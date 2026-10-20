@@ -17,18 +17,17 @@ export interface Match {
 }
 
 const RAW_DIR = join(__dirname, '..', '..', 'fixtures', 'testnet', 'raw')
-const QUERY_AGNOSTIC = new Set(['/v4/stats/stats', '/v4/indexer/events'])
+const QUERY_AGNOSTIC = new Set(['/v4/stats/stats'])
 const TOLERATED_404 = [
   /^\/cosmos\/base\/tendermint\/v1beta1\/blocks\/\d+$/,
   /^\/cosmos\/auth\/v1beta1\/module_accounts\//,
   /^\/v4\/group\/get\/\d+$/,
   /^\/v4\/trust-deposit\/get\/\d+$/,
-  /^\/v4\/graph\/traverse$/,
 ]
 const CHANGES_PATH = '/v4/indexer/changes'
 const PARTICIPANTS_PATH = '/v4/participant/list'
 const RESOLVE_PATH = '/v4/verifiable-trust/resolve'
-const UNTRUSTED_FIXTURE_DID = 'did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes'
+const DIDS_PATH = '/v4/verifiable-trust/dids'
 
 function sortedQuery(search: string): string {
   return [...new URLSearchParams(search).entries()]
@@ -88,7 +87,8 @@ export function matchFixture(
   const pinnedReplay = height !== null && method === 'GET' && pathname !== CHANGES_PATH
   const found = pick(false) ?? (pinnedReplay ? pick(true) : undefined)
   if (found) return { status: found.status, body: found.response }
-  if (method === 'POST' && pathname === RESOLVE_PATH) return untrustedResolve(body)
+  if (method === 'POST' && pathname === RESOLVE_PATH && height !== null)
+    return resolveEvaluatedAt(Number(height), wantedBody)
   if (method === 'GET' && pathname === PARTICIPANTS_PATH) return filteredParticipants(new URLSearchParams(search))
   return null
 }
@@ -106,16 +106,29 @@ function filteredParticipants(params: URLSearchParams): Match | null {
   return { status: all.status, body: { ...body, participants } }
 }
 
-function untrustedResolve(body: unknown): Match | null {
-  const did = (body as { did?: unknown } | null)?.did
-  const base = FIXTURES.find(
-    (f) => f.path === RESOLVE_PATH && JSON.stringify(f.body) === JSON.stringify({ did: UNTRUSTED_FIXTURE_DID })
+function resolveEvaluatedAt(height: number, wantedBody: string): Match | null {
+  const live = FIXTURES.find(
+    (f) =>
+      f.method === 'POST' &&
+      f.path === RESOLVE_PATH &&
+      f.height === null &&
+      JSON.stringify(f.body) === wantedBody &&
+      (f.response as { evaluatedAtBlock?: unknown }).evaluatedAtBlock === height
   )
-  if (typeof did !== 'string' || !base) return null
-  return { status: base.status, body: JSON.parse(JSON.stringify(base.response).replaceAll(UNTRUSTED_FIXTURE_DID, did)) }
+  return live ? { status: live.status, body: live.response } : null
 }
 
-export function isTolerated404(url: string): boolean {
+const AGENT_DIDS = new Set(
+  (FIXTURES.find((f) => f.method === 'GET' && f.path === DIDS_PATH)?.response as { dids?: string[] } | undefined)
+    ?.dids ?? []
+)
+
+function isBackgroundAgentResolve(method: string, pathname: string, body: unknown): boolean {
+  const did = (body as { did?: unknown } | null)?.did
+  return method === 'POST' && pathname === RESOLVE_PATH && typeof did === 'string' && AGENT_DIDS.has(did)
+}
+
+export function isTolerated404(method: string, url: string, body: unknown): boolean {
   const { pathname } = new URL(url, 'http://mock.invalid')
-  return TOLERATED_404.some((pattern) => pattern.test(pathname))
+  return TOLERATED_404.some((pattern) => pattern.test(pathname)) || isBackgroundAgentResolve(method, pathname, body)
 }

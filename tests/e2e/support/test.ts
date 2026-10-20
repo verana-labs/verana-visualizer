@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from '@playwright/test'
+import { test as base, type ConsoleMessage, expect, type Page } from '@playwright/test'
 
 export const MOCK_ORIGIN = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3101}`
 export const ECS_DID = 'did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network'
@@ -40,6 +40,12 @@ async function stubSocket(page: Page) {
   })
 }
 
+const RESOLVE_URL = /\/v4\/verifiable-trust\/resolve$/
+
+function isUnrecordedAgentResolve(message: ConsoleMessage): boolean {
+  return message.text().includes('status of 404') && RESOLVE_URL.test(message.location().url)
+}
+
 async function unmatchedRequests(page: Page, reset: boolean): Promise<string[]> {
   const response = await page.request.fetch(`${MOCK_ORIGIN}/__unmatched`, { method: reset ? 'DELETE' : 'GET' })
   return response.json()
@@ -50,7 +56,8 @@ export const test = base.extend<{ consoleErrors: string[] }>({
     async ({ page }, use) => {
       const errors: string[] = []
       page.on('console', (message) => {
-        if (message.type() === 'error') errors.push(message.text())
+        if (message.type() !== 'error' || isUnrecordedAgentResolve(message)) return
+        errors.push(message.text())
       })
       page.on('pageerror', (error) => errors.push(error.message))
       await use(errors)
