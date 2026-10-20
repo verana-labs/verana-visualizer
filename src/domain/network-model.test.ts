@@ -161,6 +161,14 @@ describe('names', () => {
     expect(ecosystemName('did:web:health-alliance.example.org')).toBe('Health Alliance')
   })
 
+  it('skips generic leading host labels', () => {
+    expect(ecosystemName('did:webvh:QmQvUk:ecosystem.intexus-dl.testnet.verana.network')).toBe('Intexus DL')
+    expect(ecosystemName('did:web:ecosystem.health-alliance.example.org')).toBe('Health Alliance')
+    expect(agentName('did:webvh:QmbMzi:verana.papapo.shoes')).toBe('Papapo')
+    expect(ecosystemName('did:webvh:QmbMzi:verana.papapo.shoes')).toBe('Papapo')
+    expect(agentName('did:web:www.example.org')).toBe('Example')
+  })
+
   it('skips DID paths and decodes ports', () => {
     expect(agentName('did:web:health-alliance.example.org:users:alice')).toBe('Health Alliance')
     expect(agentName('did:webvh:QmSCID:vesta-repair-network.example.org:path:x')).toBe('Vesta Repair Network')

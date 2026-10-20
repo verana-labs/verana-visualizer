@@ -3,10 +3,12 @@
 import { useMemo, useState } from 'react'
 import type { Entity, NetworkModel } from '@/domain/network-model'
 import { AGENT_COLORS } from '@/domain/roles'
+import { useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
 
 interface Group {
   key: string
+  ecosystem: Entity | null
   title: string
   participants: Entity[]
   agents: Entity[]
@@ -16,13 +18,14 @@ function groupsOf(model: NetworkModel): Group[] {
   const byEcosystem = (list: Entity[], ecosystemId: number | null) => list.filter((e) => e.ecosystemId === ecosystemId)
   const groups = model.ecosystems.map((eco) => ({
     key: eco.id,
+    ecosystem: eco,
     title: eco.name,
     participants: byEcosystem(model.participants, eco.ecosystemId),
     agents: byEcosystem(model.agents, eco.ecosystemId),
   }))
   const loose = byEcosystem(model.agents, null)
   return loose.length > 0
-    ? [...groups, { key: 'loose', title: 'Other services', participants: [], agents: loose }]
+    ? [...groups, { key: 'loose', ecosystem: null, title: 'Other services', participants: [], agents: loose }]
     : groups
 }
 
@@ -38,17 +41,23 @@ function narrow(groups: Group[], query: string): Group[] {
   })
 }
 
+const ROW_BUTTON = 'flex w-full cursor-pointer items-center gap-2 rounded-md text-left hover:text-white'
+
 function Row({ entity, color }: { entity: Entity; color: string }) {
+  const select = useObservatory((s) => s.select)
   return (
-    <li className="flex items-center gap-2 py-0.5">
-      <span className="size-2 shrink-0 rounded-full" style={{ background: color }} />
-      <span className="truncate">{entity.name}</span>
+    <li className="py-0.5">
+      <button type="button" onClick={() => select(entity.id)} className={ROW_BUTTON}>
+        <span className="size-2 shrink-0 rounded-full" style={{ background: color }} />
+        <span className="truncate">{entity.name}</span>
+      </button>
     </li>
   )
 }
 
 export function ListFallback({ model }: { model: NetworkModel }) {
   const [query, setQuery] = useState('')
+  const select = useObservatory((s) => s.select)
   const groups = useMemo(() => groupsOf(model), [model])
   const shown = useMemo(() => narrow(groups, query), [groups, query])
 
@@ -70,7 +79,15 @@ export function ListFallback({ model }: { model: NetworkModel }) {
         {shown.length === 0 && <p className="text-scene-mut">Nothing matches “{query}”.</p>}
         {shown.map((group) => (
           <section key={group.key} className="border-b border-scene-line py-2 last:border-b-0">
-            <h2 className="text-[13px] font-semibold">{group.title}</h2>
+            <h2 className="text-[13px] font-semibold">
+              {group.ecosystem ? (
+                <button type="button" onClick={() => select(group.ecosystem?.id ?? null)} className={ROW_BUTTON}>
+                  {group.title}
+                </button>
+              ) : (
+                group.title
+              )}
+            </h2>
             <ul>
               {group.participants.map((p) => (
                 <Row key={p.id} entity={p} color={p.color} />

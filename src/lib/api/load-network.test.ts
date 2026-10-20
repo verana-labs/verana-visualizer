@@ -87,4 +87,18 @@ describe('networkLoadSteps', () => {
     expect(sink.model?.ecosystems.length).toBeGreaterThan(0)
     expect(sink.layout?.positions.size).toBeGreaterThan(0)
   })
+
+  it('records the first request behind each list for show-the-query', async () => {
+    okFetch()
+    const sink = {} as LoadSink
+    for (const step of networkLoadSteps(cfg, sink)) await step.run()
+    expect(Object.keys(sink.queries ?? {}).sort()).toEqual([
+      'corporations',
+      'dids',
+      'ecosystems',
+      'participants',
+      'schemas',
+    ])
+    expect(sink.queries?.ecosystems?.url).toMatch(/^https:\/\/idx\.testnet\.verana\.network\/v4\/ecosystem\/list\?/)
+  })
 })

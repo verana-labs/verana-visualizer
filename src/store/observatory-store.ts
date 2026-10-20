@@ -1,6 +1,8 @@
 import { create } from 'zustand'
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import type { Layout, LensId } from '@/layouts/types'
+import type { ListQueryKey } from '@/lib/api/load-network'
+import type { QueryInfo } from '@/lib/api/query-info'
 
 const TOAST_MS = 4000
 
@@ -12,6 +14,7 @@ export interface ObservatoryState {
   hovered: EntityId | 'rocket' | null
   model: NetworkModel | null
   layouts: Partial<Record<LensId, Layout>>
+  queries: Partial<Record<ListQueryKey, QueryInfo>>
   agentVerdicts: Map<EntityId, boolean>
   flashes: Map<EntityId, number>
   blockHeight: number | null
@@ -34,6 +37,7 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   hovered: null,
   model: null,
   layouts: {},
+  queries: {},
   agentVerdicts: new Map(),
   flashes: new Map(),
   blockHeight: null,

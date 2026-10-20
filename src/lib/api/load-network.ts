@@ -3,6 +3,9 @@ import { layoutFor } from '@/layouts'
 import { type Layout } from '@/layouts/types'
 import type { NetworkConfig } from '../env'
 import { createIndexerClient } from './indexer'
+import type { Fetched, QueryInfo } from './query-info'
+
+export type ListQueryKey = 'ecosystems' | 'schemas' | 'participants' | 'corporations' | 'dids'
 
 export interface LoadSink {
   ecosystems?: RawNetwork['ecosystems']
@@ -13,6 +16,7 @@ export interface LoadSink {
   dids?: RawNetwork['dids']
   model?: NetworkModel
   layout?: Layout
+  queries?: Partial<Record<ListQueryKey, QueryInfo>>
 }
 
 export interface LoadStep {
@@ -22,29 +26,33 @@ export interface LoadStep {
 
 export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[] {
   const indexer = createIndexerClient(cfg)
+  const recorded = <T>(key: ListQueryKey, fetched: Fetched<T>): T => {
+    sink.queries = { ...sink.queries, [key]: fetched.query }
+    return fetched.data
+  }
   return [
     {
       label: 'Reading ecosystems…',
       run: async () => {
-        sink.ecosystems = (await indexer.ecosystems()).data
+        sink.ecosystems = recorded('ecosystems', await indexer.ecosystems())
       },
     },
     {
       label: 'Reading schemas…',
       run: async () => {
-        sink.schemas = (await indexer.schemas()).data
+        sink.schemas = recorded('schemas', await indexer.schemas())
       },
     },
     {
       label: 'Reading participants…',
       run: async () => {
-        sink.participants = (await indexer.participants()).data
+        sink.participants = recorded('participants', await indexer.participants())
       },
     },
     {
       label: 'Reading corporations…',
       run: async () => {
-        sink.corporations = (await indexer.corporations()).data
+        sink.corporations = recorded('corporations', await indexer.corporations())
       },
     },
     {
@@ -56,7 +64,7 @@ export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[]
     {
       label: 'Reading DIDs…',
       run: async () => {
-        sink.dids = (await indexer.dids()).data.dids
+        sink.dids = recorded('dids', await indexer.dids()).dids
       },
     },
     {

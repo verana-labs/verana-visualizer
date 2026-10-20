@@ -4,7 +4,10 @@ import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { Footer } from '@/features/footer/footer'
+import { HoverCard } from '@/features/hover-card/hover-card'
 import { Hud } from '@/features/hud/hud'
+import { Inspector } from '@/features/inspector/inspector'
+import { useSelectionUrl } from '@/features/inspector/use-selection-url'
 import { Legend } from '@/features/legend/legend'
 import { LensBar } from '@/features/lens-bar/lens-bar'
 import { ListFallback } from '@/features/list-fallback/list-fallback'
@@ -31,6 +34,7 @@ function Observatory() {
   const load = useLoadProgress(steps)
   const model = useObservatory((s) => s.model)
   const [webgl, setWebgl] = useState<boolean | null>(null)
+  useSelectionUrl()
 
   useEffect(() => setWebgl(hasWebGL()), [])
 
@@ -44,6 +48,7 @@ function Observatory() {
       model: sink.model,
       blockHeight: sink.blockHeight,
       layouts: sink.layout ? { network: sink.layout } : {},
+      queries: sink.queries ?? {},
     })
   }, [load.done, sink])
 
@@ -55,6 +60,8 @@ function Observatory() {
       <LensBar />
       <Legend />
       <Footer cfg={cfg} />
+      <Inspector frontendUrl={cfg.frontendUrl} />
+      {webgl === true && <HoverCard />}
       <Toast />
       {!loaderGone && (
         <StardustLoader

@@ -13,15 +13,19 @@ export interface SceneNode {
   color: Color
 }
 
+export type SceneMarks = Map<EntityId, { size: number; color: Color }>
+
 export interface SceneData {
   nodes: SceneNode[]
   stars: SceneNode[]
   agents: Entity[]
   validatorLinks: [EntityId, EntityId][]
   agentLinks: [EntityId, EntityId][]
+  marks: SceneMarks
 }
 
 const brightened = (hex: string, k: number) => new Color(hex).multiplyScalar(k)
+const AGENT_MARK_COLOR = new Color(AGENT_COLORS.trusted)
 
 export function buildSceneData(model: NetworkModel): SceneData {
   const participantCount = new Map<number, number>()
@@ -52,7 +56,12 @@ export function buildSceneData(model: NetworkModel): SceneData {
       .map((anchor): [EntityId, EntityId] => [agent.id, anchor])
   )
 
-  return { nodes, stars, agents: model.agents, validatorLinks, agentLinks }
+  const marks: SceneMarks = new Map([
+    ...nodes.map((node) => [node.entity.id, { size: node.size, color: node.color }] as const),
+    ...model.agents.map((agent) => [agent.id, { size: AGENT_SIZE * 1.4, color: AGENT_MARK_COLOR }] as const),
+  ])
+
+  return { nodes, stars, agents: model.agents, validatorLinks, agentLinks, marks }
 }
 
 const AGENT_TINTS = {

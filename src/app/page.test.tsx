@@ -64,4 +64,13 @@ describe('Page without WebGL', () => {
     expect(within(list).getByRole('heading', { name: 'Caledonian' })).toBeInTheDocument()
     expect(within(list).queryByRole('heading', { name: 'Civil Registry' })).not.toBeInTheDocument()
   })
+
+  it('opens the inspector from a list row', async () => {
+    render(<Page />)
+    const list = await screen.findByTestId('list-fallback')
+    await userEvent.click(within(within(list).getByRole('heading', { name: 'Caledonian' })).getByRole('button'))
+    expect(within(screen.getByTestId('inspector')).getByRole('heading', { name: 'Caledonian' })).toBeInTheDocument()
+    await userEvent.click(within(list).getByRole('button', { name: 'Playground BHI Caledonian VNA Testnet 1' }))
+    expect(screen.getByTestId('inspector')).toHaveTextContent('verifiable service')
+  })
 })

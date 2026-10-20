@@ -7,6 +7,7 @@ import { useObservatory } from '@/store/observatory-store'
 import { MAX_STAR_SIZE, type SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
+import { usePicking } from './use-picking'
 
 interface NodesProps {
   nodes: SceneNode[]
@@ -20,6 +21,8 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
   const mesh = useRef<InstancedMesh>(null)
   const geometry = useMemo(() => new SphereGeometry(1, 24, 16), [])
   const material = useMemo(() => new MeshBasicMaterial(), [])
+  const ids = useMemo(() => nodes.map((node) => node.entity.id), [nodes])
+  const picking = usePicking(ids)
   const scratch = useMemo(
     () => ({ m: new Matrix4(), q: new Quaternion(), p: new Vector3(), s: new Vector3(), c: new Color() }),
     []
@@ -63,6 +66,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     })
     instances.instanceMatrix.needsUpdate = true
     instances.instanceColor.needsUpdate = true
+    instances.computeBoundingSphere()
   })
 
   return (
@@ -72,6 +76,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
       args={[geometry, material, Math.max(1, nodes.length)]}
       count={nodes.length}
       frustumCulled={false}
+      {...picking}
     />
   )
 }

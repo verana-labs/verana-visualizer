@@ -1,4 +1,5 @@
 const MAX_ACRONYM_LENGTH = 3
+const GENERIC_LABELS = new Set(['ecosystem', 'verana', 'www'])
 
 function hostOf(did: string): string {
   const parts = did.split(':')
@@ -18,7 +19,8 @@ function titleCase(words: string[]): string {
 }
 
 function labelOf(did: string, stripSuffix: boolean): string {
-  const firstLabel = hostOf(did).split('.')[0] ?? ''
+  const labels = hostOf(did).split('.')
+  const firstLabel = labels.find((label) => !GENERIC_LABELS.has(label.toLowerCase())) ?? labels[0] ?? ''
   const base = stripSuffix ? firstLabel.replace(/-(ecosystem|network)$/i, '') : firstLabel
   return titleCase(base.split('-')) || did
 }

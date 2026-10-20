@@ -18,6 +18,7 @@ import { useObservatory } from '@/store/observatory-store'
 import { AGENT_SIZE, agentTint } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
+import { usePicking } from './use-picking'
 
 const BOB = 0.35
 const WHITE = new Color('#ffffff')
@@ -52,6 +53,8 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
     []
   )
   const count = Math.max(1, agents.length)
+  const ids = useMemo(() => agents.map((agent) => agent.id), [agents])
+  const picking = usePicking(ids)
 
   useLayoutEffect(() => {
     for (const mesh of [diamonds.current, rings.current])
@@ -91,6 +94,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
       mesh.instanceMatrix.needsUpdate = true
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     }
+    diamondMesh.computeBoundingSphere()
   })
 
   return (
@@ -100,6 +104,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
         args={[assets.diamond, assets.diamondMaterial, count]}
         count={agents.length}
         frustumCulled={false}
+        {...picking}
       />
       <instancedMesh
         ref={rings}

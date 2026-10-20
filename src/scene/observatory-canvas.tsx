@@ -5,15 +5,18 @@ import { Canvas } from '@react-three/fiber'
 import { Bloom, EffectComposer, ToneMapping } from '@react-three/postprocessing'
 import { useMemo, useState } from 'react'
 import type { NetworkModel } from '@/domain/network-model'
+import { useObservatory } from '@/store/observatory-store'
 import { Agents } from './agents'
 import { CameraRig } from './camera-rig'
 import { ChainCore } from './chain-core'
 import { FlowParticles } from './flow-particles'
 import { Halos } from './halos'
+import { HoverMarker } from './hover-marker'
 import { Labels } from './labels'
 import { Links } from './links'
 import { Nodes } from './nodes'
 import { Rings } from './rings'
+import { Ripples } from './ripples'
 import { buildSceneData } from './scene-data'
 import { useFocusSets } from './scene-focus'
 import { Sky } from './sky'
@@ -23,6 +26,7 @@ import { usePrefersReducedMotion } from './use-reduced-motion'
 const BACKGROUND = '#05040a'
 const FOG_DENSITY = 0.0028
 const EXPOSURE = 0.92
+const ZOOM_SPEED = 2.2
 // postprocessing is only a transitive dependency; 6 is its ToneMappingMode.ACES_FILMIC
 const ACES_FILMIC = 6
 const QUALITY = [
@@ -33,7 +37,7 @@ const QUALITY = [
 
 function Galaxy({ model }: { model: NetworkModel }) {
   const data = useMemo(() => buildSceneData(model), [model])
-  const nodeIds = useMemo(() => data.nodes.map((node) => node.entity.id), [data])
+  const ids = useMemo(() => [...data.nodes.map((node) => node.entity.id), ...data.agents.map((a) => a.id)], [data])
   const positionOf = useLensTween()
   const focus = useFocusSets()
   return (
@@ -45,8 +49,10 @@ function Galaxy({ model }: { model: NetworkModel }) {
       <Halos stars={data.stars} positionOf={positionOf} focus={focus} />
       <Labels stars={data.stars} positionOf={positionOf} focus={focus} />
       <Agents agents={data.agents} positionOf={positionOf} focus={focus} />
+      <HoverMarker marks={data.marks} positionOf={positionOf} />
+      <Ripples marks={data.marks} positionOf={positionOf} />
       <ChainCore />
-      <CameraRig nodeIds={nodeIds} />
+      <CameraRig ids={ids} />
     </>
   )
 }
@@ -67,6 +73,7 @@ export function ObservatoryCanvas({ model }: { model: NetworkModel }) {
         onCreated={({ gl }) => {
           gl.toneMappingExposure = EXPOSURE
         }}
+        onPointerMissed={() => useObservatory.getState().select(null)}
       >
         <color attach="background" args={[BACKGROUND]} />
         <fogExp2 attach="fog" args={[BACKGROUND, FOG_DENSITY]} />
@@ -77,8 +84,7 @@ export function ObservatoryCanvas({ model }: { model: NetworkModel }) {
           dampingFactor={0.06}
           autoRotate={!reduced}
           autoRotateSpeed={0.25}
-          minDistance={6}
-          maxDistance={900}
+          zoomSpeed={ZOOM_SPEED}
         />
         <Sky />
         <Galaxy model={model} />
