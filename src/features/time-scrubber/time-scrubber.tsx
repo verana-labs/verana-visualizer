@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import type { NetworkModel } from '@/domain/network-model'
+import { countedParticipants } from '@/features/inspector/entity-facts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { QueryInfo } from '@/lib/api/query-info'
 import { Button } from '@/ui/button'
@@ -108,7 +109,7 @@ function SnapshotLine({ snapshot }: { snapshot: SnapshotView }) {
   return (
     <span className="truncate text-scene-mut">
       {plural(model.ecosystems.length, 'ecosystem')} · {plural(model.raw.schemas.length, 'schema')} ·{' '}
-      {plural(model.participants.length, 'participant')} · {plural(model.agents.length, 'DID')}
+      {plural(countedParticipants(model, model.participants), 'participant')} · {plural(model.agents.length, 'DID')}
     </span>
   )
 }

@@ -47,6 +47,11 @@ describe('TimeScrubber', () => {
     expect(p.onScrub).toHaveBeenCalledWith(38000)
   })
 
+  it('counts participants like the indexer and the HUD, leaving terminated ones out', () => {
+    render(<TimeScrubber {...props()} />)
+    expect(screen.getByText(/157 participants/)).toBeInTheDocument()
+  })
+
   it('offers Pause while playing and disables Next event at the head', () => {
     render(<TimeScrubber {...props({ playing: true, height: 96135 })} />)
     expect(screen.getByRole('button', { name: 'Pause' })).toBeInTheDocument()
