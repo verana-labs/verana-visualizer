@@ -58,8 +58,6 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
   const pendingComets = useRef<{ height: number; events: IndexerEvent[] } | null>(null)
   const cometTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-  useEffect(() => () => clearTimeout(cometTimer.current), [])
-
   useEffect(() => {
     if (height === null) return
     let cancelled = false
@@ -92,6 +90,7 @@ function ActiveTimeLens({ cfg, live, head }: { cfg: NetworkConfig; live: Network
     return () => {
       cancelled = true
       clearTimeout(timer)
+      clearTimeout(cometTimer.current)
     }
   }, [height, live, snapshotAt, blockTimeAt, reduced])
 
