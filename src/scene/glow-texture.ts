@@ -20,8 +20,24 @@ function createGlowTexture(): CanvasTexture {
   return new CanvasTexture(canvas)
 }
 
+let shared: { texture: CanvasTexture; users: number } | null = null
+
+function acquire(): CanvasTexture {
+  shared ??= { texture: createGlowTexture(), users: 0 }
+  return shared.texture
+}
+
 export function useGlowTexture(): CanvasTexture {
-  const texture = useMemo(createGlowTexture, [])
-  useEffect(() => () => texture.dispose(), [texture])
+  const texture = useMemo(acquire, [])
+  useEffect(() => {
+    const current = shared?.texture === texture ? shared : (shared = { texture, users: 0 })
+    current.users++
+    return () => {
+      current.users--
+      if (current.users > 0) return
+      texture.dispose()
+      if (shared === current) shared = null
+    }
+  }, [texture])
   return texture
 }
