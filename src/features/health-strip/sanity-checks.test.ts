@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { failing, stubNetwork } from '@/features/chain-stats/chain-fixture'
+import { failing, stubNetwork, withChainProposals } from '@/features/chain-stats/chain-fixture'
 import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createChainClient } from '@/lib/api/chain'
 import { createGraphClient } from '@/lib/api/graph'
@@ -23,7 +23,7 @@ describe('runSanityChecks', () => {
   })
 
   it('passes every method with its HTTP status, URL and latency when the network answers', async () => {
-    stubNetwork()
+    stubNetwork(withChainProposals)
     const report = await runSanityChecks(testnetCfg)
     for (const result of report.results) {
       expect(result.outcome, `${result.method}: ${result.note}`).toBe('pass')
@@ -64,6 +64,20 @@ describe('runSanityChecks', () => {
     expect(deposit?.outcome).toBe('skip')
     expect(deposit?.note).toMatch(/indexer\.corporations/)
     expect(report.ok).toBe(false)
+  })
+
+  it('probes the tally of an open chain proposal', async () => {
+    const mock = stubNetwork(withChainProposals)
+    await runSanityChecks(testnetCfg)
+    const urls = mock.mock.calls.map(([input]) => String(input))
+    expect(urls.some((u) => u.endsWith('/cosmos/gov/v1/proposals/2/tally'))).toBe(true)
+  })
+
+  it('skips the tally probe when the chain has no proposals', async () => {
+    stubNetwork()
+    const report = await runSanityChecks(testnetCfg)
+    const tally = report.results.find((r) => r.method === 'chain.govTally')
+    expect(tally).toMatchObject({ outcome: 'skip', note: 'no chain proposals on vna-testnet-1' })
   })
 
   it('carries the resolved network config, URLs only', async () => {

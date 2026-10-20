@@ -7,6 +7,7 @@ import { ActivityFeed } from '@/features/activity-feed/activity-feed'
 import { ChainLens } from '@/features/chain-stats/chain-lens'
 import { EconomicsLens } from '@/features/economics-sim/economics-lens'
 import { Footer } from '@/features/footer/footer'
+import { GovernanceLens } from '@/features/governance/governance-lens'
 import { HealthStrip } from '@/features/health-strip/health-strip'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { Hud } from '@/features/hud/hud'
@@ -78,6 +79,7 @@ function Observatory() {
       {model && <ChainLens cfg={cfg} />}
       {model && <RegistryLens cfg={cfg} />}
       {model && <TimeLens cfg={cfg} />}
+      {model && <GovernanceLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

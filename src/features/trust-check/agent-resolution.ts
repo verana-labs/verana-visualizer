@@ -34,11 +34,12 @@ export async function resolveAgents(
 }
 
 export function useAgentResolution(cfg: NetworkConfig, model: NetworkModel | null) {
+  const agents = model?.agents
   useEffect(() => {
-    if (!model) return
+    if (!agents) return
     const controller = new AbortController()
     const indexer = createIndexerClient(cfg)
-    const dids = model.agents.flatMap((agent) => agent.did ?? [])
+    const dids = agents.flatMap((agent) => agent.did ?? [])
     void resolveAgents(
       dids,
       async (did) => (await indexer.resolve(did, {}, controller.signal)).data.trusted,
@@ -46,5 +47,5 @@ export function useAgentResolution(cfg: NetworkConfig, model: NetworkModel | nul
       controller.signal
     )
     return () => controller.abort()
-  }, [cfg, model])
+  }, [cfg, agents])
 }

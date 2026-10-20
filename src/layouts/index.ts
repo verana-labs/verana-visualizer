@@ -4,6 +4,7 @@ import { economicsLayout } from './economics'
 import { governanceLayout } from './governance'
 import { networkLayout } from './network'
 import { registryLayout } from './registry'
+import { placeProposals } from './shared'
 import { timeLayout } from './time'
 import { trustLayout } from './trust'
 import type { Layout, LayoutFn, LensExtras, LensId } from './types'
@@ -29,5 +30,7 @@ const LAYOUTS: Record<LensId, LayoutFn> = {
 }
 
 export function layoutFor(lens: LensId, model: NetworkModel, extras: LensExtras = {}): Layout {
-  return LAYOUTS[lens](model, extras)
+  const layout = LAYOUTS[lens](model, extras)
+  placeProposals(model, layout.positions, layout.corePosition)
+  return layout
 }

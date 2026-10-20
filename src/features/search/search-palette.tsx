@@ -15,6 +15,7 @@ const GROUPS: { kind: EntityKind; label: string }[] = [
   { kind: 'agent', label: 'Services' },
   { kind: 'corporation', label: 'Corporations' },
   { kind: 'schema', label: 'Schemas' },
+  { kind: 'proposal', label: 'Proposals' },
 ]
 
 const KIND_LABEL: Record<EntityKind, string> = {
@@ -27,6 +28,10 @@ const KIND_LABEL: Record<EntityKind, string> = {
 }
 
 function detailOf(entity: Entity): string {
+  if (entity.kind === 'proposal') {
+    const n = entity.id.slice('proposal:'.length)
+    return n.startsWith('group-') ? `corporation proposal #${n.slice('group-'.length)}` : `chain proposal #${n}`
+  }
   if (entity.kind === 'corporation' || entity.kind === 'schema' || entity.kind === 'participant')
     return `#${entity.id.slice(entity.id.indexOf(':') + 1)}`
   return entity.did ?? ''

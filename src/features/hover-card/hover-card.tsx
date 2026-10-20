@@ -34,7 +34,7 @@ export function clampToViewport(pointer: { x: number; y: number }, card: Size, v
 }
 
 function Title({ children }: { children: string }) {
-  return <div className="mt-0.5 mb-1.5 text-[13.5px] font-semibold">{children}</div>
+  return <div className="mt-0.5 mb-1.5 line-clamp-2 break-words text-[13.5px] font-semibold">{children}</div>
 }
 
 function Hint({ children }: { children: string }) {

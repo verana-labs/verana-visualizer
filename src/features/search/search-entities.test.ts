@@ -75,7 +75,7 @@ describe('searchEntities', () => {
     expect(searchEntities(big, 'alpha')).toHaveLength(50)
   })
 
-  it('never returns proposals', () => {
+  it('finds proposals by title, after every other kind', () => {
     const proposal: Entity = {
       id: 'proposal:1',
       kind: 'proposal',
@@ -85,7 +85,14 @@ describe('searchEntities', () => {
       tier: 0,
       did: null,
     }
-    const withProposal = { entities: new Map([[proposal.id, proposal]]) } as unknown as NetworkModel
-    expect(searchEntities(withProposal, 'alpha')).toEqual([])
+    const schema: Entity = { ...proposal, id: 'schema:1', kind: 'schema', name: 'Alpha schema' }
+    const withProposal = {
+      entities: new Map([
+        [proposal.id, proposal],
+        [schema.id, schema],
+      ]),
+    } as unknown as NetworkModel
+    expect(searchEntities(withProposal, 'alpha').map((e) => e.id)).toEqual(['schema:1', 'proposal:1'])
+    expect(searchEntities(withProposal, 'proposal:1')[0].id).toBe('proposal:1')
   })
 })

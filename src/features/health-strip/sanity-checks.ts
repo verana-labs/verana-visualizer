@@ -197,6 +197,11 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
   const firstDid = needs(dids, (data) => data.dids[0], 'no DID')
   const indexed = needs(blockHeight, (data) => data.height, 'no indexed block')
   const firstProposal = needs(groupProposals, (rows) => rows[0], 'no group proposal')
+  const chainProposal = needs(
+    govProposals,
+    (rows) => (rows.find((p) => p.status === 'PROPOSAL_STATUS_VOTING_PERIOD') ?? rows[0])?.id,
+    'no chain proposals'
+  )
   const head = needs(latestBlock, (data) => Number(data.block.header.height), 'no block')
 
   const dependents = await Promise.all([
@@ -213,6 +218,7 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
     dependent('indexer.pendingFlat', anyCorporation, (id) => indexer.pendingFlat(id)),
     dependent('graph.traverse', firstParticipant, (id) => graph.traverse('G1', { participantId: id })),
     dependent('graph.validatorChain', firstParticipant, (id) => graph.validatorChain(id)),
+    dependent('chain.govTally', chainProposal, (id) => chain.govTally(Number(id))),
     dependent('chain.block', head, (height) => chain.block(Math.max(1, height - 1))),
   ])
 

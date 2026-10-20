@@ -1,6 +1,7 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { fromGovProposal, withProposals } from '@/domain/governance'
 import { Inspector } from '@/features/inspector/inspector'
 import { useObservatory } from '@/store/observatory-store'
 import { testnetModel } from './search-fixture'
@@ -63,6 +64,19 @@ describe('SearchPalette', () => {
     expect(options[0]).toHaveTextContent('ECS')
     const groups = screen.getAllByTestId('search-group').map((g) => g.getAttribute('data-kind'))
     expect(groups[0]).toBe('ecosystem')
+  })
+
+  it('lists proposals under their own group once the governance lens loaded them', async () => {
+    const proposal = fromGovProposal({ id: '4', status: 'PROPOSAL_STATUS_PASSED', title: 'Rotate keys', summary: null })
+    useObservatory.setState({ model: withProposals(testnetModel(), [proposal]) })
+    const user = userEvent.setup()
+    render(<SearchPalette />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'rotate')
+    const group = screen.getByTestId('search-group')
+    expect(group).toHaveAttribute('data-kind', 'proposal')
+    expect(group).toHaveTextContent('Proposals')
+    expect(within(group).getByRole('option')).toHaveTextContent('Rotate keys')
   })
 
   it('finds a corporation by #34', async () => {

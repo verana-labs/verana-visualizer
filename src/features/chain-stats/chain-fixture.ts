@@ -124,3 +124,17 @@ export const failing =
     (typeof path === 'string' ? url.pathname === path : path.test(url.pathname))
       ? new Response('boom', { status })
       : undefined
+
+export const withChainProposals: Override = (url) => {
+  if (url.pathname === '/cosmos/gov/v1/proposals')
+    return Response.json({
+      proposals: [
+        { id: '1', status: 'PROPOSAL_STATUS_PASSED', final_tally_result: {} },
+        { id: '2', status: 'PROPOSAL_STATUS_VOTING_PERIOD', final_tally_result: {} },
+      ],
+      pagination: { next_key: null },
+    })
+  if (url.pathname === '/cosmos/gov/v1/proposals/2/tally')
+    return Response.json({ tally: { yes_count: '3', no_count: '1', abstain_count: '0', no_with_veto_count: '0' } })
+  return undefined
+}
