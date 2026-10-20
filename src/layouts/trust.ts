@@ -15,17 +15,18 @@ interface Tree {
 }
 
 function buildTree(model: NetworkModel, root: Entity, schemaOf: Map<EntityId, number>): Tree {
+  const entityOf = (id: EntityId): Entity => {
+    const entity = model.entities.get(id)
+    if (!entity) throw new Error(`Trust layout: child ${id} of ${root.id} is missing from the model`)
+    return entity
+  }
   const nodes = new Map<EntityId, { tx: number; depth: number }>()
   let leaf = 0
   const place = (id: EntityId, depth: number) => {
     const kids = model
       .childrenOf(id)
       .filter((child) => model.entities.get(child)?.kind === 'participant')
-      .sort(
-        (a, b) =>
-          (schemaOf.get(a) ?? 0) - (schemaOf.get(b) ?? 0) ||
-          compareIds(model.entities.get(a) as Entity, model.entities.get(b) as Entity)
-      )
+      .sort((a, b) => (schemaOf.get(a) ?? 0) - (schemaOf.get(b) ?? 0) || compareIds(entityOf(a), entityOf(b)))
     if (kids.length === 0) {
       nodes.set(id, { tx: leaf++, depth })
       return

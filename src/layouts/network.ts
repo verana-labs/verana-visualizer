@@ -44,19 +44,15 @@ export function maxOrbitRadius(model: NetworkModel, ecosystemId: EntityId): numb
   return radii.length > 0 ? Math.max(...radii) : BASE_ORBIT
 }
 
-function ecosystemCenters(model: NetworkModel): Map<EntityId, Vec3> {
-  const order = ecosystemOrder(model)
-  const radii = order.map((eco) => maxOrbitRadius(model, eco.id))
-  const unit = order.map((_, i): Vec3 => {
+export function spreadCenters(radii: readonly number[]): { centers: Vec3[]; factor: number } {
+  const heights = radii.map((_, i) => ((i % 3) - 1) * 4)
+  const unit = radii.map((_, i): Vec3 => {
     const reach = 30 * Math.sqrt(i) + 8
-    return i === 0
-      ? [0, 0, 0]
-      : [Math.cos(i * GOLDEN_ANGLE) * reach, ((i % 3) - 1) * 4, Math.sin(i * GOLDEN_ANGLE) * reach]
+    return i === 0 ? [0, 0, 0] : [Math.cos(i * GOLDEN_ANGLE) * reach, 0, Math.sin(i * GOLDEN_ANGLE) * reach]
   })
-  const heights = order.map((_, i) => ((i % 3) - 1) * 4)
   let factor = 1
-  for (let i = 0; i < order.length; i++) {
-    for (let j = i + 1; j < order.length; j++) {
+  for (let i = 0; i < radii.length; i++) {
+    for (let j = i + 1; j < radii.length; j++) {
       const reach = radii[i] + radii[j]
       const dy = heights[i] - heights[j]
       const flat = Math.hypot(unit[i][0] - unit[j][0], unit[i][2] - unit[j][2])
@@ -65,9 +61,16 @@ function ecosystemCenters(model: NetworkModel): Map<EntityId, Vec3> {
     }
   }
   const scale = factor === 1 ? 1 : Math.ceil(factor * 1000) / 1000 + 0.001
-  return new Map(
-    order.map((eco, i): [EntityId, Vec3] => [eco.id, [unit[i][0] * scale, heights[i], unit[i][2] * scale]])
-  )
+  return {
+    centers: unit.map((point, i): Vec3 => [point[0] * scale, heights[i], point[2] * scale]),
+    factor: scale,
+  }
+}
+
+function ecosystemCenters(model: NetworkModel): Map<EntityId, Vec3> {
+  const order = ecosystemOrder(model)
+  const { centers } = spreadCenters(order.map((eco) => maxOrbitRadius(model, eco.id)))
+  return new Map(order.map((eco, i): [EntityId, Vec3] => [eco.id, centers[i]]))
 }
 
 export function networkLayout(model: NetworkModel): Layout {
