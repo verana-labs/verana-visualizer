@@ -180,7 +180,15 @@ export function zoomLimits(overviewDistance: number, fov: number) {
   return { minDistance, maxDistance: Math.max(overviewDistance * MAX_ZOOM_FACTOR, minDistance * 2) }
 }
 
-export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
+export function useStableIds(ids: readonly EntityId[]): readonly EntityId[] {
+  const stable = useRef(ids)
+  const current = stable.current
+  if (current !== ids && (current.length !== ids.length || current.some((id, i) => id !== ids[i]))) stable.current = ids
+  return stable.current
+}
+
+export function CameraRig({ ids: freshIds }: { ids: readonly EntityId[] }) {
+  const ids = useStableIds(freshIds)
   const camera = useThree((s) => s.camera)
   const rawControls = useThree((s) => s.controls)
   const controls = isRigControls(rawControls) ? rawControls : null

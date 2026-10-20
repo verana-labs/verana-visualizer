@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { renderHook } from '@testing-library/react'
 import { PerspectiveCamera, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type EntityId, type RawNetwork } from '@/domain/network-model'
@@ -17,6 +18,7 @@ import {
   tightFitDistance,
   traceFrame,
   unoccludedAspect,
+  useStableIds,
   zoomLimits,
 } from './camera-rig'
 import { MAX_STAR_SIZE } from './scene-data'
@@ -227,5 +229,17 @@ describe('the intro flight', () => {
     }
     const samples = [0, 0.25, 0.5, 0.75, 1].map(azimuth)
     for (let i = 1; i < samples.length; i++) expect(samples[i]).toBeGreaterThan(samples[i - 1])
+  })
+})
+
+describe('useStableIds', () => {
+  it('keeps the same list when a model swap brings the same ids, so the camera does not re-fly', () => {
+    const first: EntityId[] = ['ecosystem:1', 'participant:2']
+    const { result, rerender } = renderHook(({ ids }) => useStableIds(ids), { initialProps: { ids: first } })
+    rerender({ ids: ['ecosystem:1', 'participant:2'] })
+    expect(result.current).toBe(first)
+    const grown: EntityId[] = ['ecosystem:1', 'participant:2', 'participant:3']
+    rerender({ ids: grown })
+    expect(result.current).toBe(grown)
   })
 })
