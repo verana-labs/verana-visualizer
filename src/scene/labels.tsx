@@ -3,6 +3,7 @@
 import { useFrame } from '@react-three/fiber'
 import { type RefObject, useRef } from 'react'
 import type { Group } from 'three'
+import { writeOpacity } from './dom-opacity'
 import type { SceneNode } from './scene-data'
 import { dimOf, type FocusSets } from './scene-focus'
 import { SceneHtml } from './scene-html'
@@ -29,8 +30,7 @@ export function Labels({ stars, positionOf, focus }: LabelsProps) {
     stars.forEach((star, i) => {
       const id = star.entity.id
       anchors.current[i]?.position.set(...positionOf(id))
-      const text = texts.current[i]
-      if (text) text.style.opacity = String(labelOpacity(dimOf(focus.current, id)) * presenceOf(id))
+      writeOpacity(texts.current[i], labelOpacity(dimOf(focus.current, id)) * presenceOf(id))
     })
   })
 

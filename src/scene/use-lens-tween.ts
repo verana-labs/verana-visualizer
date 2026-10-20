@@ -6,7 +6,7 @@ import type { Layout, LensId, Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
-const TWEEN_MS = 1500
+export const TWEEN_MS = 1500
 const REDUCED_TWEEN_MS = 300
 const TIER_STAGGER_MS = 135
 const NODE_JITTER_MS = 120

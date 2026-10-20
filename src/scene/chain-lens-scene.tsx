@@ -1,16 +1,17 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AdditiveBlending, type Group, type Material, type Mesh } from 'three'
 import type { ValidatorOrb } from '@/features/chain-stats/chain-scene'
 import type { BlockSummary } from '@/features/chain-stats/load-chain-stats'
 import { blockRise, STREAM_SIZE, VALIDATOR_RING_RADIUS } from '@/layouts/chain'
 import { useObservatory } from '@/store/observatory-store'
+import { writeOpacity } from './dom-opacity'
 import { useGlowTexture } from './glow-texture'
 import { LABEL_CLASS } from './labels'
 import { SceneHtml } from './scene-html'
-import { tweenProgress, useCoreTween } from './use-lens-tween'
+import { TWEEN_MS, tweenProgress, useCoreTween } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
 const ORB_COLOR = '#a78bfa'
@@ -72,8 +73,7 @@ function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
       const active = orbs[i].active
       setOpacity(meshes.current[i], (active ? 0.95 : 0.5) * fade)
       setOpacity(halos.current[i], (active ? 0.35 : 0.1) * fade)
-      const label = labels.current[i]
-      if (label) label.style.opacity = String(fade)
+      writeOpacity(labels.current[i], fade)
     }
   })
 
@@ -159,8 +159,7 @@ function BlockStream({ blocks }: { blocks: BlockSummary[] }) {
       slots.current.get(height)?.position.set(0, next, 0)
       const age = 1 - i / STREAM_SIZE
       setOpacity(discs.current.get(height) ?? null, (0.12 + 0.5 * age) * fade)
-      const label = labels.current.get(height)
-      if (label) label.style.opacity = String((0.35 + 0.65 * age) * fade)
+      writeOpacity(labels.current.get(height), (0.35 + 0.65 * age) * fade)
     }
   })
 
@@ -213,8 +212,24 @@ function BlockStream({ blocks }: { blocks: BlockSummary[] }) {
   )
 }
 
+export function useChainSceneShown(): boolean {
+  const lens = useObservatory((s) => s.lens)
+  const lensFrom = useObservatory((s) => s.lensFrom)
+  const changedAt = useObservatory((s) => s.lensChangedAt)
+  const leaving = lens !== 'chain' && lensFrom === 'chain'
+  const [faded, setFaded] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!leaving) return
+    const timer = setTimeout(() => setFaded(changedAt), TWEEN_MS)
+    return () => clearTimeout(timer)
+  }, [leaving, changedAt])
+
+  return lens === 'chain' || (leaving && faded !== changedAt)
+}
+
 export function ChainLensScene() {
-  const shown = useObservatory((s) => s.lens === 'chain' || s.lensFrom === 'chain')
+  const shown = useChainSceneShown()
   const orbs = useObservatory((s) => s.chainValidators)
   const blocks = useObservatory((s) => s.chainBlocks)
   if (!shown) return null
