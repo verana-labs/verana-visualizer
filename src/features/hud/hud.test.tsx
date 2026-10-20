@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { useTour } from '@/features/tour/tour-store'
 import { resolveNetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Hud } from './hud'
@@ -51,7 +53,8 @@ describe('Hud', () => {
     expect(figure('participants')).toBe(String(indexerTotal))
     expect(figure('participants')).toBe('157')
     expect(figure('credentials issued')).toBe('169')
-    expect(figure('services')).toBe('0 / 0')
+    expect(figure('services')).toBe(`0 / ${model.agents.length}`)
+    expect(screen.getByTestId('services-pending')).toHaveTextContent(`${model.agents.length} unresolved`)
   })
 
   it('hides the live dot until the block height is known', () => {
@@ -65,7 +68,14 @@ describe('Hud', () => {
     expect(dot?.className).not.toMatch(/#[0-9a-f]{6}/i)
   })
 
-  it('counts trusted over resolved services from the verdicts', () => {
+  it('starts the tour from the HUD actions', async () => {
+    render(<Hud cfg={config('testnet')} />)
+    await userEvent.setup().click(screen.getByRole('button', { name: '▶ 30-second tour' }))
+    expect(useTour.getState().step).toBe(0)
+    useTour.getState().exit()
+  })
+
+  it('counts trusted services over every service, naming how many are still unresolved', () => {
     const [a, b, c] = model.agents.map((agent) => agent.id)
     useObservatory.setState({
       agentVerdicts: new Map([
@@ -75,7 +85,14 @@ describe('Hud', () => {
       ]),
     })
     render(<Hud cfg={config('testnet')} />)
-    expect(figure('services')).toBe('2 / 3')
+    expect(figure('services')).toBe(`2 / ${model.agents.length}`)
+    expect(screen.getByTestId('services-pending')).toHaveTextContent(`${model.agents.length - 3} unresolved`)
+  })
+
+  it('drops the unresolved note once every service has a verdict', () => {
+    useObservatory.setState({ agentVerdicts: new Map(model.agents.map((agent) => [agent.id, true])) })
+    render(<Hud cfg={config('testnet')} />)
+    expect(screen.queryByTestId('services-pending')).toBeNull()
   })
 })
 

@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { countedParticipants } from '@/features/inspector/entity-facts'
 import { ViewActions } from '@/features/share/view-actions'
 import { LiveTag } from '@/features/time-scrubber/live-tag'
+import { useTour } from '@/features/tour/tour-store'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
@@ -38,6 +39,8 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
       )
     : null
   const trusted = [...verdicts.values()].filter(Boolean).length
+  const services = model ? model.agents.length : 0
+  const unresolved = model ? model.agents.filter((agent) => !verdicts.has(agent.id)).length : 0
   const ecosystems = model ? model.ecosystems.length : null
   const participants = model ? countedParticipants(model, model.participants) : null
 
@@ -77,7 +80,17 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
           value={issued === null ? '–' : number(issued)}
           growth={<GrowthLine metric="issued" total={issued} />}
         />
-        <Figure label="services" value={`${trusted} / ${verdicts.size}`} />
+        <Figure
+          label="services"
+          value={`${trusted} / ${services}`}
+          growth={
+            unresolved > 0 && (
+              <div data-testid="services-pending" className="text-[10.5px] text-scene-mut">
+                {`${number(unresolved)} unresolved`}
+              </div>
+            )
+          }
+        />
       </div>
       <GrowthUnavailable />
       <WhatChanged />
@@ -86,6 +99,9 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
         Is this service trustworthy?
       </Button>
       <ViewActions cfg={cfg} />
+      <Button onClick={() => useTour.getState().start()} className="text-[12px]">
+        ▶ 30-second tour
+      </Button>
       {children}
     </GlassPanel>
   )

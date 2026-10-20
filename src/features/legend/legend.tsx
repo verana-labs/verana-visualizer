@@ -1,9 +1,7 @@
 'use client'
 
 import { AGENT_COLORS, ECOSYSTEM_STAR_COLOR, ROLES, type Role } from '@/domain/roles'
-import { useTour } from '@/features/tour/tour-store'
 import { useObservatory } from '@/store/observatory-store'
-import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 
 const ROLE_LABELS: Record<Role, string> = {
@@ -25,8 +23,8 @@ function Row({ dotClass, color, label }: { dotClass?: string; color: string; lab
 }
 
 export function Legend() {
-  const hidden = useObservatory((s) => s.lens === 'economics' || s.lens === 'chain')
-  if (hidden) return null
+  const shown = useObservatory((s) => s.lens === 'network' || s.lens === 'trust')
+  if (!shown) return null
   return (
     <GlassPanel className="fixed bottom-[66px] left-4 z-10 px-3.5 py-3 text-[11.5px]">
       <Row color={ECOSYSTEM_STAR_COLOR} label="Ecosystem (trust root)" />
@@ -42,9 +40,6 @@ export function Legend() {
       <div className="mt-1 text-[10px] uppercase tracking-[0.08em] text-scene-mut">
         tilted orbit = one credential schema
       </div>
-      <Button className="mt-2.5" onClick={() => useTour.getState().start()}>
-        ▶ 30-second tour
-      </Button>
     </GlassPanel>
   )
 }
