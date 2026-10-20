@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { blockRise, STREAM_SIZE, VALIDATOR_RING_RADIUS } from './chain'
 import { LENSES, layoutFor } from './index'
 import { maxOrbitRadius, orbitRadius, spreadCenters } from './network'
 
@@ -251,5 +252,45 @@ describe('trust layout', () => {
       if (entity.kind !== 'schema') continue
       expect(at(entity.id)).toEqual(at(`ecosystem:${entity.ecosystemId}`))
     }
+  })
+})
+
+describe('chain layout', () => {
+  const chain = layoutFor('chain', model)
+  const network = layoutFor('network', model)
+  const core = chain.corePosition
+
+  it('keeps the core where the network lens has it', () => {
+    expect(core).toEqual(network.corePosition)
+  })
+
+  it('pulls every entity back behind the validator ring so the core and validators are the focus', () => {
+    for (const id of model.entities.keys()) {
+      const after = chain.positions.get(id) ?? [NaN, NaN, NaN]
+      expect(after[2], id).toBeLessThan(core[2] - VALIDATOR_RING_RADIUS)
+      expect(distance(after, core), id).toBeGreaterThan(VALIDATOR_RING_RADIUS + 10)
+    }
+  })
+
+  it('keeps the network shape, only moved', () => {
+    const [a, b] = model.ecosystems
+    const shift = (id: string, layout: typeof chain) => layout.positions.get(id as never) ?? [NaN, NaN, NaN]
+    const before = shift(a.id, network).map((v, i) => v - shift(b.id, network)[i])
+    const after = shift(a.id, chain).map((v, i) => v - shift(b.id, chain)[i])
+    for (const [i, v] of after.entries()) expect(v).toBeCloseTo(before[i], 9)
+  })
+
+  it('drops the orbit rings and frames the core, the validator ring and the block stream', () => {
+    expect(chain.rings ?? []).toEqual([])
+    const frame = chain.frame ?? []
+    expect(frame.length).toBeGreaterThan(0)
+    const reach = Math.max(...frame.map((p) => distance(p, core)))
+    expect(reach).toBeGreaterThanOrEqual(VALIDATOR_RING_RADIUS)
+    expect(Math.max(...frame.map((p) => p[1] - core[1]))).toBeGreaterThanOrEqual(blockRise(STREAM_SIZE - 1))
+  })
+
+  it('stacks the block stream upward from the core', () => {
+    expect(blockRise(0)).toBeGreaterThan(0)
+    expect(blockRise(1)).toBeGreaterThan(blockRise(0))
   })
 })

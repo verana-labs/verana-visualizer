@@ -4,8 +4,10 @@ import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { ActivityFeed } from '@/features/activity-feed/activity-feed'
+import { ChainLens } from '@/features/chain-stats/chain-lens'
 import { EconomicsLens } from '@/features/economics-sim/economics-lens'
 import { Footer } from '@/features/footer/footer'
+import { HealthStrip } from '@/features/health-strip/health-strip'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { Hud } from '@/features/hud/hud'
 import { Inspector } from '@/features/inspector/inspector'
@@ -63,12 +65,15 @@ function Observatory() {
     <main data-testid="observatory" style={{ '--accent': accentFor(cfg.chainName) } as React.CSSProperties}>
       {model && webgl === true && <ObservatoryCanvas model={model} />}
       {model && webgl === false && <ListFallback model={model} />}
-      <Hud cfg={cfg} />
+      <Hud cfg={cfg}>
+        <HealthStrip cfg={cfg} />
+      </Hud>
       <LensBar />
       <SearchPalette />
       <Legend />
       {model && <ActivityFeed cfg={cfg} />}
       {model && <EconomicsLens cfg={cfg} />}
+      {model && <ChainLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}

@@ -3,10 +3,12 @@ import type { NetworkConfig } from '../env'
 import type { Fetched, QueryInfo } from './query-info'
 import { buildUrl, requestJson } from './request'
 import {
+  balancesSchema,
   blockSchema,
   communityPoolSchema,
   govProposalsPageSchema,
   inflationSchema,
+  moduleAccountSchema,
   rpcStatusSchema,
   stakingPoolSchema,
   supplyPageSchema,
@@ -45,6 +47,12 @@ export function createChainClient(cfg: NetworkConfig) {
     inflation: () => getRest('/cosmos/mint/v1beta1/inflation', inflationSchema),
     stakingPool: () => getRest('/cosmos/staking/v1beta1/pool', stakingPoolSchema),
     communityPool: () => getRest('/cosmos/protocolpool/v1/community_pool', communityPoolSchema),
+    async yieldPool() {
+      const account = await getRest('/cosmos/auth/v1beta1/module_accounts/yield_intermediate_pool', moduleAccountSchema)
+      const address = account.data.account.base_account.address
+      const res = await getRest(`/cosmos/bank/v1beta1/balances/${address}`, balancesSchema)
+      return { data: res.data.balances, query: res.query }
+    },
     validators: () => pageAll('/cosmos/staking/v1beta1/validators', validatorsPageSchema, (page) => page.validators),
     govProposals: () => pageAll('/cosmos/gov/v1/proposals', govProposalsPageSchema, (page) => page.proposals),
     latestBlock: () => getRest('/cosmos/base/tendermint/v1beta1/blocks/latest', blockSchema),

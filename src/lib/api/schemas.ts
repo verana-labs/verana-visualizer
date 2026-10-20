@@ -357,6 +357,12 @@ export const stakingPoolSchema = z
 
 export const communityPoolSchema = z.object({ pool: z.array(coinSchema) }).passthrough()
 
+export const moduleAccountSchema = z
+  .object({ account: z.object({ base_account: z.object({ address: z.string() }).passthrough() }).passthrough() })
+  .passthrough()
+
+export const balancesSchema = z.object({ balances: z.array(coinSchema) }).passthrough()
+
 export const validatorSchema = z
   .object({
     operator_address: z.string(),
@@ -438,3 +444,5 @@ export type ExchangeRate = z.infer<typeof exchangeRateSchema>
 export type Validator = z.infer<typeof validatorSchema>
 export type GovProposal = z.infer<typeof govProposalSchema>
 export type ChainBlock = z.infer<typeof blockSchema>
+export type Coin = z.infer<typeof coinSchema>
+export type StatsSnapshot = z.infer<typeof statsSnapshotSchema>

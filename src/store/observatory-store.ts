@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { appendFeed, type CometLaunch, type FeedItem } from '@/domain/activity'
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { isVerdictError, type TrustCheck } from '@/domain/trust-check'
+import type { ValidatorOrb } from '@/features/chain-stats/chain-scene'
+import type { BlockSummary } from '@/features/chain-stats/load-chain-stats'
 import type { Layout, LensId } from '@/layouts/types'
 import type { ListQueryKey } from '@/lib/api/load-network'
 import type { QueryInfo } from '@/lib/api/query-info'
@@ -42,6 +44,8 @@ export interface ObservatoryState {
   trustCheck: TrustCheckState | null
   economics: EconomicsScene | null
   simulationOpen: boolean
+  chainBlocks: BlockSummary[]
+  chainValidators: ValidatorOrb[] | null
   setLens(l: LensId): void
   setLayout(lens: LensId, layout: Layout): void
   select(id: EntityId | null): void
@@ -59,6 +63,8 @@ export interface ObservatoryState {
   setAgentVerdict(id: EntityId, trusted: boolean): void
   setEconomics(economics: EconomicsScene): void
   setSimulationOpen(open: boolean): void
+  setChainBlocks(blocks: BlockSummary[]): void
+  setChainValidators(validators: ValidatorOrb[]): void
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined
@@ -83,6 +89,8 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   trustCheck: null,
   economics: null,
   simulationOpen: false,
+  chainBlocks: [],
+  chainValidators: null,
   setLens: (l) => set((s) => (s.lens === l ? s : { lens: l, lensFrom: s.lens, lensChangedAt: performance.now() })),
   setLayout: (lens, layout) => set((s) => ({ layouts: { ...s.layouts, [lens]: layout } })),
   select: (id) =>
@@ -125,4 +133,6 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   setAgentVerdict: (id, trusted) => set((s) => ({ agentVerdicts: new Map(s.agentVerdicts).set(id, trusted) })),
   setEconomics: (economics) => set({ economics }),
   setSimulationOpen: (open) => set({ simulationOpen: open }),
+  setChainBlocks: (blocks) => set({ chainBlocks: blocks }),
+  setChainValidators: (validators) => set({ chainValidators: validators }),
 }))

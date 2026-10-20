@@ -119,7 +119,7 @@ export function overviewOf(points: readonly Vec3[], lens: LensId, fov: number, a
   const point = new Vector3()
   for (const p of points) bounds.expandByPoint(point.set(...p))
   const target = bounds.isEmpty() ? new Vector3() : bounds.getCenter(new Vector3())
-  const direction = lens === 'network' ? NETWORK_DIRECTION : FLAT_DIRECTION
+  const direction = lens === 'network' || lens === 'chain' ? NETWORK_DIRECTION : FLAT_DIRECTION
   const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE, FRAME_MARGIN)
   return { target, position: target.clone().addScaledVector(direction, distance), distance }
 }
@@ -214,7 +214,7 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   useEffect(() => {
     const layout = ensureLayout(lens)
     if (!layout || !controls || !(camera instanceof PerspectiveCamera)) return
-    const overview = overviewOf(framePoints(layout, ids), lens, camera.fov, aspectRef.current)
+    const overview = overviewOf(layout.frame ?? framePoints(layout, ids), lens, camera.fov, aspectRef.current)
     Object.assign(controls, zoomLimits(overview.distance, camera.fov))
     userMoved.current = false
 
@@ -291,7 +291,7 @@ export function CameraRig({ ids }: { ids: readonly EntityId[] }) {
   useEffect(() => {
     const layout = ensureLayout(lens)
     if (!layout || !controls || !(camera instanceof PerspectiveCamera) || !introduced.current) return
-    const overview = overviewOf(framePoints(layout, ids), lens, camera.fov, aspect)
+    const overview = overviewOf(layout.frame ?? framePoints(layout, ids), lens, camera.fov, aspect)
     Object.assign(controls, zoomLimits(overview.distance, camera.fov))
     if (useObservatory.getState().selected || userMoved.current || flight.current) return
     flight.current = {

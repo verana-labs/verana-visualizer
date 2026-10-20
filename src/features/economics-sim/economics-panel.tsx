@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useLayoutEffect, useState } from 'react'
+import type { ReactNode } from 'react'
 import { tuRateValue } from '@/domain/economics'
 import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
@@ -11,6 +11,7 @@ import type { CredentialSchema, Participant } from '@/lib/api/schemas'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import { Sparkline } from '@/ui/sparkline'
+import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
 import { amount, percent, vnaFromUvna } from './format'
 import type { EconomicsData } from './load-economics'
 
@@ -181,28 +182,6 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
       <ShowQuery query={data.queries.tdParams} />
     </>
   )
-}
-
-const HUD_GAP = 12
-const FOOTER_SPACE = 66
-const FALLBACK_TOP = 248
-
-function useBelowHud(): number {
-  const [top, setTop] = useState(FALLBACK_TOP)
-  useLayoutEffect(() => {
-    const hud = document.querySelector<HTMLElement>('[data-testid="hud"]')
-    if (!hud) return
-    const update = () => setTop(Math.round(hud.getBoundingClientRect().bottom) + HUD_GAP)
-    update()
-    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
-    observer?.observe(hud)
-    window.addEventListener('resize', update)
-    return () => {
-      observer?.disconnect()
-      window.removeEventListener('resize', update)
-    }
-  }, [])
-  return top
 }
 
 export function EconomicsPanel({ chainId, model, state, onOpenSimulation }: EconomicsPanelProps) {

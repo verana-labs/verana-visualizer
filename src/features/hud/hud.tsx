@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import type { ReactNode } from 'react'
 import { countedParticipants } from '@/features/inspector/entity-facts'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
@@ -21,7 +22,7 @@ function Figure({ label, value }: { label: string; value: string }) {
   )
 }
 
-export function Hud({ cfg }: { cfg: NetworkConfig }) {
+export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNode }) {
   const model = useObservatory((s) => s.model)
   const blockHeight = useObservatory((s) => s.blockHeight)
   const verdicts = useObservatory((s) => s.agentVerdicts)
@@ -63,6 +64,7 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
       <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
         Is this service trustworthy?
       </Button>
+      {children}
     </GlassPanel>
   )
 }

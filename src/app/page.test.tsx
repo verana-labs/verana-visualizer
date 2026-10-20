@@ -26,6 +26,7 @@ vi.mock('next/navigation', () => ({
 }))
 vi.mock('@/scene/webgl-support', () => ({ hasWebGL: () => false }))
 vi.mock('@/features/loader/stardust-loader', () => ({ StardustLoader: () => null }))
+vi.mock('@/features/health-strip/health-strip', () => ({ HealthStrip: () => null }))
 vi.mock('@/lib/env', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/lib/env')>()
   return {

@@ -132,4 +132,20 @@ describe('createChainClient', () => {
     expect(data).toHaveLength(2)
     expect(new URL(mock.mock.calls[1][0] as string).searchParams.get('pagination.key')).toBe('abc=')
   })
+
+  it('reads the yield pool balance from the yield_intermediate_pool module account', async () => {
+    const mock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        Response.json({ account: { base_account: { address: 'verana1yield' }, name: 'yield_intermediate_pool' } })
+      )
+      .mockResolvedValueOnce(Response.json({ balances: [{ denom: 'uvna', amount: '42' }], pagination: null }))
+    vi.stubGlobal('fetch', mock)
+    const { data, query } = await createChainClient(cfg).yieldPool()
+    expect(data).toEqual([{ denom: 'uvna', amount: '42' }])
+    expect(mock.mock.calls[0][0]).toBe(
+      'https://api.testnet.verana.network/cosmos/auth/v1beta1/module_accounts/yield_intermediate_pool'
+    )
+    expect(query.url).toBe('https://api.testnet.verana.network/cosmos/bank/v1beta1/balances/verana1yield')
+  })
 })

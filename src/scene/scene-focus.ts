@@ -7,13 +7,15 @@ export interface FocusSets {
   related: Set<EntityId> | null
   hover: Set<EntityId> | null
   trace: Set<EntityId> | null
+  backdrop?: boolean
 }
 
 const UNRELATED_DIM = 0.12
 const UNHOVERED_DIM = 0.42
+const BACKDROP_DIM = 0.32
 const FLASH_DECAY_PER_MS = 0.0006
 
-function focusSetsOf({ model, selected, hovered, trustCheck }: ObservatoryState): FocusSets {
+export function focusSetsOf({ model, selected, hovered, trustCheck, lens }: ObservatoryState): FocusSets {
   if (!model) return { related: null, hover: null, trace: null }
   const hoveredEntity = hovered && hovered !== 'rocket' && model.entities.has(hovered) ? hovered : null
   const path = traceablePath(trustCheck?.result ?? null, model)
@@ -21,6 +23,7 @@ function focusSetsOf({ model, selected, hovered, trustCheck }: ObservatoryState)
     trace: path ? new Set(path) : null,
     related: selected && model.entities.has(selected) ? model.related(selected) : null,
     hover: hoveredEntity ? new Set([hoveredEntity, ...model.neighbors(hoveredEntity)]) : null,
+    backdrop: lens === 'chain',
   }
 }
 
@@ -33,7 +36,8 @@ export function useFocusSets(): RefObject<FocusSets> {
           state.selected === previous.selected &&
           state.hovered === previous.hovered &&
           state.model === previous.model &&
-          state.trustCheck === previous.trustCheck
+          state.trustCheck === previous.trustCheck &&
+          state.lens === previous.lens
         )
           return
         sets.current = focusSetsOf(state)
@@ -46,8 +50,8 @@ export function useFocusSets(): RefObject<FocusSets> {
 export function dimOf(sets: FocusSets, id: EntityId): number {
   if (sets.trace) return sets.trace.has(id) ? 1 : UNRELATED_DIM
   if (sets.related) return sets.related.has(id) ? 1 : UNRELATED_DIM
-  if (sets.hover) return sets.hover.has(id) ? 1 : UNHOVERED_DIM
-  return 1
+  if (sets.hover) return sets.hover.has(id) ? 1 : sets.backdrop ? BACKDROP_DIM : UNHOVERED_DIM
+  return sets.backdrop ? BACKDROP_DIM : 1
 }
 
 export function flashOf(id: EntityId, now: number): number {

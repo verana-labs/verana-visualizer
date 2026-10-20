@@ -12,6 +12,7 @@ export interface Layout {
   positions: Map<EntityId, Vec3>
   corePosition: Vec3
   rings?: RingSpec[]
+  frame?: Vec3[]
 }
 
 export type LensId = 'network' | 'trust' | 'economics' | 'chain' | 'time' | 'governance' | 'registry'

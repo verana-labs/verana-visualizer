@@ -24,8 +24,8 @@ function Row({ dotClass, color, label }: { dotClass?: string; color: string; lab
 }
 
 export function Legend() {
-  const economics = useObservatory((s) => s.lens === 'economics')
-  if (economics) return null
+  const hidden = useObservatory((s) => s.lens === 'economics' || s.lens === 'chain')
+  if (hidden) return null
   return (
     <GlassPanel className="fixed bottom-[66px] left-4 z-10 px-3.5 py-3 text-[11.5px]">
       <Row color={ECOSYSTEM_STAR_COLOR} label="Ecosystem (trust root)" />
