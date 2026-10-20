@@ -43,15 +43,17 @@ jobs:
       - name: Compute tags
         id: compute-tags
         run: |
-          echo "APP_VERSION=${RELEASE_VERSION#v}" >> $GITHUB_ENV
-          if [ "$RELEASE_TYPE" = "stable" ]; then
-            echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-            echo "SUFFIX=" >> $GITHUB_ENV
-          else
-            echo "IMAGE_TAG=dev" >> $GITHUB_ENV
-            echo "SUFFIX=-dev" >> $GITHUB_ENV
-            echo "RELEASE_PATCH_SHORT=${RELEASE_PATCH:0:1}" >> $GITHUB_ENV
-          fi
+          {
+            echo "APP_VERSION=${RELEASE_VERSION#v}"
+            if [ "$RELEASE_TYPE" = "stable" ]; then
+              echo "IMAGE_TAG=latest"
+              echo "SUFFIX="
+            else
+              echo "IMAGE_TAG=dev"
+              echo "SUFFIX=-dev"
+              echo "RELEASE_PATCH_SHORT=${RELEASE_PATCH:0:1}"
+            fi
+          } >> "$GITHUB_ENV"
 
       - name: Docker login
         uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
@@ -114,8 +116,8 @@ jobs:
             )
           fi
           for tag in "${TAGS[@]}"; do
-            helm package ./charts --version $tag --app-version "$APP_VERSION" -d ./charts
-            helm push ./charts/${CHART_NAME}-$tag.tgz oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}
+            helm package ./charts --version "$tag" --app-version "$APP_VERSION" -d ./charts
+            helm push "./charts/${CHART_NAME}-${tag}.tgz" "oci://docker.io/${{ secrets.DOCKER_HUB_LOGIN }}"
           done
 
   discord-notify:
