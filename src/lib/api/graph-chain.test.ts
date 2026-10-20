@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
 import { resolveNetworkConfig } from '../env'
+import { FetchError } from '../fetch-json'
 import { createChainClient } from './chain'
 import { createGraphClient } from './graph'
 import {
@@ -57,7 +58,6 @@ describe.each(['testnet', 'devnet'])('graph and chain fixtures (%s)', (network) 
   })
 
   it('parses the G1 output as a validator chain', () => {
-    if (!files.includes('graph-traverse-g1.json')) return
     const { output } = JSON.parse(readFileSync(join(dir, 'graph-traverse-g1.json'), 'utf8'))
     expect(validatorChainSchema.parse(output).length).toBeGreaterThan(0)
   })
@@ -81,6 +81,34 @@ describe('createGraphClient', () => {
       headers: { 'content-type': 'application/json' },
       body: { query: 'G1', input: { participantId: 158 } },
     })
+  })
+})
+
+describe('validatorChain', () => {
+  const node = { id: 1, didId: 'did:x', role: 'ECOSYSTEM', state: 'ACTIVE', validatorParticipantId: null }
+
+  it('works when destructured from the client', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ query: 'G1', evaluatedAtTime: 'now', output: [node] }))
+    )
+    const { validatorChain } = createGraphClient(cfg)
+    const { data, query } = await validatorChain(1)
+    expect(data).toHaveLength(1)
+    expect(query.body).toEqual({ query: 'G1', input: { participantId: 1 } })
+  })
+
+  it('throws a FetchError naming the field path and url on malformed output', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ query: 'G1', evaluatedAtTime: 'now', output: [{ ...node, id: 'one' }] }))
+    )
+    const error = await createGraphClient(cfg)
+      .validatorChain(1)
+      .catch((e: unknown) => e)
+    expect(error).toBeInstanceOf(FetchError)
+    expect((error as FetchError).message).toContain('https://graph.testnet.verana.network/v4/graph/traverse')
+    expect((error as FetchError).message).toContain('output.0.id')
   })
 })
 

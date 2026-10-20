@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/group/votes?proposal_id=36&limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "votes": [
+      {
+        "id": 35,
+        "proposal_id": 36,
+        "voter": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+        "option": "YES",
+        "metadata": "",
+        "submit_time": "2026-10-16T21:36:44.497Z"
+      }
+    ]
+  }
+}

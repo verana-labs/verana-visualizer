@@ -7,7 +7,6 @@ import {
   changesSchema,
   corporationSchema,
   credentialSchemaSchema,
-  didListSchema,
   ecosystemSchema,
   eventsResponseSchema,
   exchangeRateSchema,
@@ -22,7 +21,6 @@ import {
   statsSnapshotSchema,
   trustDepositParamsSchema,
   trustDepositResponseSchema,
-  trustDepositSchema,
   trustVerdictSchema,
   verifiableTrustDidsPageSchema,
 } from './schemas'
@@ -124,13 +122,12 @@ export function createIndexerClient(cfg: NetworkConfig, atHeight?: number) {
         dids.push(...page.data.dids)
         cursor = page.data.nextCursor ?? undefined
       } while (cursor)
-      const data = didListSchema.parse({ atBlock, dids })
-      return { data, query: firstQuery as QueryInfo }
+      return { data: { atBlock, dids }, query: firstQuery as QueryInfo }
     },
 
     async trustDeposit(corpId: number) {
       const res = await get(`/v4/trust-deposit/get/${corpId}`, trustDepositResponseSchema)
-      return { data: trustDepositSchema.parse(res.data.trust_deposit), query: res.query }
+      return { data: res.data.trust_deposit, query: res.query }
     },
 
     trustDepositHistory: (corpId: number) =>

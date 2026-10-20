@@ -46,16 +46,18 @@ export function createGraphClient(cfg: NetworkConfig) {
     body,
   })
 
+  const traverseQuery = (query: TraversalQuery, input: Record<string, unknown>, limit?: number) =>
+    post('/v4/graph/traverse', { query, input, ...(limit === undefined ? {} : { limit }) })
+
   return {
-    traverse(query: TraversalQuery, input: Record<string, unknown>, limit?: number) {
-      return requestJson(
-        post('/v4/graph/traverse', { query, input, ...(limit === undefined ? {} : { limit }) }),
-        traverseResponseSchema
-      )
-    },
+    traverse: (query: TraversalQuery, input: Record<string, unknown>, limit?: number) =>
+      requestJson(traverseQuery(query, input, limit), traverseResponseSchema),
     async validatorChain(participantId: number) {
-      const res = await this.traverse('G1', { participantId })
-      return { data: validatorChainSchema.parse(res.data.output), query: res.query }
+      const res = await requestJson(
+        traverseQuery('G1', { participantId }),
+        traverseResponseSchema.extend({ output: validatorChainSchema })
+      )
+      return { data: res.data.output, query: res.query }
     },
     search: (params: SearchParams) => requestJson(post('/v4/graph/search', params), searchResponseSchema),
     health: () =>

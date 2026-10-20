@@ -40,14 +40,16 @@ export async function fetchJson<T>(url: string, init: RequestInit | undefined, s
     })
   }
 
+  const text = await response.text()
   let json: unknown
   try {
-    json = await response.json()
-  } catch {
-    throw new FetchError(`${method} ${url} returned a body that is not valid JSON`, {
+    json = JSON.parse(text)
+  } catch (cause) {
+    const reason = cause instanceof Error ? cause.message : String(cause)
+    throw new FetchError(`${method} ${url} returned a body that is not valid JSON: ${reason}`, {
       url,
       status: response.status,
-      body: null,
+      body: text.slice(0, 2000),
     })
   }
 
@@ -56,7 +58,7 @@ export async function fetchJson<T>(url: string, init: RequestInit | undefined, s
     throw new FetchError(`${method} ${url} returned an unexpected shape at ${describeIssue(parsed.error)}`, {
       url,
       status: response.status,
-      body: JSON.stringify(json).slice(0, 2000),
+      body: text.slice(0, 2000),
     })
   }
   return parsed.data

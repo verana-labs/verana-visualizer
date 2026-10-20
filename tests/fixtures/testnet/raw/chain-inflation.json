@@ -1,0 +1,11 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.testnet.verana.network/cosmos/mint/v1beta1/inflation",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "inflation": "0.131971385104223264"
+  }
+}

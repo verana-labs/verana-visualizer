@@ -44,6 +44,14 @@ describe('fetchJson', () => {
     expect((error as FetchError).message).toContain('fetch failed')
   })
 
+  it('reports the parse reason and keeps the raw text when the body is not JSON', async () => {
+    stubFetch(new Response('<html>oops</html>', { status: 200 }))
+    const error = (await fetchJson(url, undefined, z.unknown()).catch((e: unknown) => e)) as FetchError
+    expect(error).toBeInstanceOf(FetchError)
+    expect(error.message).toContain('not valid JSON')
+    expect(error.body).toBe('<html>oops</html>')
+  })
+
   it('throws on a zod mismatch naming the field path and the url', async () => {
     stubFetch(Response.json({ ecosystems: [{ id: 'one' }] }))
     const schema = z.object({ ecosystems: z.array(z.object({ id: z.number() })) })
