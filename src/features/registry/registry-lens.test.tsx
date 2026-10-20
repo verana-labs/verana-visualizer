@@ -39,6 +39,17 @@ describe('RegistryLens', () => {
     expect(fetchMock.mock.calls.some(([url]) => String(url).includes('/pending/flat'))).toBe(false)
   })
 
+  it('refreshes pending and slash data each time the lens is entered again', async () => {
+    render(<RegistryLens cfg={testnetCfg} />)
+    const statsCalls = () => fetchMock.mock.calls.filter(([url]) => String(url).includes('/v4/stats/stats')).length
+    act(() => useObservatory.getState().setLens('registry'))
+    await screen.findByText('No slashes recorded since 2026-10-15')
+    act(() => useObservatory.getState().setLens('network'))
+    act(() => useObservatory.getState().setLens('registry'))
+    await screen.findByText('No slashes recorded since 2026-10-15')
+    expect(statsCalls()).toBe(2)
+  })
+
   it('gives the inspector slot back when an entity is selected', () => {
     render(<RegistryLens cfg={testnetCfg} />)
     act(() => useObservatory.setState({ lens: 'registry', selected: 'ecosystem:2' }))

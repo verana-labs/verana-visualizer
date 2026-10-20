@@ -97,7 +97,7 @@ function Ready({ model, now, data }: { model: NetworkModel; now: Date; data: Reg
             <PendingList model={model} tasks={pending.data} />
           )}
         </div>
-        {pending.status === 'ready' && pending.query && <ShowQuery query={pending.query} />}
+        {pending.status === 'ready' && pending.queries.map((query) => <ShowQuery key={query.url} query={query} />)}
       </section>
       <WatchPanel model={model} now={now} expiring={expiringSoon(model.raw.participants, now)} slashes={data.slashes} />
     </>

@@ -23,7 +23,7 @@ describe('WatchPanel', () => {
         expiring={expiring}
         slashes={{
           status: 'ready',
-          query,
+          queries: [query],
           data: {
             since: '2026-10-15',
             events: [{ day: '2026-10-18', ecosystemEvents: 1, networkEvents: 0, amount: 500 }],
@@ -48,7 +48,7 @@ describe('WatchPanel', () => {
         model={model}
         now={NOW}
         expiring={[]}
-        slashes={{ status: 'ready', query, data: { since: '2026-10-15', events: [] } }}
+        slashes={{ status: 'ready', queries: [query], data: { since: '2026-10-15', events: [] } }}
       />
     )
     expect(screen.getByText('No accreditation expires in the next 30 days')).toBeInTheDocument()

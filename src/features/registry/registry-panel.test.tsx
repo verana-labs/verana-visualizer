@@ -23,11 +23,12 @@ const pendingQuery = {
   url: 'https://idx.devnet.verana.network/v4/participant/pending/flat?corporation_id=2',
   headers: {},
 }
+const pendingQuery2 = { ...pendingQuery, url: pendingQuery.url.replace('corporation_id=2', 'corporation_id=5') }
 const statsQuery = { method: 'GET' as const, url: 'https://idx.devnet.verana.network/v4/stats/stats', headers: {} }
 
 const ready = (pending: RegistryData['pending']): RegistryData => ({
   pending,
-  slashes: { status: 'ready', query: statsQuery, data: { since: '2026-10-01', events: [] } },
+  slashes: { status: 'ready', queries: [statsQuery], data: { since: '2026-10-01', events: [] } },
 })
 
 const tasks = [
@@ -41,7 +42,10 @@ describe('RegistryPanel', () => {
       <RegistryPanel
         model={model}
         now={NOW}
-        state={{ status: 'ready', data: ready({ status: 'ready', data: tasks, query: pendingQuery }) }}
+        state={{
+          status: 'ready',
+          data: ready({ status: 'ready', data: tasks, queries: [pendingQuery, pendingQuery2] }),
+        }}
       />
     )
     const columns = screen.getByRole('list', { name: 'Onboarding states' })
@@ -54,7 +58,10 @@ describe('RegistryPanel', () => {
       <RegistryPanel
         model={model}
         now={NOW}
-        state={{ status: 'ready', data: ready({ status: 'ready', data: tasks, query: pendingQuery }) }}
+        state={{
+          status: 'ready',
+          data: ready({ status: 'ready', data: tasks, queries: [pendingQuery, pendingQuery2] }),
+        }}
       />
     )
     const list = screen.getByRole('list', { name: 'Pending tasks' })
@@ -63,6 +70,21 @@ describe('RegistryPanel', () => {
     expect(rows[0]).toHaveTextContent('#46')
     expect(rows[0]).toHaveTextContent('Holder')
     expect(rows[0]).toHaveTextContent('awaiting corporation #2')
+  })
+
+  it('shows the query behind every pending/flat request', () => {
+    render(
+      <RegistryPanel
+        model={model}
+        now={NOW}
+        state={{
+          status: 'ready',
+          data: ready({ status: 'ready', data: tasks, queries: [pendingQuery, pendingQuery2] }),
+        }}
+      />
+    )
+    expect(screen.getByText(pendingQuery.url)).toBeInTheDocument()
+    expect(screen.getByText(pendingQuery2.url)).toBeInTheDocument()
   })
 
   it('keeps the participant counts when pending/flat is unavailable', () => {
@@ -86,7 +108,7 @@ describe('RegistryPanel', () => {
       <RegistryPanel
         model={model}
         now={NOW}
-        state={{ status: 'ready', data: ready({ status: 'ready', data: [], query: null }) }}
+        state={{ status: 'ready', data: ready({ status: 'ready', data: [], queries: [] }) }}
       />
     )
     expect(screen.getByRole('region', { name: 'Watch list' })).toBeInTheDocument()

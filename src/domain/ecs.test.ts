@@ -82,6 +82,16 @@ describe('isEcsCompliant', () => {
     await expect(isEcsCompliant(ecsEcosystem.filter((s) => s.title !== 'BadgeCredential'))).resolves.toBe(false)
   })
 
+  it('keeps the verdict when an extra schema has a malformed or non-object json_schema', async () => {
+    const [first] = ecsEcosystem
+    const extras = [
+      { ...first, id: 900, title: 'Broken', json_schema: '{oops' },
+      { ...first, id: 901, title: 'Array', json_schema: '[1]' },
+    ]
+    await expect(isEcsCompliant([...ecsEcosystem, ...extras])).resolves.toBe(true)
+    await expect(isEcsCompliant(extras)).resolves.toBe(false)
+  })
+
   it('ignores archived schemas', async () => {
     const archived = ecsEcosystem.map((s) => (s.title === 'PersonaCredential' ? { ...s, archived: '2026-10-01' } : s))
     await expect(isEcsCompliant(archived)).resolves.toBe(false)

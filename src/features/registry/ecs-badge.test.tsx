@@ -1,9 +1,9 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { Inspector } from '@/features/inspector/inspector'
 import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
-import { EcsBadge } from './ecs-badge'
+import { EcsBadge, ecosystemEcsCompliance } from './ecs-badge'
 
 const model = testnetModel()
 
@@ -19,7 +19,9 @@ describe('EcsBadge', () => {
 
   it('renders nothing for an ordinary ecosystem, never an unknown badge', async () => {
     const { container } = render(<EcsBadge model={model} ecosystemId={11} />)
-    await new Promise((resolve) => setTimeout(resolve, 20))
+    await act(async () => {
+      await expect(ecosystemEcsCompliance(model, 11)).resolves.toBe(false)
+    })
     expect(container).toBeEmptyDOMElement()
     expect(screen.queryByText(/unknown/i)).toBeNull()
   })

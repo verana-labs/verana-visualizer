@@ -1,4 +1,5 @@
 import type { CredentialSchema } from '@/lib/api/schemas'
+import { logger } from '@/lib/logger'
 
 export const ECS_SPEC_URL =
   'https://verana-labs.github.io/verifiable-trust-spec/#ecs-ec-essential-credential-schemas-ecosystem'
@@ -48,9 +49,18 @@ const KIND_OF_DIGEST = new Map<string, EcsKind>(
   Object.entries(ECS_DIGESTS).map(([kind, digest]) => [digest, kind as EcsKind])
 )
 
+async function digestOrNull(schema: CredentialSchema): Promise<string | null> {
+  try {
+    return await ecsSchemaDigest(schema.json_schema)
+  } catch (error) {
+    logger.warn(`Credential schema ${schema.id} is not an ECS candidate: its json_schema cannot be digested`, error)
+    return null
+  }
+}
+
 export async function ecsKinds(schemas: readonly CredentialSchema[]): Promise<EcsKind[]> {
-  const digests = await Promise.all(schemas.filter((s) => !s.archived).map((s) => ecsSchemaDigest(s.json_schema)))
-  const kinds = new Set(digests.flatMap((digest) => KIND_OF_DIGEST.get(digest) ?? []))
+  const digests = await Promise.all(schemas.filter((s) => !s.archived).map(digestOrNull))
+  const kinds = new Set(digests.flatMap((digest) => (digest === null ? [] : (KIND_OF_DIGEST.get(digest) ?? []))))
   return (Object.keys(ECS_DIGESTS) as EcsKind[]).filter((kind) => kinds.has(kind))
 }
 

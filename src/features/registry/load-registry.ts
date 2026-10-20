@@ -5,7 +5,7 @@ import type { QueryInfo } from '@/lib/api/query-info'
 import { type PendingTask, pendingCorporations, pendingTasks, type SlashDay, slashEvents } from './registry-data'
 
 export type RegistrySection<T> =
-  | { status: 'ready'; data: T; query: QueryInfo | null }
+  | { status: 'ready'; data: T; queries: QueryInfo[] }
   | { status: 'error'; message: string }
 
 export interface SlashHistory {
@@ -18,7 +18,7 @@ export interface RegistryData {
   slashes: RegistrySection<SlashHistory>
 }
 
-async function section<T>(load: () => Promise<{ data: T; query: QueryInfo | null }>): Promise<RegistrySection<T>> {
+async function section<T>(load: () => Promise<{ data: T; queries: QueryInfo[] }>): Promise<RegistrySection<T>> {
   try {
     return { status: 'ready', ...(await load()) }
   } catch (error) {
@@ -33,7 +33,7 @@ export async function loadRegistry(indexer: IndexerClient, model: NetworkModel, 
       const responses = await Promise.all(corporations.map((id) => indexer.pendingFlat(id)))
       return {
         data: pendingTasks(responses.map((res, i) => ({ corporationId: corporations[i], flat: res.data }))),
-        query: responses[0]?.query ?? null,
+        queries: responses.map((res) => res.query),
       }
     }),
     section(async () => {
@@ -47,7 +47,7 @@ export async function loadRegistry(indexer: IndexerClient, model: NetworkModel, 
       const buckets = stats.data.buckets ?? []
       return {
         data: { since: buckets[0]?.timestamp.slice(0, 10) ?? null, events: slashEvents(buckets) },
-        query: stats.query,
+        queries: [stats.query],
       }
     }),
   ])

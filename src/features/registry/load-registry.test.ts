@@ -66,14 +66,16 @@ describe('loadRegistry', () => {
       'https://idx.testnet.verana.network/v4/participant/pending/flat?corporation_id=2',
     ])
     expect(data.pending.status === 'ready' && data.pending.data.map((t) => t.participantId)).toEqual([46, 32])
-    expect(data.pending.status === 'ready' && data.pending.query?.url).toContain('corporation_id=2')
+    expect(data.pending.status === 'ready' && data.pending.queries.map((q) => q.url)).toEqual([
+      'https://idx.testnet.verana.network/v4/participant/pending/flat?corporation_id=2',
+    ])
   })
 
   it('never calls pending/flat when nothing is pending', async () => {
     const mock = stub({})
     const data = await loadRegistry(createIndexerClient(testnetCfg), testnetModel(), NOW)
     expect(pendingCalls(mock)).toEqual([])
-    expect(data.pending).toEqual({ status: 'ready', data: [], query: null })
+    expect(data.pending).toEqual({ status: 'ready', data: [], queries: [] })
   })
 
   it('reads the global daily stats series for slashes since the network began', async () => {
@@ -84,6 +86,28 @@ describe('loadRegistry', () => {
     expect(stats.searchParams.get('granularity')).toBe('DAY')
     expect(stats.searchParams.get('timestamp_until')).toBe(NOW.toISOString())
     expect(data.slashes.status === 'ready' && data.slashes.data).toEqual({ events: [], since: '2026-10-15' })
+  })
+
+  it('exposes every pending/flat request it made', async () => {
+    const raw = {
+      ecosystems: fixture('devnet', 'ecosystems'),
+      schemas: fixture('devnet', 'schemas'),
+      participants: fixture<RawNetwork['participants']>('devnet', 'participants'),
+      corporations: fixture('devnet', 'corporations'),
+      dids: fixture<{ dids: string[] }>('devnet', 'dids').dids,
+    } satisfies RawNetwork
+    const validator = raw.participants.find((p) => p.op_state === 'VALIDATED' && p.corporation_id !== 2)
+    if (!validator) throw new Error('fixture has no second validator corporation')
+    raw.participants = [
+      ...raw.participants,
+      { ...raw.participants[0], id: 9001, op_state: 'PENDING', validator_participant_id: validator.id },
+    ]
+    stub({ pending: () => Response.json({ ecosystems: [] }) })
+    const data = await loadRegistry(createIndexerClient(testnetCfg), buildNetworkModel(raw), NOW)
+    expect(data.pending.status === 'ready' && data.pending.queries.map((q) => q.url)).toEqual([
+      'https://idx.testnet.verana.network/v4/participant/pending/flat?corporation_id=2',
+      `https://idx.testnet.verana.network/v4/participant/pending/flat?corporation_id=${validator.corporation_id}`,
+    ])
   })
 
   it('marks only the failing section unavailable', async () => {

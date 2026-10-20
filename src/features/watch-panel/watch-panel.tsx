@@ -111,7 +111,7 @@ export function WatchPanel({ model, now, expiring, slashes }: WatchPanelProps) {
       <div className="mt-0.5 text-[12px]">
         <Slashes slashes={slashes} />
       </div>
-      {slashes.status === 'ready' && slashes.query && <ShowQuery query={slashes.query} />}
+      {slashes.status === 'ready' && slashes.queries.map((query) => <ShowQuery key={query.url} query={query} />)}
     </section>
   )
 }

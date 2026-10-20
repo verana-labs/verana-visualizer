@@ -95,6 +95,17 @@ describe('onboardingCounts', () => {
     ])
   })
 
+  it('counts a participant once, in PENDING when pending/flat says it is pending', () => {
+    const tasks = [{ participantId: 2, role: 'ISSUER', ecosystemId: 1, schemaId: 1, validatorCorporationId: 2 }]
+    const counts = onboardingCounts([person(1), person(2), person(3, { op_state: 'TERMINATED' })], tasks)
+    expect(counts).toEqual([
+      { state: 'PENDING', count: 1 },
+      { state: 'VALIDATED', count: 1 },
+      { state: 'TERMINATED', count: 1 },
+    ])
+    expect(counts.reduce((sum, c) => sum + c.count, 0)).toBe(3)
+  })
+
   it('falls back to the participant list when pending/flat is unavailable', () => {
     expect(onboardingCounts(testnet.participants, null)).toEqual([
       { state: 'PENDING', count: 0 },

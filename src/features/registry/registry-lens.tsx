@@ -12,16 +12,11 @@ export function RegistryLens({ cfg }: { cfg: NetworkConfig }) {
   const active = useObservatory((s) => s.lens === 'registry')
   const model = useObservatory((s) => s.model)
   const inspecting = useObservatory((s) => s.selected !== null || s.trustCheck !== null)
-  const [requested, setRequested] = useState(false)
   const [now, setNow] = useState(() => new Date())
   const [state, setState] = useState<RegistryState>({ status: 'loading' })
 
   useEffect(() => {
-    if (active) setRequested(true)
-  }, [active])
-
-  useEffect(() => {
-    if (!requested || !model) return
+    if (!active || !model) return
     let cancelled = false
     const at = new Date()
     setNow(at)
@@ -32,7 +27,7 @@ export function RegistryLens({ cfg }: { cfg: NetworkConfig }) {
     return () => {
       cancelled = true
     }
-  }, [requested, model, cfg])
+  }, [active, model, cfg])
 
   if (!active || !model) return null
   return (

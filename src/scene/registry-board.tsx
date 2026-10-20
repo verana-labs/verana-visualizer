@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { EXPIRY_WINDOW_DAYS } from '@/domain/expiry'
 import { EXPIRING_COLOR, onboardingColor } from '@/features/registry/registry-data'
-import { registryBoard } from '@/layouts/registry'
+import { cachedRegistryBoard } from '@/layouts/registry'
 import { useObservatory } from '@/store/observatory-store'
 import { LABEL_CLASS } from './labels'
 import { SceneHtml } from './scene-html'
@@ -13,7 +13,7 @@ const HEADER_RISE = 3
 export function RegistryBoard() {
   const active = useObservatory((s) => s.lens === 'registry')
   const model = useObservatory((s) => s.model)
-  const columns = useMemo(() => (model && active ? registryBoard(model, new Date()).columns : []), [model, active])
+  const columns = useMemo(() => (model && active ? cachedRegistryBoard(model).columns : []), [model, active])
 
   return (
     <>

@@ -98,6 +98,16 @@ export function registryBoard(model: NetworkModel, now: Date): RegistryBoard {
   return { layout: { positions, corePosition: core }, columns }
 }
 
+const boards = new WeakMap<NetworkModel, RegistryBoard>()
+
+export function cachedRegistryBoard(model: NetworkModel): RegistryBoard {
+  const cached = boards.get(model)
+  if (cached) return cached
+  const board = registryBoard(model, new Date())
+  boards.set(model, board)
+  return board
+}
+
 export function registryLayout(model: NetworkModel, extras: LensExtras & { now?: Date } = {}): Layout {
-  return registryBoard(model, extras.now ?? new Date()).layout
+  return extras.now ? registryBoard(model, extras.now).layout : cachedRegistryBoard(model).layout
 }

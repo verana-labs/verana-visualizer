@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
-import { registryBoard, registryLayout } from './registry'
+import { cachedRegistryBoard, registryBoard, registryLayout } from './registry'
 
 const rawOf = (network: string): RawNetwork => {
   const fixture = <T>(name: string): T =>
@@ -63,6 +63,12 @@ describe('registryBoard', () => {
     const { layout, columns } = registryBoard(testnet, NOW)
     const lowest = Math.min(...columns.map((c) => c.bottom))
     expect(layout.corePosition[1]).toBeLessThan(lowest)
+  })
+
+  it('shares one board, and its now, between the lens layout and the scene labels', () => {
+    const board = cachedRegistryBoard(testnet)
+    expect(cachedRegistryBoard(testnet)).toBe(board)
+    expect(registryLayout(testnet)).toBe(board.layout)
   })
 
   it('is the layout the registry lens uses', () => {

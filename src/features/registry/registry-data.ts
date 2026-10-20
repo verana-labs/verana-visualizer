@@ -79,13 +79,13 @@ export function onboardingCounts(
   participants: readonly Participant[],
   tasks: readonly PendingTask[] | null
 ): OnboardingCount[] {
+  const pending = new Set((tasks ?? []).map((task) => task.participantId))
   const ids = new Map<string, Set<number>>(ONBOARDING_STATES.map((state) => [state, new Set()]))
+  ids.set('PENDING', pending)
   for (const p of participants) {
-    const set = ids.get(p.op_state) ?? new Set<number>()
-    ids.set(p.op_state, set.add(p.id))
+    const state = pending.has(p.id) ? 'PENDING' : p.op_state
+    ids.set(state, (ids.get(state) ?? new Set<number>()).add(p.id))
   }
-  const pending = ids.get('PENDING') ?? new Set<number>()
-  for (const task of tasks ?? []) pending.add(task.participantId)
   return [...ids].map(([state, set]) => ({ state, count: set.size }))
 }
 

@@ -51,7 +51,7 @@ export function CoveragePanel({ model }: { model: NetworkModel }) {
     <GlassPanel
       role="complementary"
       aria-label="Coverage"
-      className="fixed top-4 right-4 z-20 max-h-[calc(100vh-380px)] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt"
+      className="fixed top-4 right-4 z-20 max-h-[max(240px,calc(100vh-380px))] w-[340px] max-w-[calc(100vw-32px)] overflow-y-auto p-[18px] text-scene-txt"
     >
       <Kicker>registry · coverage</Kicker>
       <h2 className="mt-1 text-lg font-semibold tracking-[-.01em]">Ecosystems × schemas</h2>
