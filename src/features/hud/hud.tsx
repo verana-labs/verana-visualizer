@@ -35,7 +35,7 @@ export function Hud({ cfg }: { cfg: NetworkConfig }) {
   const trusted = [...verdicts.values()].filter(Boolean).length
 
   return (
-    <GlassPanel className="fixed left-4 top-4 z-10 flex flex-col gap-3 px-4 py-3">
+    <GlassPanel data-testid="hud" className="fixed left-4 top-4 z-10 flex flex-col gap-3 px-4 py-3">
       <div className="flex items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-[13px] font-semibold">

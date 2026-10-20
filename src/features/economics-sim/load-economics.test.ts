@@ -15,13 +15,13 @@ const raw = (network: string, name: string): unknown =>
 
 const NOW = new Date('2026-10-20T12:00:00Z')
 
-function stubIndexer(network: string, depositOf: (id: number) => Response) {
+function stubIndexer(network: string, depositOf: (id: number) => Response, exchangeRates?: unknown) {
   const mock = vi.fn(async (input: string) => {
     const url = new URL(input)
     const deposit = url.pathname.match(/^\/v4\/trust-deposit\/get\/(\d+)$/)
     if (deposit) return depositOf(Number(deposit[1]))
     if (url.pathname === '/v4/trust-deposit/params') return Response.json(raw(network, 'td-params'))
-    if (url.pathname === '/v4/exchange-rate/list') return Response.json(raw(network, 'exchange-rates'))
+    if (url.pathname === '/v4/exchange-rate/list') return Response.json(exchangeRates ?? raw(network, 'exchange-rates'))
     if (url.pathname === '/v4/stats/stats') return Response.json(raw(network, 'stats'))
     return new Response('unexpected', { status: 500 })
   })
@@ -43,6 +43,7 @@ describe('loadEconomics', () => {
     const data = await loadEconomics(createIndexerClient(testnetCfg), model, NOW)
     expect(data.rates).toEqual({ trustDepositRate: 0.05, userAgentRewardRate: 0.1, walletUserAgentRewardRate: 0.1 })
     expect(data.exchangeRates).toEqual([])
+    expect(data.tuRate).toBeNull()
     expect(data.deposits.size).toBe(model.raw.corporations.length)
     expect(data.deposits.get(2)?.deposit).toBe(50000)
     expect(data.deposits.get(3)).toBeNull()
@@ -71,5 +72,24 @@ describe('loadEconomics', () => {
   it('fails on any other trust-deposit error', async () => {
     stubIndexer('testnet', () => new Response('boom', { status: 502 }))
     await expect(loadEconomics(createIndexerClient(testnetCfg), testnetModel(), NOW)).rejects.toThrow(/502/)
+  })
+
+  it('resolves the live TU rate while loading, so a malformed rate fails the load', async () => {
+    const malformed = {
+      exchange_rates: [
+        {
+          id: 9,
+          base_asset_type: 'TU',
+          base_asset: 'tu',
+          quote_asset_type: 'COIN',
+          quote_asset: 'uvna',
+          rate: '2000000',
+          state: true,
+          expires: '2026-10-21T00:00:00Z',
+        },
+      ],
+    }
+    stubIndexer('testnet', notFound, malformed)
+    await expect(loadEconomics(createIndexerClient(testnetCfg), testnetModel(), NOW)).rejects.toThrow(/rate_scale/)
   })
 })

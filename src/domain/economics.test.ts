@@ -13,6 +13,8 @@ import {
   simulateOnboarding,
   simulateVerification,
   tuInVna,
+  tuToUvna,
+  UVNA_PER_VNA,
   verificationBeneficiaries,
 } from './economics'
 
@@ -189,6 +191,24 @@ describe('liveTuRate', () => {
     if (!live) throw new Error('expected a live rate')
     expect(tuInVna(10, live)).toBe(0.000025)
     expect(tuInVna(1_000_000, live)).toBe(2.5)
+  })
+
+  it('converts in integers, so decimal TU amounts never lose a uvna to float error', () => {
+    const at = (value: string) => {
+      const live = liveTuRate([rate({ rate: value, rate_scale: 6 })], now)
+      if (!live) throw new Error('expected a live rate')
+      return live
+    }
+    expect(tuToUvna(0.1425, at('10000000000'))).toBe(1425n)
+    expect(tuToUvna(4.35, at('100000000'))).toBe(435n)
+    expect(tuToUvna(0.57, at('100000000'))).toBe(57n)
+    expect(tuToUvna(1, at('2500000'))).toBe(2n)
+    expect(UVNA_PER_VNA).toBe(1_000_000)
+  })
+
+  it('refuses a rate without rate_scale instead of assuming 0', () => {
+    expect(() => liveTuRate([rate({ rate_scale: undefined })], now)).toThrow(/rate_scale/)
+    expect(() => liveTuRate([rate({ rate: '2.5' })], now)).toThrow(/rate/)
   })
 })
 

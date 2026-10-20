@@ -1,4 +1,4 @@
-import { type Rates, ratesFromTdParams } from '@/domain/economics'
+import { liveTuRate, type Rates, ratesFromTdParams, type TuRate } from '@/domain/economics'
 import type { NetworkModel } from '@/domain/network-model'
 import type { IndexerClient } from '@/lib/api/indexer'
 import type { QueryInfo } from '@/lib/api/query-info'
@@ -14,6 +14,7 @@ export interface SeriesPoint {
 export interface EconomicsData {
   rates: Rates
   exchangeRates: ExchangeRate[]
+  tuRate: TuRate | null
   deposits: Map<number, TrustDeposit | null>
   series: SeriesPoint[]
   queries: { tdParams: QueryInfo }
@@ -84,6 +85,7 @@ export async function loadEconomics(indexer: IndexerClient, model: NetworkModel,
   return {
     rates: ratesFromTdParams(params.data.params),
     exchangeRates: exchangeRates.data,
+    tuRate: liveTuRate(exchangeRates.data, now),
     deposits,
     series,
     queries: { tdParams: params.query },

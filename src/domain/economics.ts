@@ -32,7 +32,7 @@ export interface Beneficiary {
 
 export interface TuRate {
   id: number
-  rate: number
+  rate: bigint
   scale: number
   updated: string | null
   expires: string | null
@@ -51,7 +51,8 @@ export interface MonthlyTotals {
   agentRewards: number
 }
 
-const UVNA_PER_VNA = 1_000_000
+export const UVNA_PER_VNA = 1_000_000
+const TU_DECIMALS = 9
 
 function checkRates(r: Rates) {
   for (const [name, value] of Object.entries(r)) {
@@ -167,17 +168,26 @@ export function liveTuRate(rates: readonly ExchangeRate[], now: Date): TuRate | 
       Date.parse(r.expires) > now.getTime()
   )
   if (!live) return null
-  const rate = Number(live.rate)
-  const scale = Number(live.rate_scale ?? 0)
-  if (!Number.isFinite(rate) || !Number.isInteger(scale)) {
-    throw new Error(`Exchange rate #${live.id} has an unreadable rate ${live.rate} / scale ${live.rate_scale}`)
+  const scale = live.rate_scale
+  if (typeof scale !== 'number' || !Number.isInteger(scale) || scale < 0) {
+    throw new Error(`Exchange rate #${live.id} has no usable rate_scale (got ${JSON.stringify(scale)})`)
   }
-  return { id: live.id, rate, scale, updated: live.updated ?? null, expires: live.expires ?? null }
+  const rate = String(live.rate)
+  if (!/^\d+$/.test(rate)) throw new Error(`Exchange rate #${live.id} has a non-integer rate ${rate}`)
+  return { id: live.id, rate: BigInt(rate), scale, updated: live.updated ?? null, expires: live.expires ?? null }
+}
+
+export function tuToUvna(amount: number, tu: TuRate): bigint {
+  if (!Number.isFinite(amount) || amount < 0) throw new Error(`TU amount must be non-negative, got ${amount}`)
+  const scaled = BigInt(amount.toFixed(TU_DECIMALS).replace('.', ''))
+  return (scaled * tu.rate) / 10n ** BigInt(tu.scale + TU_DECIMALS)
 }
 
 export function tuInVna(amount: number, tu: TuRate): number {
-  return Math.floor((amount * tu.rate) / 10 ** tu.scale) / UVNA_PER_VNA
+  return Number(tuToUvna(amount, tu)) / UVNA_PER_VNA
 }
+
+export const tuRateValue = (tu: TuRate) => Number(tu.rate) / 10 ** tu.scale
 
 const sumSplits = (splits: Iterable<Split>, key: keyof Split) => [...splits].reduce((sum, s) => sum + s[key], 0)
 

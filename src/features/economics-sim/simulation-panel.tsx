@@ -4,7 +4,6 @@ import { type ReactNode, useState } from 'react'
 import {
   type Beneficiary,
   issuanceBeneficiaries,
-  liveTuRate,
   monthlyTotals,
   onboardingFee,
   type Rates,
@@ -14,16 +13,19 @@ import {
   simulateVerification,
   type TuRate,
   tuInVna,
+  tuRateValue,
+  UVNA_PER_VNA,
   type Volumes,
   verificationBeneficiaries,
 } from '@/domain/economics'
 import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
-import type { ExchangeRate } from '@/lib/api/schemas'
+import type { CredentialSchema } from '@/lib/api/schemas'
 import { amount, percent, signed } from './format'
 
 type Op = 'onboarding' | 'issuance' | 'verification'
+type Unit = 'TU' | 'VNA'
 
 interface FeeRow {
   key: string
@@ -32,6 +34,7 @@ interface FeeRow {
 }
 
 interface Scenario {
+  unit: Unit
   onboarding: string
   issuance: FeeRow[]
   verification: FeeRow[]
@@ -41,14 +44,14 @@ interface SimulationPanelProps {
   chainId: string
   model: NetworkModel
   rates: Rates
-  exchangeRates: readonly ExchangeRate[]
-  now: Date
+  tuRate: TuRate | null
   onClose: () => void
 }
 
 const SPEC = 'spec'
 
 const SPEC_EXAMPLE: Scenario = {
+  unit: 'TU',
   onboarding: '1000',
   issuance: [
     { key: 'ecosystem', label: 'Ecosystem', input: '10' },
@@ -70,34 +73,53 @@ const OPS: { id: Op; label: string; payer: string }[] = [
   { id: 'verification', label: 'Verification', payer: 'Verifier (payer)' },
 ]
 
-const toNumber = (input: string) => {
+const parseAmount = (input: string): number | null => {
+  if (input.trim() === '') return null
   const n = Number(input)
-  return Number.isFinite(n) && n > 0 ? n : 0
+  return Number.isFinite(n) && n >= 0 ? n : null
 }
+
+const unitOf = (schema: CredentialSchema): Unit | null => {
+  if (schema.pricing_asset_type === 'TU') return 'TU'
+  if (schema.pricing_asset_type === 'COIN' && schema.pricing_asset === 'uvna') return 'VNA'
+  return null
+}
+
+const inUnit = (fee: number, unit: Unit) => (unit === 'VNA' ? fee / UVNA_PER_VNA : fee)
 
 const roleLabel = (role: string) => (isRole(role) ? ROLE_LABELS[role] : role)
 
-const rowOf = (b: Beneficiary): FeeRow => ({
-  key: String(b.participantId),
-  label: `${roleLabel(b.role)} #${b.participantId}`,
-  input: String(b.fee),
-})
+const rowOf =
+  (unit: Unit) =>
+  (b: Beneficiary): FeeRow => ({
+    key: String(b.participantId),
+    label: `${roleLabel(b.role)} #${b.participantId}`,
+    input: String(inUnit(b.fee, unit)),
+  })
 
-const feesOf = (rows: FeeRow[]) => Object.fromEntries(rows.map((row) => [row.key, toNumber(row.input)]))
+const feesOf = (rows: FeeRow[]) => Object.fromEntries(rows.map((row) => [row.key, parseAmount(row.input) ?? 0]))
 
-function scenarioFor(model: NetworkModel, issuerId: number | null, verifierId: number | null): Scenario {
+function scenarioFor(model: NetworkModel, unit: Unit, issuerId: number | null, verifierId: number | null): Scenario {
   const participants = model.raw.participants
   const applicant = issuerId ?? verifierId
   return {
-    onboarding: String(applicant === null ? 0 : onboardingFee(applicant, participants)),
-    issuance: issuerId === null ? [] : issuanceBeneficiaries(issuerId, participants).map(rowOf),
-    verification: verificationBeneficiaries(issuerId, verifierId, participants).map(rowOf),
+    unit,
+    onboarding: String(applicant === null ? 0 : inUnit(onboardingFee(applicant, participants), unit)),
+    issuance: issuerId === null ? [] : issuanceBeneficiaries(issuerId, participants).map(rowOf(unit)),
+    verification: verificationBeneficiaries(issuerId, verifierId, participants).map(rowOf(unit)),
   }
 }
 
-function Tu({ value, sign = true, tu }: { value: number; sign?: boolean; tu: TuRate | null }) {
-  const text = sign ? signed(value) : amount(value)
-  if (!tu) return <>{`${text} TU`}</>
+interface MoneyProps {
+  value: number
+  sign?: boolean
+  unit: Unit
+  tu: TuRate | null
+}
+
+function Money({ value, sign = true, unit, tu }: MoneyProps) {
+  const text = sign ? signed(value) : amount(value, unit === 'VNA' ? 6 : 4)
+  if (unit === 'VNA' || !tu) return <>{`${text} ${unit}`}</>
   const vna = Math.sign(value) * tuInVna(Math.abs(value), tu)
   return <>{`${text} TU ≈ ${sign ? signed(vna, 6) : amount(vna, 6)} VNA`}</>
 }
@@ -113,32 +135,36 @@ function Line({ label, children, testId }: { label: string; children: ReactNode;
   )
 }
 
-function SplitLine({ label, split, tu }: { label: string; split: Split; tu: TuRate | null }) {
+function SplitLine({ label, split, unit, tu }: { label: string; split: Split; unit: Unit; tu: TuRate | null }) {
   return (
     <Line label={label}>
       <span className="block">
-        wallet <Tu value={split.wallet} tu={tu} />
+        wallet <Money value={split.wallet} unit={unit} tu={tu} />
       </span>
       <span className="block text-[11px] text-amber-200/80">
-        deposit <Tu value={split.deposit} tu={tu} />
+        deposit <Money value={split.deposit} unit={unit} tu={tu} />
       </span>
     </Line>
   )
 }
 
 function NumberField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const invalid = parseAmount(value) === null
   return (
     <label className="flex items-center justify-between gap-3 py-[5px] text-[12px]">
       <span className="truncate text-scene-mut">{label}</span>
       <input
         aria-label={label}
+        aria-invalid={invalid}
         type="number"
         min={0}
         step="any"
         inputMode="decimal"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-[110px] rounded-md border border-amber-200/20 bg-black/30 px-2 py-1 text-right tabular-nums text-white"
+        className={`w-[110px] rounded-md border bg-black/30 px-2 py-1 text-right tabular-nums text-white ${
+          invalid ? 'border-[#ff6b8b]' : 'border-amber-200/20'
+        }`}
       />
     </label>
   )
@@ -150,7 +176,7 @@ const Heading = ({ children }: { children: ReactNode }) => (
 
 const selectClass = 'w-full rounded-md border border-amber-200/20 bg-black/40 px-2 py-1 text-[12px] text-white'
 
-export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onClose }: SimulationPanelProps) {
+export function SimulationPanel({ chainId, model, rates, tuRate, onClose }: SimulationPanelProps) {
   const [source, setSource] = useState(SPEC)
   const [issuerId, setIssuerId] = useState<number | null>(null)
   const [verifierId, setVerifierId] = useState<number | null>(null)
@@ -159,8 +185,16 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
   const [op, setOp] = useState<Op>('issuance')
 
   const liveSchemas = model.raw.schemas.filter((s) => model.entities.has(`schema:${s.id}`))
-  const tuSchemas = liveSchemas.filter((s) => s.pricing_asset_type === 'TU')
-  const otherAssets = liveSchemas.length - tuSchemas.length
+  const tuSchemas = liveSchemas.filter((s) => unitOf(s) === 'TU')
+  const vnaSchemas = liveSchemas.filter((s) => unitOf(s) === 'VNA')
+  const otherAssets = liveSchemas.length - tuSchemas.length - vnaSchemas.length
+  const schemaOption = (s: CredentialSchema) => (
+    <option key={s.id} value={String(s.id)}>
+      {`${model.entities.get(`schema:${s.id}`)?.name ?? `Schema ${s.id}`} #${s.id} · ${
+        model.entities.get(`ecosystem:${s.ecosystem_id}`)?.name ?? `ecosystem ${s.ecosystem_id}`
+      }`}
+    </option>
+  )
   const schemaId = source === SPEC ? null : Number(source)
   const members = (role: string) =>
     model.raw.participants.filter(
@@ -182,32 +216,45 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
       model.raw.participants.find(
         (p) => p.schema_id === id && p.role === role && model.entities.has(`participant:${p.id}`)
       )?.id ?? null
+    const schema = liveSchemas.find((s) => s.id === id)
+    const unit = schema ? unitOf(schema) : null
+    if (!unit) throw new Error(`Schema #${id} is not priced in TU or VNA and cannot be simulated`)
     const issuer = first('ISSUER')
     const verifier = first('VERIFIER')
     setIssuerId(issuer)
     setVerifierId(verifier)
-    setScenario(scenarioFor(model, issuer, verifier))
+    setScenario(scenarioFor(model, unit, issuer, verifier))
   }
 
   const pickParticipants = (issuer: number | null, verifier: number | null) => {
     setIssuerId(issuer)
     setVerifierId(verifier)
-    setScenario(scenarioFor(model, issuer, verifier))
+    setScenario((s) => scenarioFor(model, s.unit, issuer, verifier))
   }
 
   const editRow = (key: 'issuance' | 'verification', rowKey: string, input: string) =>
     setScenario((s) => ({ ...s, [key]: s[key].map((row) => (row.key === rowKey ? { ...row, input } : row)) }))
 
-  const onboarding = simulateOnboarding(toNumber(scenario.onboarding), rates)
+  const unit = scenario.unit
+  const fields: [string, string][] = [
+    ['Validator validation fee', scenario.onboarding],
+    ...scenario.issuance.map((row): [string, string] => [`Issuance: ${row.label} fee`, row.input]),
+    ...scenario.verification.map((row): [string, string] => [`Verification: ${row.label} fee`, row.input]),
+    ['Onboardings per month', volumes.onboardings],
+    ['Issuances per month', volumes.issuances],
+    ['Verifications per month', volumes.verifications],
+  ]
+  const invalid = fields.filter(([, input]) => parseAmount(input) === null).map(([label]) => label)
+  const onboarding = simulateOnboarding(parseAmount(scenario.onboarding) ?? 0, rates)
   const issuance = simulateIssuance(feesOf(scenario.issuance), rates)
   const verification = simulateVerification(feesOf(scenario.verification), rates)
   const volumeNumbers: Volumes = {
-    onboardings: toNumber(volumes.onboardings),
-    issuances: toNumber(volumes.issuances),
-    verifications: toNumber(volumes.verifications),
+    onboardings: parseAmount(volumes.onboardings) ?? 0,
+    issuances: parseAmount(volumes.issuances) ?? 0,
+    verifications: parseAmount(volumes.verifications) ?? 0,
   }
   const totals = monthlyTotals(onboarding, issuance, verification, volumeNumbers)
-  const tu = liveTuRate(exchangeRates, now)
+  const tu = unit === 'TU' ? tuRate : null
   const active = OPS.find((o) => o.id === op) ?? OPS[1]
   const payPer = op === 'issuance' ? issuance : verification
   const rows = op === 'issuance' ? scenario.issuance : scenario.verification
@@ -240,19 +287,14 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
       <label className="block text-[12px]">
         <span className="mb-1 block text-scene-mut">Start from</span>
         <select aria-label="Start from" value={source} onChange={(e) => pick(e.target.value)} className={selectClass}>
-          <option value={SPEC}>VPR v4 spec example</option>
-          {tuSchemas.map((s) => (
-            <option key={s.id} value={String(s.id)}>
-              {`${model.entities.get(`schema:${s.id}`)?.name ?? `Schema ${s.id}`} #${s.id} · ${
-                model.entities.get(`ecosystem:${s.ecosystem_id}`)?.name ?? `ecosystem ${s.ecosystem_id}`
-              }`}
-            </option>
-          ))}
+          <option value={SPEC}>VPR v4 spec example (at live rates)</option>
+          {tuSchemas.length > 0 && <optgroup label="Priced in TU">{tuSchemas.map(schemaOption)}</optgroup>}
+          {vnaSchemas.length > 0 && <optgroup label="Priced in VNA (uvna)">{vnaSchemas.map(schemaOption)}</optgroup>}
         </select>
       </label>
       {otherAssets > 0 && (
         <p className="mt-1 text-[11px] text-scene-mut">
-          {otherAssets} schemas price fees in another asset and are not listed: the simulator works in TU.
+          {otherAssets} schemas price fees in another asset and are not listed.
         </p>
       )}
       {schemaId !== null && (
@@ -309,7 +351,7 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
         ))}
       </div>
 
-      <Heading>Fees (TU)</Heading>
+      <Heading>{`Fees (${unit})`}</Heading>
       {op === 'onboarding' ? (
         <NumberField
           label="Validator validation fee"
@@ -329,34 +371,7 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
         <p className="py-1 text-[11.5px] text-scene-mut">No beneficiary up the validator tree for this pick.</p>
       )}
 
-      <Heading>Per {active.label.toLowerCase()}</Heading>
-      {op === 'onboarding' ? (
-        <>
-          <Line label="Applicant account" testId="payer-total">
-            <Tu value={onboarding.applicant} tu={tu} />
-          </Line>
-          <Line label="Applicant trust deposit" testId="payer-deposit">
-            <Tu value={-onboarding.applicant - onboarding.validator.wallet - onboarding.validator.deposit} tu={tu} />
-          </Line>
-          <SplitLine label="Validator" split={onboarding.validator} tu={tu} />
-        </>
-      ) : (
-        <>
-          <Line label={`${active.payer} account`} testId="payer-total">
-            <Tu value={payPer.payer} tu={tu} />
-          </Line>
-          <Line label="Payer trust deposit" testId="payer-deposit">
-            <Tu value={payPer.payerDeposit} tu={tu} />
-          </Line>
-          {rows.map((row) => (
-            <SplitLine key={row.key} label={row.label} split={payPer.beneficiaries[row.key]} tu={tu} />
-          ))}
-          <SplitLine label="User agent" split={payPer.userAgent} tu={tu} />
-          <SplitLine label="Wallet user agent" split={payPer.walletUserAgent} tu={tu} />
-        </>
-      )}
-
-      <Heading>Per month</Heading>
+      <Heading>Volumes per month</Heading>
       <NumberField
         label="Onboardings per month"
         value={volumes.onboardings}
@@ -372,25 +387,73 @@ export function SimulationPanel({ chainId, model, rates, exchangeRates, now, onC
         value={volumes.verifications}
         onChange={(v) => setVolumes((s) => ({ ...s, verifications: v }))}
       />
-      <div className="mt-1">
-        <Line label="Paid by payers" testId="monthly-paid">
-          <Tu value={totals.paidByPayers} sign={false} tu={tu} />
-        </Line>
-        <Line label="Beneficiary wallet revenue">
-          <Tu value={totals.beneficiaryRevenue} sign={false} tu={tu} />
-        </Line>
-        <Line label="Trust deposit growth">
-          <Tu value={totals.depositGrowth} sign={false} tu={tu} />
-        </Line>
-        <Line label="User-agent rewards">
-          <Tu value={totals.agentRewards} sign={false} tu={tu} />
-        </Line>
+
+      <div data-testid="simulation-outputs">
+        {invalid.length > 0 ? (
+          <p role="alert" className="mt-3 text-[12px] text-[#ff8a8a]">
+            {`Fix ${invalid.join(', ')}: each fee and volume must be a non-negative number.`}
+          </p>
+        ) : (
+          <>
+            <Heading>Per {active.label.toLowerCase()}</Heading>
+            {op === 'onboarding' ? (
+              <>
+                <Line label="Applicant account" testId="payer-total">
+                  <Money value={onboarding.applicant} unit={unit} tu={tu} />
+                </Line>
+                <Line label="Applicant trust deposit" testId="payer-deposit">
+                  <Money
+                    value={-onboarding.applicant - onboarding.validator.wallet - onboarding.validator.deposit}
+                    unit={unit}
+                    tu={tu}
+                  />
+                </Line>
+                <SplitLine label="Validator" split={onboarding.validator} unit={unit} tu={tu} />
+              </>
+            ) : (
+              <>
+                <Line label={`${active.payer} account`} testId="payer-total">
+                  <Money value={payPer.payer} unit={unit} tu={tu} />
+                </Line>
+                <Line label="Payer trust deposit" testId="payer-deposit">
+                  <Money value={payPer.payerDeposit} unit={unit} tu={tu} />
+                </Line>
+                {rows.map((row) => (
+                  <SplitLine
+                    key={row.key}
+                    label={row.label}
+                    split={payPer.beneficiaries[row.key]}
+                    unit={unit}
+                    tu={tu}
+                  />
+                ))}
+                <SplitLine label="User agent" split={payPer.userAgent} unit={unit} tu={tu} />
+                <SplitLine label="Wallet user agent" split={payPer.walletUserAgent} unit={unit} tu={tu} />
+              </>
+            )}
+            <Heading>Per month</Heading>
+            <Line label="Paid by payers" testId="monthly-paid">
+              <Money value={totals.paidByPayers} sign={false} unit={unit} tu={tu} />
+            </Line>
+            <Line label="Beneficiary wallet revenue">
+              <Money value={totals.beneficiaryRevenue} sign={false} unit={unit} tu={tu} />
+            </Line>
+            <Line label="Trust deposit growth">
+              <Money value={totals.depositGrowth} sign={false} unit={unit} tu={tu} />
+            </Line>
+            <Line label="User-agent rewards">
+              <Money value={totals.agentRewards} sign={false} unit={unit} tu={tu} />
+            </Line>
+          </>
+        )}
       </div>
 
       <p className="mt-3 text-[11px] text-amber-100/60">
-        {tu
-          ? `1 TU = ${amount(tu.rate / 10 ** tu.scale, 6)} uvna · rate #${tu.id} · updated ${tu.updated ?? 'unknown'} · expires ${tu.expires ?? 'unknown'} · /v4/exchange-rate/list on ${chainId}`
-          : `No TU exchange rate on ${chainId}: amounts stay in TU.`}
+        {unit === 'VNA'
+          ? 'This schema prices fees in VNA (uvna on chain, ÷ 10⁶): simulated natively, no exchange rate involved.'
+          : tu
+            ? `1 TU = ${amount(tuRateValue(tu), 6)} uvna · rate #${tu.id} · updated ${tu.updated ?? 'unknown'} · expires ${tu.expires ?? 'unknown'} · /v4/exchange-rate/list on ${chainId}`
+            : `No TU exchange rate on ${chainId}: amounts stay in TU.`}
       </p>
     </div>
   )

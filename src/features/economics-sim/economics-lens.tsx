@@ -26,13 +26,12 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   useEffect(() => {
     if (!requested || !model) return
     let cancelled = false
-    const now = new Date()
     setState({ status: 'loading' })
-    loadEconomics(createIndexerClient(cfg), model, now).then(
+    loadEconomics(createIndexerClient(cfg), model, new Date()).then(
       (data) => {
         if (cancelled) return
         useObservatory.getState().setEconomics(economicsScene(model, data.deposits))
-        setState({ status: 'ready', data, now })
+        setState({ status: 'ready', data })
       },
       (error: unknown) => {
         if (cancelled) return
@@ -68,8 +67,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
           chainId={cfg.chainId}
           model={model}
           rates={state.data.rates}
-          exchangeRates={state.data.exchangeRates}
-          now={state.now ?? new Date()}
+          tuRate={state.data.tuRate}
           onClose={() => setSimulationOpen(false)}
         />
       )}

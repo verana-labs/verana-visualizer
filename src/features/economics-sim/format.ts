@@ -1,4 +1,4 @@
-const UVNA_PER_VNA = 1_000_000
+import { UVNA_PER_VNA } from '@/domain/economics'
 
 const plain = (value: number, digits = 4) =>
   (Object.is(value, -0) ? 0 : value).toLocaleString('en-US', { maximumFractionDigits: digits })

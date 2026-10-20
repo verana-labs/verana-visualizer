@@ -1,7 +1,7 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import { liveTuRate } from '@/domain/economics'
+import { type ReactNode, useLayoutEffect, useState } from 'react'
+import { tuRateValue } from '@/domain/economics'
 import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
@@ -17,7 +17,7 @@ import type { EconomicsData } from './load-economics'
 export type EconomicsState =
   | { status: 'loading' }
   | { status: 'error'; message: string }
-  | { status: 'ready'; data: EconomicsData; now?: Date }
+  | { status: 'ready'; data: EconomicsData }
 
 interface EconomicsPanelProps {
   chainId: string
@@ -59,24 +59,14 @@ const charges = (p: Participant) =>
 
 const day = (timestamp: string) => timestamp.slice(0, 10)
 
-function Ready({
-  chainId,
-  model,
-  data,
-  now,
-}: {
-  chainId: string
-  model: NetworkModel
-  data: EconomicsData
-  now: Date
-}) {
+function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel; data: EconomicsData }) {
   const held = [...data.deposits.values()].flatMap((d) => (d && Number(d.deposit) > 0 ? [d] : []))
   const total = held.reduce((sum, d) => sum + Number(d.deposit), 0)
   const schemas = new Map(model.raw.schemas.map((s) => [s.id, s]))
   const feeRules = model.raw.participants.filter((p) => model.entities.has(`participant:${p.id}`) && charges(p))
   const weights = data.series.map((p) => p.weight)
   const slashes = data.series.map((p) => p.slashed)
-  const tu = liveTuRate(data.exchangeRates, now)
+  const tu = data.tuRate
 
   return (
     <>
@@ -94,7 +84,8 @@ function Ready({
           <p className="text-[11.5px] text-scene-mut">
             {`${held.length} corporation${held.length === 1 ? '' : 's'} hold a trust deposit`}
           </p>
-          <div className="mt-1 text-[12px]">
+          <div className="mt-2 text-[10px] uppercase tracking-[.09em] text-scene-mut">Corporation deposits</div>
+          <div className="text-[12px]">
             {held.map((d) => (
               <Row
                 key={d.corporation_id}
@@ -112,11 +103,16 @@ function Ready({
         </>
       )}
       <p className="mt-1.5 text-[11px] text-scene-mut">
-        Orb size follows the trust deposit (log scale); orbs without a deposit record keep their base size. Gold rings
-        fill with each ecosystem’s trust weight. Gold comets are real trust-deposit transactions.
+        An ecosystem orb grows with its controlling corporation’s deposit: one deposit per corporation, shared by every
+        ecosystem it controls, not each ecosystem’s own. A participant orb grows with its own deposit (log scale). Orbs
+        without a deposit record keep their base size. Gold rings fill with each ecosystem’s trust weight; gold comets
+        are real trust-deposit transactions.
       </p>
 
       <Section title="history · indexer stats, daily">
+        <p className="mb-1 text-[11px] text-scene-mut">
+          The indexer publishes no fee series; trust weight and slashes are the real history it has.
+        </p>
         {data.series.length < 2 ? (
           <p className="text-scene-mut">
             {data.series.length === 0
@@ -134,7 +130,7 @@ function Ready({
                   <Sparkline values={weights} width={110} height={26} color={GOLD} drawIn />
                 </figure>
                 <div className="text-right text-[10.5px] text-scene-mut">
-                  {`${day(data.series[0].timestamp)} → ${day(data.series.at(-1)?.timestamp ?? '')} · now ${amount(weights.at(-1) ?? 0)}`}
+                  {`${day(data.series[0].timestamp)} → ${day(data.series.at(-1)?.timestamp ?? '')} · now ${vnaFromUvna(weights.at(-1) ?? 0)}`}
                 </div>
               </>
             )}
@@ -178,7 +174,7 @@ function Ready({
         </p>
         <p className="mt-0.5 text-scene-mut">
           {tu
-            ? `1 TU = ${amount(tu.rate / 10 ** tu.scale, 6)} uvna · exchange rate #${tu.id}, updated ${tu.updated ?? 'unknown'}`
+            ? `1 TU = ${amount(tuRateValue(tu), 6)} uvna · exchange rate #${tu.id}, updated ${tu.updated ?? 'unknown'}`
             : `No TU exchange rate published on ${chainId}.`}
         </p>
       </Section>
@@ -187,11 +183,35 @@ function Ready({
   )
 }
 
+const HUD_GAP = 12
+const FOOTER_SPACE = 66
+const FALLBACK_TOP = 248
+
+function useBelowHud(): number {
+  const [top, setTop] = useState(FALLBACK_TOP)
+  useLayoutEffect(() => {
+    const hud = document.querySelector<HTMLElement>('[data-testid="hud"]')
+    if (!hud) return
+    const update = () => setTop(Math.round(hud.getBoundingClientRect().bottom) + HUD_GAP)
+    update()
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
+    observer?.observe(hud)
+    window.addEventListener('resize', update)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+  return top
+}
+
 export function EconomicsPanel({ chainId, model, state, onOpenSimulation }: EconomicsPanelProps) {
+  const top = useBelowHud()
   return (
     <GlassPanel
       aria-label="Economics"
-      className="fixed bottom-[66px] left-4 z-10 max-h-[calc(100vh-330px)] w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
+      style={{ top, maxHeight: `calc(100vh - ${top + FOOTER_SPACE}px)` }}
+      className="fixed left-4 z-10 w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
     >
       <Kicker>economics · live data</Kicker>
       <h2 className="mt-1 text-base font-semibold tracking-[-.01em]">Trust deposits</h2>
@@ -203,9 +223,7 @@ export function EconomicsPanel({ chainId, model, state, onOpenSimulation }: Econ
           {`Economics data unavailable: ${state.message}`}
         </p>
       )}
-      {state.status === 'ready' && (
-        <Ready chainId={chainId} model={model} data={state.data} now={state.now ?? new Date()} />
-      )}
+      {state.status === 'ready' && <Ready chainId={chainId} model={model} data={state.data} />}
       <Button
         onClick={onOpenSimulation}
         disabled={state.status !== 'ready'}

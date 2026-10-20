@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import type { Rates } from '@/domain/economics'
+import { liveTuRate, type Rates } from '@/domain/economics'
 import { testnetModel } from '@/features/search/search-fixture'
 import type { ExchangeRate } from '@/lib/api/schemas'
 import { SimulationPanel } from './simulation-panel'
@@ -34,8 +34,7 @@ const renderPanel = (exchangeRates: ExchangeRate[] = emptyRates) =>
       chainId="vna-testnet-1"
       model={model}
       rates={LIVE}
-      exchangeRates={exchangeRates}
-      now={NOW}
+      tuRate={liveTuRate(exchangeRates, NOW)}
       onClose={vi.fn()}
     />
   )
@@ -68,9 +67,17 @@ describe('SimulationPanel', () => {
 
   it('shows TU only while the exchange-rate list is empty', () => {
     renderPanel()
-    const panel = screen.getByRole('dialog', { name: /simulation/i })
-    expect(panel.textContent).not.toMatch(/VNA/)
-    expect(within(panel).getByText(/No TU exchange rate on vna-testnet-1/)).toBeInTheDocument()
+    for (const id of ['payer-total', 'payer-deposit', 'monthly-paid'])
+      expect(screen.getByTestId(id).textContent).not.toMatch(/VNA/)
+    expect(screen.getByTestId('simulation-outputs').textContent).not.toMatch(/VNA|≈/)
+    expect(screen.getByText(/No TU exchange rate on vna-testnet-1/)).toBeInTheDocument()
+  })
+
+  it('labels the spec example as priced at the live rates', () => {
+    renderPanel()
+    expect(
+      within(screen.getByLabelText('Start from')).getByRole('option', { name: 'VPR v4 spec example (at live rates)' })
+    ).toBeInTheDocument()
   })
 
   it('shows VNA next to TU with the rate source once a live rate exists', () => {
@@ -91,10 +98,39 @@ describe('SimulationPanel', () => {
     expect(screen.getByTestId('payer-total')).toHaveTextContent(/^0 TU/)
   })
 
-  it('does not offer schemas priced in another asset as TU', () => {
+  it('offers TU and VNA-priced schemas grouped by unit', () => {
     renderPanel()
-    const options = within(screen.getByLabelText('Start from')).getAllByRole('option')
-    expect(options.map((o) => o.getAttribute('value'))).not.toContain('1')
-    expect(screen.getByText(/8 schemas price fees in another asset/)).toBeInTheDocument()
+    const select = screen.getByLabelText('Start from')
+    const groups = [...select.querySelectorAll('optgroup')].map((g) => g.getAttribute('label'))
+    expect(groups).toEqual(['Priced in TU', 'Priced in VNA (uvna)'])
+    const values = within(select)
+      .getAllByRole('option')
+      .map((o) => o.getAttribute('value'))
+    expect(values).toContain('16')
+    expect(values).toContain('1')
+  })
+
+  it('pre-fills a real non-zero fee from a VNA-priced schema and simulates it natively in VNA', async () => {
+    const user = userEvent.setup()
+    renderPanel([TU_RATE])
+    await user.selectOptions(screen.getByLabelText('Start from'), '1')
+    expect(screen.getByLabelText('Issuer')).toHaveValue('2')
+    await user.click(screen.getByRole('tab', { name: 'Onboarding' }))
+    expect(screen.getByText('Fees (VNA)')).toBeInTheDocument()
+    expect(screen.getByLabelText('Validator validation fee')).toHaveValue(1)
+    expect(screen.getByTestId('payer-total')).toHaveTextContent(/^-1.05 VNA$/)
+    expect(screen.getByTestId('simulation-outputs').textContent).not.toMatch(/TU/)
+  })
+
+  it('flags an invalid or negative input instead of reading it as zero', async () => {
+    const user = userEvent.setup()
+    renderPanel()
+    await user.click(screen.getByRole('tab', { name: 'Verification' }))
+    const issuerFee = screen.getByLabelText('Issuer fee')
+    await user.clear(issuerFee)
+    await user.type(issuerFee, '-5')
+    expect(issuerFee).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByRole('alert')).toHaveTextContent(/non-negative number/)
+    expect(screen.queryByTestId('payer-total')).toBeNull()
   })
 })
