@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { act } from 'react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
 import { layoutFor } from '@/layouts'
 import { useObservatory } from '@/store/observatory-store'
@@ -45,5 +46,30 @@ describe('useLensTween', () => {
     const id = model.participants[0].id
     expect(result.current(id)).toEqual(layoutFor('trust', model).positions.get(id))
     expect(useObservatory.getState().layouts.trust).toBeDefined()
+  })
+
+  afterEach(() => vi.restoreAllMocks())
+
+  it('reads the store once per lens change, not once per entity per frame', () => {
+    const { result } = renderHook(() => useLensTween())
+    const getState = vi.spyOn(useObservatory, 'getState')
+    for (const p of model.participants) result.current(p.id)
+    for (const p of model.participants) result.current(p.id)
+    const settled = getState.mock.calls.length
+    expect(settled).toBeLessThanOrEqual(3)
+    act(() => useObservatory.setState({ lens: 'network', lensFrom: 'trust', lensChangedAt: performance.now() }))
+    getState.mockClear()
+    for (const p of model.participants) result.current(p.id)
+    expect(getState.mock.calls.length).toBeLessThanOrEqual(3)
+  })
+
+  it('reuses one position buffer per entity while tweening', () => {
+    useObservatory.setState({ lens: 'trust', lensFrom: 'network', lensChangedAt: performance.now() - 900 })
+    const { result } = renderHook(() => useLensTween())
+    const id = model.participants[0].id
+    const first = result.current(id)
+    const again = result.current(id)
+    expect(again).toBe(first)
+    expect(result.current(model.participants[1].id)).not.toBe(first)
   })
 })

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { layoutFor } from '@/layouts'
 import { seededRandom } from '@/layouts/seed'
@@ -50,24 +50,69 @@ function entityDelays(model: NetworkModel | null): Map<EntityId, number> {
 const lerp3 = (from: Vec3, to: Vec3, t: number): Vec3 =>
   t >= 1 ? to : [from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t, from[2] + (to[2] - from[2]) * t]
 
+type Scratch = [number, number, number]
+
+function lerpInto(out: Scratch, from: Vec3, to: Vec3, t: number): Vec3 {
+  out[0] = from[0] + (to[0] - from[0]) * t
+  out[1] = from[1] + (to[1] - from[1]) * t
+  out[2] = from[2] + (to[2] - from[2]) * t
+  return out
+}
+
 export type PositionOf = (id: EntityId) => Vec3
+
+interface TweenFrame {
+  lens: LensId
+  changedAt: number
+  to: Layout | null
+  from: Layout | null
+}
+
+function readFrame(): TweenFrame {
+  const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
+  const to = ensureLayout(lens)
+  return { lens, changedAt: lensChangedAt, to, from: lens === lensFrom ? null : ensureLayout(lensFrom) }
+}
 
 export function useLensTween(): PositionOf {
   const reduced = usePrefersReducedMotion()
   const model = useObservatory((s) => s.model)
   const delays = useMemo(() => entityDelays(model), [model])
+  const scratch = useMemo(() => new Map<EntityId, Scratch>(), [])
+  const frame = useRef<TweenFrame | null>(null)
+
+  useEffect(() => {
+    frame.current = null
+    return useObservatory.subscribe((s, prev) => {
+      if (
+        s.lens !== prev.lens ||
+        s.lensFrom !== prev.lensFrom ||
+        s.lensChangedAt !== prev.lensChangedAt ||
+        s.layouts !== prev.layouts ||
+        s.model !== prev.model
+      )
+        frame.current = null
+    })
+  }, [])
 
   return useCallback(
     (id: EntityId) => {
-      const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
-      const to = ensureLayout(lens)?.positions.get(id)
-      if (!to) throw new Error(`Entity ${id} has no position in the ${lens} layout`)
-      const progress = tweenProgress(performance.now(), lensChangedAt, delays.get(id) ?? 0, reduced)
-      if (progress >= 1 || lens === lensFrom) return to
-      const from = ensureLayout(lensFrom)?.positions.get(id) ?? to
-      return lerp3(from, to, progress)
+      const current = frame.current ?? readFrame()
+      frame.current = current
+      const to = current.to?.positions.get(id)
+      if (!to) throw new Error(`Entity ${id} has no position in the ${current.lens} layout`)
+      if (!current.from) return to
+      const progress = tweenProgress(performance.now(), current.changedAt, delays.get(id) ?? 0, reduced)
+      if (progress >= 1) return to
+      const from = current.from.positions.get(id) ?? to
+      let out = scratch.get(id)
+      if (!out) {
+        out = [0, 0, 0]
+        scratch.set(id, out)
+      }
+      return lerpInto(out, from, to, progress)
     },
-    [delays, reduced]
+    [delays, reduced, scratch]
   )
 }
 
