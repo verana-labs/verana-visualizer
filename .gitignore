@@ -64,3 +64,6 @@ docs/superpowers/
 .superpowers/
 /test-results/
 /playwright-report/
+
+AGENTS.md
+CLAUDE.md
