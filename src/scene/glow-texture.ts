@@ -30,7 +30,8 @@ function acquire(): CanvasTexture {
 export function useGlowTexture(): CanvasTexture {
   const texture = useMemo(acquire, [])
   useEffect(() => {
-    const current = shared?.texture === texture ? shared : (shared = { texture, users: 0 })
+    if (shared?.texture !== texture) shared = { texture, users: 0 }
+    const current = shared
     current.users++
     return () => {
       current.users--
