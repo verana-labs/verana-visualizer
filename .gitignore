@@ -57,6 +57,8 @@ node_modules/
 # tasks.json
 # tasks/
 
+# superpowers working docs (internal specs/plans, not part of the deliverable)
+docs/superpowers/
 
 # working scratch
 .superpowers/
