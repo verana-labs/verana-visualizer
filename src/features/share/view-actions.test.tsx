@@ -7,7 +7,6 @@ import { serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { testnetCfg } from '../../../tests/support/network'
 import { useSceneHandle } from './scene-handle'
-import { shareUrl } from './share-link'
 import { ViewActions } from './view-actions'
 
 const writeText = vi.fn<(text: string) => Promise<void>>()
@@ -26,21 +25,6 @@ beforeEach(() => {
 afterEach(() => {
   useSceneHandle.setState({ handle: null })
   window.history.replaceState(null, '', '/')
-})
-
-describe('shareUrl', () => {
-  it('is the origin, "/?" and the serialized view', () => {
-    const view = {
-      lens: 'chain' as const,
-      sel: null,
-      cam: [1, 2, 3, 0, 0, 0] as [number, number, number, number, number, number],
-      t: null,
-      panel: null,
-      tour: null,
-      q: null,
-    }
-    expect(shareUrl('https://vis.example', view)).toBe(`https://vis.example/?${serializeViewState(view)}`)
-  })
 })
 
 describe('ViewActions', () => {

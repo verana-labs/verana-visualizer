@@ -4,12 +4,11 @@ import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { useTour } from '@/features/tour/tour-store'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
-import { parseViewState } from '@/lib/view-state'
+import { parseViewState, serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { exportPng, pngFileName } from './export-png'
 import { useSceneHandle } from './scene-handle'
-import { shareUrl } from './share-link'
 
 const REVOKE_MS = 10_000
 
@@ -27,7 +26,7 @@ async function copyShareLink() {
     cam: handle.camera(),
   }
   try {
-    await navigator.clipboard.writeText(shareUrl(window.location.origin, view))
+    await navigator.clipboard.writeText(`${window.location.origin}/?${serializeViewState(view)}`)
     showToast('Link copied')
   } catch (error) {
     logger.error('Could not copy the share link', error)
