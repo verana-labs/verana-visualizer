@@ -92,7 +92,7 @@ function Observatory() {
         <HealthStrip cfg={cfg} />
       </Hud>
       <LensBar />
-      <SearchPalette />
+      <SearchPalette cfg={cfg} />
       <Legend />
       {model && <ActivityFeed cfg={cfg} />}
       {model && <EconomicsLens cfg={cfg} />}

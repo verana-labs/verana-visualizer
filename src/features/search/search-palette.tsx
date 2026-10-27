@@ -2,11 +2,15 @@
 
 import { Command } from 'cmdk'
 import { useEffect, useMemo, useState } from 'react'
-import type { Entity, EntityKind } from '@/domain/network-model'
+import type { Entity, EntityId, EntityKind } from '@/domain/network-model'
 import { agentColor } from '@/domain/roles'
+import { createGraphClient } from '@/lib/api/graph'
+import type { NetworkConfig } from '@/lib/env'
 import { isTyping } from '@/lib/is-typing'
+import { logger } from '@/lib/logger'
 import { type PaletteMode, useObservatory } from '@/store/observatory-store'
 import { GlassPanel } from '@/ui/glass-panel'
+import { searchGraph } from './graph-search'
 import { searchEntities } from './search-entities'
 
 const GROUPS: { kind: EntityKind; label: string }[] = [
@@ -65,6 +69,8 @@ const ROW_CLASS =
   'flex cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-[12.5px] data-[selected=true]:bg-white/10'
 
 const looksLikeDid = (query: string) => /^did:[a-z0-9]+:\S+$/i.test(query.trim())
+const looksLikeAddress = (query: string) => /^verana1[0-9a-z]+$/i.test(query.trim())
+const isFreeText = (query: string) => query.trim() !== '' && !looksLikeDid(query) && !looksLikeAddress(query)
 
 function CheckDidRow({ did, onCheck }: { did: string; onCheck: (did: string) => void }) {
   return (
@@ -104,12 +110,53 @@ function trapTab(event: React.KeyboardEvent<HTMLElement>) {
   items[next].focus()
 }
 
-const PLACEHOLDER: Record<Exclude<PaletteMode, 'closed'>, string> = {
+type OpenMode = Exclude<PaletteMode, 'closed'>
+
+const PLACEHOLDER: Record<OpenMode, string> = {
   search: 'Search ecosystems, participants, services, corporations',
   check: 'Paste a DID, or search for a service to check',
 }
 
-function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onClose: () => void }) {
+const GRAPH_KINDS: Record<OpenMode, readonly EntityKind[]> = {
+  search: GROUPS.map(({ kind }) => kind),
+  check: ['agent'],
+}
+
+const GRAPH_DEBOUNCE_MS = 150
+const NO_HITS: EntityId[] = []
+
+interface GraphHits {
+  query: string
+  ids: EntityId[]
+  error: string | null
+}
+
+function useGraphHits(cfg: NetworkConfig, query: string, mode: OpenMode) {
+  const [hits, setHits] = useState<GraphHits>({ query: '', ids: NO_HITS, error: null })
+  useEffect(() => {
+    if (!isFreeText(query)) return
+    const controller = new AbortController()
+    const timer = setTimeout(() => {
+      searchGraph(createGraphClient(cfg, { signal: controller.signal }), query, GRAPH_KINDS[mode]).then(
+        (ids) => setHits({ query, ids, error: null }),
+        (error: unknown) => {
+          if (controller.signal.aborted) return
+          logger.error('Graph search failed', error)
+          setHits({ query, ids: [], error: error instanceof Error ? error.message : String(error) })
+        }
+      )
+    }, GRAPH_DEBOUNCE_MS)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [cfg, query, mode])
+  if (!isFreeText(query)) return { ids: NO_HITS, error: null, pending: false }
+  const settled = hits.query === query
+  return { ids: settled ? hits.ids : NO_HITS, error: settled ? hits.error : null, pending: !settled }
+}
+
+function Palette({ cfg, mode, onClose }: { cfg: NetworkConfig; mode: OpenMode; onClose: () => void }) {
   const model = useObservatory((s) => s.model)
   const select = useObservatory((s) => s.select)
   const [query, setQuery] = useState(() => useObservatory.getState().paletteQuery)
@@ -120,10 +167,20 @@ function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onCl
     },
     [returnTo]
   )
+  const graph = useGraphHits(cfg, query, mode)
   const results = useMemo(() => {
-    const found = model ? searchEntities(model, query) : []
+    if (!model) return []
+    const found = searchEntities(model, query)
+    const seen = new Set(found.map((entity) => entity.id))
+    for (const id of graph.ids) {
+      const entity = model.entities.get(id)
+      if (entity && !seen.has(id)) {
+        seen.add(id)
+        found.push(entity)
+      }
+    }
     return mode === 'check' ? found.filter((entity) => entity.kind === 'agent') : found
-  }, [model, query, mode])
+  }, [model, query, mode, graph.ids])
   const did = looksLikeDid(query) ? query.trim() : null
 
   const check = (target: string) => {
@@ -164,8 +221,13 @@ function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onCl
           />
           <Command.List className="max-h-[min(380px,60vh)] overflow-y-auto p-1.5">
             {did && <CheckDidRow did={did} onCheck={check} />}
-            {query.trim() !== '' && results.length === 0 && !did && (
+            {query.trim() !== '' && results.length === 0 && !did && !graph.pending && (
               <p className="px-3 py-6 text-center text-[12.5px] text-scene-mut">Nothing matches “{query.trim()}”.</p>
+            )}
+            {graph.error && (
+              <p role="alert" className="px-3 py-2 text-[11.5px] text-amber-200">
+                Graph search failed ({graph.error}). Only names in the loaded network are matched.
+              </p>
             )}
             {GROUPS.map(({ kind, label }) => {
               const rows = results.filter((entity) => entity.kind === kind)
@@ -190,7 +252,7 @@ function Palette({ mode, onClose }: { mode: Exclude<PaletteMode, 'closed'>; onCl
   )
 }
 
-export function SearchPalette() {
+export function SearchPalette({ cfg }: { cfg: NetworkConfig }) {
   const palette = useObservatory((s) => s.palette)
   const paletteQuery = useObservatory((s) => s.paletteQuery)
   const open = palette !== 'closed'
@@ -217,7 +279,7 @@ export function SearchPalette() {
           <kbd className="ml-auto rounded border border-scene-line px-1.5 text-[11px]">/</kbd>
         </button>
       </GlassPanel>
-      {palette !== 'closed' && <Palette key={`${palette}:${paletteQuery}`} mode={palette} onClose={close} />}
+      {palette !== 'closed' && <Palette key={`${palette}:${paletteQuery}`} cfg={cfg} mode={palette} onClose={close} />}
     </>
   )
 }

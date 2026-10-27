@@ -1,6 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Hud } from '@/features/hud/hud'
 import { Inspector } from '@/features/inspector/inspector'
 import { SearchPalette } from '@/features/search/search-palette'
@@ -28,7 +28,13 @@ beforeEach(() => {
     trustCheck: null,
     agentVerdicts: new Map(),
   })
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => Response.json({ totalCount: 0, hits: [], nextCursor: null }))
+  )
 })
+
+afterEach(() => vi.unstubAllGlobals())
 
 describe('the trust check entry points', () => {
   it('opens the palette in check mode from the HUD hero button', async () => {
@@ -36,7 +42,7 @@ describe('the trust check entry points', () => {
     render(
       <>
         <Hud cfg={testnetCfg} />
-        <SearchPalette />
+        <SearchPalette cfg={testnetCfg} />
       </>
     )
     await user.click(screen.getByRole('button', { name: 'Is this service trustworthy?' }))
@@ -47,7 +53,7 @@ describe('the trust check entry points', () => {
   it('checks a pasted DID even when it is not in the loaded network', async () => {
     const user = userEvent.setup()
     useObservatory.getState().openPalette('check')
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.click(screen.getByRole('combobox'))
     await user.paste(UNKNOWN_DID)
     await user.keyboard('{Enter}')
@@ -59,7 +65,7 @@ describe('the trust check entry points', () => {
   it('checks a service picked by name and selects it', async () => {
     const user = userEvent.setup()
     useObservatory.getState().openPalette('check')
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.type(screen.getByRole('combobox'), 'QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv')
     const options = within(screen.getByRole('listbox')).getAllByRole('option')
     expect(options).toHaveLength(1)
@@ -71,7 +77,7 @@ describe('the trust check entry points', () => {
 
   it('offers a trust check action in normal search when the query is a DID', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.click(screen.getByRole('combobox'))
     await user.paste(PAPAPO_DID)

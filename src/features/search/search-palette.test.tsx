@@ -1,9 +1,11 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { fromGovProposal, withProposals } from '@/domain/governance'
 import { Inspector } from '@/features/inspector/inspector'
+import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
+import { PAPAPO_DID, testnetCfg } from '../../../tests/support/network'
 import { testnetModel } from '../../../tests/support/recorded'
 import { SearchPalette } from './search-palette'
 
@@ -13,15 +15,39 @@ class ResizeObserverStub {
   disconnect() {}
 }
 
+interface SearchBody {
+  surface: string
+  freeText: string
+  includeUntrusted?: boolean
+}
+
+const GRAPH_HITS: Record<string, { type: string; id: string | number }[]> = {
+  CredentialSchema: [{ type: 'CredentialSchema', id: 9 }],
+  Did: [{ type: 'Did', id: PAPAPO_DID }],
+}
+
+function stubGraphSearch(hits: typeof GRAPH_HITS = {}) {
+  const fetchMock = vi.fn(async (_input: string, init?: RequestInit) => {
+    const { surface } = JSON.parse(String(init?.body)) as SearchBody
+    const found = hits[surface] ?? []
+    return Response.json({ totalCount: found.length, hits: found, nextCursor: null })
+  })
+  vi.stubGlobal('fetch', fetchMock)
+  return fetchMock
+}
+
 beforeEach(() => {
   globalThis.ResizeObserver = ResizeObserverStub
   Element.prototype.scrollIntoView = () => {}
   useObservatory.setState({ model: testnetModel(), selected: null, palette: 'closed' })
+  stubGraphSearch()
 })
+
+afterEach(() => vi.unstubAllGlobals())
 
 describe('SearchPalette', () => {
   it('opens prefilled with a query handed over by a legacy link', () => {
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     act(() =>
       useObservatory
         .getState()
@@ -36,7 +62,7 @@ describe('SearchPalette', () => {
 
   it('opens with / and with Cmd+K and Ctrl+K', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     expect(screen.queryByRole('dialog')).toBeNull()
     await user.keyboard('/')
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -51,7 +77,7 @@ describe('SearchPalette', () => {
 
   it('hands focus back to the search trigger when it closes', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     const trigger = screen.getByRole('button', { name: /search the network/i })
     await user.click(trigger)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
@@ -64,7 +90,7 @@ describe('SearchPalette', () => {
     render(
       <>
         <input aria-label="other" />
-        <SearchPalette />
+        <SearchPalette cfg={testnetCfg} />
       </>
     )
     await user.click(screen.getByLabelText('other'))
@@ -74,14 +100,14 @@ describe('SearchPalette', () => {
 
   it('opens from the trigger button', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.click(screen.getByRole('button', { name: /search/i }))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 
   it('lists ECS first under the ecosystem group', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.type(screen.getByRole('combobox'), 'ecs')
     const options = screen.getAllByRole('option')
@@ -94,7 +120,7 @@ describe('SearchPalette', () => {
     const proposal = fromGovProposal({ id: '4', status: 'PROPOSAL_STATUS_PASSED', title: 'Rotate keys', summary: null })
     useObservatory.setState({ model: withProposals(testnetModel(), [proposal]) })
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.type(screen.getByRole('combobox'), 'rotate')
     const group = screen.getByTestId('search-group')
@@ -103,9 +129,68 @@ describe('SearchPalette', () => {
     expect(within(group).getByRole('option')).toHaveTextContent('Rotate keys')
   })
 
+  it('adds Graph faceted-search hits that the loaded names do not match', async () => {
+    const fetchMock = stubGraphSearch(GRAPH_HITS)
+    const user = userEvent.setup()
+    render(<SearchPalette cfg={testnetCfg} />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'workshop')
+    const schemas = await screen.findByText('AuthorizedRepairerCredential')
+    expect(schemas.closest('[data-kind]')).toHaveAttribute('data-kind', 'schema')
+    expect(screen.getAllByTestId('search-group').map((g) => g.getAttribute('data-kind'))).toEqual(['agent', 'schema'])
+    const bodies = fetchMock.mock.calls.map(([url, init]) => ({ url, body: JSON.parse(String(init?.body)) }))
+    expect(bodies.every(({ url }) => url === `${testnetCfg.graphUrl}/v4/graph/search`)).toBe(true)
+    expect(bodies.map(({ body }) => body.surface).sort()).toEqual([
+      'Corporation',
+      'CredentialSchema',
+      'Did',
+      'Ecosystem',
+    ])
+    expect(bodies.find(({ body }) => body.surface === 'Did')?.body).toMatchObject({
+      freeText: 'workshop',
+      includeUntrusted: true,
+    })
+  })
+
+  it('resolves a pasted DID or account locally without a Graph free-text search', async () => {
+    const fetchMock = stubGraphSearch(GRAPH_HITS)
+    const user = userEvent.setup()
+    render(<SearchPalette cfg={testnetCfg} />)
+    await user.keyboard('/')
+    await user.click(screen.getByRole('combobox'))
+    await user.paste(PAPAPO_DID)
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    expect(screen.getByRole('option', { name: /is this service trustworthy/i })).toBeInTheDocument()
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('asks the Graph only for services in check mode', async () => {
+    const fetchMock = stubGraphSearch(GRAPH_HITS)
+    render(<SearchPalette cfg={testnetCfg} />)
+    act(() => useObservatory.getState().openPalette('check', 'workshop'))
+    const [service] = await screen.findAllByRole('option')
+    expect(service).toHaveTextContent(/papapo/i)
+    expect(screen.queryByText('AuthorizedRepairerCredential')).toBeNull()
+    expect(fetchMock.mock.calls.map(([, init]) => JSON.parse(String(init?.body)).surface)).toEqual(['Did'])
+  })
+
+  it('says so when the Graph search fails and keeps the local matches', async () => {
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ error: { code: 'INTERNAL', message: 'down' } }, { status: 500 }))
+    )
+    const user = userEvent.setup()
+    render(<SearchPalette cfg={testnetCfg} />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'ecs')
+    expect(await screen.findByRole('alert')).toHaveTextContent(/graph search failed/i)
+    expect(screen.getAllByRole('option')[0]).toHaveTextContent('ECS')
+  })
+
   it('finds a corporation by #34', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.type(screen.getByRole('combobox'), '#34')
     expect(within(screen.getByRole('listbox')).getAllByRole('option')[0]).toHaveTextContent(/corporation/i)
@@ -113,7 +198,7 @@ describe('SearchPalette', () => {
 
   it('selects the highlighted result on Enter and closes', async () => {
     const user = userEvent.setup()
-    render(<SearchPalette />)
+    render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.type(screen.getByRole('combobox'), 'ecs')
     await user.keyboard('{Enter}')
@@ -126,7 +211,7 @@ describe('SearchPalette', () => {
     render(
       <>
         <button type="button">outside</button>
-        <SearchPalette />
+        <SearchPalette cfg={testnetCfg} />
       </>
     )
     await user.keyboard('/')
@@ -145,7 +230,7 @@ describe('SearchPalette', () => {
     render(
       <>
         <Inspector frontendUrl="https://app.testnet.verana.network" chainId="vna-testnet-1" />
-        <SearchPalette />
+        <SearchPalette cfg={testnetCfg} />
       </>
     )
     await user.keyboard('/')

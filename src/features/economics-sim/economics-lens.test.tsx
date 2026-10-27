@@ -69,7 +69,7 @@ describe('EconomicsLens Escape', () => {
       <>
         <Inspector frontendUrl="https://app.testnet.verana.network" chainId="vna-testnet-1" />
         <EconomicsLens cfg={testnetCfg} />
-        <SearchPalette />
+        <SearchPalette cfg={testnetCfg} />
       </>
     )
     act(() => useObservatory.getState().setLens('economics'))
