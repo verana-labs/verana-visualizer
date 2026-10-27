@@ -2,7 +2,6 @@ interface SparklineProps {
   values: readonly number[]
   width?: number
   height?: number
-  className?: string
   color?: string
   drawIn?: boolean
 }
@@ -11,7 +10,6 @@ export function Sparkline({
   values,
   width = 96,
   height = 24,
-  className,
   color = 'var(--accent)',
   drawIn = false,
 }: SparklineProps) {
@@ -22,7 +20,7 @@ export function Sparkline({
     .map((v, i) => `${(i / (values.length - 1)) * width},${height - ((v - min) / span) * (height - 2) - 1}`)
     .join(' ')
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className={className} aria-hidden="true">
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
       <polyline
         points={points}
         fill="none"
