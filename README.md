@@ -118,7 +118,7 @@ Same entities, seven arrangements. The tab bar switches between them and `?lens=
     </td>
     <td valign="top">
       <b>Governance</b><br />
-      Corporations as small constellations beside their ecosystems, members sized by voting weight, open proposals pulsing.<br /><br />
+      Corporations as small constellations beside their ecosystems, members sized by voting weight, open proposals brighter than closed ones.<br /><br />
       <img src=".github/readme/lens-governance.webp" alt="Governance lens" width="100%" />
     </td>
   </tr>

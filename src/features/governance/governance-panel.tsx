@@ -73,7 +73,7 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
       )}
       <p className="mt-1.5 text-[11px] text-scene-mut">
         Each corporation is a small constellation of its group members, orb size by voting weight. Proposals are markers
-        on their corporation and pulse while voting is open. Votes arrive as comets.
+        on their corporation, open ones brighter than closed ones. Votes arrive as comets.
       </p>
       <Section compact title="chain · gov/v1 proposals">
         {data.chain.status === 'error' ? (
