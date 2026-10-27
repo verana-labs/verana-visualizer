@@ -113,10 +113,7 @@ export function tightFitDistance(
 }
 
 export function overviewOf(points: readonly Vec3[], lens: LensId, fov: number, aspect: number) {
-  const bounds = new Box3()
-  const point = new Vector3()
-  for (const p of points) bounds.expandByPoint(point.set(...p))
-  const target = bounds.isEmpty() ? new Vector3() : bounds.getCenter(new Vector3())
+  const target = boundsCenter(points)
   const direction = lens === 'network' || lens === 'chain' ? NETWORK_DIRECTION : FLAT_DIRECTION
   const distance = fitDistance(points, target, direction, fov, aspect, MIN_OVERVIEW_DISTANCE, FRAME_MARGIN)
   return { target, position: target.clone().addScaledVector(direction, distance), distance }
@@ -149,10 +146,7 @@ function boundsCenter(points: readonly Vec3[]): Vector3 {
 
 export function traceFrame(points: readonly Vec3[], heading: Vector3, fov: number, aspect: number) {
   const target = boundsCenter(points)
-  const distance = Math.max(
-    focusDistance('agent', 'network'),
-    FOCUS_ROOM * tightFitDistance(target, points, heading, fov, aspect)
-  )
+  const distance = focusFrameDistance('agent', 'network', target, points, heading, fov, aspect)
   return { target, position: target.clone().addScaledVector(heading, distance) }
 }
 
