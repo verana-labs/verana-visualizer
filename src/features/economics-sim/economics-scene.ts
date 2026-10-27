@@ -4,7 +4,7 @@ import { MAX_STAR_SIZE } from '@/scene/scene-data'
 import type { EconomicsScene } from '@/store/observatory-store'
 
 export const STAR_DEPOSIT_BASE = 1
-export const PARTICIPANT_DEPOSIT_BASE = 0.42
+const PARTICIPANT_DEPOSIT_BASE = 0.42
 export const PARTICIPANT_DEPOSIT_MAX = 1.1
 
 const positive = (value: unknown) => {

@@ -7,7 +7,7 @@ import { FetchError } from '@/lib/fetch-json'
 
 export type Outcome = 'pass' | 'fail' | 'skip'
 
-export interface ProbeResult {
+interface ProbeResult {
   method: string
   outcome: Outcome
   status: number | null

@@ -18,8 +18,6 @@ const TINTS = ['#ece8ff', '#ddd5fe', '#d0c4fe', '#c4b5fd']
 const ENTRANCE_MS = 1600
 const MAX_DELAY = 0.25
 
-export const MARK_ASPECT = MARK_HEIGHT / MARK_BOX
-
 export function rasteriseLogoMask(size: number): LogoMask | null {
   if (typeof document === 'undefined' || typeof Path2D === 'undefined') return null
   const canvas = document.createElement('canvas')

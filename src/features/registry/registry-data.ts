@@ -3,9 +3,9 @@ import { effectiveEnd, isExpiringSoon } from '@/domain/expiry'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import type { Participant, pendingFlatSchema } from '@/lib/api/schemas'
 
-export type PendingFlat = z.infer<typeof pendingFlatSchema>
+type PendingFlat = z.infer<typeof pendingFlatSchema>
 
-export const ONBOARDING_STATES = ['PENDING', 'VALIDATED', 'TERMINATED'] as const
+const ONBOARDING_STATES = ['PENDING', 'VALIDATED', 'TERMINATED'] as const
 export const EXPIRING_COLOR = '#fbbf24'
 
 const ONBOARDING_COLORS: Record<string, string> = {
@@ -24,7 +24,7 @@ export interface PendingTask {
   validatorCorporationId: number
 }
 
-export interface OnboardingCount {
+interface OnboardingCount {
   state: string
   count: number
 }
@@ -36,7 +36,7 @@ export interface CoverageCell {
   services: number
 }
 
-export interface CoverageRow {
+interface CoverageRow {
   ecosystem: Entity
   cells: CoverageCell[]
 }

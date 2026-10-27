@@ -4,9 +4,9 @@ import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
 
-export type ServiceId = 'indexer' | 'graph' | 'chain'
+type ServiceId = 'indexer' | 'graph' | 'chain'
 
-export interface ServiceHealth {
+interface ServiceHealth {
   id: ServiceId
   up: boolean
   detail: string

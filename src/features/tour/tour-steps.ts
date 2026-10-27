@@ -1,7 +1,7 @@
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import type { LensId } from '@/layouts/types'
 
-export type TourStepId = 'intro' | LensId | 'trust-check' | 'live-core'
+type TourStepId = 'intro' | LensId | 'trust-check' | 'live-core'
 
 export interface TourStep {
   id: TourStepId

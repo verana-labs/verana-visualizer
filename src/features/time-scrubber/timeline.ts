@@ -4,7 +4,7 @@ import type { QueryInfo } from '@/lib/api/query-info'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
 
-export const EVENTS_PAGE = 100
+const EVENTS_PAGE = 100
 
 export interface DensityPoint {
   height: number
@@ -16,7 +16,7 @@ export interface DayMark {
   height: number
 }
 
-export type FetchEventsPage = (afterHeight: number, limit: number) => Promise<IndexerEvent[]>
+type FetchEventsPage = (afterHeight: number, limit: number) => Promise<IndexerEvent[]>
 
 const eventKey = (ev: IndexerEvent) =>
   `${ev.block_height}:${ev.tx_hash ?? ''}:${String(ev.payload.tx_index)}:${String(ev.payload.message_index)}:${ev.event_type}`

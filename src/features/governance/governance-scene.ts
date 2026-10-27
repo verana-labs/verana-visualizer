@@ -2,7 +2,7 @@ import type { Constellation } from '@/domain/governance'
 import { seededRandom } from '@/layouts/seed'
 import type { Vec3 } from '@/layouts/types'
 
-export const MEMBER_RING = 2.6
+const MEMBER_RING = 2.6
 const MEMBER_BASE = 0.28
 const MEMBER_SPAN = 0.6
 

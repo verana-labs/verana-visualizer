@@ -7,7 +7,7 @@ import type { Participant } from '@/lib/api/schemas'
 import { FetchError } from '@/lib/fetch-json'
 import { logger } from '@/lib/logger'
 
-export interface TrustClients {
+interface TrustClients {
   indexer: Pick<IndexerClient, 'resolve'>
   graph: Pick<GraphClient, 'validatorChain'> | null
 }

@@ -14,8 +14,8 @@ import { absentAt, missingFromLive } from './timeline'
 import { useTimeUrl } from './use-time-url'
 import { useTimeline } from './use-timeline'
 
-export const SNAPSHOT_DEBOUNCE_MS = 150
-export const PLAY_STEP_MS = 1400
+const SNAPSHOT_DEBOUNCE_MS = 150
+const PLAY_STEP_MS = 1400
 
 const messageOf = (error: unknown) => (error instanceof Error ? error.message : String(error))
 const clamp = (h: number, head: number) => Math.min(head, Math.max(1, Math.round(h)))

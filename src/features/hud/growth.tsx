@@ -17,7 +17,7 @@ import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
 import { Sparkline } from '@/ui/sparkline'
 
-export type GrowthState =
+type GrowthState =
   | { status: 'loading' }
   | { status: 'ready'; buckets: StatsBucket[] }
   | { status: 'error'; message: string }

@@ -1,7 +1,7 @@
 import type { NetworkModel } from '@/domain/network-model'
 import type { IndexerClient } from '@/lib/api/indexer'
 
-export interface FirstEcosystem {
+interface FirstEcosystem {
   height: number
   name: string
 }

@@ -6,7 +6,7 @@ import type { QueryInfo } from '@/lib/api/query-info'
 import type { Corporation, ExchangeRate, TrustDeposit } from '@/lib/api/schemas'
 import { FetchError } from '@/lib/fetch-json'
 
-export interface SeriesPoint {
+interface SeriesPoint {
   timestamp: string
   weight: number
   slashed: number

@@ -7,7 +7,7 @@ import { create } from 'zustand'
 import { type Cam, parseViewState } from '@/lib/view-state'
 import { pinCamera } from './camera-pin'
 
-export interface SceneHandleApi {
+interface SceneHandleApi {
   camera(): Cam
   capture(): HTMLCanvasElement
 }

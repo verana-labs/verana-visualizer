@@ -15,9 +15,9 @@ export interface BlockSummary {
   txs: number
 }
 
-export type Settled<T> = { ok: true; value: T; query: QueryInfo } | { ok: false; reason: string }
+type Settled<T> = { ok: true; value: T; query: QueryInfo } | { ok: false; reason: string }
 
-export interface TuRateStat {
+interface TuRateStat {
   rate: TuRate | null
 }
 
@@ -37,7 +37,7 @@ export interface BlockWindow {
   query: QueryInfo | null
 }
 
-export type StatState = 'loading' | 'ok' | 'unavailable'
+type StatState = 'loading' | 'ok' | 'unavailable'
 
 export interface StatRow {
   id: string

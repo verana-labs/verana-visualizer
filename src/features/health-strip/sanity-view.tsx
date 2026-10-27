@@ -8,7 +8,7 @@ import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import { type Outcome, runSanityChecks, type SanityReport } from './sanity-checks'
 
-export type SanityFormat = 'html' | 'json'
+type SanityFormat = 'html' | 'json'
 
 type RunState = { status: 'running' } | { status: 'done'; report: SanityReport } | { status: 'error'; message: string }
 

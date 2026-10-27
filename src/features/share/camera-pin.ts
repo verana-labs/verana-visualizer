@@ -2,7 +2,7 @@ import type { Camera, Vector3 } from 'three'
 import type { Cam } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
 
-export interface PinnedControls {
+interface PinnedControls {
   target: Vector3
   minDistance: number
   maxDistance: number

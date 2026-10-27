@@ -8,8 +8,8 @@ import type { Participant } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
 
-export const SERVER_TIMEOUT_MS = 8000
-export const VERDICT_BUDGET_MS = 20_000
+const SERVER_TIMEOUT_MS = 8000
+const VERDICT_BUDGET_MS = 20_000
 const DID_PARAM = /^did:[a-z0-9]+:\S+$/
 
 export interface VerdictCardData {
@@ -20,7 +20,7 @@ export interface VerdictCardData {
   networkError: string | null
 }
 
-export type BlockParam = { block: number | null } | { invalid: string }
+type BlockParam = { block: number | null } | { invalid: string }
 
 export function parseBlock(value: string | string[] | undefined): BlockParam {
   const raw = Array.isArray(value) ? value[0] : value

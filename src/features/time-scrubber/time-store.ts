@@ -3,7 +3,7 @@ import type { EntityId } from '@/domain/network-model'
 
 export const FADE_MS = 700
 
-export interface TimeState {
+interface TimeState {
   height: number | null
   absent: ReadonlySet<EntityId> | null
   previous: ReadonlySet<EntityId> | null

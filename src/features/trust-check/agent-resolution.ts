@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
 import { describeFailure } from './run-trust-check'
 
-export const RESOLVE_CONCURRENCY = 4
+const RESOLVE_CONCURRENCY = 4
 
 export async function resolveAgents(
   dids: readonly string[],

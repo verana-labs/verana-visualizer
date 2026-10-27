@@ -2,8 +2,6 @@ import { STREAM_SIZE } from '@/layouts/chain'
 import type { Validator } from '@/lib/api/schemas'
 import type { BlockSummary } from './load-chain-stats'
 
-export { STREAM_SIZE }
-
 export interface ValidatorOrb {
   address: string
   moniker: string

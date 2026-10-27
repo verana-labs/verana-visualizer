@@ -39,7 +39,7 @@ export interface TimeScrubberProps {
 const number = (n: number) => n.toLocaleString('en-US')
 const plural = (n: number, word: string) => `${number(n)} ${word}${n === 1 ? '' : 's'}`
 
-export function formatBlockTime(time: string): string {
+function formatBlockTime(time: string): string {
   return `${new Date(time).toLocaleString('en-GB', { timeZone: 'UTC', dateStyle: 'medium', timeStyle: 'medium' })} UTC`
 }
 

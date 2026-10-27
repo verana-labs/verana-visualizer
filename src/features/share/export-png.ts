@@ -1,4 +1,4 @@
-export interface PngStamp {
+interface PngStamp {
   chainId: string
   blockHeight: number
   at: string

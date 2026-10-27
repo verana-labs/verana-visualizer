@@ -21,7 +21,7 @@ const DAY_MS = 86_400_000
 const NO_DENSITY: DensityPoint[] = []
 const NO_DAYS: DayMark[] = []
 
-export interface TimelineHistory {
+interface TimelineHistory {
   events: IndexerEvent[]
   density: DensityPoint[]
   days: DayMark[]
@@ -97,5 +97,3 @@ export function useTimeline(cfg: NetworkConfig) {
     blockTimeAt,
   }
 }
-
-export type Timeline = ReturnType<typeof useTimeline>

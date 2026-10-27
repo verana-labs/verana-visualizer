@@ -42,7 +42,7 @@ const TALLY = [
 
 const UNSCHEDULED = '0001-01-01T00:00:00Z'
 
-export const formatTime = (iso: string | null) => (iso ? `${iso.slice(0, 16).replace('T', ' ')} UTC` : 'unknown')
+const formatTime = (iso: string | null) => (iso ? `${iso.slice(0, 16).replace('T', ' ')} UTC` : 'unknown')
 const voteOption = (option: string) =>
   option
     .replace(/^VOTE_OPTION_/, '')

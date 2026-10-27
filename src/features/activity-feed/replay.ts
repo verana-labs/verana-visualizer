@@ -3,9 +3,9 @@ import { replayWindows } from '@/domain/events'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import { logger } from '@/lib/logger'
 
-export const REPLAY_LIMIT = 100
-export const REPLAY_COUNT = 30
-export const REPLAY_INTERVAL_MS = 450
+const REPLAY_LIMIT = 100
+const REPLAY_COUNT = 30
+const REPLAY_INTERVAL_MS = 450
 
 export type FetchEvents = (afterHeight: number, limit: number, signal: AbortSignal) => Promise<IndexerEvent[]>
 

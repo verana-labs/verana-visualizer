@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export interface TourState {
+interface TourState {
   step: number | null
   presenting: boolean
   note: string | null
