@@ -6,10 +6,10 @@ import { isRole } from '@/domain/roles'
 import { formatAmount, ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
-import type { RegistrySection, SlashHistory } from '@/features/registry/load-registry'
 import type { Participant } from '@/lib/api/schemas'
 import { vnaFromUvna } from '@/lib/format'
 import { useObservatory } from '@/store/observatory-store'
+import type { RegistrySection, SlashHistory } from './load-registry'
 
 const DAY_MS = 86_400_000
 const SLASH_RED = '#ff6b8b'

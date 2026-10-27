@@ -5,11 +5,11 @@ import { isRole } from '@/domain/roles'
 import { formatAmount, ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
-import { WatchPanel } from '@/features/watch-panel/watch-panel'
 import { useObservatory } from '@/store/observatory-store'
 import { LensPanel } from '@/ui/lens-panel'
 import type { RegistryData } from './load-registry'
 import { expiringSoon, onboardingColor, onboardingCounts, type PendingTask } from './registry-data'
+import { WatchPanel } from './watch-panel'
 
 export type RegistryState = { status: 'loading' } | { status: 'ready'; data: RegistryData }
 
