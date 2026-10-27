@@ -3,15 +3,12 @@ import { z } from 'zod'
 const amount = z.union([z.number(), z.string()])
 const optionalText = z.string().nullish()
 
-export const ecosystemDocumentSchema = z
-  .object({ id: z.number(), language: z.string(), url: z.string(), digest_sri: optionalText })
-  .passthrough()
+export const ecosystemDocumentSchema = z.object({ id: z.number(), language: z.string(), url: z.string() }).passthrough()
 
 export const ecosystemVersionSchema = z
   .object({
     id: z.number(),
     version: z.number(),
-    active_since: optionalText,
     documents: z.array(ecosystemDocumentSchema),
   })
   .passthrough()
@@ -28,7 +25,6 @@ export const ecosystemSchema = z
     active_version: z.number(),
     versions: z.array(ecosystemVersionSchema),
     active_schemas: z.number(),
-    archived_schemas: z.number(),
     participants: z.number(),
     weight: amount,
     issued: amount,
@@ -45,7 +41,6 @@ export const credentialSchemaSchema = z
     description: optionalText,
     issuer_onboarding_mode: z.string(),
     verifier_onboarding_mode: z.string(),
-    holder_onboarding_mode: z.string(),
     pricing_asset_type: optionalText,
     pricing_asset: optionalText,
     created: z.string(),
@@ -81,8 +76,6 @@ export const participantSchema = z
     repaid_deposit: amount,
     validator_participant_id: z.number().nullable(),
     op_state: z.string(),
-    participant_state: z.string(),
-    vs_operator: optionalText,
     issued: amount,
     verified: amount,
     weight: amount,
@@ -102,7 +95,6 @@ export const corporationSchema = z
     participants: z.number(),
     deposit: amount,
     share: amount,
-    refunded: amount,
     slashed_deposit: amount,
     repaid_deposit: amount,
     slash_count: z.number(),
@@ -114,13 +106,9 @@ export const trustDepositSchema = z
     corporation_id: z.number(),
     share: amount,
     deposit: amount,
-    refunded: amount,
-    claimable: amount,
     slashed_deposit: amount,
     repaid_deposit: amount,
     slash_count: z.number(),
-    last_slashed: optionalText,
-    last_repaid: optionalText,
   })
   .passthrough()
 
@@ -218,7 +206,6 @@ export const groupProposalSchema = z
   .object({
     id: z.number(),
     corporation_id: z.number(),
-    group_policy_address: z.string(),
     proposers: z.array(z.string()),
     submit_time: z.string(),
     status: z.string(),
@@ -241,9 +228,7 @@ export const groupVoteSchema = z
   })
   .passthrough()
 
-export const groupMemberSchema = z
-  .object({ address: z.string(), weight: amount, metadata: optionalText, added_at: optionalText })
-  .passthrough()
+export const groupMemberSchema = z.object({ address: z.string(), weight: amount, metadata: optionalText }).passthrough()
 
 export const groupSchema = z
   .object({
@@ -373,11 +358,8 @@ export const validatorSchema = z
     jailed: z.boolean(),
     status: z.string(),
     tokens: z.string(),
-    delegator_shares: z.string(),
     description: z.object({ moniker: z.string() }).passthrough(),
-    commission: z
-      .object({ commission_rates: z.object({ rate: z.string(), max_rate: z.string() }).passthrough() })
-      .passthrough(),
+    commission: z.object({ commission_rates: z.object({ rate: z.string() }).passthrough() }).passthrough(),
   })
   .passthrough()
 
@@ -411,9 +393,7 @@ export const blockSchema = z
     block_id: z.object({ hash: z.string() }).passthrough(),
     block: z
       .object({
-        header: z
-          .object({ chain_id: z.string(), height: z.string(), time: z.string(), proposer_address: z.string() })
-          .passthrough(),
+        header: z.object({ chain_id: z.string(), height: z.string(), time: z.string() }).passthrough(),
         data: z.object({ txs: z.array(z.string()) }).passthrough(),
       })
       .passthrough(),
