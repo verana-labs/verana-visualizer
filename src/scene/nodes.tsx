@@ -84,7 +84,7 @@ export function Nodes({ nodes, positionOf, focus }: NodesProps) {
     })
     instances.instanceMatrix.needsUpdate = true
     instances.instanceColor.needsUpdate = true
-    instances.computeBoundingSphere()
+    instances.boundingSphere = null
   })
 
   return (

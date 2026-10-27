@@ -97,7 +97,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
       mesh.instanceMatrix.needsUpdate = true
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     }
-    diamondMesh.computeBoundingSphere()
+    diamondMesh.boundingSphere = null
   })
 
   return (
