@@ -1,0 +1,11 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/participant/pending/flat?corporation_id=2",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "ecosystems": []
+  }
+}

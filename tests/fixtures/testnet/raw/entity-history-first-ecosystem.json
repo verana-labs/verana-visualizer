@@ -1,0 +1,69 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/ecosystem/history/1?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "entity_type": "Ecosystem",
+    "entity_id": "1",
+    "activity": [
+      {
+        "id": 1,
+        "timestamp": "2026-10-14T10:02:19.046Z",
+        "block_height": "7070",
+        "entity_type": "Ecosystem",
+        "entity_id": "1",
+        "msg": "CreateEcosystem",
+        "changes": {
+          "did": "did:web:ecosystem.health-alliance.example.org",
+          "corporation_id": 1,
+          "created": "2026-10-14T10:02:08.784Z",
+          "modified": "2026-10-14T10:02:08.784Z",
+          "archived": null,
+          "language": "en",
+          "active_version": 1,
+          "participants": 0,
+          "participants_ecosystem": 0,
+          "participants_issuer_grantor": 0,
+          "participants_issuer": 0,
+          "participants_verifier_grantor": 0,
+          "participants_verifier": 0,
+          "participants_holder": 0,
+          "active_schemas": 0,
+          "archived_schemas": 0,
+          "weight": 0,
+          "issued": 0,
+          "verified": 0,
+          "ecosystem_slash_events": 0,
+          "ecosystem_slashed_amount": 0,
+          "ecosystem_slashed_amount_repaid": 0,
+          "network_slash_events": 0,
+          "network_slashed_amount": 0,
+          "network_slashed_amount_repaid": 0,
+          "versions": [
+            {
+              "id": 2,
+              "ecosystem_id": 1,
+              "created": "2026-10-14T10:02:08.784Z",
+              "version": 1,
+              "active_since": "2026-10-14T10:02:08.784Z",
+              "documents": [
+                {
+                  "id": 2,
+                  "url": "https://raw.githubusercontent.com/verana-labs/verana-docs/54fd0a2/docs/understand/ecosystems/ecosystems-and-governance-frameworks.md",
+                  "created": "2026-10-14T10:02:08.784Z",
+                  "language": "en",
+                  "digest_sri": "sha384-hYqmSLZ844xPLKBV5w++x7xKSau2IxROYsZXTTvhhkC9GXCFdNVsTRoHOB/5/AAw",
+                  "version_id": 2
+                }
+              ]
+            }
+          ]
+        },
+        "created_at": "2026-10-14T10:02:19.046Z"
+      }
+    ]
+  }
+}
