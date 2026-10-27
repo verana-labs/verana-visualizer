@@ -1,14 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { ingestEvent } from '@/features/activity-feed/live-activity'
-import { type FetchEvents, useReplay } from '@/features/activity-feed/replay'
+import { useEffect, useRef, useState } from 'react'
+import { useIndexerReplay } from '@/features/activity-feed/live-activity'
 import { useTourSteps } from '@/features/tour/tour'
 import { useTour } from '@/features/tour/tour-store'
-import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { usePrefersReducedMotion } from '@/scene/use-reduced-motion'
-import { useObservatory } from '@/store/observatory-store'
 
 export const STEP_MS = 9000
 export const LIVE_STEP_MS = 18_000
@@ -16,7 +13,6 @@ const FADE_OUT_MS = 300
 const FADE_HOLD_MS = 450
 const STOP_EVENTS = ['keydown', 'pointerdown', 'wheel', 'touchstart'] as const
 
-const currentHead = () => useObservatory.getState().blockHeight
 const number = (n: number) => n.toLocaleString('en-US')
 
 export function Autopilot({ cfg }: { cfg: NetworkConfig }) {
@@ -25,11 +21,7 @@ export function Autopilot({ cfg }: { cfg: NetworkConfig }) {
   const reduced = usePrefersReducedMotion()
   const [fading, setFading] = useState(false)
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  const fetchEvents = useMemo<FetchEvents>(() => {
-    const indexer = createIndexerClient(cfg)
-    return async (after, limit) => (await indexer.events(after, limit)).data
-  }, [cfg])
-  const replay = useReplay(fetchEvents, ingestEvent, currentHead)
+  const replay = useIndexerReplay(cfg)
   const steps = useTourSteps(cfg.chainName)
   const liveStep = steps?.findIndex((s) => s.id === 'live-core') ?? -1
   const { start: startReplay, cancel: cancelReplay, state: replayState } = replay

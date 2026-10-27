@@ -1,21 +1,19 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FeedItem } from '@/domain/activity'
-import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
 import { Button } from '@/ui/button'
 import { Chip } from '@/ui/chip'
 import { GlassPanel } from '@/ui/glass-panel'
 import { relativeAge } from './activity'
-import { ingestEvent, useLiveActivity } from './live-activity'
-import { type FetchEvents, type ReplayState, useReplay } from './replay'
+import { useIndexerReplay, useLiveActivity } from './live-activity'
+import type { ReplayState } from './replay'
 
 const AGE_REFRESH_MS = 30_000
 
 const number = (n: number) => n.toLocaleString('en-US')
-const currentHead = () => useObservatory.getState().blockHeight
 
 function useNow(): number {
   const [now, setNow] = useState(() => Date.now())
@@ -76,11 +74,7 @@ export function ActivityFeed({ cfg }: { cfg: NetworkConfig }) {
   const collapsed = useObservatory((s) => s.selected !== null || s.trustCheck !== null)
   const besidePanel = useObservatory((s) => s.lens !== 'network' && s.lens !== 'trust')
   const now = useNow()
-  const fetchEvents = useMemo<FetchEvents>(() => {
-    const indexer = createIndexerClient(cfg)
-    return async (after, limit) => (await indexer.events(after, limit)).data
-  }, [cfg])
-  const replay = useReplay(fetchEvents, ingestEvent, currentHead)
+  const replay = useIndexerReplay(cfg)
   const busy = replay.state.status === 'searching' || replay.state.status === 'running'
   const status = replayStatus(replay.state)
 
