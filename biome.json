@@ -60,7 +60,13 @@
       "allowComments": true
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "rules": {
       "style": {
@@ -123,14 +129,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "**/__tests__/**",
-        "**/vitest.*.ts",
-        "setupTests.ts",
-        "**/tests/**"
-      ],
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "**/vitest.*.ts", "**/tests/**"],
       "linter": {
         "rules": {
           "suspicious": {

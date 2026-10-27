@@ -1,27 +1,26 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { PublicEnvScript } from 'next-runtime-env'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { NetworkEnvScript } from './network-env-script'
+import { Providers } from './providers'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
   title: 'Verana Visualizer',
-  description: 'A decentralized trust layer visualizer for the Verana network',
-  icons: {
-    icon: '/logo.svg',
-    shortcut: '/logo.svg',
-    apple: '/logo.svg',
-  },
+  description: 'A 3D observatory of the Verana verifiable trust network',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <head>
-        <PublicEnvScript />
+        <NetworkEnvScript />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className="bg-scene-bg font-sans text-scene-txt">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }

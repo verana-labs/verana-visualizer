@@ -59,3 +59,11 @@ node_modules/
 
 # superpowers working docs (internal specs/plans, not part of the deliverable)
 docs/superpowers/
+
+# working scratch
+.superpowers/
+/test-results/
+/playwright-report/
+
+AGENTS.md
+CLAUDE.md
