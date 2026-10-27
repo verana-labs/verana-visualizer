@@ -13,7 +13,7 @@ const ECOSYSTEM_PITCH = 7
 const ECOSYSTEM_STAGGER = 6
 const CORE_DROP = 26
 
-export interface BoardColumn {
+interface BoardColumn {
   key: string
   count: number
   left: number

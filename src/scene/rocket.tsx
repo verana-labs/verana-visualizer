@@ -14,7 +14,7 @@ import {
 } from 'three'
 import { useObservatory } from '@/store/observatory-store'
 
-export const ROCKET_TOAST = '🚀 You spotted the v5 rocket. Next stop: the visualizer spec.'
+const ROCKET_TOAST = '🚀 You spotted the v5 rocket. Next stop: the visualizer spec.'
 
 const FIRST_PASS_MS = 14_000
 const MIN_GAP_MS = 50_000

@@ -1,4 +1,4 @@
-export const WAVE_START = 8
+const WAVE_START = 8
 export const WAVE_REACH = 170
 
 export function blockChange(shown: number | null, next: number | null): { record: boolean; pulse: boolean } {

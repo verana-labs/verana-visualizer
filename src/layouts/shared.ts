@@ -2,16 +2,16 @@ import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { seededRandom } from './seed'
 import type { Vec3 } from './types'
 
-export const CORPORATION_DROP = 6
-export const LOOSE_CORPORATION_RING = 18
-export const LOOSE_AGENT_RING = 24
-export const LOOSE_AGENT_RISE = 6
-export const PROPOSAL_RING = 1.5
-export const PROPOSAL_RING_STEP = 0.35
-export const PROPOSALS_PER_RING = 10
-export const PROPOSAL_RISE = 1.2
-export const CHAIN_PROPOSAL_RING = 8
-export const CHAIN_PROPOSAL_RISE = 6
+const CORPORATION_DROP = 6
+const LOOSE_CORPORATION_RING = 18
+const LOOSE_AGENT_RING = 24
+const LOOSE_AGENT_RISE = 6
+const PROPOSAL_RING = 1.5
+const PROPOSAL_RING_STEP = 0.35
+const PROPOSALS_PER_RING = 10
+const PROPOSAL_RISE = 1.2
+const CHAIN_PROPOSAL_RING = 8
+const CHAIN_PROPOSAL_RISE = 6
 
 export function ecosystemOrder(model: NetworkModel): Entity[] {
   const counts = new Map<number, number>()

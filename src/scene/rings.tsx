@@ -39,12 +39,12 @@ function ringGeometry(rings: readonly RingSpec[]): BufferGeometry {
   return geometry
 }
 
-export interface RingPaint {
+interface RingPaint {
   absent: ReadonlySet<EntityId> | null
   settled: boolean
 }
 
-export const isFading = (changedAt: number, now: number, reduced: boolean) => !reduced && now - changedAt < FADE_MS
+const isFading = (changedAt: number, now: number, reduced: boolean) => !reduced && now - changedAt < FADE_MS
 
 export function needsRingRepaint(
   last: RingPaint | null,

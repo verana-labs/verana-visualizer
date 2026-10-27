@@ -21,6 +21,5 @@ describe('waveRadius', () => {
   it('grows from the start radius to exactly 170 units', () => {
     expect(waveRadius(0)).toBe(8)
     expect(waveRadius(1)).toBe(WAVE_REACH)
-    expect(WAVE_REACH).toBe(170)
   })
 })

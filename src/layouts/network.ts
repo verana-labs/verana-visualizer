@@ -13,7 +13,7 @@ export function orbitRadius(tier: number, schemaIndex: number): number {
   return BASE_ORBIT + tier * TIER_STEP + schemaIndex * SCHEMA_STEP
 }
 
-export function orbitTilt(schemaIndex: number): number {
+function orbitTilt(schemaIndex: number): number {
   return (schemaIndex % 2 ? -1 : 1) * (0.3 + schemaIndex * 0.28)
 }
 
