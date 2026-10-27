@@ -16,7 +16,6 @@ export function buildUrl(base: string, path: string, params: Record<string, Para
 export interface RequestOptions {
   timeoutMs?: number
   signal?: AbortSignal
-  revalidateSeconds?: number
 }
 
 export function requestSignal(options: RequestOptions, signal?: AbortSignal): AbortSignal | undefined {
@@ -29,12 +28,10 @@ export async function requestJson<T>(
   query: QueryInfo,
   schema: z.ZodType<T>,
   signal?: AbortSignal,
-  via?: string,
-  revalidateSeconds?: number
+  via?: string
 ): Promise<Fetched<T>> {
   const init: RequestInit = { method: query.method, headers: query.headers }
   if (signal) init.signal = signal
-  if (revalidateSeconds !== undefined) init.next = { revalidate: revalidateSeconds }
   if (query.body !== undefined) init.body = JSON.stringify(query.body)
   const data = await fetchJson(via ?? query.url, init, schema)
   return { data, query }

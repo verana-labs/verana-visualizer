@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { logger } from '@/lib/logger'
 import { PAPAPO_DID, testnetCfg } from '../../../tests/support/network'
 import { stubTrustNetwork } from '../../../tests/support/trust-fixture'
-import { loadVerdict, PINNED_REVALIDATE_S } from './load-verdict'
+import { loadVerdict } from './load-verdict'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -28,16 +28,5 @@ describe('loadVerdict', () => {
     const data = await loadVerdict(testnetCfg, PAPAPO_DID, null, { timeoutMs: 60_000, budgetMs: 50 })
     expect(data.networkError).toMatch(/failed/)
     expect(data.check.verdict).toMatchObject({ trusted: false })
-  })
-
-  it('lets the server cache reads pinned to a block, and never caches live reads', async () => {
-    const pinned = stubTrustNetwork()
-    await loadVerdict(testnetCfg, PAPAPO_DID, 44_000)
-    expect(pinned.length).toBeGreaterThan(0)
-    expect(pinned.filter((c) => c.method === 'GET').every((c) => c.revalidate === PINNED_REVALIDATE_S)).toBe(true)
-    vi.unstubAllGlobals()
-    const live = stubTrustNetwork()
-    await loadVerdict(testnetCfg, PAPAPO_DID, null)
-    expect(live.every((c) => c.revalidate === null)).toBe(true)
   })
 })
