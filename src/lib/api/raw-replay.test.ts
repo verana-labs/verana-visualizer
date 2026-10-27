@@ -31,6 +31,8 @@ const historyReplay =
   (c, r) =>
     c.indexer.entityHistory(kind, lastId(r))
 
+const searchReplay: Replay = (c, r) => c.graph.search(r.body as Parameters<Calls['graph']['search']>[0])
+
 const replays: Record<string, Replay> = {
   ecosystems: (c) => c.indexer.ecosystems(),
   schemas: (c) => c.indexer.schemas(),
@@ -73,7 +75,11 @@ const replays: Record<string, Replay> = {
   'graph-traverse-g1': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
   'graph-traverse-g1-11': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
   'graph-traverse-g1-97': (c, r) => c.graph.traverse('G1', (bodyOf(r).input as Record<string, unknown>) ?? {}),
-  'graph-search': (c, r) => c.graph.search(r.body as Parameters<Calls['graph']['search']>[0]),
+  'graph-search': searchReplay,
+  'graph-search-papapo-Did': searchReplay,
+  'graph-search-papapo-Ecosystem': searchReplay,
+  'graph-search-papapo-Corporation': searchReplay,
+  'graph-search-papapo-CredentialSchema': searchReplay,
   'graph-health': (c) => c.graph.health(),
   'chain-supply': (c) => c.chain.supply(),
   'chain-inflation': (c) => c.chain.inflation(),

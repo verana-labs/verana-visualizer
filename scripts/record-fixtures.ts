@@ -11,6 +11,7 @@ import { configFor, ECS_DID, PAPAPO_DID } from '../tests/support/network'
 const NETWORKS = ['testnet', 'devnet'] as const
 const TRACED_PARTICIPANTS: Record<string, number[]> = { testnet: [11, 97] }
 const FIXTURE_DIR = join(process.cwd(), 'tests', 'fixtures')
+const PALETTE_QUERY = 'papapo'
 
 interface RawResponse {
   request: QueryInfo
@@ -139,6 +140,16 @@ async function recordNetwork(network: string) {
   await record('indexer-health', () => indexer.health())
 
   await record('graph-search', () => graph.search({ surface: 'Did', limit: 20 }))
+  if (network === 'testnet')
+    for (const surface of ['Did', 'Ecosystem', 'Corporation', 'CredentialSchema'] as const)
+      await record(`graph-search-${PALETTE_QUERY}-${surface}`, () =>
+        graph.search({
+          surface,
+          freeText: PALETTE_QUERY,
+          limit: 20,
+          ...(surface === 'Did' ? { includeUntrusted: true } : {}),
+        })
+      )
   await record('graph-health', () => graph.health())
 
   await record('chain-supply', () => chain.supply())
