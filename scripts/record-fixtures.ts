@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { isTraversable } from '../src/domain/participant-state'
 import { createChainClient } from '../src/lib/api/chain'
 import { createGraphClient } from '../src/lib/api/graph'
 import { createIndexerClient } from '../src/lib/api/indexer'
@@ -10,6 +11,7 @@ import { configFor, ECS_DID, PAPAPO_DID } from '../tests/support/network'
 
 const NETWORKS = ['testnet', 'devnet'] as const
 const TRACED_PARTICIPANTS: Record<string, number[]> = { testnet: [11, 97] }
+const TRUST_PARTICIPANT: Record<string, number> = { testnet: 158, devnet: 48 }
 const FIXTURE_DIR = join(process.cwd(), 'tests', 'fixtures')
 const PALETTE_QUERY = 'papapo'
 
@@ -63,7 +65,7 @@ async function recordNetwork(network: string) {
   const recordAnyStatus = async (name: string, load: () => Promise<unknown>) => {
     rawResponses.length = 0
     await load().catch((error: unknown) => {
-      if (!(error instanceof FetchError) || error.status === null) throw error
+      if (!(error instanceof FetchError) || error.status === null || error.status >= 500) throw error
     })
     await write(name, rawResponses[0].request)
   }
@@ -77,15 +79,22 @@ async function recordNetwork(network: string) {
     }
   }
 
-  const [ecosystems, schemas, participants, corporations] = [
-    await record('ecosystems', () => indexer.ecosystems()),
-    await record('schemas', () => indexer.schemas()),
-    await record('participants', () => indexer.participants()),
-    await record('corporations', () => indexer.corporations()),
-  ]
+  const trustId = TRUST_PARTICIPANT[network]
+  const trusted = (await indexer.participants()).data.find((p) => p.id === trustId)
+  if (!trusted || !isTraversable(trusted))
+    throw new Error(
+      `${network}: participant ${trustId}, which graph-traverse-g1 and the trust fixtures are pinned to, is ${
+        trusted
+          ? `op_state ${trusted.op_state}, revoked ${trusted.revoked ?? 'no'}`
+          : 'missing from the participant list'
+      } and the graph no longer traverses it. Pin a VALIDATED, unrevoked participant in TRUST_PARTICIPANT and move tests/support/trust-fixture.ts and the e2e trust flow to it.`
+    )
+  const ecosystems = await record('ecosystems', () => indexer.ecosystems())
+  await record('participants', () => indexer.participants())
+  const schemas = await record('schemas', () => indexer.schemas())
+  const corporations = await record('corporations', () => indexer.corporations())
 
   const funded = corporations.data.find((c) => Number(c.deposit) > 0) ?? corporations.data[0]
-  const issuer = participants.data.find((p) => p.role === 'ISSUER') ?? participants.data[0]
   const ecosystem = ecosystems.data[0]
   const schema = schemas.data[0]
 
@@ -103,10 +112,8 @@ async function recordNetwork(network: string) {
     await record('entity-history-first-ecosystem', () => indexer.entityHistory('ecosystem', firstEcosystem.id))
   if (schema)
     await record('entity-history-credential-schema', () => indexer.entityHistory('credential-schema', schema.id))
-  if (issuer) {
-    await record('entity-history-participant', () => indexer.entityHistory('participant', issuer.id))
-    await record('graph-traverse-g1', () => graph.traverse('G1', { participantId: issuer.id }))
-  }
+  await record('entity-history-participant', () => indexer.entityHistory('participant', trusted.id))
+  await record('graph-traverse-g1', () => graph.traverse('G1', { participantId: trusted.id }))
   for (const participantId of TRACED_PARTICIPANTS[network] ?? [])
     await recordAnyStatus(`graph-traverse-g1-${participantId}`, () => graph.traverse('G1', { participantId }))
 
