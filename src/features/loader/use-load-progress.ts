@@ -1,13 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { LoadStep } from '@/lib/api/load-network'
 import { FetchError } from '@/lib/fetch-json'
-
-export interface LoadStepSpec {
-  label: string
-  barrier?: boolean
-  run: () => Promise<unknown>
-}
 
 interface LoadProgress {
   progress: number
@@ -22,7 +17,7 @@ const toFetchError = (cause: unknown): FetchError =>
     ? cause
     : new FetchError(cause instanceof Error ? cause.message : String(cause), { url: '', status: null, body: null })
 
-export function useLoadProgress(steps: readonly LoadStepSpec[]): LoadProgress {
+export function useLoadProgress(steps: readonly LoadStep[]): LoadProgress {
   const stepsRef = useRef(steps)
   stepsRef.current = steps
   const cancelRef = useRef<() => void>(() => {})
@@ -38,7 +33,7 @@ export function useLoadProgress(steps: readonly LoadStepSpec[]): LoadProgress {
     setFinished(new Set())
     setError(null)
     let failed = false
-    const runStep = async (step: LoadStepSpec, index: number) => {
+    const runStep = async (step: LoadStep, index: number) => {
       try {
         await step.run()
       } catch (cause) {
