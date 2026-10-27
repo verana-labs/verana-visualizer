@@ -325,7 +325,6 @@ export const validatorChainSchema = z.array(validatorChainNodeSchema)
 
 export const searchResponseSchema = z
   .object({
-    totalCount: z.number(),
     hits: z.array(z.object({ type: z.string(), id: z.union([z.string(), z.number()]) }).passthrough()),
     nextCursor: z.string().nullish(),
   })
