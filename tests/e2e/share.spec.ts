@@ -8,7 +8,7 @@ test('a shared URL restores the lens and the selection', async ({ page }) => {
   await expect(page).toHaveURL(/sel=participant:158/)
 })
 
-test('Task 19: the share button copies a link that restores lens and selection', async ({ page, context }) => {
+test('the share button copies a link that restores lens and selection', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await openScene(page, '?lens=registry&sel=participant:158')
   await page.getByRole('button', { name: 'Share', exact: true }).click()
