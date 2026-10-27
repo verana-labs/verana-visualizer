@@ -9,7 +9,7 @@ import { EconomicsLens } from './economics-lens'
 const model = testnetModel()
 
 beforeEach(() => {
-  useObservatory.setState({ model, lens: 'network', economics: null, simulationOpen: false })
+  useObservatory.setState({ model, lens: 'network', economics: null })
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: string) => {

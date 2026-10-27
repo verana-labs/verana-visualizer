@@ -45,7 +45,6 @@ export interface ObservatoryState {
   paletteQuery: string
   trustCheck: TrustCheckState | null
   economics: EconomicsScene | null
-  simulationOpen: boolean
   chainBlocks: BlockSummary[]
   chainValidators: ValidatorOrb[] | null
   governance: GovernanceScene | null
@@ -65,7 +64,6 @@ export interface ObservatoryState {
   clearTrustCheck(): void
   setAgentVerdict(id: EntityId, trusted: boolean): void
   setEconomics(economics: EconomicsScene): void
-  setSimulationOpen(open: boolean): void
   setChainBlocks(blocks: BlockSummary[]): void
   setChainValidators(validators: ValidatorOrb[] | null): void
   setGovernance(governance: GovernanceScene): void
@@ -93,7 +91,6 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   paletteQuery: '',
   trustCheck: null,
   economics: null,
-  simulationOpen: false,
   chainBlocks: [],
   chainValidators: null,
   governance: null,
@@ -138,7 +135,6 @@ export const useObservatory = create<ObservatoryState>()((set) => ({
   clearTrustCheck: () => set({ trustCheck: null }),
   setAgentVerdict: (id, trusted) => set((s) => ({ agentVerdicts: new Map(s.agentVerdicts).set(id, trusted) })),
   setEconomics: (economics) => set({ economics }),
-  setSimulationOpen: (open) => set({ simulationOpen: open }),
   setChainBlocks: (blocks) => set({ chainBlocks: blocks }),
   setChainValidators: (validators) => set({ chainValidators: validators }),
   setGovernance: (governance) => set({ governance }),

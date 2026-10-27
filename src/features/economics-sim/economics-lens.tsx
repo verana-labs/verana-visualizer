@@ -15,8 +15,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   const active = useObservatory((s) => s.lens === 'economics')
   const model = useObservatory((s) => s.model)
   const raw = useObservatory((s) => s.model?.raw ?? null)
-  const simulationOpen = useObservatory((s) => s.simulationOpen)
-  const setSimulationOpen = useObservatory((s) => s.setSimulationOpen)
+  const [simulationOpen, setSimulationOpen] = useState(false)
   const [requested, setRequested] = useState(false)
   const [state, setState] = useState<EconomicsState>({ status: 'loading' })
 
@@ -53,7 +52,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [simulationOpen, setSimulationOpen])
+  }, [simulationOpen])
 
   if (!active || !model) return null
   return (
