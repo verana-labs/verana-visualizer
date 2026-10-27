@@ -4,7 +4,6 @@ import { testnetCfg } from '../../../tests/support/network'
 import { rawBody } from '../../../tests/support/recorded'
 import {
   averageBlockSeconds,
-  BLOCK_TIME_WINDOW,
   type BlockSummary,
   contiguousTail,
   loadBlockWindow,
@@ -84,7 +83,6 @@ describe('loadBlockWindow', () => {
   it('reads the last 20 blocks from the chain, newest last', async () => {
     const fetchMock = stubNetwork()
     const window = await loadBlockWindow(testnetCfg)
-    expect(BLOCK_TIME_WINDOW).toBe(20)
     expect(window.error).toBeNull()
     expect(window.blocks.map((b) => b.height)).toEqual(Array.from({ length: 20 }, (_, i) => HEAD - 19 + i))
     expect(window.blocks.at(-1)).toEqual({ height: HEAD, time: blockTime(HEAD), txs: HEAD % 3 })

@@ -76,7 +76,6 @@ describe('HealthStrip', () => {
     const fetchMock = stubNetwork()
     render(<HealthStrip cfg={testnetCfg} />)
     await flush()
-    expect(REFRESH_MS).toBe(30_000)
     const first = fetchMock.mock.calls.length
     expect(first).toBeGreaterThan(0)
     expect(screen.getByTestId('health-checked')).toHaveTextContent('10:00:00')

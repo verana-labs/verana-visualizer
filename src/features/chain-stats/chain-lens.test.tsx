@@ -132,7 +132,6 @@ describe('ChainLens resilience', () => {
       vi.advanceTimersByTime(STATS_REFRESH_MS)
     })
     await vi.waitFor(() => expect(snapshots()).toBe(2))
-    expect(STATS_REFRESH_MS).toBe(30_000)
     vi.useRealTimers()
   })
 

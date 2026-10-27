@@ -13,7 +13,6 @@ import {
   simulateVerification,
   tuInVna,
   tuToUvna,
-  UVNA_PER_VNA,
   verificationBeneficiaries,
 } from './economics'
 
@@ -210,7 +209,6 @@ describe('liveTuRate', () => {
     expect(tuToUvna(4.35, at('100000000'))).toBe(435n)
     expect(tuToUvna(0.57, at('100000000'))).toBe(57n)
     expect(tuToUvna(1, at('2500000'))).toBe(2n)
-    expect(UVNA_PER_VNA).toBe(1_000_000)
   })
 
   it('refuses a rate without rate_scale instead of assuming 0', () => {

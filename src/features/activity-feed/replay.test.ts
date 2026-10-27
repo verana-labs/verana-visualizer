@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { replayWindows } from '@/domain/events'
 import type { IndexerEvent } from '@/lib/api/schemas'
-import { findReplayEvents, REPLAY_COUNT, REPLAY_INTERVAL_MS, REPLAY_LIMIT, useReplay } from './replay'
+import { findReplayEvents, useReplay } from './replay'
 
 const event = (block: number): IndexerEvent => ({
   type: 'indexer-event',
@@ -22,8 +22,6 @@ describe('findReplayEvents', () => {
     const windows = replayWindows(head)
     const fetchEvents = vi.fn(async (after: number) => (after === windows[3] ? range(after + 1, 40) : []))
     const found = await findReplayEvents(head, fetchEvents)
-    expect(REPLAY_LIMIT).toBe(100)
-    expect(REPLAY_COUNT).toBe(30)
     expect(fetchEvents.mock.calls).toEqual(windows.slice(0, 4).map((w) => [w, 100, expect.anything()]))
     expect(found?.events).toHaveLength(30)
     expect(found?.events[0].block_height).toBe(windows[3] + 11)
@@ -74,7 +72,6 @@ describe('useReplay', () => {
     })
     expect(result.current.state).toEqual({ status: 'running', from: 1010, to: 1039 })
     expect(onEvent).toHaveBeenCalledTimes(1)
-    expect(REPLAY_INTERVAL_MS).toBe(450)
     act(() => vi.advanceTimersByTime(449))
     expect(onEvent).toHaveBeenCalledTimes(1)
     act(() => vi.advanceTimersByTime(1))

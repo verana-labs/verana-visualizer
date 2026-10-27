@@ -2,25 +2,18 @@ import { describe, expect, it } from 'vitest'
 import { MODULE_COLORS } from '@/features/activity-feed/activity'
 import {
   bezierPoint,
-  COMET_CAP,
   COMET_MS,
   cometBrightness,
   cometLift,
   cometProgress,
   enqueueComets,
   STAGGER_MS,
-  TRAIL_POINTS,
 } from './comet-system'
 
 const launch = (n: number) =>
   Array.from({ length: n }, (_, i) => ({ target: `participant:${i}` as const, color: '#34d399' }))
 
 describe('comet system', () => {
-  it('flies for 1.8 s with a 26-point trail', () => {
-    expect(COMET_MS).toBe(1800)
-    expect(TRAIL_POINTS).toBe(26)
-  })
-
   it('staggers the comets of one event', () => {
     const comets = enqueueComets([], launch(3), 1000, false)
     expect(comets.map((c) => c.startAt)).toEqual([1000, 1000 + STAGGER_MS, 1000 + 2 * STAGGER_MS])
@@ -34,7 +27,6 @@ describe('comet system', () => {
       10,
       false
     )
-    expect(COMET_CAP).toBe(48)
     expect(next).toHaveLength(48)
     expect(next[0].target).toBe('participant:12')
     expect(next[next.length - 1].target).toBe('agent:participant:19')

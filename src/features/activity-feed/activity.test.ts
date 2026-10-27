@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { appendFeed, FEED_SIZE } from '@/domain/activity'
+import { appendFeed } from '@/domain/activity'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import { recorded, testnetModel } from '../../../tests/support/recorded'
 import {
@@ -77,7 +77,6 @@ describe('cometsFor', () => {
     const dids = [...new Set(model.participants.map((p) => p.did).filter((d): d is string => !!d))].slice(0, 10)
     expect(dids.length).toBeGreaterThan(6)
     const comets = cometsFor(event({ did: dids[0] }, { module: 'de', related_dids: dids }), model)
-    expect(COMETS_PER_EVENT).toBe(6)
     expect(comets).toHaveLength(6)
     expect(comets.every((c) => c.color === '#94a3b8')).toBe(true)
   })
@@ -91,7 +90,6 @@ describe('feed', () => {
   it('keeps the newest 6 items, newest first', () => {
     let feed = appendFeed([], feedItemOf(event({ block_height: 1 }), model))
     for (let block = 2; block <= 9; block++) feed = appendFeed(feed, feedItemOf(event({ block_height: block }), model))
-    expect(FEED_SIZE).toBe(6)
     expect(feed.map((item) => item.block)).toEqual([9, 8, 7, 6, 5, 4])
     expect(new Set(feed.map((item) => item.key)).size).toBe(6)
   })

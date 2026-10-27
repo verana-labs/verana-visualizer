@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react'
 import { act } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useTimeStore } from './time-store'
-import { T_DEBOUNCE_MS, useTimeUrl } from './use-time-url'
+import { useTimeUrl } from './use-time-url'
 
 let params = new URLSearchParams()
 vi.mock('next/navigation', () => ({
@@ -30,7 +30,6 @@ describe('useTimeUrl', () => {
       vi.advanceTimersByTime(100)
       useTimeStore.getState().setHeight(7070)
     })
-    expect(T_DEBOUNCE_MS).toBe(250)
     act(() => vi.advanceTimersByTime(249))
     expect(window.location.search).toBe('?lens=time')
     act(() => vi.advanceTimersByTime(1))

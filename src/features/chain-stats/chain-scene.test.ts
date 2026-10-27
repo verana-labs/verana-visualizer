@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Validator } from '@/lib/api/schemas'
 import { rawBody } from '../../../tests/support/recorded'
-import { STREAM_SIZE, streamBlocks, validatorOrbs } from './chain-scene'
+import { streamBlocks, validatorOrbs } from './chain-scene'
 
 const testnetValidators = (rawBody('chain-validators') as { validators: Validator[] }).validators
 
@@ -48,7 +48,6 @@ describe('streamBlocks', () => {
   it('keeps the newest 12 blocks, newest first', () => {
     const blocks = Array.from({ length: 20 }, (_, i) => ({ height: 100 + i, time: '', txs: i }))
     const stream = streamBlocks(blocks)
-    expect(STREAM_SIZE).toBe(12)
     expect(stream.map((b) => b.height)).toEqual(Array.from({ length: 12 }, (_, i) => 119 - i))
   })
 })

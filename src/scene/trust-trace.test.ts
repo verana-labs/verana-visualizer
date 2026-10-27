@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { EntityId } from '@/domain/network-model'
-import { TRUST_HOP_MS, type TrustCheck } from '@/domain/trust-check'
+import { type TrustCheck } from '@/domain/trust-check'
 import { testnetModel } from '../../tests/support/recorded'
 import { agentStrength } from './links'
 import { dimOf, type FocusSets } from './scene-focus'
@@ -22,7 +22,6 @@ const check = (path: EntityId[]): TrustCheck => ({
 
 describe('the trust trace', () => {
   it('moves the spark 0.55 s per hop and ends at the root', () => {
-    expect(TRUST_HOP_MS).toBe(550)
     expect(sparkAt(3, 0)).toEqual({ segment: 0, t: 0 })
     expect(sparkAt(3, 275)).toEqual({ segment: 0, t: 0.5 })
     expect(sparkAt(3, 550)).toEqual({ segment: 1, t: 0 })

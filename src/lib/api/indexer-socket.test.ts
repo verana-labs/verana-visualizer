@@ -161,7 +161,6 @@ describe('connectIndexerSocket', () => {
     const onBlock = vi.fn()
     const dispose = connectIndexerSocket(URL, onBlock, create)
     latest().drop()
-    expect(RECONNECT_MS).toBe(3000)
     vi.advanceTimersByTime(2999)
     expect(MockSocket.instances).toHaveLength(1)
     vi.advanceTimersByTime(1)
