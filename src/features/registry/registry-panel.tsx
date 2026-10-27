@@ -7,8 +7,7 @@ import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import { WatchPanel } from '@/features/watch-panel/watch-panel'
 import { useObservatory } from '@/store/observatory-store'
-import { GlassPanel } from '@/ui/glass-panel'
-import { useBelowHud } from '@/ui/use-below-hud'
+import { LensPanel } from '@/ui/lens-panel'
 import type { RegistryData } from './load-registry'
 import { expiringSoon, onboardingColor, onboardingCounts, type PendingTask } from './registry-data'
 
@@ -19,8 +18,6 @@ interface RegistryPanelProps {
   now: Date
   state: RegistryState
 }
-
-const FOOTER_SPACE = 66
 
 function Columns({ model, tasks }: { model: NetworkModel; tasks: readonly PendingTask[] | null }) {
   const counts = onboardingCounts(model.raw.participants, tasks)
@@ -105,14 +102,8 @@ function Ready({ model, now, data }: { model: NetworkModel; now: Date; data: Reg
 }
 
 export function RegistryPanel({ model, now, state }: RegistryPanelProps) {
-  const top = useBelowHud()
   return (
-    <GlassPanel
-      role="complementary"
-      aria-label="Registry"
-      style={{ top, maxHeight: `calc(100vh - ${top + FOOTER_SPACE}px)` }}
-      className="fixed left-4 z-10 w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
-    >
+    <LensPanel role="complementary" aria-label="Registry">
       <Kicker>registry · live data</Kicker>
       <h2 className="mt-1 text-base font-semibold tracking-[-.01em]">Onboarding lifecycle</h2>
       <p className="text-[11.5px] text-scene-mut">
@@ -127,6 +118,6 @@ export function RegistryPanel({ model, now, state }: RegistryPanelProps) {
       ) : (
         <Ready model={model} now={now} data={state.data} />
       )}
-    </GlassPanel>
+    </LensPanel>
   )
 }

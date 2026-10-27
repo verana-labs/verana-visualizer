@@ -4,8 +4,7 @@ import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { QueryInfo } from '@/lib/api/query-info'
 import { amount } from '@/lib/format'
-import { GlassPanel } from '@/ui/glass-panel'
-import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
+import { LensPanel } from '@/ui/lens-panel'
 import type { ValidatorOrb } from './chain-scene'
 import type { StatRow } from './load-chain-stats'
 
@@ -74,15 +73,9 @@ function Validators({ state }: { state: ValidatorsState }) {
 }
 
 export function ChainStatsPanel({ chainId, rows, validators }: ChainStatsPanelProps) {
-  const top = useBelowHud()
   const blockQuery = rows.find((r) => r.id === 'blockHeight')?.query
   return (
-    <GlassPanel
-      role="region"
-      aria-label="Chain"
-      style={{ top, maxHeight: `calc(100vh - ${top + FOOTER_SPACE}px)` }}
-      className="fixed left-4 z-10 w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
-    >
+    <LensPanel role="region" aria-label="Chain">
       <Kicker>{`chain · ${chainId} · live data`}</Kicker>
       <h2 className="mt-1 text-base font-semibold tracking-[-.01em]">Network health at a glance</h2>
       <div className="mt-2 text-[12px]">
@@ -97,6 +90,6 @@ export function ChainStatsPanel({ chainId, rows, validators }: ChainStatsPanelPr
           <Validators state={validators} />
         </div>
       </section>
-    </GlassPanel>
+    </LensPanel>
   )
 }

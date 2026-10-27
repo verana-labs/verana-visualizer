@@ -6,8 +6,7 @@ import type { NetworkModel } from '@/domain/network-model'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import { useObservatory } from '@/store/observatory-store'
-import { GlassPanel } from '@/ui/glass-panel'
-import { useBelowHud } from '@/ui/use-below-hud'
+import { LensPanel } from '@/ui/lens-panel'
 import type { GovernanceData } from './load-governance'
 
 export type GovernanceState =
@@ -21,7 +20,6 @@ interface GovernancePanelProps {
   state: GovernanceState
 }
 
-const FOOTER_SPACE = 66
 const ROW =
   'flex w-full cursor-pointer flex-col gap-0.5 border-b border-scene-line py-[6px] text-left last:border-b-0 hover:text-white'
 
@@ -117,13 +115,8 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
 }
 
 export function GovernancePanel({ chainId, model, state }: GovernancePanelProps) {
-  const top = useBelowHud()
   return (
-    <GlassPanel
-      aria-label="Governance"
-      style={{ top, maxHeight: `calc(100vh - ${top + FOOTER_SPACE}px)` }}
-      className="fixed left-4 z-10 w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
-    >
+    <LensPanel aria-label="Governance">
       <Kicker>governance · live data</Kicker>
       <h2 className="mt-1 text-base font-semibold tracking-[-.01em]">Proposals</h2>
       {state.status === 'loading' && (
@@ -135,6 +128,6 @@ export function GovernancePanel({ chainId, model, state }: GovernancePanelProps)
         </p>
       )}
       {state.status === 'ready' && <Ready chainId={chainId} model={model} data={state.data} />}
-    </GlassPanel>
+    </LensPanel>
   )
 }

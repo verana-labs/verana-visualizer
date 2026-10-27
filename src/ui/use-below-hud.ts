@@ -2,7 +2,6 @@ import { useLayoutEffect, useState } from 'react'
 
 const HUD_GAP = 12
 const FALLBACK_TOP = 248
-export const FOOTER_SPACE = 66
 
 export function useBelowHud(): number {
   const [top, setTop] = useState(FALLBACK_TOP)

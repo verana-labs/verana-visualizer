@@ -10,9 +10,8 @@ import { ShowQuery } from '@/features/inspector/show-query'
 import type { Participant } from '@/lib/api/schemas'
 import { amount, percent, priced, vnaFromUvna } from '@/lib/format'
 import { Button } from '@/ui/button'
-import { GlassPanel } from '@/ui/glass-panel'
+import { LensPanel } from '@/ui/lens-panel'
 import { Sparkline } from '@/ui/sparkline'
-import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
 import type { EconomicsData } from './load-economics'
 
 export type EconomicsState =
@@ -178,13 +177,8 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
 }
 
 export function EconomicsPanel({ chainId, model, state, onOpenSimulation }: EconomicsPanelProps) {
-  const top = useBelowHud()
   return (
-    <GlassPanel
-      aria-label="Economics"
-      style={{ top, maxHeight: `calc(100vh - ${top + FOOTER_SPACE}px)` }}
-      className="fixed left-4 z-10 w-[330px] max-w-[calc(100vw-32px)] overflow-y-auto p-4 text-scene-txt"
-    >
+    <LensPanel aria-label="Economics">
       <Kicker>economics · live data</Kicker>
       <h2 className="mt-1 text-base font-semibold tracking-[-.01em]">Trust deposits</h2>
       {state.status === 'loading' && (
@@ -203,6 +197,6 @@ export function EconomicsPanel({ chainId, model, state, onOpenSimulation }: Econ
       >
         Open what-if simulator
       </Button>
-    </GlassPanel>
+    </LensPanel>
   )
 }
