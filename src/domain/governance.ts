@@ -90,7 +90,6 @@ export interface GovernanceScene {
 
 export type UpgradeExecutionStatus = 'executed' | 'pending' | 'not_executed' | 'unknown'
 
-const UPGRADE_MESSAGE_TYPE = '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade'
 const PASSED = 'PROPOSAL_STATUS_PASSED'
 const OPEN_STATUSES = new Set(['SUBMITTED', 'VOTING_PERIOD', 'DEPOSIT_PERIOD'])
 const PROPOSAL_TIER = 3
@@ -98,7 +97,7 @@ const MAX_NAME = 120
 const DECIMAL = /^\d+(\.\d+)?$/
 const SHARE_SCALE = BigInt(1_000_000)
 
-export const PROPOSAL_COLORS = {
+const PROPOSAL_COLORS = {
   open: '#38E1FF',
   accepted: '#29C68C',
   rejected: '#ff8a8a',
@@ -119,7 +118,7 @@ export function formatProposalStatus(status: string): string {
 
 export function isUpgradeMessage(message: Message): boolean {
   const type = text(message['@type'])
-  return type === UPGRADE_MESSAGE_TYPE || type.includes('MsgSoftwareUpgrade')
+  return type.includes('MsgSoftwareUpgrade')
 }
 
 export function upgradePlanOf(messages: readonly Message[]): UpgradePlan | null {
@@ -284,7 +283,7 @@ export function formatDecimal(value: string): string {
   return fraction === undefined ? grouped : `${grouped}.${fraction}`
 }
 
-export const clampTitle = (title: string) => (title.length > MAX_NAME ? `${title.slice(0, MAX_NAME)}…` : title)
+const clampTitle = (title: string) => (title.length > MAX_NAME ? `${title.slice(0, MAX_NAME)}…` : title)
 
 export function proposalEntityId(source: ProposalSource, n: number): EntityId {
   return source === 'group' ? `proposal:group-${n}` : `proposal:${n}`

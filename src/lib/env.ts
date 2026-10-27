@@ -1,8 +1,6 @@
 import { env } from 'next-runtime-env'
 import { useMemo } from 'react'
 
-export type NetworkName = 'devnet' | 'testnet' | string
-
 export interface NetworkConfig {
   indexerUrl: string
   graphUrl: string
@@ -11,7 +9,7 @@ export interface NetworkConfig {
   frontendUrl: string
   peerVisualizerUrl: string | null
   chainId: string
-  chainName: NetworkName
+  chainName: string
   indexerWsUrl: string
 }
 
