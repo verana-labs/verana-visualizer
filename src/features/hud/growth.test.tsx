@@ -1,11 +1,11 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, render, renderHook, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { StatsBucket } from '@/domain/digest'
 import { useObservatory } from '@/store/observatory-store'
 import { testnetCfg } from '../../../tests/support/network'
 import { rawBody, testnetModel } from '../../../tests/support/recorded'
-import { useGrowth, WhatChanged } from './growth'
+import { useGrowth, useGrowthLoader, WhatChanged } from './growth'
 import { Hud } from './hud'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams('') }))
@@ -61,6 +61,34 @@ describe('HUD growth sparklines', () => {
     render(<Hud cfg={testnetCfg} />)
     expect(screen.getByText(/growth unavailable/i)).toBeInTheDocument()
     expect(screen.queryByTestId('growth')).toBeNull()
+  })
+})
+
+describe('useGrowthLoader', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('does not refetch or flash loading when the model is swapped over the same raw data', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () =>
+        Response.json({
+          granularity: 'DAY',
+          timestamp_from: '2026-10-01T00:00:00Z',
+          timestamp_until: '2026-12-31T00:00:00Z',
+          entity_type: 'GLOBAL',
+          entity_ids: [],
+          result_type: 'BUCKETS',
+          buckets: recorded,
+        })
+      )
+    )
+    renderHook(() => useGrowthLoader(testnetCfg))
+    await waitFor(() => expect(useGrowth.getState().state.status).toBe('ready'))
+    const before = vi.mocked(fetch).mock.calls.length
+    const model = useObservatory.getState().model
+    act(() => useObservatory.setState({ model: model && { ...model } }))
+    expect(useGrowth.getState().state.status).toBe('ready')
+    expect(vi.mocked(fetch).mock.calls.length).toBe(before)
   })
 })
 

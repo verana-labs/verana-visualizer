@@ -25,9 +25,10 @@ export type GrowthState =
 export const useGrowth = create<{ state: GrowthState }>()(() => ({ state: { status: 'loading' } }))
 
 export function useGrowthLoader(cfg: NetworkConfig) {
-  const model = useObservatory((s) => s.model)
+  const raw = useObservatory((s) => s.model?.raw ?? null)
   useEffect(() => {
-    if (!model) return
+    const model = useObservatory.getState().model
+    if (!raw || !model) return
     let cancelled = false
     const now = new Date()
     useGrowth.setState({ state: { status: 'loading' } })
@@ -54,7 +55,7 @@ export function useGrowthLoader(cfg: NetworkConfig) {
     return () => {
       cancelled = true
     }
-  }, [cfg, model])
+  }, [cfg, raw])
 }
 
 export function GrowthLine({ metric, total }: { metric: GrowthMetric; total: number | null }) {
