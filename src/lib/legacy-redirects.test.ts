@@ -23,12 +23,12 @@ describe('legacyRedirect', () => {
   })
 
   it('maps permalinks', () => {
-    expect(r('/e/participant/158')).toBe('/?sel=participant:158')
-    expect(r('/e/schema/7')).toBe('/?sel=schema:7')
-    expect(r('/e/did/did:web:x')).toBe('/?sel=agent:did%3Aweb%3Ax')
-    expect(r('/e/did/did%3Aweb%3Ax')).toBe('/?sel=agent:did%3Aweb%3Ax')
-    expect(r('/e/bogus/1')).toBe('/')
-    expect(r('/e/participant/abc')).toBe('/')
+    expect(permalinkFor('participant', '158')).toBe('/?sel=participant:158')
+    expect(permalinkFor('schema', '7')).toBe('/?sel=schema:7')
+    expect(permalinkFor('did', 'did:web:x')).toBe('/?sel=agent:did%3Aweb%3Ax')
+    expect(permalinkFor('did', 'did%3Aweb%3Ax')).toBe('/?sel=agent:did%3Aweb%3Ax')
+    expect(permalinkFor('bogus', '1')).toBe('/')
+    expect(permalinkFor('participant', 'abc')).toBe('/')
     expect(permalinkFor('did', 'did:x')).toBe('/?sel=agent:did%3Ax')
   })
 

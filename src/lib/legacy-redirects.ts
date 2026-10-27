@@ -46,8 +46,5 @@ export function legacyRedirect(pathname: string, search: URLSearchParams): strin
     const target = permalinkFor('proposal', governance[1])
     return target === '/' ? '/?lens=governance' : `/?lens=governance&${target.slice(2)}`
   }
-  const permalink = /^\/e\/([^/]+)\/([^/]+)$/.exec(path)
-  if (permalink) return permalinkFor(permalink[1], permalink[2])
-  if (path.startsWith('/e/')) return '/'
   return STATIC_ROUTES[path] ?? null
 }
