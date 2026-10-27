@@ -126,11 +126,9 @@ export function Rocket() {
   const onOver = (event: ThreeEvent<PointerEvent>) => {
     if (!body.current?.visible) return
     event.stopPropagation()
-    document.body.style.cursor = 'pointer'
     useObservatory.getState().hover('rocket')
   }
   const onOut = () => {
-    document.body.style.cursor = ''
     if (useObservatory.getState().hovered === 'rocket') useObservatory.getState().hover(null)
   }
 
