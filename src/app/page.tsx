@@ -4,7 +4,11 @@ import dynamic from 'next/dynamic'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { ActivityFeed } from '@/features/activity-feed/activity-feed'
+import { Autopilot } from '@/features/autopilot/autopilot'
+import { ChainLens } from '@/features/chain-stats/chain-lens'
+import { EconomicsLens } from '@/features/economics-sim/economics-lens'
 import { Footer } from '@/features/footer/footer'
+import { GovernanceLens } from '@/features/governance/governance-lens'
 import { HealthStrip } from '@/features/health-strip/health-strip'
 import { HoverCard } from '@/features/hover-card/hover-card'
 import { useGrowthLoader } from '@/features/hud/growth'
@@ -16,8 +20,11 @@ import { LensBar } from '@/features/lens-bar/lens-bar'
 import { ListFallback } from '@/features/list-fallback/list-fallback'
 import { StardustLoader } from '@/features/loader/stardust-loader'
 import { useLoadProgress } from '@/features/loader/use-load-progress'
+import { RegistryLens } from '@/features/registry/registry-lens'
 import { SearchPalette } from '@/features/search/search-palette'
+import { TimeLens } from '@/features/time-scrubber/time-lens'
 import { Toast } from '@/features/toast/toast'
+import { Tour } from '@/features/tour/tour'
 import { useAgentResolution } from '@/features/trust-check/agent-resolution'
 import { useTrustCheckRunner } from '@/features/trust-check/use-trust-check-runner'
 import { accentFor } from '@/lib/accent'
@@ -88,10 +95,17 @@ function Observatory() {
       <SearchPalette cfg={cfg} />
       <Legend />
       {model && <ActivityFeed cfg={cfg} />}
+      {model && <EconomicsLens cfg={cfg} />}
+      {model && <ChainLens cfg={cfg} />}
+      {model && <RegistryLens cfg={cfg} />}
+      {model && <TimeLens cfg={cfg} />}
+      {model && <GovernanceLens cfg={cfg} />}
       <Footer cfg={cfg} />
       <Inspector frontendUrl={cfg.frontendUrl} chainId={cfg.chainId} />
       {webgl === true && <HoverCard />}
       <Toast />
+      <Tour ready={loaderGone} cfg={cfg} />
+      <Autopilot cfg={cfg} />
       {!loaderGone && (
         <StardustLoader
           progress={load.progress}

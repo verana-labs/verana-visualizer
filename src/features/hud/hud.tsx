@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { type ReactNode, useState } from 'react'
 import { countedParticipants } from '@/features/inspector/entity-facts'
+import { ViewActions } from '@/features/share/view-actions'
 import { LiveTag } from '@/features/time-scrubber/live-tag'
 import type { NetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
@@ -112,6 +113,7 @@ export function Hud({ cfg, children }: { cfg: NetworkConfig; children?: ReactNod
         <Button onClick={() => useObservatory.getState().openPalette('check')} className="text-[12.5px]">
           Is this service trustworthy?
         </Button>
+        <ViewActions cfg={cfg} />
         {children}
       </div>
     </GlassPanel>
