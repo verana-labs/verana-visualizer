@@ -48,10 +48,13 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   useEffect(() => {
     if (!simulationOpen) return
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !isTyping(event.target)) setSimulationOpen(false)
+      if (event.key !== 'Escape' || isTyping(event.target)) return
+      if (event.defaultPrevented || useObservatory.getState().palette !== 'closed') return
+      event.stopPropagation()
+      setSimulationOpen(false)
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
   }, [simulationOpen])
 
   if (!active || !model) return null

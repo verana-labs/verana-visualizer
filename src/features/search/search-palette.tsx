@@ -51,6 +51,7 @@ function useOpenShortcuts(toggle: () => void, close: () => void, open: boolean) 
         return
       }
       if (event.key === 'Escape' && open) {
+        event.preventDefault()
         event.stopPropagation()
         close()
       }
