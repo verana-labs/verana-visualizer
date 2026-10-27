@@ -1,8 +1,8 @@
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { maxOrbitRadius, networkLayout } from './network'
 import { seededRandom } from './seed'
-import { ofKind, placeProposals } from './shared'
-import type { Layout, LensExtras, Vec3 } from './types'
+import { ofKind } from './shared'
+import type { Layout, Vec3 } from './types'
 
 const CONSTELLATION_GAP = 5
 const CONSTELLATION_DROP = 2
@@ -15,7 +15,7 @@ function besideStar(star: Vec3, reach: number): Vec3 {
   return [star[0] + dx * reach, star[1] - CONSTELLATION_DROP, star[2] + dz * reach]
 }
 
-export function governanceLayout(model: NetworkModel, _extras: LensExtras = {}): Layout {
+export function governanceLayout(model: NetworkModel): Layout {
   const layout = networkLayout(model)
   for (const corporation of ofKind(model, 'corporation')) {
     if (corporation.ecosystemId === null) {
@@ -33,6 +33,5 @@ export function governanceLayout(model: NetworkModel, _extras: LensExtras = {}):
     if (!star) throw new Error(`Corporation ${corporation.id} has no placed ecosystem ${starId}`)
     layout.positions.set(corporation.id, besideStar(star, maxOrbitRadius(model, starId) + CONSTELLATION_GAP))
   }
-  placeProposals(model, layout.positions, layout.corePosition)
   return layout
 }

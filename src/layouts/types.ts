@@ -18,6 +18,4 @@ export interface Layout {
 
 export type LensId = 'network' | 'trust' | 'economics' | 'chain' | 'time' | 'governance' | 'registry'
 
-export type LensExtras = Record<never, never>
-
-export type LayoutFn = (model: NetworkModel, extras: LensExtras) => Layout
+export type LayoutFn = (model: NetworkModel) => Layout

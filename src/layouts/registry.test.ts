@@ -57,8 +57,4 @@ describe('registryBoard', () => {
     expect(cachedRegistryBoard(testnet)).toBe(board)
     expect(registryLayout(testnet)).toBe(board.layout)
   })
-
-  it('is the layout the registry lens uses', () => {
-    expect(registryLayout(testnet, { now: NOW })).toEqual(registryBoard(testnet, NOW).layout)
-  })
 })

@@ -1,6 +1,6 @@
 import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { networkLayout } from './network'
-import type { Layout, LensExtras, Vec3 } from './types'
+import type { Layout, Vec3 } from './types'
 
 export const VALIDATOR_RING_RADIUS = 15
 export const STREAM_SIZE = 12
@@ -20,7 +20,7 @@ function chainFrame([x, y, z]: Vec3): Vec3[] {
   return [...ring, [x, y + blockRise(STREAM_SIZE - 1) + BLOCK_STEP, z], [x, y - 4, z]]
 }
 
-export function chainLayout(model: NetworkModel, _extras: LensExtras = {}): Layout {
+export function chainLayout(model: NetworkModel): Layout {
   const network = networkLayout(model)
   const core = network.corePosition
   const front = Math.max(core[2], ...[...network.positions.values()].map((p) => p[2]))

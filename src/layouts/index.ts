@@ -1,13 +1,11 @@
 import type { NetworkModel } from '@/domain/network-model'
 import { chainLayout } from './chain'
-import { economicsLayout } from './economics'
 import { governanceLayout } from './governance'
 import { networkLayout } from './network'
 import { registryLayout } from './registry'
 import { placeProposals } from './shared'
-import { timeLayout } from './time'
 import { trustLayout } from './trust'
-import type { Layout, LayoutFn, LensExtras, LensId } from './types'
+import type { Layout, LayoutFn, LensId } from './types'
 
 export const LENSES = [
   'network',
@@ -22,15 +20,15 @@ export const LENSES = [
 const LAYOUTS: Record<LensId, LayoutFn> = {
   network: networkLayout,
   trust: trustLayout,
-  economics: economicsLayout,
+  economics: networkLayout,
   chain: chainLayout,
-  time: timeLayout,
+  time: networkLayout,
   governance: governanceLayout,
   registry: registryLayout,
 }
 
-export function layoutFor(lens: LensId, model: NetworkModel, extras: LensExtras = {}): Layout {
-  const layout = LAYOUTS[lens](model, extras)
+export function layoutFor(lens: LensId, model: NetworkModel): Layout {
+  const layout = LAYOUTS[lens](model)
   placeProposals(model, layout.positions, layout.corePosition)
   return layout
 }

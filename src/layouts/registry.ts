@@ -1,7 +1,7 @@
 import { effectiveEnd, isExpiringSoon } from '@/domain/expiry'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
 import { compareIds, ecosystemOrder, placeAgents, placeSchemasAndCorporations } from './shared'
-import type { Layout, LensExtras, Vec3 } from './types'
+import type { Layout, Vec3 } from './types'
 
 const STATE_ORDER = ['PENDING', 'VALIDATED', 'TERMINATED']
 const EXPIRING = 'EXPIRING'
@@ -110,6 +110,6 @@ export function cachedRegistryBoard(model: NetworkModel): RegistryBoard {
   return board
 }
 
-export function registryLayout(model: NetworkModel, extras: LensExtras & { now?: Date } = {}): Layout {
-  return extras.now ? registryBoard(model, extras.now).layout : cachedRegistryBoard(model).layout
+export function registryLayout(model: NetworkModel): Layout {
+  return cachedRegistryBoard(model).layout
 }
