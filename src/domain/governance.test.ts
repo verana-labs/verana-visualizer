@@ -16,8 +16,6 @@ import {
   proposalEntityId,
   tallyOf,
   tallyShares,
-  totalVotingPower,
-  turnoutPercent,
   upgradeExecution,
   upgradePlanOf,
   withProposals,
@@ -114,25 +112,6 @@ describe('upgrade proposal parsing', () => {
     expect(binaryVersion({ name: '', info: '{"version":"v2.0.0"}' }, null)).toBe('v2.0.0')
     expect(binaryVersion({ name: '', info: '' }, 'Upgrade to v3.1.4')).toBe('v3.1.4')
     expect(binaryVersion({ name: '', info: '' }, null)).toBeNull()
-  })
-
-  it('adds vote counts with BigInt so large tallies keep every digit', () => {
-    expect(
-      totalVotingPower({
-        yes_count: '900000000000000000001',
-        no_count: '1',
-        abstain_count: '0',
-        no_with_veto_count: '',
-      })
-    ).toBe('900000000000000000002')
-  })
-
-  it('formats turnout with 2 to 4 decimals and returns null without bonded tokens', () => {
-    expect(turnoutPercent('500', '1000')).toBe('50.00')
-    expect(turnoutPercent('25', '1000')).toBe('2.500')
-    expect(turnoutPercent('1', '1000')).toBe('0.1000')
-    expect(turnoutPercent('1', '0')).toBeNull()
-    expect(turnoutPercent('1', 'not a number')).toBeNull()
   })
 
   it('derives the execution state from the proposal status and the chain height', () => {

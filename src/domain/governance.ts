@@ -200,30 +200,6 @@ export function binaryVersion(plan: Pick<UpgradePlan, 'name' | 'info'>, title: s
   return version
 }
 
-export function totalVotingPower(tally: {
-  yes_count?: string
-  no_count?: string
-  abstain_count?: string
-  no_with_veto_count?: string
-}): string {
-  return [tally.yes_count, tally.no_count, tally.abstain_count, tally.no_with_veto_count]
-    .reduce((sum, value) => sum + BigInt(value || '0'), BigInt(0))
-    .toString()
-}
-
-export function turnoutPercent(totalPower: string, bondedTokens: string): string | null {
-  try {
-    const bonded = BigInt(bondedTokens)
-    if (bonded === BigInt(0)) return null
-    const percent = Number((BigInt(totalPower || '0') * BigInt(100_000_000)) / bonded) / 1_000_000
-    if (percent >= 10) return percent.toFixed(2)
-    if (percent >= 1) return percent.toFixed(3)
-    return percent.toFixed(4)
-  } catch {
-    return null
-  }
-}
-
 export function upgradeExecution(
   status: string,
   planHeight: string,
