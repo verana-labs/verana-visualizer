@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "e2e": "playwright test tests/e2e --pass-with-no-tests",
+    "e2e": "playwright test tests/e2e",
     "live": "playwright test tests/live --pass-with-no-tests",
     "perf": "NEXT_PUBLIC_PERF_HARNESS=1 next build && playwright test -c tests/perf/playwright.config.ts",
     "record:fixtures": "tsx scripts/record-fixtures.ts"
