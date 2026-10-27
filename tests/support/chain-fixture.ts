@@ -93,7 +93,7 @@ const unproxied = (url: URL) => {
 }
 
 export function stubNetwork(...overrides: Override[]) {
-  const mock = vi.fn(async (input: string | URL | Request) => {
+  const mock = vi.fn(async (input: string | URL | Request, _init?: RequestInit) => {
     const url = unproxied(
       new URL(
         typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,

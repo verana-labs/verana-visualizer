@@ -4,6 +4,7 @@ import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
 import { failing, stubNetwork, withChainProposals } from '../../../tests/support/chain-fixture'
 import { testnetCfg } from '../../../tests/support/network'
+import { rawBody } from '../../../tests/support/recorded'
 import { isHealthy, runSanityChecks } from './sanity-checks'
 
 afterEach(() => vi.unstubAllGlobals())
@@ -64,6 +65,21 @@ describe('runSanityChecks', () => {
     expect(deposit?.outcome).toBe('skip')
     expect(deposit?.note).toMatch(/indexer\.corporations/)
     expect(report.ok).toBe(false)
+  })
+
+  it('traverses the first participant the graph indexes, not a terminated or revoked one', async () => {
+    const body = structuredClone(rawBody('participants')) as {
+      participants: { id: number; op_state: string; revoked: string | null }[]
+    }
+    const [terminated, revoked, validated] = body.participants
+    terminated.op_state = 'TERMINATED'
+    revoked.revoked = '2026-10-23T00:00:00Z'
+    const mock = stubNetwork((url) => (url.pathname === '/v4/participant/list' ? Response.json(body) : undefined))
+    await runSanityChecks(testnetCfg)
+    const traversed = mock.mock.calls
+      .filter(([input]) => String(input).endsWith('/v4/graph/traverse'))
+      .map(([, init]) => JSON.parse(String(init?.body)).input.participantId)
+    expect(traversed).toEqual([validated.id, validated.id])
   })
 
   it('probes the tally of an open chain proposal', async () => {

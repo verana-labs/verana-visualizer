@@ -1,3 +1,4 @@
+import { isTraversable } from '@/domain/participant-state'
 import { createChainClient } from '@/lib/api/chain'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient, pinnedProxyUrl } from '@/lib/api/indexer'
@@ -193,7 +194,7 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
   )
   const anyCorporation = needs(corporations, (rows) => rows[0]?.id, 'no corporation')
   const firstEcosystem = needs(ecosystems, (rows) => rows[0]?.id, 'no ecosystem')
-  const firstParticipant = needs(participants, (rows) => rows[0]?.id, 'no participant')
+  const traversable = needs(participants, (rows) => rows.find(isTraversable)?.id, 'no validated, unrevoked participant')
   const firstDid = needs(dids, (data) => data.dids[0], 'no DID')
   const indexed = needs(blockHeight, (data) => data.height, 'no indexed block')
   const firstProposal = needs(groupProposals, (rows) => rows[0], 'no group proposal')
@@ -216,8 +217,8 @@ async function probeAll(cfg: NetworkConfig, statuses: Map<string, number>, now: 
     dependent('indexer.groupVotes', firstProposal, (proposal) => indexer.groupVotes(proposal.id)),
     dependent('indexer.groupMembers', firstProposal, (proposal) => indexer.groupMembers(proposal.corporation_id)),
     dependent('indexer.pendingFlat', anyCorporation, (id) => indexer.pendingFlat(id)),
-    dependent('graph.traverse', firstParticipant, (id) => graph.traverse('G1', { participantId: id })),
-    dependent('graph.validatorChain', firstParticipant, (id) => graph.validatorChain(id)),
+    dependent('graph.traverse', traversable, (id) => graph.traverse('G1', { participantId: id })),
+    dependent('graph.validatorChain', traversable, (id) => graph.validatorChain(id)),
     dependent('chain.govTally', chainProposal, (id) => chain.govTally(Number(id))),
     dependent('chain.block', head, (height) => chain.block(Math.max(1, height - 1))),
   ])

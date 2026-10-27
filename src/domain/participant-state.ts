@@ -13,3 +13,7 @@ export function participantState(p: Participant, now: Date): ParticipantState {
 export function isCountedParticipant(p: Participant): boolean {
   return p.op_state !== 'TERMINATED'
 }
+
+export function isTraversable(p: Participant): boolean {
+  return p.op_state === 'VALIDATED' && !p.revoked
+}
