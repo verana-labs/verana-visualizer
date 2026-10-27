@@ -9,7 +9,7 @@ const HARDENING = { 'X-Content-Type-Options': 'nosniff', 'Content-Security-Polic
 
 type Upstream = (input: string, init?: RequestInit) => Promise<Response>
 
-const failure = (status: 400 | 502, message: string) =>
+export const failure = (status: 400 | 502, message: string) =>
   Response.json({ error: message }, { status, headers: { 'Cache-Control': 'no-store', ...HARDENING } })
 
 const validSegment = (segment: string) => SEGMENT.test(segment) && segment !== '.' && segment !== '..'
