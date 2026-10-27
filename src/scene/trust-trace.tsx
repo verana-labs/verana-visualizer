@@ -7,7 +7,7 @@ import type { EntityId, NetworkModel } from '@/domain/network-model'
 import { TRUST_HOP_MS, type TrustCheck } from '@/domain/trust-check'
 import type { Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import type { PositionOf } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
@@ -38,7 +38,7 @@ function pointOn(path: EntityId[], positionOf: PositionOf, elapsedMs: number): V
 }
 
 export function TrustTrace({ positionOf }: { positionOf: PositionOf }) {
-  const texture = useGlowTexture()
+  const texture = glowTexture()
   const reduced = usePrefersReducedMotion()
   const reached = useRef<{ tracedAt: number | null; hop: number }>({ tracedAt: null, hop: -1 })
   const { geometry, positions, colors } = useMemo(() => {

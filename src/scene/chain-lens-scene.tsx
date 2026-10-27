@@ -8,7 +8,7 @@ import type { BlockSummary } from '@/features/chain-stats/load-chain-stats'
 import { blockRise, STREAM_SIZE, VALIDATOR_RING_RADIUS } from '@/layouts/chain'
 import { useObservatory } from '@/store/observatory-store'
 import { writeOpacity } from './dom-opacity'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import { LABEL_CLASS } from './labels'
 import { SceneHtml } from './scene-html'
 import { lensVisibility, TWEEN_MS, tweenProgress, useCoreTween } from './use-lens-tween'
@@ -48,7 +48,7 @@ function useChainFade(): () => number {
 const percent = (share: number) => `${(share * 100).toLocaleString('en-US', { maximumFractionDigits: 1 })}%`
 
 function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
-  const glow = useGlowTexture()
+  const glow = glowTexture()
   const reduced = usePrefersReducedMotion()
   const fadeOf = useChainFade()
   const coreAt = useCoreTween()

@@ -3,7 +3,7 @@
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
 import { AdditiveBlending, BufferAttribute, BufferGeometry, Color, type Points, ShaderMaterial, Vector3 } from 'three'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import { Meteors } from './meteors'
 import { Rocket } from './rocket'
 
@@ -83,7 +83,7 @@ function Starfield() {
 }
 
 function Nebulae() {
-  const texture = useGlowTexture()
+  const texture = glowTexture()
   return (
     <>
       {NEBULAE.map(({ color, at, size }) => (

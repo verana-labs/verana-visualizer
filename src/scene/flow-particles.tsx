@@ -6,7 +6,7 @@ import { AdditiveBlending, BufferAttribute, BufferGeometry, type Color, DynamicD
 import type { EntityId } from '@/domain/network-model'
 import { seededRandom } from '@/layouts/seed'
 import { useObservatory } from '@/store/observatory-store'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import { agentTint, type SceneData } from './scene-data'
 import type { FocusSets } from './scene-focus'
 import type { PositionOf } from './use-lens-tween'
@@ -31,7 +31,7 @@ function strength({ related, hover, trace }: FocusSets, a: EntityId, b: EntityId
 }
 
 export function FlowParticles({ data, positionOf, focus }: FlowParticlesProps) {
-  const texture = useGlowTexture()
+  const texture = glowTexture()
   const pairs = useMemo(() => [...data.validatorLinks, ...data.agentLinks], [data])
   const colorOf = useMemo(() => new Map(data.nodes.map((node) => [node.entity.id, node.color])), [data.nodes])
   const presenceOf = useTimePresence()

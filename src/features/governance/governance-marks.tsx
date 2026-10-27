@@ -15,7 +15,7 @@ import {
 } from 'three'
 import { type GovernanceProposal, proposalColor } from '@/domain/governance'
 import type { EntityId } from '@/domain/network-model'
-import { useGlowTexture } from '@/scene/glow-texture'
+import { glowTexture } from '@/scene/glow-texture'
 import { dimOf, type FocusSets, flashOf } from '@/scene/scene-focus'
 import { lensVisibility, type PositionOf, tweenProgress } from '@/scene/use-lens-tween'
 import { usePicking } from '@/scene/use-picking'
@@ -94,7 +94,7 @@ export function GovernanceMarks({ positionOf, focus }: MarksProps) {
   const governance = useObservatory((s) => s.governance)
   const model = useObservatory((s) => s.model)
   const reduced = usePrefersReducedMotion()
-  const texture = useGlowTexture()
+  const texture = glowTexture()
   const root = useRef<Group>(null)
   const corporationSprites = useRef<(Sprite | null)[]>([])
   const memberSprites = useRef<(Sprite | null)[]>([])

@@ -1,4 +1,3 @@
-import { useEffect, useMemo } from 'react'
 import { CanvasTexture } from 'three'
 
 const SIZE = 128
@@ -20,25 +19,6 @@ function createGlowTexture(): CanvasTexture {
   return new CanvasTexture(canvas)
 }
 
-let shared: { texture: CanvasTexture; users: number } | null = null
+let glow: CanvasTexture | null = null
 
-function acquire(): CanvasTexture {
-  shared ??= { texture: createGlowTexture(), users: 0 }
-  return shared.texture
-}
-
-export function useGlowTexture(): CanvasTexture {
-  const texture = useMemo(acquire, [])
-  useEffect(() => {
-    if (shared?.texture !== texture) shared = { texture, users: 0 }
-    const current = shared
-    current.users++
-    return () => {
-      current.users--
-      if (current.users > 0) return
-      texture.dispose()
-      if (shared === current) shared = null
-    }
-  }, [texture])
-  return texture
-}
+export const glowTexture = (): CanvasTexture => (glow ??= createGlowTexture())

@@ -25,7 +25,7 @@ import {
   TRAIL_POINTS,
   TRAIL_SPACING,
 } from './comet-system'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import { easeInOutCubic, type PositionOf, useCoreTween } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
@@ -41,7 +41,7 @@ interface Slot {
 export function Comets({ positionOf }: { positionOf: PositionOf }) {
   const reduced = usePrefersReducedMotion()
   const coreAt = useCoreTween()
-  const glow = useGlowTexture()
+  const glow = glowTexture()
   const active = useRef<Comet[]>([])
   const scratch = useRef({ point: [0, 0, 0] as [number, number, number], color: new Color() })
   const slots = useMemo<Slot[]>(

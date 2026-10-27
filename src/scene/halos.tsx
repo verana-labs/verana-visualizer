@@ -3,7 +3,7 @@
 import { useFrame } from '@react-three/fiber'
 import { type RefObject, useRef } from 'react'
 import { AdditiveBlending, type Sprite } from 'three'
-import { useGlowTexture } from './glow-texture'
+import { glowTexture } from './glow-texture'
 import { useLensSize } from './lens-size'
 import type { SceneNode } from './scene-data'
 import { dimOf, type FocusSets, flashOf } from './scene-focus'
@@ -22,7 +22,7 @@ interface HalosProps {
 }
 
 export function Halos({ stars, positionOf, focus }: HalosProps) {
-  const texture = useGlowTexture()
+  const texture = glowTexture()
   const sprites = useRef<(Sprite | null)[]>([])
   const sizeOf = useLensSize()
   const presenceOf = useTimePresence()
