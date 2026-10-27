@@ -3,12 +3,12 @@
 import { EXPIRY_WINDOW_DAYS } from '@/domain/expiry'
 import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
-import { vnaFromUvna } from '@/features/economics-sim/format'
 import { formatAmount, ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { RegistrySection, SlashHistory } from '@/features/registry/load-registry'
 import type { Participant } from '@/lib/api/schemas'
+import { vnaFromUvna } from '@/lib/format'
 import { useObservatory } from '@/store/observatory-store'
 
 const DAY_MS = 86_400_000

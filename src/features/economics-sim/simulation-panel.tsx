@@ -23,7 +23,7 @@ import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
 import type { CredentialSchema } from '@/lib/api/schemas'
-import { amount, percent, signed } from './format'
+import { amount, percent, signed } from '@/lib/format'
 
 type Op = 'onboarding' | 'issuance' | 'verification'
 type Unit = 'TU' | 'VNA'

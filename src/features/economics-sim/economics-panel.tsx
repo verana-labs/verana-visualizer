@@ -8,11 +8,11 @@ import { ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { Participant } from '@/lib/api/schemas'
+import { amount, percent, priced, vnaFromUvna } from '@/lib/format'
 import { Button } from '@/ui/button'
 import { GlassPanel } from '@/ui/glass-panel'
 import { Sparkline } from '@/ui/sparkline'
 import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
-import { amount, percent, priced, vnaFromUvna } from './format'
 import type { EconomicsData } from './load-economics'
 
 export type EconomicsState =

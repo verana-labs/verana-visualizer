@@ -6,11 +6,11 @@ import {
   type DigestPeriod,
   type GrowthMetric,
   growthOf,
+  historyStart,
   periodLabel,
   type StatsBucket,
   whatChanged,
 } from '@/domain/digest'
-import { historyStart } from '@/features/economics-sim/load-economics'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { NetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'

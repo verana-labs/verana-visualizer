@@ -1,9 +1,9 @@
 'use client'
 
-import { amount } from '@/features/economics-sim/format'
 import { Kicker } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { QueryInfo } from '@/lib/api/query-info'
+import { amount } from '@/lib/format'
 import { GlassPanel } from '@/ui/glass-panel'
 import { FOOTER_SPACE, useBelowHud } from '@/ui/use-below-hud'
 import type { ValidatorOrb } from './chain-scene'

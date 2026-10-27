@@ -1,5 +1,5 @@
+import { historyStart } from '@/domain/digest'
 import type { NetworkModel } from '@/domain/network-model'
-import { historyStart } from '@/features/economics-sim/load-economics'
 import type { IndexerClient } from '@/lib/api/indexer'
 import type { QueryInfo } from '@/lib/api/query-info'
 import { type PendingTask, pendingCorporations, pendingTasks, type SlashDay, slashEvents } from './registry-data'

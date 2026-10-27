@@ -1,12 +1,12 @@
 import { liveTuRate, type TuRate, tuInVna } from '@/domain/economics'
 import { ROLES, type Role } from '@/domain/roles'
-import { amount, percent, vnaFromUvna } from '@/features/economics-sim/format'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
 import { createChainClient } from '@/lib/api/chain'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { Fetched, QueryInfo } from '@/lib/api/query-info'
 import type { ChainBlock, Coin, StatsSnapshot } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
+import { amount, percent, vnaFromUvna } from '@/lib/format'
 import { logger } from '@/lib/logger'
 
 export interface BlockSummary {

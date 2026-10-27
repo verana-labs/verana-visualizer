@@ -1,5 +1,6 @@
 import type { z } from 'zod'
 import type { statsBucketSchema } from '@/lib/api/schemas'
+import type { NetworkModel } from './network-model'
 
 export type StatsBucket = z.infer<typeof statsBucketSchema>
 export type DigestPeriod = 'day' | 'week'
@@ -20,6 +21,7 @@ interface Change {
 }
 
 const DAY_MS = 86_400_000
+const YEAR_MS = 365 * DAY_MS
 
 const CHANGES: readonly Change[] = [
   { keys: ['active_ecosystems'], one: 'ecosystem created', many: 'ecosystems created', net: 'active ecosystems' },
@@ -102,4 +104,12 @@ export function growthOf(
     label: periodLabel(buckets, period, now),
     series,
   }
+}
+
+export function historyStart(model: NetworkModel, now: Date): string {
+  const created = [...model.raw.ecosystems, ...model.raw.corporations]
+    .map((entity) => Date.parse(entity.created))
+    .filter(Number.isFinite)
+  const start = created.length > 0 ? Math.min(...created) : now.getTime() - YEAR_MS
+  return new Date(start).toISOString()
 }
