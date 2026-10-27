@@ -43,7 +43,10 @@ beforeEach(() => {
   stubGraphSearch()
 })
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
 
 describe('SearchPalette', () => {
   it('opens prefilled with a query handed over by a legacy link', () => {
@@ -184,6 +187,56 @@ describe('SearchPalette', () => {
     render(<SearchPalette cfg={testnetCfg} />)
     await user.keyboard('/')
     await user.type(screen.getByRole('combobox'), 'ecs')
+    expect(await screen.findByRole('alert')).toHaveTextContent(/graph search failed/i)
+    expect(screen.getAllByRole('option')[0]).toHaveTextContent('ECS')
+  })
+
+  it('never lets a slower reply to an earlier query replace the hits of the newer one', async () => {
+    const stale: ((response: Response) => void)[] = []
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_input: string, init?: RequestInit) => {
+        const { surface, freeText } = JSON.parse(String(init?.body)) as SearchBody
+        if (freeText === 'work') return new Promise<Response>((resolve) => stale.push(resolve))
+        const found = GRAPH_HITS[surface] ?? []
+        return Response.json({ hits: found, nextCursor: null })
+      })
+    )
+    const user = userEvent.setup()
+    render(<SearchPalette cfg={testnetCfg} />)
+    act(() => useObservatory.getState().openPalette('search', 'work'))
+    await vi.waitFor(() => expect(stale).toHaveLength(4))
+    await user.type(screen.getByRole('combobox'), 'shop')
+    expect(await screen.findByText('AuthorizedRepairerCredential')).toBeInTheDocument()
+    await act(async () => {
+      for (const resolve of stale)
+        resolve(Response.json({ hits: [{ type: 'CredentialSchema', id: 20 }], nextCursor: null }))
+    })
+    expect(screen.getByText('AuthorizedRepairerCredential')).toBeInTheDocument()
+    expect(screen.queryByText('DriverLicense')).toBeNull()
+  })
+
+  it('gives up on a Graph search that never answers and keeps the local matches', async () => {
+    vi.spyOn(logger, 'error').mockImplementation(() => {})
+    const timeout = new AbortController()
+    const timeoutSpy = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(timeout.signal)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        (_input: string, init?: RequestInit) =>
+          new Promise<Response>((_resolve, reject) =>
+            init?.signal?.addEventListener('abort', () => reject(init.signal?.reason))
+          )
+      )
+    )
+    const user = userEvent.setup()
+    render(<SearchPalette cfg={testnetCfg} />)
+    await user.keyboard('/')
+    await user.type(screen.getByRole('combobox'), 'ecs')
+    await vi.waitFor(() => expect(fetch).toHaveBeenCalled())
+    expect(timeoutSpy).toHaveBeenCalledWith(8000)
+    expect(screen.queryByRole('alert')).toBeNull()
+    act(() => timeout.abort(new DOMException('The operation timed out.', 'TimeoutError')))
     expect(await screen.findByRole('alert')).toHaveTextContent(/graph search failed/i)
     expect(screen.getAllByRole('option')[0]).toHaveTextContent('ECS')
   })

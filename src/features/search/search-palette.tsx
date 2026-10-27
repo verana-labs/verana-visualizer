@@ -123,6 +123,7 @@ const GRAPH_KINDS: Record<OpenMode, readonly EntityKind[]> = {
 }
 
 const GRAPH_DEBOUNCE_MS = 150
+const GRAPH_TIMEOUT_MS = 8000
 const NO_HITS: EntityId[] = []
 
 interface GraphHits {
@@ -137,8 +138,11 @@ function useGraphHits(cfg: NetworkConfig, query: string, mode: OpenMode) {
     if (!isFreeText(query)) return
     const controller = new AbortController()
     const timer = setTimeout(() => {
-      searchGraph(createGraphClient(cfg, { signal: controller.signal }), query, GRAPH_KINDS[mode]).then(
-        (ids) => setHits({ query, ids, error: null }),
+      const graph = createGraphClient(cfg, { signal: controller.signal, timeoutMs: GRAPH_TIMEOUT_MS })
+      searchGraph(graph, query, GRAPH_KINDS[mode]).then(
+        (ids) => {
+          if (!controller.signal.aborted) setHits({ query, ids, error: null })
+        },
         (error: unknown) => {
           if (controller.signal.aborted) return
           logger.error('Graph search failed', error)
