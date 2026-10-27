@@ -25,7 +25,7 @@ export interface LoadStep {
   run: () => Promise<unknown>
 }
 
-export const LOADER_TIMEOUT_MS = 15_000
+const LOADER_TIMEOUT_MS = 15_000
 
 export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[] {
   const indexer = createIndexerClient(cfg, undefined, { timeoutMs: LOADER_TIMEOUT_MS })
@@ -81,17 +81,10 @@ export function networkLoadSteps(cfg: NetworkConfig, sink: LoadSink): LoadStep[]
   ]
 }
 
-export function rawFromSink(sink: LoadSink): RawNetwork {
+function rawFromSink(sink: LoadSink): RawNetwork {
   const { ecosystems, schemas, participants, corporations, dids } = sink
   if (!ecosystems || !schemas || !participants || !corporations || !dids) {
     throw new Error('Cannot assemble the network: a data step has not completed')
   }
   return { ecosystems, schemas, participants, corporations, dids }
-}
-
-export async function loadRawNetwork(cfg: NetworkConfig): Promise<{ raw: RawNetwork; blockHeight: number }> {
-  const sink: LoadSink = {}
-  for (const step of networkLoadSteps(cfg, sink).slice(0, 6)) await step.run()
-  if (sink.blockHeight === undefined) throw new Error('Cannot assemble the network: block height missing')
-  return { raw: rawFromSink(sink), blockHeight: sink.blockHeight }
 }

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { testnetCfg } from '../../../tests/support/network'
 import { rawBody } from '../../../tests/support/recorded'
-import { type LoadSink, loadRawNetwork, networkLoadSteps } from './load-network'
+import { type LoadSink, networkLoadSteps } from './load-network'
 
 const routes: Record<string, string> = {
   '/v4/ecosystem/list': 'ecosystems',
@@ -13,32 +13,6 @@ const routes: Record<string, string> = {
 }
 
 afterEach(() => vi.unstubAllGlobals())
-
-describe('loadRawNetwork', () => {
-  it('assembles the raw network and block height from the indexer', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async (input: RequestInfo | URL) => {
-        const fixture = routes[new URL(String(input)).pathname]
-        return fixture ? Response.json(rawBody(fixture)) : new Response('nope', { status: 404 })
-      })
-    )
-    const { raw, blockHeight } = await loadRawNetwork(testnetCfg)
-    expect(raw.ecosystems.length).toBeGreaterThan(0)
-    expect(raw.participants.length).toBeGreaterThan(0)
-    expect(raw.schemas.length).toBeGreaterThan(0)
-    expect(raw.dids.length).toBeGreaterThan(0)
-    expect(blockHeight).toBe((rawBody('block-height') as { height: number }).height)
-  })
-
-  it('throws when any endpoint fails', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => new Response('down', { status: 503 }))
-    )
-    await expect(loadRawNetwork(testnetCfg)).rejects.toThrow()
-  })
-})
 
 describe('networkLoadSteps', () => {
   const okFetch = () =>
