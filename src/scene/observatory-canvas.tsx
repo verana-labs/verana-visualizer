@@ -13,7 +13,6 @@ import { CameraRig } from './camera-rig'
 import { ChainCore } from './chain-core'
 import { ChainLensScene } from './chain-lens-scene'
 import { Comets } from './comets'
-import { FlowParticles } from './flow-particles'
 import { Halos } from './halos'
 import { HoverMarker } from './hover-marker'
 import { Labels } from './labels'
@@ -51,7 +50,6 @@ function Galaxy({ model }: { model: NetworkModel }) {
     <>
       <Rings />
       <Links data={data} positionOf={positionOf} focus={focus} />
-      <FlowParticles data={data} positionOf={positionOf} focus={focus} />
       <Nodes nodes={data.nodes} positionOf={positionOf} focus={focus} />
       <Halos stars={data.stars} positionOf={positionOf} focus={focus} />
       <Reservoirs stars={data.stars} positionOf={positionOf} />
