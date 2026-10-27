@@ -1,9 +1,8 @@
 'use client'
 
-import type { ReactNode } from 'react'
 import { type Constellation, formatProposalStatus, type GovernanceProposal, proposalColor } from '@/domain/governance'
 import type { NetworkModel } from '@/domain/network-model'
-import { Kicker } from '@/features/inspector/entity-parts'
+import { Kicker, Section } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import { useObservatory } from '@/store/observatory-store'
 import { LensPanel } from '@/ui/lens-panel'
@@ -22,15 +21,6 @@ interface GovernancePanelProps {
 
 const ROW =
   'flex w-full cursor-pointer flex-col gap-0.5 border-b border-scene-line py-[6px] text-left last:border-b-0 hover:text-white'
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-3">
-      <Kicker>{title}</Kicker>
-      <div className="mt-1 text-[12px]">{children}</div>
-    </section>
-  )
-}
 
 function sourceLabel(proposal: GovernanceProposal, model: NetworkModel): string {
   if (proposal.source === 'chain') return `chain #${proposal.number}`
@@ -85,7 +75,7 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
         Each corporation is a small constellation of its group members, orb size by voting weight. Proposals are markers
         on their corporation and pulse while voting is open. Votes arrive as comets.
       </p>
-      <Section title="chain · gov/v1 proposals">
+      <Section compact title="chain · gov/v1 proposals">
         {data.chain.status === 'error' ? (
           <p className="text-[#ff8a8a]">{`Chain proposals unavailable: ${data.chain.message}`}</p>
         ) : chain.length === 0 ? (
@@ -95,14 +85,14 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
         )}
       </Section>
       {group.length > 0 && (
-        <Section title="corporation · group proposals">
+        <Section compact title="corporation · group proposals">
           {group.map((p) => (
             <ProposalRow key={p.id} proposal={p} model={model} />
           ))}
         </Section>
       )}
       {data.constellations.length > 0 && (
-        <Section title="corporation groups">
+        <Section compact title="corporation groups">
           {data.constellations.map((c) => (
             <ConstellationRow key={c.corporation} constellation={c} model={model} />
           ))}

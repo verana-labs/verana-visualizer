@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, type ReactNode } from 'react'
+import { Fragment } from 'react'
 import {
   binaryLinks,
   binaryVersion,
@@ -17,7 +17,7 @@ import {
   type VotesState,
 } from '@/domain/governance'
 import type { NetworkModel } from '@/domain/network-model'
-import { ExternalLink, Fact, Kicker, Mono } from '@/features/inspector/entity-parts'
+import { ExternalLink, Fact, Kicker, Mono, Section } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import { ENTITY_SPECS, GROUP_PROPOSAL_SPEC } from '@/features/inspector/spec-links'
 import type { QueryInfo } from '@/lib/api/query-info'
@@ -48,15 +48,6 @@ const voteOption = (option: string) =>
     .replace(/^VOTE_OPTION_/, '')
     .toLowerCase()
     .replace(/_/g, ' ')
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-3.5">
-      <Kicker>{title}</Kicker>
-      <div className="mt-1">{children}</div>
-    </section>
-  )
-}
 
 function TallyView({ state }: { state: TallyState }) {
   if (state.status === 'none') return <p className="my-1.5 text-[12px] text-scene-mut">Tally available after voting</p>

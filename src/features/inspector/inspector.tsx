@@ -27,7 +27,7 @@ import {
   rawSchema,
   schemaParticipants,
 } from './entity-facts'
-import { ExternalLink, Fact, Kicker, Mono, RoleChip, StateChip, VerdictChip } from './entity-parts'
+import { ExternalLink, Fact, Kicker, Mono, RoleChip, Section, StateChip, VerdictChip } from './entity-parts'
 import { ShowQuery } from './show-query'
 import { ENTITY_SPECS } from './spec-links'
 
@@ -52,15 +52,6 @@ const select = (id: EntityId) => useObservatory.getState().select(id)
 
 function Title({ children }: { children: ReactNode }) {
   return <h2 className="mt-1 mb-0.5 break-words text-lg font-semibold tracking-[-.01em]">{children}</h2>
-}
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-3.5">
-      <Kicker>{title}</Kicker>
-      <div className="mt-1">{children}</div>
-    </section>
-  )
 }
 
 function EntityButton({ entity, note }: { entity: Entity; note?: string }) {

@@ -5,7 +5,7 @@ import { tuRateValue } from '@/domain/economics'
 import type { NetworkModel } from '@/domain/network-model'
 import { isRole } from '@/domain/roles'
 import { ROLE_LABELS } from '@/features/inspector/entity-facts'
-import { Kicker } from '@/features/inspector/entity-parts'
+import { Kicker, Section } from '@/features/inspector/entity-parts'
 import { ShowQuery } from '@/features/inspector/show-query'
 import type { Participant } from '@/lib/api/schemas'
 import { amount, percent, priced, vnaFromUvna } from '@/lib/format'
@@ -28,15 +28,6 @@ interface EconomicsPanelProps {
 
 const GOLD = '#fbbf24'
 const SLASH_RED = '#ff6b8b'
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="mt-3">
-      <Kicker>{title}</Kicker>
-      <div className="mt-1 text-[12px]">{children}</div>
-    </section>
-  )
-}
 
 function Row({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
@@ -102,7 +93,7 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
         are real trust-deposit transactions.
       </p>
 
-      <Section title="history · indexer stats, daily">
+      <Section compact title="history · indexer stats, daily">
         <p className="mb-1 text-[11px] text-scene-mut">
           The indexer publishes no fee series; trust weight and slashes are the real history it has.
         </p>
@@ -139,7 +130,7 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
         )}
       </Section>
 
-      <Section title="fee rules · participants">
+      <Section compact title="fee rules · participants">
         {feeRules.length === 0 ? (
           <p className="text-scene-mut">{`No participant on ${chainId} charges fees yet.`}</p>
         ) : (
@@ -161,7 +152,7 @@ function Ready({ chainId, model, data }: { chainId: string; model: NetworkModel;
         )}
       </Section>
 
-      <Section title="td params · live">
+      <Section compact title="td params · live">
         <p>
           {`trust_deposit_rate ${percent(data.rates.trustDepositRate)} · user_agent_reward_rate ${percent(data.rates.userAgentRewardRate)} · wallet_user_agent_reward_rate ${percent(data.rates.walletUserAgentRewardRate)}`}
         </p>

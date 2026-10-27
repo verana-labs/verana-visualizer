@@ -51,6 +51,23 @@ export function Fact({ label, children }: { label: string; children: ReactNode }
   )
 }
 
+export function Section({
+  title,
+  compact = false,
+  children,
+}: {
+  title: string
+  compact?: boolean
+  children: ReactNode
+}) {
+  return (
+    <section className={compact ? 'mt-3' : 'mt-3.5'}>
+      <Kicker>{title}</Kicker>
+      <div className={compact ? 'mt-1 text-[12px]' : 'mt-1'}>{children}</div>
+    </section>
+  )
+}
+
 export function Kicker({ children, spec }: { children: ReactNode; spec?: SpecLink }) {
   if (!spec) return <div className="text-[10px] uppercase tracking-[.09em] text-scene-mut">{children}</div>
   return (
