@@ -13,7 +13,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   env: {
     NEXT_PUBLIC_APP_VERSION: process.env.APP_VERSION ?? pkg.version,
-    NEXT_PUBLIC_PERF_HARNESS: process.env.NEXT_PUBLIC_PERF_HARNESS === '1' ? '1' : '0',
   },
   async headers() {
     return [{ source: '/:path*', headers: SECURITY_HEADERS }]
