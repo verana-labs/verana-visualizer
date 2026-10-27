@@ -25,7 +25,10 @@ function concat(chunks: Uint8Array[], size: number): ArrayBuffer {
 }
 
 async function cappedBody(response: Response): Promise<ArrayBuffer | null> {
-  if (Number(response.headers.get('content-length')) > MAX_BODY_BYTES) return null
+  if (Number(response.headers.get('content-length')) > MAX_BODY_BYTES) {
+    await response.body?.cancel()
+    return null
+  }
   if (!response.body) return new ArrayBuffer(0)
   const reader = response.body.getReader()
   const chunks: Uint8Array[] = []
