@@ -1,23 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
+import { buildNetworkModel } from '@/domain/network-model'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { testnetCfg } from '../../../tests/support/network'
+import { recorded, recordedNetwork, testnetModel } from '../../../tests/support/recorded'
 import { loadRegistry } from './load-registry'
 
-const fixture = <T>(network: string, name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures', network, `${name}.json`), 'utf8')) as T
-
-const devnetModel = () =>
-  buildNetworkModel({
-    ecosystems: fixture('devnet', 'ecosystems'),
-    schemas: fixture('devnet', 'schemas'),
-    participants: fixture('devnet', 'participants'),
-    corporations: fixture('devnet', 'corporations'),
-    dids: fixture<{ dids: string[] }>('devnet', 'dids').dids,
-  } satisfies RawNetwork)
+const devnetModel = () => buildNetworkModel(recordedNetwork('devnet'))
 
 const NOW = new Date('2026-10-20T12:00:00Z')
 const flat = {
@@ -46,7 +34,7 @@ function stub(handlers: { pending?: (corp: number) => Response; stats?: () => Re
     if (url.pathname === '/v4/participant/pending/flat')
       return (handlers.pending ?? (() => Response.json(flat)))(Number(url.searchParams.get('corporation_id')))
     if (url.pathname === '/v4/stats/stats')
-      return handlers.stats ? handlers.stats() : Response.json(fixture('testnet', 'stats'))
+      return handlers.stats ? handlers.stats() : Response.json(recorded('stats', 'testnet'))
     return new Response('unexpected', { status: 500 })
   })
   vi.stubGlobal('fetch', mock)
@@ -89,13 +77,7 @@ describe('loadRegistry', () => {
   })
 
   it('exposes every pending/flat request it made', async () => {
-    const raw = {
-      ecosystems: fixture('devnet', 'ecosystems'),
-      schemas: fixture('devnet', 'schemas'),
-      participants: fixture<RawNetwork['participants']>('devnet', 'participants'),
-      corporations: fixture('devnet', 'corporations'),
-      dids: fixture<{ dids: string[] }>('devnet', 'dids').dids,
-    } satisfies RawNetwork
+    const raw = recordedNetwork('devnet')
     const validator = raw.participants.find((p) => p.op_state === 'VALIDATED' && p.corporation_id !== 2)
     if (!validator) throw new Error('fixture has no second validator corporation')
     raw.participants = [

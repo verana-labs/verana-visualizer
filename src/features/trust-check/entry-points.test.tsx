@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Hud } from '@/features/hud/hud'
 import { Inspector } from '@/features/inspector/inspector'
-import { testnetModel } from '@/features/search/search-fixture'
 import { SearchPalette } from '@/features/search/search-palette'
 import { useObservatory } from '@/store/observatory-store'
-import { PAPAPO_DID, testnetCfg, UNKNOWN_DID } from './trust-fixture'
+import { PAPAPO_DID, testnetCfg, UNKNOWN_DID } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams('') }))
 

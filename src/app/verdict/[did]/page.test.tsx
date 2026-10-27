@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { PAPAPO_DID, stubTrustNetwork } from '@/features/trust-check/trust-fixture'
 import { logger } from '@/lib/logger'
+import { PAPAPO_DID } from '../../../../tests/support/network'
+import { stubTrustNetwork } from '../../../../tests/support/trust-fixture'
 import VerdictPage from './page'
 
 const ENV = {

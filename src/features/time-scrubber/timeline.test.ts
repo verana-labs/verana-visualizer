@@ -1,19 +1,13 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel } from '@/domain/network-model'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createIndexerClient } from '@/lib/api/indexer'
 import type { IndexerEvent } from '@/lib/api/schemas'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, recorded, testnetModel } from '../../../tests/support/recorded'
 import { absentAt, buildDays, buildDensity, loadEvents, loadModelAt, nextChangeAfter } from './timeline'
 
-const fixture = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-const rawBody = (name: string): unknown => fixture<{ body: unknown }>(`raw/${name}`).body
-
-const events = fixture<IndexerEvent[]>('events')
-const stats = fixture<{ buckets: { timestamp: string }[] }>('stats')
+const events = recorded<IndexerEvent[]>('events')
+const stats = recorded<{ buckets: { timestamp: string }[] }>('stats')
 
 afterEach(() => vi.unstubAllGlobals())
 

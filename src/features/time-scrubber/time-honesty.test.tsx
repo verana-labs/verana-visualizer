@@ -1,24 +1,20 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel } from '@/domain/network-model'
 import { Hud } from '@/features/hud/hud'
 import { Inspector } from '@/features/inspector/inspector'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { networkLayout } from '@/layouts/network'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { launchHistoryComets } from './history-comets'
 import { useTimeStore } from './time-store'
 import { missingFromLive } from './timeline'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams() }))
 
-const events = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/events.json'), 'utf8')
-) as IndexerEvent[]
+const events = recorded<IndexerEvent[]>('events')
 
 beforeEach(() => {
   useTimeStore.getState().reset()

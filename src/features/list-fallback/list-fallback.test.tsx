@@ -2,8 +2,8 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { AGENT_COLORS } from '@/domain/roles'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../../tests/support/recorded'
 import { ListFallback } from './list-fallback'
 
 const model = testnetModel()

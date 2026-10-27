@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Validator } from '@/lib/api/schemas'
-import { rawBody } from './chain-fixture'
+import { rawBody } from '../../../tests/support/recorded'
 import { STREAM_SIZE, streamBlocks, validatorOrbs } from './chain-scene'
 
 const testnetValidators = (rawBody('chain-validators') as { validators: Validator[] }).validators

@@ -1,8 +1,9 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
-import { ECS_DID, PAPAPO_DID, stubTrustNetwork, testnetCfg } from './trust-fixture'
+import { ECS_DID, PAPAPO_DID, testnetCfg } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
+import { stubTrustNetwork } from '../../../tests/support/trust-fixture'
 import { useTrustCheckRunner } from './use-trust-check-runner'
 
 beforeEach(() => {

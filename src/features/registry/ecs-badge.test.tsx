@@ -1,8 +1,8 @@
 import { act, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { Inspector } from '@/features/inspector/inspector'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../../tests/support/recorded'
 import { EcsBadge, ecosystemEcsCompliance } from './ecs-badge'
 
 const model = testnetModel()

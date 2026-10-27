@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react'
 import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { resolveNetworkConfig } from '@/lib/env'
 import { logger } from '@/lib/logger'
+import { testnetCfg } from '../../../tests/support/network'
 import {
   connectIndexerSocket,
   type LiveBlock,
@@ -202,17 +202,10 @@ describe('connectIndexerSocket', () => {
 })
 
 describe('useIndexerBlocks', () => {
-  const cfg = resolveNetworkConfig({
-    NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-    NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-    NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-    NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-  })
-
   it('opens the indexer socket and closes it on unmount', () => {
     vi.stubGlobal('WebSocket', MockSocket)
     const onBlock = vi.fn()
-    const { unmount } = renderHook(() => useIndexerBlocks(cfg, onBlock))
+    const { unmount } = renderHook(() => useIndexerBlocks(testnetCfg, onBlock))
     expect(latest().url).toBe(URL)
     latest().receive(blockMessage)
     expect(onBlock).toHaveBeenCalledTimes(1)
@@ -223,7 +216,7 @@ describe('useIndexerBlocks', () => {
 
   it('leaves exactly one live socket under Strict Mode double mount', () => {
     vi.stubGlobal('WebSocket', MockSocket)
-    const { unmount } = renderHook(() => useIndexerBlocks(cfg, () => {}), { wrapper: StrictMode })
+    const { unmount } = renderHook(() => useIndexerBlocks(testnetCfg, () => {}), { wrapper: StrictMode })
     expect(MockSocket.instances.filter((s) => !s.closed)).toHaveLength(1)
     vi.advanceTimersByTime(10_000)
     expect(MockSocket.instances.filter((s) => !s.closed)).toHaveLength(1)

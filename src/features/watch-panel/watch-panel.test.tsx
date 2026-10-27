@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { Participant } from '@/lib/api/schemas'
+import { testnetModel } from '../../../tests/support/recorded'
 import { WatchPanel } from './watch-panel'
 
 const model = testnetModel()

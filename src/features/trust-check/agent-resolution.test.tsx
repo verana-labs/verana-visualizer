@@ -2,11 +2,11 @@ import { act, render, renderHook, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { NetworkModel } from '@/domain/network-model'
 import { Hud } from '@/features/hud/hud'
-import { testnetModel } from '@/features/search/search-fixture'
 import { logger } from '@/lib/logger'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
 import { resolveAgents, useAgentResolution } from './agent-resolution'
-import { testnetCfg } from './trust-fixture'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams('') }))
 

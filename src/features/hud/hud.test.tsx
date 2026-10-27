@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -7,19 +5,11 @@ import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
 import { useTour } from '@/features/tour/tour-store'
 import { resolveNetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
+import { recordedNetwork } from '../../../tests/support/recorded'
 import { Hud } from './hud'
 import { NetworkSwitch } from './network-switch'
 
-const fixture = <T,>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const raw: RawNetwork = {
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-}
+const raw: RawNetwork = recordedNetwork()
 const model = buildNetworkModel(raw)
 
 const config = (network: string, extra: Record<string, string> = {}) =>

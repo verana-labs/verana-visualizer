@@ -3,9 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { useTour } from '@/features/tour/tour-store'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
 import { useSceneHandle } from './scene-handle'
 import { shareUrl } from './share-link'
 import { ViewActions } from './view-actions'
@@ -86,7 +86,7 @@ describe('ViewActions', () => {
   })
 
   it('starts the presentation from the Present button', async () => {
-    useObservatory.setState({ model: (await import('@/features/search/search-fixture')).testnetModel() })
+    useObservatory.setState({ model: (await import('../../../tests/support/recorded')).testnetModel() })
     render(<ViewActions cfg={testnetCfg} />)
     await userEvent.click(screen.getByRole('button', { name: 'Present' }))
     expect(useTour.getState()).toMatchObject({ step: 0, presenting: true })

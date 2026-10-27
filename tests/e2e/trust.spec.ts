@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
-import { ECS_DID, expect, openScene, PAPAPO_DID, test } from './support/test'
+import { ECS_DID, PAPAPO_DID } from '../support/network'
+import { expect, openScene, test } from './support/test'
 
 async function checkDid(page: Page, did: string) {
   await page.getByTestId('hud').getByRole('button', { name: 'Is this service trustworthy?' }).click()

@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -8,20 +6,12 @@ import { participantState } from '@/domain/participant-state'
 import type { QueryInfo } from '@/lib/api/query-info'
 import type { Ecosystem } from '@/lib/api/schemas'
 import { useObservatory } from '@/store/observatory-store'
+import { recordedNetwork } from '../../../tests/support/recorded'
 import { Inspector } from './inspector'
-
-const fixture = <T,>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
 
 const FRONTEND = 'https://app.testnet.verana.network'
 
-const baseRaw = (): RawNetwork => ({
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-})
+const baseRaw = (): RawNetwork => recordedNetwork()
 
 const listQuery = (path: string): QueryInfo => ({
   method: 'GET',

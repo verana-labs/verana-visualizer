@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
+import { testnetModel } from '../../../tests/support/recorded'
 import { TimeScrubber, type TimeScrubberProps } from './time-scrubber'
 
 const props = (over: Partial<TimeScrubberProps> = {}): TimeScrubberProps => ({

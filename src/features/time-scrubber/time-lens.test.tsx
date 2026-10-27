@@ -1,9 +1,9 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { resolveNetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
 import { launchHistoryComets } from './history-comets'
 import { TimeLens } from './time-lens'
 import { FADE_MS, useTimeStore } from './time-store'
@@ -27,12 +27,7 @@ timeline.current = {
   error: null,
 }
 
-const cfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-})
+const cfg = testnetCfg
 
 beforeEach(() => {
   vi.mocked(launchHistoryComets).mockClear()

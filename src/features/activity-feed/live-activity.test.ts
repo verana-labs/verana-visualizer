@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../../tests/support/recorded'
 import { applyBlock, ingestEvent } from './live-activity'
 
 const model = testnetModel()

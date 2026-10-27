@@ -1,10 +1,10 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useTimeStore } from '@/features/time-scrubber/time-store'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
 import { Tour } from './tour'
 import { useTour } from './tour-store'
 

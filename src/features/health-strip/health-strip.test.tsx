@@ -1,7 +1,7 @@
 import { act, render, screen, within } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { failing, stubNetwork } from '@/features/chain-stats/chain-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
+import { failing, stubNetwork } from '../../../tests/support/chain-fixture'
+import { testnetCfg } from '../../../tests/support/network'
 import { HealthStrip, REFRESH_MS } from './health-strip'
 
 afterEach(() => {

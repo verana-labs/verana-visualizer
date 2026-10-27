@@ -1,8 +1,8 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { resolveNetworkConfig } from '@/lib/env'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
 import { feedItemOf } from './activity'
 import { ActivityFeed } from './activity-feed'
 
@@ -15,12 +15,7 @@ class SilentSocket {
   close() {}
 }
 
-const cfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-})
+const cfg = testnetCfg
 const model = testnetModel()
 
 const item = (block: number, eventType = 'CreateNewCorporation', module = 'co') =>

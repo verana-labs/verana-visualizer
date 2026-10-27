@@ -1,13 +1,8 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { rawBody } from '../../tests/support/recorded'
 import { growthOf, periodLabel, type StatsBucket, whatChanged } from './digest'
 
-const recorded = (
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/stats.json'), 'utf8')) as {
-    buckets: StatsBucket[]
-  }
-).buckets
+const recorded = (rawBody('stats') as { buckets: StatsBucket[] }).buckets
 
 const bucket = (day: string, deltas: Record<string, number>, cumulative: Record<string, number> = {}): StatsBucket => ({
   timestamp: `${day}T00:00:00Z`,

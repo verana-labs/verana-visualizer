@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { PAPAPO_DID, stubTrustNetwork, testnetCfg } from '@/features/trust-check/trust-fixture'
 import { logger } from '@/lib/logger'
+import { PAPAPO_DID, testnetCfg } from '../../../tests/support/network'
+import { stubTrustNetwork } from '../../../tests/support/trust-fixture'
 import { loadVerdict, PINNED_REVALIDATE_S } from './load-verdict'
 
 afterEach(() => {

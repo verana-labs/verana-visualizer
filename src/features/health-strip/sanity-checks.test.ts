@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { failing, stubNetwork, withChainProposals } from '@/features/chain-stats/chain-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createChainClient } from '@/lib/api/chain'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { failing, stubNetwork, withChainProposals } from '../../../tests/support/chain-fixture'
+import { testnetCfg } from '../../../tests/support/network'
 import { isHealthy, runSanityChecks } from './sanity-checks'
 
 afterEach(() => vi.unstubAllGlobals())

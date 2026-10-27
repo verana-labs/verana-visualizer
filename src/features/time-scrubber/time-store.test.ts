@@ -1,8 +1,8 @@
 import { InstancedMesh, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from 'three'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { buildSceneData } from '@/scene/scene-data'
 import { isHittableInstance } from '@/scene/use-picking'
+import { testnetModel } from '../../../tests/support/recorded'
 import { FADE_MS, presenceOf, useTimeStore } from './time-store'
 
 beforeEach(() => useTimeStore.getState().reset())

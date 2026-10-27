@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react'
 import { act } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../../tests/support/recorded'
 import { useSelectionUrl } from './use-selection-url'
 
 let params = new URLSearchParams()

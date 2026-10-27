@@ -1,18 +1,14 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it } from 'vitest'
 import { fromGovProposal, fromGroupProposal, withProposals } from '@/domain/governance'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { GroupProposal } from '@/lib/api/schemas'
 import { useObservatory } from '@/store/observatory-store'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { GovernancePanel } from './governance-panel'
 import type { GovernanceData } from './load-governance'
 
-const groupProposals = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/group-proposals.json'), 'utf8')
-) as GroupProposal[]
+const groupProposals = recorded<GroupProposal[]>('group-proposals')
 
 const query = (path: string) => ({
   method: 'GET' as const,

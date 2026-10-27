@@ -1,12 +1,10 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, fireEvent, render } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useTour } from '@/features/tour/tour-store'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { Autopilot, LIVE_STEP_MS, STEP_MS } from './autopilot'
 
 const events = vi.hoisted(() => vi.fn<(after: number, limit: number) => Promise<{ data: IndexerEvent[] }>>())
@@ -15,9 +13,7 @@ vi.mock('@/lib/api/indexer', () => ({ createIndexerClient: () => ({ events }) })
 const reduced = vi.hoisted(() => ({ value: false }))
 vi.mock('@/scene/use-reduced-motion', () => ({ usePrefersReducedMotion: () => reduced.value }))
 
-const recorded = (
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/events.json'), 'utf8')) as IndexerEvent[]
-).slice(0, 2)
+const recorded = (rawBody('events') as { events: IndexerEvent[] }).events.slice(0, 2)
 
 beforeEach(() => {
   vi.useFakeTimers()

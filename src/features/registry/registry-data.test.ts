@@ -1,8 +1,7 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { buildNetworkModel } from '@/domain/network-model'
 import type { Participant } from '@/lib/api/schemas'
+import { recorded, recordedNetwork } from '../../../tests/support/recorded'
 import {
   coverageMatrix,
   expiringSoon,
@@ -12,20 +11,9 @@ import {
   slashEvents,
 } from './registry-data'
 
-const fixture = <T>(network: string, name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures', network, `${name}.json`), 'utf8')) as T
-
-const rawOf = (network: string): RawNetwork => ({
-  ecosystems: fixture(network, 'ecosystems'),
-  schemas: fixture(network, 'schemas'),
-  participants: fixture(network, 'participants'),
-  corporations: fixture(network, 'corporations'),
-  dids: fixture<{ dids: string[] }>(network, 'dids').dids,
-})
-
 const NOW = new Date('2026-10-20T12:00:00Z')
-const testnet = rawOf('testnet')
-const devnet = rawOf('devnet')
+const testnet = recordedNetwork('testnet')
+const devnet = recordedNetwork('devnet')
 const [base] = testnet.participants
 
 const person = (id: number, patch: Partial<Participant> = {}): Participant => ({
@@ -206,7 +194,7 @@ describe('slashEvents', () => {
   })
 
   it('is empty on the real testnet series', () => {
-    expect(slashEvents(fixture<{ buckets: Record<string, unknown>[] }>('testnet', 'stats').buckets)).toEqual([])
+    expect(slashEvents(recorded<{ buckets: Record<string, unknown>[] }>('stats', 'testnet').buckets)).toEqual([])
   })
 
   it('fails on a non-numeric slash field', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { EntityId } from '@/domain/network-model'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../tests/support/recorded'
 import { dimOf, focusSetsOf } from './scene-focus'
 
 const model = testnetModel()

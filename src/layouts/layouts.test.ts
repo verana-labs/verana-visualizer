@@ -1,21 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { recordedNetwork } from '../../tests/support/recorded'
 import { blockRise, STREAM_SIZE, VALIDATOR_RING_RADIUS } from './chain'
 import { LENSES, layoutFor } from './index'
 import { maxOrbitRadius, orbitRadius, spreadCenters } from './network'
 
-const fixture = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(__dirname, '../../tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const raw: RawNetwork = {
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-}
+const raw: RawNetwork = recordedNetwork()
 const model = buildNetworkModel(raw)
 const distance = (a: readonly number[], b: readonly number[]) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2])
 

@@ -1,24 +1,14 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { IndexerEvent, Participant } from '@/lib/api/schemas'
+import { recorded, recordedNetwork } from '../../tests/support/recorded'
 import { replayWindows, touchedEntities } from './events'
 import { agentName, ecosystemName, schemaTitle } from './names'
 import { buildNetworkModel, type EntityId, type RawNetwork } from './network-model'
 import { participantState } from './participant-state'
 import { ROLES } from './roles'
 
-const fixture = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(__dirname, '../../tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const raw: RawNetwork = {
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-}
-const events = fixture<IndexerEvent[]>('events')
+const raw: RawNetwork = recordedNetwork()
+const events = recorded<IndexerEvent[]>('events')
 
 describe('buildNetworkModel', () => {
   const model = buildNetworkModel(raw)

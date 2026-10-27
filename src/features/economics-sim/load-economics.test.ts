@@ -1,17 +1,8 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { loadEconomics } from './load-economics'
-
-const raw = (network: string, name: string): unknown =>
-  (
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures', network, 'raw', `${name}.json`), 'utf8')) as {
-      body: unknown
-    }
-  ).body
 
 const NOW = new Date('2026-10-20T12:00:00Z')
 
@@ -20,9 +11,10 @@ function stubIndexer(network: string, depositOf: (id: number) => Response, excha
     const url = new URL(input)
     const deposit = url.pathname.match(/^\/v4\/trust-deposit\/get\/(\d+)$/)
     if (deposit) return depositOf(Number(deposit[1]))
-    if (url.pathname === '/v4/trust-deposit/params') return Response.json(raw(network, 'td-params'))
-    if (url.pathname === '/v4/exchange-rate/list') return Response.json(exchangeRates ?? raw(network, 'exchange-rates'))
-    if (url.pathname === '/v4/stats/stats') return Response.json(raw(network, 'stats'))
+    if (url.pathname === '/v4/trust-deposit/params') return Response.json(rawBody('td-params', network))
+    if (url.pathname === '/v4/exchange-rate/list')
+      return Response.json(exchangeRates ?? rawBody('exchange-rates', network))
+    if (url.pathname === '/v4/stats/stats') return Response.json(rawBody('stats', network))
     return new Response('unexpected', { status: 500 })
   })
   vi.stubGlobal('fetch', mock)
@@ -38,7 +30,7 @@ describe('loadEconomics', () => {
   it('reads live rates, exchange rates, the stats series and one trust deposit per corporation', async () => {
     const model = testnetModel()
     const mock = stubIndexer('testnet', (id) =>
-      id === 2 ? Response.json(raw('testnet', 'trust-deposit')) : notFound(id)
+      id === 2 ? Response.json(rawBody('trust-deposit', 'testnet')) : notFound(id)
     )
     const data = await loadEconomics(createIndexerClient(testnetCfg), model, NOW)
     expect(data.rates).toEqual({ trustDepositRate: 0.05, userAgentRewardRate: 0.1, walletUserAgentRewardRate: 0.1 })
@@ -56,7 +48,7 @@ describe('loadEconomics', () => {
   })
 
   it('only asks the trust-deposit endpoint for corporations whose list row shows deposit activity', async () => {
-    const mock = stubIndexer('testnet', (id) => Response.json(raw('testnet', 'trust-deposit')))
+    const mock = stubIndexer('testnet', (id) => Response.json(rawBody('trust-deposit', 'testnet')))
     const data = await loadEconomics(createIndexerClient(testnetCfg), testnetModel(), NOW)
     const asked = mock.mock.calls.flatMap(([url]) => url.match(/trust-deposit\/get\/(\d+)$/)?.[1] ?? []).sort()
     expect(asked).toEqual(['1', '2'])

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Entity, EntityId, NetworkModel } from '@/domain/network-model'
+import { testnetModel } from '../../../tests/support/recorded'
 import { searchEntities } from './search-entities'
-import { testnetModel } from './search-fixture'
 
 const model = testnetModel()
 const ids = (query: string) => searchEntities(model, query).map((e) => e.id)

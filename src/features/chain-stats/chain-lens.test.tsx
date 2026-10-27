@@ -1,9 +1,9 @@
 import { act, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
-import { HEAD, rawBody, stubNetwork } from './chain-fixture'
+import { HEAD, stubNetwork } from '../../../tests/support/chain-fixture'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { ChainLens, STATS_REFRESH_MS } from './chain-lens'
 
 const model = testnetModel()

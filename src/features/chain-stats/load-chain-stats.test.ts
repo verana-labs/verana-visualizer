@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
-import { blockBody, blockTime, failing, HEAD, rawBody, stubNetwork } from './chain-fixture'
+import { blockBody, blockTime, failing, HEAD, stubNetwork } from '../../../tests/support/chain-fixture'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody } from '../../../tests/support/recorded'
 import {
   averageBlockSeconds,
   BLOCK_TIME_WINDOW,

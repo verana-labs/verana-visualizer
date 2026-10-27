@@ -1,13 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { RegistryLens } from './registry-lens'
 
-const stats = JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/stats.json'), 'utf8')) as unknown
+const stats = recorded<unknown>('stats')
 const model = testnetModel()
 let fetchMock: ReturnType<typeof vi.fn>
 

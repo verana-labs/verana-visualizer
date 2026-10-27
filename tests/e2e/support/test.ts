@@ -1,8 +1,6 @@
 import { test as base, type ConsoleMessage, expect, type Page } from '@playwright/test'
 
 export const MOCK_ORIGIN = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3101}`
-export const ECS_DID = 'did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network'
-export const PAPAPO_DID = 'did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes'
 
 const blockMessage = (block: number, events: unknown[]) => ({
   type: 'block',

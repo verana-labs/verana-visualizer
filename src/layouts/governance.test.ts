@@ -1,14 +1,10 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { fromGovProposal, fromGroupProposal, withProposals } from '@/domain/governance'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { GroupProposal } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../tests/support/recorded'
 import { LENSES, layoutFor } from './index'
 
-const groupProposals = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/group-proposals.json'), 'utf8')
-) as GroupProposal[]
+const groupProposals = recorded<GroupProposal[]>('group-proposals')
 
 const chainProposal = fromGovProposal({
   id: '7',

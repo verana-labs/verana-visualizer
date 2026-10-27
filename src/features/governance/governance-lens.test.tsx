@@ -1,13 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { withProposals } from '@/domain/governance'
 import { Inspector } from '@/features/inspector/inspector'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { GovernanceLens } from './governance-lens'
 
 vi.mock('next/navigation', () => ({
@@ -15,19 +13,12 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/',
 }))
 
-const raw = (name: string): unknown =>
-  (
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/raw', `${name}.json`), 'utf8')) as {
-      body: unknown
-    }
-  ).body
-
 let votesStatus = 200
 const fetchMock = vi.fn(async (input: string) => {
   const { pathname } = new URL(input)
-  if (pathname === '/v4/group/proposals') return Response.json(raw('group-proposals'))
+  if (pathname === '/v4/group/proposals') return Response.json(rawBody('group-proposals'))
   if (pathname === '/v4/group/votes')
-    return votesStatus === 200 ? Response.json(raw('group-votes')) : new Response('boom', { status: votesStatus })
+    return votesStatus === 200 ? Response.json(rawBody('group-votes')) : new Response('boom', { status: votesStatus })
   if (pathname.startsWith('/v4/group/get/')) return Response.json({ code: 404 }, { status: 404 })
   if (pathname === '/cosmos/gov/v1/proposals') return Response.json({ proposals: [], pagination: { next_key: null } })
   return new Response('unexpected', { status: 500 })

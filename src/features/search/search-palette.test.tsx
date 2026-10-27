@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { fromGovProposal, withProposals } from '@/domain/governance'
 import { Inspector } from '@/features/inspector/inspector'
 import { useObservatory } from '@/store/observatory-store'
-import { testnetModel } from './search-fixture'
+import { testnetModel } from '../../../tests/support/recorded'
 import { SearchPalette } from './search-palette'
 
 class ResizeObserverStub {

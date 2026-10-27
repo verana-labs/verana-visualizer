@@ -1,19 +1,15 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { liveTuRate, type Rates } from '@/domain/economics'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { ExchangeRate } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { SimulationPanel } from './simulation-panel'
 
 const model = testnetModel()
 const LIVE: Rates = { trustDepositRate: 0.05, userAgentRewardRate: 0.1, walletUserAgentRewardRate: 0.1 }
 const NOW = new Date('2026-10-20T12:00:00Z')
-const emptyRates = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/exchange-rates.json'), 'utf8')
-) as ExchangeRate[]
+const emptyRates = recorded<ExchangeRate[]>('exchange-rates')
 
 const TU_RATE = {
   id: 4,

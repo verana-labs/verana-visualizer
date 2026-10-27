@@ -1,19 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { vi } from 'vitest'
+import { rawBody } from './recorded'
 
 export const HEAD = 1000
 export const BLOCK_MS = 6000
 export const INDEXER_HEIGHT = 998
 const BASE_TIME = Date.parse('2026-10-20T10:00:00Z')
 export const YIELD_POOL_ADDRESS = 'verana1wjnrmvjlgxvs098cnu3jaczzjjm4csmqep067h'
-
-export const rawBody = (name: string): unknown =>
-  (
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/raw', `${name}.json`), 'utf8')) as {
-      body: unknown
-    }
-  ).body
 
 export const blockTime = (height: number) => new Date(BASE_TIME + height * BLOCK_MS).toISOString()
 

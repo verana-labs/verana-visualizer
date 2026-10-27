@@ -1,15 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { fromGroupProposal, withProposals } from '@/domain/governance'
 import { MODULE_COLORS } from '@/features/activity-feed/activity'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { GroupProposal, IndexerEvent } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { governanceComets } from './governance-comets'
 
-const groupProposals = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/group-proposals.json'), 'utf8')
-) as GroupProposal[]
+const groupProposals = recorded<GroupProposal[]>('group-proposals')
 const model = withProposals(testnetModel(), groupProposals.map(fromGroupProposal))
 
 const vote = (payload: Record<string, unknown>): IndexerEvent => ({

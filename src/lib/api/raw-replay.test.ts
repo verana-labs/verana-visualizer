@@ -1,11 +1,13 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { resolveNetworkConfig } from '../env'
+import { configFor } from '../../../tests/support/network'
+import { rawBody } from '../../../tests/support/recorded'
 import { createChainClient } from './chain'
 import { createGraphClient } from './graph'
 import { createIndexerClient } from './indexer'
 import type { QueryInfo } from './query-info'
+import { validatorChainSchema } from './schemas'
 
 interface RawFixture {
   request: QueryInfo
@@ -19,15 +21,6 @@ interface Calls {
   indexer: ReturnType<typeof createIndexerClient>
   graph: ReturnType<typeof createGraphClient>
   chain: ReturnType<typeof createChainClient>
-}
-
-function configFor(network: string) {
-  return resolveNetworkConfig({
-    NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: `https://idx.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_RPC_ENDPOINT: `https://rpc.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_REST_ENDPOINT: `https://api.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_CHAIN_ID: `vna-${network}-1`,
-  })
 }
 
 const search = (request: QueryInfo) => new URL(request.url).searchParams
@@ -95,7 +88,7 @@ const replays: Record<string, Replay> = {
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe.each(['testnet', 'devnet'])('raw response replay (%s)', (network) => {
+describe.each(['testnet', 'devnet'] as const)('raw response replay (%s)', (network) => {
   const dir = join(process.cwd(), 'tests', 'fixtures', network, 'raw')
   const files = readdirSync(dir).filter((f) => f.endsWith('.json'))
   const cfg = configFor(network)
@@ -104,6 +97,11 @@ describe.each(['testnet', 'devnet'])('raw response replay (%s)', (network) => {
     const names = files.map((f) => f.replace(/\.json$/, ''))
     expect(names.filter((name) => !(name in replays))).toEqual([])
     expect(names).toContain('graph-traverse-g1')
+  })
+
+  it('parses the recorded G1 output as a validator chain', () => {
+    const { output } = rawBody('graph-traverse-g1', network) as { output: unknown }
+    expect(validatorChainSchema.parse(output).length).toBeGreaterThan(0)
   })
 
   it.each(files)('replays %s through the matching client method', async (file) => {

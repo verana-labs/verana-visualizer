@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
+import { testnetCfg } from '../../../tests/support/network'
 import { createIndexerClient } from './indexer'
 import { proxyIndexer } from './indexer-proxy'
 

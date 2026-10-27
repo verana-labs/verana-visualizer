@@ -141,8 +141,6 @@ export const activityItemSchema = z
 
 export const historyItemSchema = activityItemSchema.extend({ id: z.number() })
 
-export const historyActivitySchema = z.array(historyItemSchema)
-
 export const trustVerdictSchema = z
   .object({
     did: z.string(),
@@ -315,8 +313,6 @@ export const verifiableTrustDidsPageSchema = z
   .object({ atBlock: z.number(), dids: z.array(z.string()), nextCursor: z.string().nullish() })
   .passthrough()
 
-export const didListSchema = z.object({ atBlock: z.number(), dids: z.array(z.string()) }).passthrough()
-
 export const graphHealthSchema = z.object({ status: z.string(), lastAppliedBlock: z.number() }).passthrough()
 
 export const traverseResponseSchema = z
@@ -356,7 +352,6 @@ const chainPaginationSchema = z.object({ next_key: z.string().nullish(), total: 
 export const supplyPageSchema = z
   .object({ supply: z.array(coinSchema), pagination: chainPaginationSchema.nullish() })
   .passthrough()
-export const supplySchema = z.array(coinSchema)
 
 export const inflationSchema = z.object({ inflation: z.string() }).passthrough()
 
@@ -389,7 +384,6 @@ export const validatorSchema = z
 export const validatorsPageSchema = z
   .object({ validators: z.array(validatorSchema), pagination: chainPaginationSchema.nullish() })
   .passthrough()
-export const validatorsSchema = z.array(validatorSchema)
 
 export const govProposalSchema = z
   .object({
@@ -410,7 +404,6 @@ export const govProposalSchema = z
 export const govProposalsPageSchema = z
   .object({ proposals: z.array(govProposalSchema), pagination: chainPaginationSchema.nullish() })
   .passthrough()
-export const govProposalsSchema = z.array(govProposalSchema)
 export const govTallySchema = z.object({ tally: tallySchema }).passthrough()
 
 export const blockSchema = z

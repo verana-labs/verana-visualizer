@@ -3,17 +3,17 @@ import { join } from 'node:path'
 import { createChainClient } from '../src/lib/api/chain'
 import { createGraphClient } from '../src/lib/api/graph'
 import { createIndexerClient } from '../src/lib/api/indexer'
-import type { Fetched } from '../src/lib/api/query-info'
-import { resolveNetworkConfig } from '../src/lib/env'
+import type { Fetched, QueryInfo } from '../src/lib/api/query-info'
 import { FetchError } from '../src/lib/fetch-json'
 import { logger } from '../src/lib/logger'
+import { configFor, ECS_DID, PAPAPO_DID } from '../tests/support/network'
 
 const NETWORKS = ['testnet', 'devnet'] as const
-const TRUSTED_ROOT = 'did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network'
-const UNTRUSTED = 'did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes'
+const TRACED_PARTICIPANTS: Record<string, number[]> = { testnet: [11, 97] }
 const FIXTURE_DIR = join(process.cwd(), 'tests', 'fixtures')
 
 interface RawResponse {
+  request: QueryInfo
   status: number
   body: unknown
 }
@@ -27,17 +27,14 @@ globalThis.fetch = async (input, init) => {
     .clone()
     .json()
     .catch(() => null)
-  rawResponses.push({ status: response.status, body })
+  const request: QueryInfo = {
+    method: init?.method === 'POST' ? 'POST' : 'GET',
+    url: String(input),
+    headers: (init?.headers ?? {}) as Record<string, string>,
+    ...(init?.body ? { body: JSON.parse(String(init.body)) } : {}),
+  }
+  rawResponses.push({ request, status: response.status, body })
   return response
-}
-
-function configFor(network: string) {
-  return resolveNetworkConfig({
-    NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: `https://idx.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_RPC_ENDPOINT: `https://rpc.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_REST_ENDPOINT: `https://api.${network}.verana.network`,
-    NEXT_PUBLIC_VERANA_CHAIN_ID: `vna-${network}-1`,
-  })
 }
 
 async function recordNetwork(network: string) {
@@ -48,15 +45,26 @@ async function recordNetwork(network: string) {
   const dir = join(FIXTURE_DIR, network)
   await mkdir(join(dir, 'raw'), { recursive: true })
 
+  const write = async (name: string, request: QueryInfo) => {
+    if (rawResponses.length > 1) throw new Error(`${network}/${name} took ${rawResponses.length} requests`)
+    const [{ status, body }] = rawResponses
+    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify({ request, status, body }, null, 2)}\n`)
+    logger.log(`${network}/raw/${name}.json`)
+  }
+
   const record = async <T>(name: string, load: () => Promise<Fetched<T>>): Promise<Fetched<T>> => {
     rawResponses.length = 0
     const result = await load()
-    const first = rawResponses[0]
-    await writeFile(join(dir, `${name}.json`), `${JSON.stringify(result.data, null, 2)}\n`)
-    const raw = { request: result.query, status: first.status, body: first.body }
-    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify(raw, null, 2)}\n`)
-    logger.log(`${network}/${name}.json`)
+    await write(name, result.query)
     return result
+  }
+
+  const recordAnyStatus = async (name: string, load: () => Promise<unknown>) => {
+    rawResponses.length = 0
+    await load().catch((error: unknown) => {
+      if (!(error instanceof FetchError) || error.status === null) throw error
+    })
+    await write(name, rawResponses[0].request)
   }
 
   const recordIfFound = async <T>(name: string, load: () => Promise<Fetched<T>>) => {
@@ -64,7 +72,7 @@ async function recordNetwork(network: string) {
       await record(name, load)
     } catch (error) {
       if (!(error instanceof FetchError) || error.status !== 404) throw error
-      logger.log(`${network}/${name}.json skipped: ${error.message}`)
+      logger.log(`${network}/raw/${name}.json skipped: ${error.message}`)
     }
   }
 
@@ -98,15 +106,21 @@ async function recordNetwork(network: string) {
     await record('entity-history-participant', () => indexer.entityHistory('participant', issuer.id))
     await record('graph-traverse-g1', () => graph.traverse('G1', { participantId: issuer.id }))
   }
+  for (const participantId of TRACED_PARTICIPANTS[network] ?? [])
+    await recordAnyStatus(`graph-traverse-g1-${participantId}`, () => graph.traverse('G1', { participantId }))
 
-  await recordIfFound('resolve-trusted-root', () => indexer.resolve(TRUSTED_ROOT))
-  await recordIfFound('resolve-untrusted', () => indexer.resolve(UNTRUSTED))
+  await recordIfFound('resolve-trusted-root', () => indexer.resolve(ECS_DID))
+  await recordIfFound('resolve-untrusted', () => indexer.resolve(PAPAPO_DID))
   const firstDid = dids.data.dids[0]
   if (firstDid) await record('resolve-first-did', () => indexer.resolve(firstDid))
 
   const block = await record('block-height', () => indexer.blockHeight())
-  await record('events', () => indexer.events(0, 100))
+  const events = await record('events', () => indexer.events(0, 100))
+  const lastEvent = events.data.at(-1)
+  if (network === 'testnet' && lastEvent)
+    await record('events-page-2', () => indexer.events(lastEvent.block_height - 1, 100))
   await record('changes', () => indexer.changes(Math.max(1, block.data.height - 1)))
+  await record('changes-38000', () => indexer.changes(38000))
   await record('stats', () =>
     indexer.stats({
       entity_type: 'GLOBAL',

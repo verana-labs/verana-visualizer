@@ -1,12 +1,9 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { CredentialSchema } from '@/lib/api/schemas'
+import { recorded } from '../../tests/support/recorded'
 import { canonicalJson, ECS_DIGESTS, ecsKinds, ecsSchemaDigest, isEcsCompliant } from './ecs'
 
-const schemas = JSON.parse(
-  readFileSync(join(__dirname, '../../tests/fixtures/testnet/schemas.json'), 'utf8')
-) as CredentialSchema[]
+const schemas = recorded<CredentialSchema[]>('schemas')
 const ecsEcosystem = schemas.filter((s) => s.ecosystem_id === 2)
 const byTitle = (title: string) => {
   const schema = ecsEcosystem.find((s) => s.title === title)

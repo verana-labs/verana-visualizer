@@ -1,8 +1,8 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetModel } from '../../../tests/support/recorded'
 import { CoveragePanel } from './coverage-panel'
 import { coverageMatrix } from './registry-data'
 

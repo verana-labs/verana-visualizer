@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel } from '@/domain/network-model'
-import { testnetModel } from '@/features/search/search-fixture'
 import { LENSES } from '@/layouts'
+import { testnetModel } from '../../../tests/support/recorded'
 import { tourSteps } from './tour-steps'
 
 const model = testnetModel()

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { EntityId } from '@/domain/network-model'
 import { TRUST_HOP_MS, type TrustCheck } from '@/domain/trust-check'
-import { testnetModel } from '@/features/search/search-fixture'
+import { testnetModel } from '../../tests/support/recorded'
 import { agentStrength } from './links'
 import { dimOf, type FocusSets } from './scene-focus'
 import { sparkAt, traceablePath } from './trust-trace'

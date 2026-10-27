@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { failing, HEAD, INDEXER_HEIGHT, stubNetwork } from '@/features/chain-stats/chain-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
+import { failing, HEAD, INDEXER_HEIGHT, stubNetwork } from '../../../tests/support/chain-fixture'
+import { testnetCfg } from '../../../tests/support/network'
 import { checkHealth, lagTone } from './check-health'
 
 afterEach(() => vi.unstubAllGlobals())

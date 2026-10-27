@@ -1,22 +1,16 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { StatsBucket } from '@/domain/digest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { useGrowth, WhatChanged } from './growth'
 import { Hud } from './hud'
 
 vi.mock('next/navigation', () => ({ useSearchParams: () => new URLSearchParams('') }))
 
-const recorded = (
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/stats.json'), 'utf8')) as {
-    buckets: StatsBucket[]
-  }
-).buckets
+const recorded = (rawBody('stats') as { buckets: StatsBucket[] }).buckets
 
 const bucket = (day: string, participants: number, delta: number): StatsBucket => ({
   timestamp: `${day}T00:00:00Z`,

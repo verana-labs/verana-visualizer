@@ -1,11 +1,10 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { renderHook } from '@testing-library/react'
 import { PerspectiveCamera, Vector3 } from 'three'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type EntityId, type RawNetwork } from '@/domain/network-model'
 import { layoutFor } from '@/layouts'
 import type { Layout, Vec3 } from '@/layouts/types'
+import { recordedNetwork } from '../../tests/support/recorded'
 import {
   focusDistance,
   focusFrameDistance,
@@ -141,15 +140,7 @@ describe('focusFrameDistance', () => {
 })
 
 describe('focusFrameIds', () => {
-  const fixture = <T>(name: string): T =>
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-  const raw: RawNetwork = {
-    ecosystems: fixture('ecosystems'),
-    schemas: fixture('schemas'),
-    participants: fixture('participants'),
-    corporations: fixture('corporations'),
-    dids: fixture<{ dids: string[] }>('dids').dids,
-  }
+  const raw: RawNetwork = recordedNetwork()
   const model = buildNetworkModel(raw)
 
   it('gives ECS 1.6 times its tight fit', () => {

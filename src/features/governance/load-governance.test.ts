@@ -1,13 +1,9 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { createChainClient } from '@/lib/api/chain'
 import { createIndexerClient } from '@/lib/api/indexer'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody } from '../../../tests/support/recorded'
 import { loadGovernance, loadVotes } from './load-governance'
-
-const raw = (name: string): { body: unknown } =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/raw', `${name}.json`), 'utf8'))
 
 const upgrade = {
   id: '3',
@@ -42,10 +38,10 @@ function zeros() {
 function stub({ gov, group, tally }: Stub = {}) {
   const mock = vi.fn(async (input: string) => {
     const url = new URL(input)
-    if (url.pathname === '/v4/group/proposals') return Response.json(raw('group-proposals').body)
-    if (url.pathname === '/v4/group/votes') return Response.json(raw('group-votes').body)
+    if (url.pathname === '/v4/group/proposals') return Response.json(rawBody('group-proposals'))
+    if (url.pathname === '/v4/group/votes') return Response.json(rawBody('group-votes'))
     const member = url.pathname.match(/^\/v4\/group\/get\/(\d+)$/)
-    if (member) return group ? group(Number(member[1])) : Response.json(raw('group-members').body)
+    if (member) return group ? group(Number(member[1])) : Response.json(rawBody('group-members'))
     const live = url.pathname.match(/^\/cosmos\/gov\/v1\/proposals\/(\d+)\/tally$/)
     if (live)
       return tally
@@ -98,7 +94,7 @@ describe('loadGovernance', () => {
     const mock = stub({
       group: (id) =>
         id === 2
-          ? Response.json(raw('group-members').body)
+          ? Response.json(rawBody('group-members'))
           : Response.json({ error: `Corporation ${id} group not found`, code: 404 }, { status: 404 }),
     })
     const { indexer, chain } = clients()

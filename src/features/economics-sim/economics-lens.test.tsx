@@ -1,19 +1,10 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
-import { testnetCfg } from '@/features/trust-check/trust-fixture'
 import { useObservatory } from '@/store/observatory-store'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody, testnetModel } from '../../../tests/support/recorded'
 import { EconomicsLens } from './economics-lens'
-
-const raw = (name: string): unknown =>
-  (
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/raw', `${name}.json`), 'utf8')) as {
-      body: unknown
-    }
-  ).body
 
 const model = testnetModel()
 
@@ -23,11 +14,11 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (input: string) => {
       const { pathname } = new URL(input)
-      if (pathname === '/v4/trust-deposit/get/1') return Response.json(raw('trust-deposit'))
+      if (pathname === '/v4/trust-deposit/get/1') return Response.json(rawBody('trust-deposit'))
       if (pathname.startsWith('/v4/trust-deposit/get/')) return Response.json({ code: 404 }, { status: 404 })
-      if (pathname === '/v4/trust-deposit/params') return Response.json(raw('td-params'))
-      if (pathname === '/v4/exchange-rate/list') return Response.json(raw('exchange-rates'))
-      if (pathname === '/v4/stats/stats') return Response.json(raw('stats'))
+      if (pathname === '/v4/trust-deposit/params') return Response.json(rawBody('td-params'))
+      if (pathname === '/v4/exchange-rate/list') return Response.json(rawBody('exchange-rates'))
+      if (pathname === '/v4/stats/stats') return Response.json(rawBody('stats'))
       return new Response('unexpected', { status: 500 })
     })
   )

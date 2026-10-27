@@ -1,14 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { resolveNetworkConfig } from '@/lib/env'
+import { testnetCfg } from '../../../tests/support/network'
 import { Footer } from './footer'
 
-const cfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-})
+const cfg = testnetCfg
 
 describe('Footer', () => {
   it('renders the 8 links with exact hrefs, opening in a new tab', () => {

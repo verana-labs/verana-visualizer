@@ -1,7 +1,6 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { type ExchangeRate, exchangeRateSchema, type Participant } from '@/lib/api/schemas'
+import { recorded } from '../../tests/support/recorded'
 import {
   issuanceBeneficiaries,
   liveTuRate,
@@ -19,9 +18,6 @@ import {
 } from './economics'
 
 const R: Rates = { trustDepositRate: 0.05, userAgentRewardRate: 0.05, walletUserAgentRewardRate: 0.05 }
-
-const fixture = <T>(network: string, name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures', network, `${name}.json`), 'utf8')) as T
 
 describe('VPR v4 business models worked examples', () => {
   it('splits an onboarding fee between the escrow and the validator', () => {
@@ -76,7 +72,7 @@ describe('VPR v4 business models worked examples', () => {
 
 describe('ratesFromTdParams', () => {
   it('reads the three rates from the live td params', () => {
-    const { params } = fixture<{ params: Record<string, unknown> }>('testnet', 'td-params')
+    const { params } = recorded<{ params: Record<string, unknown> }>('td-params', 'testnet')
     expect(ratesFromTdParams(params)).toEqual({
       trustDepositRate: 0.05,
       userAgentRewardRate: 0.1,
@@ -174,8 +170,8 @@ describe('liveTuRate', () => {
   const now = new Date('2026-10-20T00:00:00Z')
 
   it('finds nothing while the exchange-rate list is empty on both networks', () => {
-    expect(liveTuRate(fixture('testnet', 'exchange-rates'), now)).toBeNull()
-    expect(liveTuRate(fixture('devnet', 'exchange-rates'), now)).toBeNull()
+    expect(liveTuRate(recorded('exchange-rates', 'testnet'), now)).toBeNull()
+    expect(liveTuRate(recorded('exchange-rates', 'devnet'), now)).toBeNull()
   })
 
   it('parses a spec TU row whose base_asset is null and uses it', () => {

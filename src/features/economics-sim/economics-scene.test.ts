@@ -1,24 +1,13 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { buildNetworkModel } from '@/domain/network-model'
 import type { TrustDeposit } from '@/lib/api/schemas'
+import { recorded, recordedNetwork } from '../../../tests/support/recorded'
 import { economicsScene, PARTICIPANT_DEPOSIT_MAX, STAR_DEPOSIT_BASE } from './economics-scene'
 
-const fixture = <T>(network: string, name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures', network, `${name}.json`), 'utf8')) as T
-
-const modelOf = (network: string) =>
-  buildNetworkModel({
-    ecosystems: fixture(network, 'ecosystems'),
-    schemas: fixture(network, 'schemas'),
-    participants: fixture(network, 'participants'),
-    corporations: fixture(network, 'corporations'),
-    dids: fixture<{ dids: string[] }>(network, 'dids').dids,
-  } satisfies RawNetwork)
+const modelOf = (network: string) => buildNetworkModel(recordedNetwork(network))
 
 const deposit = (corporationId: number, amount: number): TrustDeposit => ({
-  ...fixture<TrustDeposit>('testnet', 'trust-deposit'),
+  ...recorded<TrustDeposit>('trust-deposit', 'testnet'),
   corporation_id: corporationId,
   deposit: amount,
 })

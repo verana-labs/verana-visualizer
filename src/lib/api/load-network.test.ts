@@ -1,22 +1,7 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { resolveNetworkConfig } from '../env'
+import { testnetCfg } from '../../../tests/support/network'
+import { rawBody } from '../../../tests/support/recorded'
 import { type LoadSink, loadRawNetwork, networkLoadSteps } from './load-network'
-
-const cfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-})
-
-const rawBody = (name: string): unknown =>
-  (
-    JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet/raw', `${name}.json`), 'utf8')) as {
-      body: unknown
-    }
-  ).body
 
 const routes: Record<string, string> = {
   '/v4/ecosystem/list': 'ecosystems',
@@ -38,7 +23,7 @@ describe('loadRawNetwork', () => {
         return fixture ? Response.json(rawBody(fixture)) : new Response('nope', { status: 404 })
       })
     )
-    const { raw, blockHeight } = await loadRawNetwork(cfg)
+    const { raw, blockHeight } = await loadRawNetwork(testnetCfg)
     expect(raw.ecosystems.length).toBeGreaterThan(0)
     expect(raw.participants.length).toBeGreaterThan(0)
     expect(raw.schemas.length).toBeGreaterThan(0)
@@ -51,7 +36,7 @@ describe('loadRawNetwork', () => {
       'fetch',
       vi.fn(async () => new Response('down', { status: 503 }))
     )
-    await expect(loadRawNetwork(cfg)).rejects.toThrow()
+    await expect(loadRawNetwork(testnetCfg)).rejects.toThrow()
   })
 })
 
@@ -66,7 +51,7 @@ describe('networkLoadSteps', () => {
     )
 
   it('exposes the seven captioned steps in order', () => {
-    const steps = networkLoadSteps(cfg, {} as LoadSink)
+    const steps = networkLoadSteps(testnetCfg, {} as LoadSink)
     expect(steps.map((s) => s.label)).toEqual([
       'Reading ecosystems…',
       'Reading schemas…',
@@ -88,13 +73,13 @@ describe('networkLoadSteps', () => {
         return fixture ? Response.json(rawBody(fixture)) : new Response('nope', { status: 404 })
       })
     )
-    for (const step of networkLoadSteps(cfg, {} as LoadSink)) await step.run()
+    for (const step of networkLoadSteps(testnetCfg, {} as LoadSink)) await step.run()
     expect(signals.length).toBeGreaterThanOrEqual(6)
     expect(signals.every((signal) => signal instanceof AbortSignal)).toBe(true)
   })
 
   it('marks only the layout step as waiting for the data steps', () => {
-    expect(networkLoadSteps(cfg, {} as LoadSink).map((s) => s.barrier === true)).toEqual([
+    expect(networkLoadSteps(testnetCfg, {} as LoadSink).map((s) => s.barrier === true)).toEqual([
       false,
       false,
       false,
@@ -108,7 +93,7 @@ describe('networkLoadSteps', () => {
   it('stores each result in the sink and builds the model and layout in the last step', async () => {
     okFetch()
     const sink = {} as LoadSink
-    for (const step of networkLoadSteps(cfg, sink)) await step.run()
+    for (const step of networkLoadSteps(testnetCfg, sink)) await step.run()
     expect(sink.ecosystems?.length).toBeGreaterThan(0)
     expect(sink.blockHeight).toBe((rawBody('block-height') as { height: number }).height)
     expect(sink.model?.ecosystems.length).toBeGreaterThan(0)
@@ -118,7 +103,7 @@ describe('networkLoadSteps', () => {
   it('records the first request behind each list for show-the-query', async () => {
     okFetch()
     const sink = {} as LoadSink
-    for (const step of networkLoadSteps(cfg, sink)) await step.run()
+    for (const step of networkLoadSteps(testnetCfg, sink)) await step.run()
     expect(Object.keys(sink.queries ?? {}).sort()).toEqual([
       'corporations',
       'dids',

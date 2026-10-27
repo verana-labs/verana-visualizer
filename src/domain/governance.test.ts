@@ -1,8 +1,6 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { GovProposal, Group, GroupProposal } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../tests/support/recorded'
 import {
   binaryLinks,
   binaryVersion,
@@ -25,11 +23,8 @@ import {
   withProposals,
 } from './governance'
 
-const fixture = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const groupProposals = fixture<GroupProposal[]>('group-proposals')
-const group = fixture<Group>('group-members')
+const groupProposals = recorded<GroupProposal[]>('group-proposals')
+const group = recorded<Group>('group-members')
 
 const upgradeMsg = (plan: Record<string, unknown>) => ({
   '@type': '/cosmos.upgrade.v1beta1.MsgSoftwareUpgrade',

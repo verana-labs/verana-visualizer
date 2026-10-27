@@ -1,19 +1,9 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildNetworkModel, type EntityId, type RawNetwork } from '@/domain/network-model'
+import { recordedNetwork } from '../../../tests/support/recorded'
 import { countedParticipants, ecosystemMembers } from './entity-facts'
 
-const fixture = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const raw: RawNetwork = {
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-}
+const raw: RawNetwork = recordedNetwork()
 const model = buildNetworkModel(raw)
 
 describe('countedParticipants', () => {

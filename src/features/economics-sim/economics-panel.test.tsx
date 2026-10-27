@@ -1,17 +1,13 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { TrustDeposit } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import { EconomicsPanel } from './economics-panel'
 import type { EconomicsData } from './load-economics'
 
 const model = testnetModel()
-const deposit = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/trust-deposit.json'), 'utf8')
-) as TrustDeposit
+const deposit = recorded<TrustDeposit>('trust-deposit')
 
 const query = { method: 'GET' as const, url: 'https://idx.testnet.verana.network/v4/trust-deposit/params', headers: {} }
 

@@ -1,71 +1,7 @@
-import { readdirSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { z } from 'zod'
-import { resolveNetworkConfig } from '../env'
+import { testnetCfg } from '../../../tests/support/network'
 import { createIndexerClient } from './indexer'
-import {
-  blockHeightSchema,
-  changesSchema,
-  corporationSchema,
-  credentialSchemaSchema,
-  didListSchema,
-  ecosystemSchema,
-  exchangeRateSchema,
-  groupProposalSchema,
-  groupSchema,
-  groupVoteSchema,
-  historyActivitySchema,
-  indexerEventSchema,
-  indexerStatusSchema,
-  participantSchema,
-  pendingFlatSchema,
-  statsSchema,
-  statsSnapshotSchema,
-  trustDepositParamsSchema,
-  trustDepositSchema,
-  trustVerdictSchema,
-} from './schemas'
-
-const cfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-})
-
-const indexerFixtures: Record<string, z.ZodType> = {
-  ecosystems: z.array(ecosystemSchema),
-  schemas: z.array(credentialSchemaSchema),
-  participants: z.array(participantSchema),
-  corporations: z.array(corporationSchema),
-  dids: didListSchema,
-  'trust-deposit': trustDepositSchema,
-  'trust-deposit-history': historyActivitySchema,
-  'group-members': groupSchema,
-  'pending-flat': pendingFlatSchema,
-  'entity-history-corporation': historyActivitySchema,
-  'entity-history-ecosystem': historyActivitySchema,
-  'entity-history-first-ecosystem': historyActivitySchema,
-  'entity-history-credential-schema': historyActivitySchema,
-  'entity-history-participant': historyActivitySchema,
-  'resolve-trusted-root': trustVerdictSchema,
-  'resolve-untrusted': trustVerdictSchema,
-  'resolve-first-did': trustVerdictSchema,
-  'block-height': blockHeightSchema,
-  events: z.array(indexerEventSchema),
-  changes: changesSchema,
-  'changes-38000': changesSchema,
-  stats: statsSchema,
-  snapshot: statsSnapshotSchema,
-  'group-proposals': z.array(groupProposalSchema),
-  'group-votes': z.array(groupVoteSchema),
-  'exchange-rates': z.array(exchangeRateSchema),
-  'td-params': trustDepositParamsSchema,
-  'indexer-health': indexerStatusSchema,
-}
-
-const nonIndexerFixtures = /^(graph-|chain-)/
+import { exchangeRateSchema } from './schemas'
 
 function stubFetch(body: unknown = {}) {
   const mock = vi.fn(async (_url: string, _init?: RequestInit) => Response.json(body))
@@ -75,38 +11,16 @@ function stubFetch(body: unknown = {}) {
 
 afterEach(() => vi.unstubAllGlobals())
 
-describe.each(['testnet', 'devnet'])('indexer fixtures (%s)', (network) => {
-  const dir = join(process.cwd(), 'tests', 'fixtures', network)
-  const files = readdirSync(dir).filter((f) => f.endsWith('.json') && !nonIndexerFixtures.test(f))
-
-  it('has a schema for every fixture and a fixture for every schema', () => {
-    const names = files.map((f) => f.replace(/\.json$/, ''))
-    expect(names.filter((name) => !(name in indexerFixtures))).toEqual([])
-    const optional =
-      network === 'devnet'
-        ? ['group-votes', 'trust-deposit', 'trust-deposit-history', 'resolve-trusted-root', 'resolve-untrusted']
-        : []
-    expect(Object.keys(indexerFixtures).filter((name) => !optional.includes(name) && !names.includes(name))).toEqual([])
-  })
-
-  it.each(files)('parses %s', (file) => {
-    const schema = indexerFixtures[file.replace(/\.json$/, '')]
-    expect(schema, `no schema registered for ${file}`).toBeDefined()
-    const parsed = schema.safeParse(JSON.parse(readFileSync(join(dir, file), 'utf8')))
-    expect(parsed.success, parsed.success ? '' : parsed.error.message).toBe(true)
-  })
-})
-
 describe('createIndexerClient', () => {
   it('rejects events with a limit above 100 before fetching', async () => {
     const mock = stubFetch()
-    await expect(createIndexerClient(cfg).events(0, 101)).rejects.toThrow('events limit must be <= 100')
+    await expect(createIndexerClient(testnetCfg).events(0, 101)).rejects.toThrow('events limit must be <= 100')
     expect(mock).not.toHaveBeenCalled()
   })
 
   it('sends At-Block-Height when an atHeight is given', async () => {
     const mock = stubFetch({ ecosystems: [] })
-    const result = await createIndexerClient(cfg, 44200).ecosystems()
+    const result = await createIndexerClient(testnetCfg, 44200).ecosystems()
     const init = mock.mock.calls[0][1]
     expect(new Headers(init?.headers).get('At-Block-Height')).toBe('44200')
     expect(result.query.headers).toEqual({ 'At-Block-Height': '44200' })
@@ -128,7 +42,7 @@ describe('createIndexerClient', () => {
       .mockResolvedValueOnce(Response.json({ exchange_rates: full }))
       .mockResolvedValueOnce(Response.json({ exchange_rates: rest }))
     vi.stubGlobal('fetch', mock)
-    const result = await createIndexerClient(cfg).exchangeRates()
+    const result = await createIndexerClient(testnetCfg).exchangeRates()
     expect(result.data).toHaveLength(1003)
     expect(mock).toHaveBeenCalledTimes(2)
     const first = new URL(mock.mock.calls[0][0] as string)
@@ -141,7 +55,7 @@ describe('createIndexerClient', () => {
 
   it('records the exact request of a POST resolve', async () => {
     const mock = stubFetch({ did: 'did:x', trusted: false })
-    const { query } = await createIndexerClient(cfg).resolve('did:x')
+    const { query } = await createIndexerClient(testnetCfg).resolve('did:x')
     expect(query).toEqual({
       method: 'POST',
       url: 'https://idx.testnet.verana.network/v4/verifiable-trust/resolve',

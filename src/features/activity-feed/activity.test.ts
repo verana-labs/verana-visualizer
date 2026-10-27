@@ -1,9 +1,7 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { appendFeed, FEED_SIZE } from '@/domain/activity'
-import { testnetModel } from '@/features/search/search-fixture'
 import type { IndexerEvent } from '@/lib/api/schemas'
+import { recorded, testnetModel } from '../../../tests/support/recorded'
 import {
   COMETS_PER_EVENT,
   cometsFor,
@@ -14,9 +12,7 @@ import {
   relativeAge,
 } from './activity'
 
-const events = JSON.parse(
-  readFileSync(join(process.cwd(), 'tests/fixtures/testnet/events.json'), 'utf8')
-) as IndexerEvent[]
+const events = recorded<IndexerEvent[]>('events')
 const model = testnetModel()
 
 const event = (overrides: Partial<IndexerEvent> = {}, payload: Record<string, unknown> = {}): IndexerEvent => ({

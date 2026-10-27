@@ -1,21 +1,11 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
+import { buildNetworkModel } from '@/domain/network-model'
+import { recordedNetwork } from '../../../tests/support/recorded'
 import type { RegistryData } from './load-registry'
 import { RegistryPanel } from './registry-panel'
 
-const fixture = <T,>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/devnet', `${name}.json`), 'utf8')) as T
-
-const model = buildNetworkModel({
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-} satisfies RawNetwork)
+const model = buildNetworkModel(recordedNetwork('devnet'))
 
 const NOW = new Date('2026-10-20T12:00:00Z')
 const pendingQuery = {

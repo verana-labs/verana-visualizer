@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { hopLabel, verdictPath, verdictText } from '@/domain/trust-check'
-import { testnetModel } from '@/features/search/search-fixture'
 import { createGraphClient } from '@/lib/api/graph'
 import { createIndexerClient } from '@/lib/api/indexer'
 import { logger } from '@/lib/logger'
+import { ECS_DID, PAPAPO_DID, testnetCfg, UNKNOWN_DID } from '../../../tests/support/network'
+import { testnetModel } from '../../../tests/support/recorded'
+import { stubTrustNetwork } from '../../../tests/support/trust-fixture'
 import { runTrustCheck } from './run-trust-check'
-import { ECS_DID, PAPAPO_DID, stubTrustNetwork, testnetCfg, UNKNOWN_DID } from './trust-fixture'
 
 const model = testnetModel()
 const clients = () => ({ indexer: createIndexerClient(testnetCfg), graph: createGraphClient(testnetCfg) })

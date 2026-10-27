@@ -1,22 +1,12 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { act, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
 import type { LoadSink } from '@/lib/api/load-network'
 import { resolveNetworkConfig } from '@/lib/env'
+import { recordedNetwork } from '../../tests/support/recorded'
 import Page from './page'
 
-const fixture = <T,>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const raw: RawNetwork = {
-  ecosystems: fixture('ecosystems'),
-  schemas: fixture('schemas'),
-  participants: fixture('participants'),
-  corporations: fixture('corporations'),
-  dids: fixture<{ dids: string[] }>('dids').dids,
-}
+const raw: RawNetwork = recordedNetwork()
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: vi.fn() }),

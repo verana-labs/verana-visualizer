@@ -1,25 +1,7 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
 import { vi } from 'vitest'
 import type { Participant } from '@/lib/api/schemas'
-import { resolveNetworkConfig } from '@/lib/env'
-
-export const ECS_DID = 'did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network'
-export const PAPAPO_DID = 'did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes'
-export const UNKNOWN_DID = 'did:web:not-in-the-network.example.org'
-
-export const testnetCfg = resolveNetworkConfig({
-  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: 'https://idx.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: 'https://rpc.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_REST_ENDPOINT: 'https://api.testnet.verana.network',
-  NEXT_PUBLIC_VERANA_CHAIN_ID: 'vna-testnet-1',
-  NEXT_PUBLIC_VERANA_CHAIN_NAME: 'testnet',
-})
-
-const read = <T>(name: string): T =>
-  JSON.parse(readFileSync(join(process.cwd(), 'tests/fixtures/testnet', `${name}.json`), 'utf8')) as T
-
-const rawBody = (name: string): unknown => read<{ body: unknown }>(`raw/${name}`).body
+import { ECS_DID, PAPAPO_DID } from './network'
+import { rawBody, recorded } from './recorded'
 
 const LIST_BODIES: Record<string, string> = {
   '/v4/ecosystem/list': 'ecosystems',
@@ -31,7 +13,7 @@ const LIST_BODIES: Record<string, string> = {
 }
 
 function validatorChainOf(participantId: number) {
-  const participants = read<Participant[]>('participants')
+  const participants = recorded<Participant[]>('participants')
   const byId = new Map(participants.map((p) => [p.id, p]))
   const chain: Participant[] = []
   for (
@@ -98,9 +80,9 @@ export function stubTrustNetwork({
   resolveDid,
 }: StubOptions = {}) {
   const calls: StubCall[] = []
-  const trusted = read<Record<string, unknown>>('resolve-trusted-root')
-  const untrusted = read<Record<string, unknown>>('resolve-untrusted')
-  const g1 = read<unknown>('graph-traverse-g1')
+  const trusted = recorded<Record<string, unknown>>('resolve-trusted-root')
+  const untrusted = recorded<Record<string, unknown>>('resolve-untrusted')
+  const g1 = rawBody('graph-traverse-g1')
   vi.stubGlobal(
     'fetch',
     vi.fn(async (input: string, init?: RequestInit) => {
