@@ -29,7 +29,6 @@ export function Halos({ stars, positionOf, focus }: HalosProps) {
 
   useFrame(() => {
     const now = performance.now()
-    const pulse = 0.5 + 0.5 * Math.sin(now / 420)
     stars.forEach((star, i) => {
       const sprite = sprites.current[i]
       if (!sprite) return
@@ -39,8 +38,7 @@ export function Halos({ stars, positionOf, focus }: HalosProps) {
       sprite.position.set(...positionOf(id))
       const presence = presenceOf(id)
       sprite.scale.setScalar(sizeOf(id, star.size) * (HALO_SCALE + flash * 5) * presence)
-      sprite.material.opacity =
-        ((dimmed ? DIMMED_HALO_OPACITY : HALO_OPACITY) * (0.85 + 0.15 * pulse) + flash * 0.6) * presence
+      sprite.material.opacity = ((dimmed ? DIMMED_HALO_OPACITY : HALO_OPACITY) + flash * 0.6) * presence
     })
   })
 

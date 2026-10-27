@@ -21,7 +21,6 @@ import type { PositionOf } from './use-lens-tween'
 import { usePicking } from './use-picking'
 import { useTimePresence } from './use-time-presence'
 
-const BOB = 0.35
 const WHITE = new Color('#ffffff')
 
 interface AgentsProps {
@@ -82,7 +81,7 @@ export function Agents({ agents, positionOf, focus }: AgentsProps) {
       const flash = flashOf(id, now)
       const presence = presenceOf(id)
       const [x, y, z] = positionOf(id)
-      p.set(x, y + Math.sin(now / 1100 + i) * BOB, z)
+      p.set(x, y, z)
       s.setScalar(AGENT_SIZE * (1 + flash) * (id === hovered && id !== selected ? 1.4 : 1) * presence)
       m.compose(p, q.setFromEuler(e.set(0, now * 0.0012 + i, 0)), s)
       diamondMesh.setMatrixAt(i, m)

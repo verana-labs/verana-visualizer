@@ -27,7 +27,6 @@ export function ChainCore() {
   const group = useRef<Group>(null)
   const ball = useRef<Mesh>(null)
   const innerRing = useRef<Mesh<RingGeometry, MeshBasicMaterial>>(null)
-  const outerRing = useRef<Mesh>(null)
   const label = useRef<HTMLSpanElement>(null)
   const pulse = useRef(0)
   const shownHeight = useRef<number | null>(null)
@@ -77,9 +76,7 @@ export function ChainCore() {
 
     const [x, y, z] = coreAt()
     group.current?.position.set(x, y, z)
-    ball.current?.scale.setScalar(1 + pulse.current * 0.45 + Math.sin(now / 900) * 0.04)
-    innerRing.current?.rotation.set(Math.PI / 2 + Math.sin(now / 4000) * 0.3, now / 3000, 0)
-    outerRing.current?.rotation.set(Math.PI / 2.4, -now / 5200, Math.cos(now / 6000) * 0.2)
+    ball.current?.scale.setScalar(1 + pulse.current * 0.45)
     if (innerRing.current) innerRing.current.material.opacity = 0.5 + pulse.current * 0.5
 
     for (const wave of waves.current) {
@@ -98,11 +95,11 @@ export function ChainCore() {
         <icosahedronGeometry args={[2, 2]} />
         <meshBasicMaterial color={CORE_COLOR} />
       </mesh>
-      <mesh ref={innerRing}>
+      <mesh ref={innerRing} rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[5, 0.07, 8, 96]} />
         <meshBasicMaterial color="#a78bfa" transparent opacity={0.8} />
       </mesh>
-      <mesh ref={outerRing}>
+      <mesh rotation={[Math.PI / 2.4, 0, 0]}>
         <torusGeometry args={[7.6, 0.05, 8, 128]} />
         <meshBasicMaterial color="#7c3aed" transparent opacity={0.55} />
       </mesh>

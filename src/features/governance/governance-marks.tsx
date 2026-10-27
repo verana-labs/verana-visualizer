@@ -21,7 +21,7 @@ import { lensVisibility, type PositionOf, tweenProgress } from '@/scene/use-lens
 import { usePicking } from '@/scene/use-picking'
 import { usePrefersReducedMotion } from '@/scene/use-reduced-motion'
 import { useObservatory } from '@/store/observatory-store'
-import { type MemberMark, memberMarks, proposalPulse } from './governance-scene'
+import { type MemberMark, memberMarks } from './governance-scene'
 
 const CORPORATION_COLOR = '#e2e8f0'
 const MEMBER_COLOR = '#a78bfa'
@@ -148,7 +148,7 @@ export function GovernanceMarks({ positionOf, focus }: MarksProps) {
       const at = positionOf(p.id)
       sprite.position.set(at[0], at[1], at[2])
       const flash = flashOf(p.id, now)
-      sprite.scale.setScalar(PROPOSAL_SCALE * proposalPulse(p.open, now, reduced) * (1 + flash))
+      sprite.scale.setScalar(PROPOSAL_SCALE * (1 + flash))
       sprite.material.opacity = (p.open ? 0.95 : 0.55) * alpha * dimFactor(focus, p.id) + flash * 0.4
     }
   })

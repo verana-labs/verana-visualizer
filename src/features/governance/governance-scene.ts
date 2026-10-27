@@ -5,8 +5,6 @@ import type { Vec3 } from '@/layouts/types'
 export const MEMBER_RING = 2.6
 const MEMBER_BASE = 0.28
 const MEMBER_SPAN = 0.6
-const PULSE_MS = 320
-const PULSE_DEPTH = 0.35
 
 export interface MemberMark {
   key: string
@@ -29,9 +27,4 @@ export function memberMarks(constellation: Constellation): MemberMark[] {
       size: MEMBER_BASE + MEMBER_SPAN * Math.sqrt(member.share),
     }
   })
-}
-
-export function proposalPulse(open: boolean, now: number, reduced: boolean): number {
-  if (!open || reduced) return 1
-  return 1 + PULSE_DEPTH * Math.sin(now / PULSE_MS)
 }

@@ -22,7 +22,6 @@ const BUSY_DISC_COLOR = '#38E1FF'
 const DISC_RADIUS = 2
 const DISC_THICKNESS = 0.14
 const RISE_PER_S = 9
-const RING_TURN_MS = 90_000
 
 interface Fadeable {
   material: Material | Material[]
@@ -49,11 +48,9 @@ const percent = (share: number) => `${(share * 100).toLocaleString('en-US', { ma
 
 function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
   const glow = glowTexture()
-  const reduced = usePrefersReducedMotion()
   const fadeOf = useChainFade()
   const coreAt = useCoreTween()
   const group = useRef<Group>(null)
-  const spin = useRef<Group>(null)
   const ring = useRef<Mesh>(null)
   const meshes = useRef<(Mesh | null)[]>([])
   const halos = useRef<(Fadeable | null)[]>([])
@@ -65,7 +62,6 @@ function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
       group.current.visible = fade > 0.001
       group.current.position.set(...coreAt())
     }
-    if (spin.current && !reduced) spin.current.rotation.y = (performance.now() / RING_TURN_MS) * Math.PI * 2
     setOpacity(ring.current, 0.28 * fade)
     for (let i = 0; i < orbs.length; i++) {
       const active = orbs[i].active
@@ -81,7 +77,7 @@ function ValidatorRing({ orbs }: { orbs: ValidatorOrb[] }) {
         <torusGeometry args={[VALIDATOR_RING_RADIUS, 0.04, 8, 160]} />
         <meshBasicMaterial color={RING_COLOR} transparent opacity={0} depthWrite={false} />
       </mesh>
-      <group ref={spin}>
+      <group>
         {orbs.map((orb, i) => {
           const x = Math.cos(orb.angle) * VALIDATOR_RING_RADIUS
           const z = Math.sin(orb.angle) * VALIDATOR_RING_RADIUS
