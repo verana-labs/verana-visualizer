@@ -11,7 +11,7 @@ import { writeOpacity } from './dom-opacity'
 import { useGlowTexture } from './glow-texture'
 import { LABEL_CLASS } from './labels'
 import { SceneHtml } from './scene-html'
-import { TWEEN_MS, tweenProgress, useCoreTween } from './use-lens-tween'
+import { lensVisibility, TWEEN_MS, tweenProgress, useCoreTween } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
 const ORB_COLOR = '#a78bfa'
@@ -41,9 +41,7 @@ function useChainFade(): () => number {
   const reduced = usePrefersReducedMotion()
   return () => {
     const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
-    const t = tweenProgress(performance.now(), lensChangedAt, 0, reduced)
-    if (lens === 'chain') return lensFrom === 'chain' ? 1 : t
-    return lensFrom === 'chain' ? Math.max(0, 1 - t * 2) : 0
+    return lensVisibility('chain', lens, lensFrom, tweenProgress(performance.now(), lensChangedAt, 0, reduced), 2)
   }
 }
 

@@ -5,7 +5,7 @@ import { buildNetworkModel, type RawNetwork } from '@/domain/network-model'
 import { layoutFor } from '@/layouts'
 import { useObservatory } from '@/store/observatory-store'
 import { recordedNetwork } from '../../tests/support/recorded'
-import { tweenProgress, useLensTween } from './use-lens-tween'
+import { lensVisibility, tweenProgress, useLensTween } from './use-lens-tween'
 
 const raw: RawNetwork = recordedNetwork()
 const model = buildNetworkModel(raw)
@@ -23,6 +23,20 @@ describe('tweenProgress', () => {
 
   it('finishes within 300 ms under reduced motion', () => {
     expect(tweenProgress(1000 + 300, 1000, 200, true)).toBe(1)
+  })
+})
+
+describe('lensVisibility', () => {
+  it('fades in on the target lens and out when leaving it', () => {
+    expect(lensVisibility('governance', 'governance', 'network', 0.25)).toBe(0.25)
+    expect(lensVisibility('governance', 'governance', 'governance', 0)).toBe(1)
+    expect(lensVisibility('governance', 'network', 'governance', 0.25)).toBe(0.75)
+    expect(lensVisibility('governance', 'network', 'trust', 0.5)).toBe(0)
+  })
+
+  it('fades out faster with a higher out speed', () => {
+    expect(lensVisibility('chain', 'network', 'chain', 0.25, 2)).toBe(0.5)
+    expect(lensVisibility('chain', 'network', 'chain', 0.75, 2)).toBe(0)
   })
 })
 

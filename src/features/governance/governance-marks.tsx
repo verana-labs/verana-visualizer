@@ -17,11 +17,11 @@ import { type GovernanceProposal, proposalColor } from '@/domain/governance'
 import type { EntityId } from '@/domain/network-model'
 import { useGlowTexture } from '@/scene/glow-texture'
 import { dimOf, type FocusSets, flashOf } from '@/scene/scene-focus'
-import { type PositionOf, tweenProgress } from '@/scene/use-lens-tween'
+import { lensVisibility, type PositionOf, tweenProgress } from '@/scene/use-lens-tween'
 import { usePicking } from '@/scene/use-picking'
 import { usePrefersReducedMotion } from '@/scene/use-reduced-motion'
 import { useObservatory } from '@/store/observatory-store'
-import { governanceVisibility, type MemberMark, memberMarks, proposalPulse } from './governance-scene'
+import { type MemberMark, memberMarks, proposalPulse } from './governance-scene'
 
 const CORPORATION_COLOR = '#e2e8f0'
 const MEMBER_COLOR = '#a78bfa'
@@ -43,7 +43,7 @@ interface CorporationMarks {
 
 function visibilityAt(now: number, reduced: boolean): number {
   const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
-  return governanceVisibility(lens, lensFrom, tweenProgress(now, lensChangedAt, 0, reduced))
+  return lensVisibility('governance', lens, lensFrom, tweenProgress(now, lensChangedAt, 0, reduced))
 }
 
 function dimFactor(focus: RefObject<FocusSets>, id: EntityId): number {

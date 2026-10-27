@@ -8,7 +8,7 @@ import type { Layout, LensId, Vec3 } from '@/layouts/types'
 import { useObservatory } from '@/store/observatory-store'
 import { MAX_STAR_SIZE } from './scene-data'
 import { traceablePath } from './trust-trace'
-import { ensureLayout } from './use-lens-tween'
+import { easeInOutCubic, ensureLayout } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
 const INTRO_FROM = new Vector3(0, 420, 900)
@@ -48,8 +48,6 @@ interface RigControls {
 
 const isRigControls = (value: unknown): value is RigControls =>
   typeof value === 'object' && value !== null && 'target' in value && 'autoRotate' in value
-
-const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
 export function focusDistance(kind: EntityKind, lens: LensId): number {
   if (kind === 'ecosystem') return lens === 'trust' ? 60 : 34

@@ -7,7 +7,7 @@ import type { EntityId } from '@/domain/network-model'
 import { useObservatory } from '@/store/observatory-store'
 import { useLensSize } from './lens-size'
 import type { SceneNode } from './scene-data'
-import { type PositionOf, tweenProgress } from './use-lens-tween'
+import { lensVisibility, type PositionOf, tweenProgress } from './use-lens-tween'
 import { usePrefersReducedMotion } from './use-reduced-motion'
 
 const GOLD = '#fbbf24'
@@ -76,9 +76,12 @@ export function Reservoirs({ stars, positionOf }: { stars: SceneNode[]; position
 
   useFrame(({ camera }) => {
     const { lens, lensFrom, lensChangedAt } = useObservatory.getState()
-    const progress = tweenProgress(performance.now(), lensChangedAt, 0, reduced)
-    const from = lensFrom === 'economics' ? 1 : 0
-    const shown = from + ((lens === 'economics' ? 1 : 0) - from) * progress
+    const shown = lensVisibility(
+      'economics',
+      lens,
+      lensFrom,
+      tweenProgress(performance.now(), lensChangedAt, 0, reduced)
+    )
     materials.fill.opacity = FILL_OPACITY * shown
     materials.track.opacity = TRACK_OPACITY * shown
     gauges.forEach((gauge, i) => {

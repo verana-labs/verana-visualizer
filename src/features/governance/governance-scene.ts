@@ -1,6 +1,6 @@
 import type { Constellation } from '@/domain/governance'
 import { seededRandom } from '@/layouts/seed'
-import type { LensId, Vec3 } from '@/layouts/types'
+import type { Vec3 } from '@/layouts/types'
 
 export const MEMBER_RING = 2.6
 const MEMBER_BASE = 0.28
@@ -12,11 +12,6 @@ export interface MemberMark {
   key: string
   offset: Vec3
   size: number
-}
-
-export function governanceVisibility(lens: LensId, lensFrom: LensId, progress: number): number {
-  if (lens === 'governance') return lensFrom === 'governance' ? 1 : progress
-  return lensFrom === 'governance' ? 1 - progress : 0
 }
 
 export function memberMarks(constellation: Constellation): MemberMark[] {

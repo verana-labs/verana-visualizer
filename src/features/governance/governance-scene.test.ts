@@ -1,14 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { governanceVisibility, memberMarks, proposalPulse } from './governance-scene'
-
-describe('governanceVisibility', () => {
-  it('fades in on the governance lens and out when leaving it', () => {
-    expect(governanceVisibility('governance', 'network', 0.25)).toBe(0.25)
-    expect(governanceVisibility('governance', 'governance', 0)).toBe(1)
-    expect(governanceVisibility('network', 'governance', 0.25)).toBe(0.75)
-    expect(governanceVisibility('network', 'trust', 0.5)).toBe(0)
-  })
-})
+import { memberMarks, proposalPulse } from './governance-scene'
 
 describe('memberMarks', () => {
   it('rings members around their corporation and sizes them by weight share', () => {

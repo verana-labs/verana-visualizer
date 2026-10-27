@@ -13,7 +13,7 @@ const NODE_JITTER_MS = 120
 const AGENT_DELAY_MS = 675
 const AGENT_JITTER_MS = 150
 
-const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
+export const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
 export function tweenProgress(now: number, changedAt: number, delay: number, reduced: boolean): number {
   const elapsed = reduced ? now - changedAt : now - changedAt - delay
@@ -21,6 +21,11 @@ export function tweenProgress(now: number, changedAt: number, delay: number, red
   if (t <= 0) return 0
   if (t >= 1) return 1
   return easeInOutCubic(t)
+}
+
+export function lensVisibility(target: LensId, lens: LensId, lensFrom: LensId, progress: number, outSpeed = 1): number {
+  if (lens === target) return lensFrom === target ? 1 : progress
+  return lensFrom === target ? Math.max(0, 1 - progress * outSpeed) : 0
 }
 
 export function ensureLayout(lens: LensId): Layout | null {
