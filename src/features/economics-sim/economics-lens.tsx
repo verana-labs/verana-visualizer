@@ -18,6 +18,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   const [simulationOpen, setSimulationOpen] = useState(false)
   const [requested, setRequested] = useState(false)
   const [state, setState] = useState<EconomicsState>({ status: 'loading' })
+  const simulationShown = active && simulationOpen && state.status === 'ready'
 
   useEffect(() => {
     if (active) setRequested(true)
@@ -46,7 +47,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
   }, [requested, raw, cfg])
 
   useEffect(() => {
-    if (!simulationOpen) return
+    if (!simulationShown) return
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== 'Escape' || isTyping(event.target)) return
       if (event.defaultPrevented || useObservatory.getState().palette !== 'closed') return
@@ -55,7 +56,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
     }
     window.addEventListener('keydown', onKey, true)
     return () => window.removeEventListener('keydown', onKey, true)
-  }, [simulationOpen])
+  }, [simulationShown])
 
   if (!active || !model) return null
   return (
@@ -66,7 +67,7 @@ export function EconomicsLens({ cfg }: { cfg: NetworkConfig }) {
         state={state}
         onOpenSimulation={() => setSimulationOpen(true)}
       />
-      {simulationOpen && state.status === 'ready' && (
+      {simulationShown && state.status === 'ready' && (
         <SimulationPanel
           chainId={cfg.chainId}
           model={model}

@@ -86,6 +86,15 @@ describe('EconomicsLens Escape', () => {
     expect(useObservatory.getState().selected).toBe('ecosystem:14')
   })
 
+  it('lets Escape reach the inspector once the lens has moved away from the open simulation', async () => {
+    useObservatory.setState({ selected: null, palette: 'closed' })
+    const user = await openSimulation()
+    act(() => useObservatory.getState().setLens('network'))
+    act(() => useObservatory.setState({ selected: 'ecosystem:14' }))
+    await user.keyboard('{Escape}')
+    expect(useObservatory.getState().selected).toBeNull()
+  })
+
   it('closes only the palette when it is open over the simulation', async () => {
     useObservatory.setState({ palette: 'closed' })
     const user = await openSimulation()
