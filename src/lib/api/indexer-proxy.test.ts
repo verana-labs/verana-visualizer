@@ -116,6 +116,19 @@ describe('proxyIndexer hardening', () => {
     expect(res.headers.get('Cache-Control')).toBe('no-store')
   })
 
+  it('stops reading an undeclared-length body as soon as it passes the cap', async () => {
+    let pulled = 0
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        pulled += 1
+        controller.enqueue(new Uint8Array(1024 * 1024))
+      },
+    })
+    const res = await call(async () => new Response(stream))
+    expect(res.status).toBe(502)
+    expect(pulled).toBeLessThan(10)
+  })
+
   it('trims a trailing slash on the indexer url', async () => {
     const upstream = vi.fn(async (_input: string, _init?: RequestInit) => Response.json({}))
     await call(upstream, `${INDEXER}/`)

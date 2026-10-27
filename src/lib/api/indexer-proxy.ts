@@ -14,11 +14,32 @@ export const failure = (status: 400 | 502, message: string) =>
 
 const validSegment = (segment: string) => SEGMENT.test(segment) && segment !== '.' && segment !== '..'
 
+function concat(chunks: Uint8Array[], size: number): ArrayBuffer {
+  const body = new Uint8Array(size)
+  let offset = 0
+  for (const chunk of chunks) {
+    body.set(chunk, offset)
+    offset += chunk.byteLength
+  }
+  return body.buffer
+}
+
 async function cappedBody(response: Response): Promise<ArrayBuffer | null> {
-  const declared = Number(response.headers.get('content-length'))
-  if (declared > MAX_BODY_BYTES) return null
-  const body = await response.arrayBuffer()
-  return body.byteLength > MAX_BODY_BYTES ? null : body
+  if (Number(response.headers.get('content-length')) > MAX_BODY_BYTES) return null
+  if (!response.body) return new ArrayBuffer(0)
+  const reader = response.body.getReader()
+  const chunks: Uint8Array[] = []
+  let size = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) return concat(chunks, size)
+    size += value.byteLength
+    if (size > MAX_BODY_BYTES) {
+      await reader.cancel()
+      return null
+    }
+    chunks.push(value)
+  }
 }
 
 export async function proxyIndexer(
