@@ -1,0 +1,107 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.testnet.verana.network/v4/graph/search",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "surface": "Did",
+      "freeText": "papapo",
+      "limit": 20,
+      "includeUntrusted": true
+    }
+  },
+  "status": 200,
+  "body": {
+    "query": {
+      "surface": "Did",
+      "freeText": "papapo",
+      "limit": 20,
+      "includeUntrusted": true
+    },
+    "totalCount": 1,
+    "hits": [
+      {
+        "type": "Did",
+        "id": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+        "score": 6.688990739330699,
+        "snippet": {
+          "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+          "lastObservedAtTime": "2026-10-26T22:34:49.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": true,
+          "isEcosystem": true,
+          "service": {
+            "pattern": "A",
+            "name": "Papapo agent",
+            "type": "WEB_PORTAL",
+            "description": "Testnet business wallet",
+            "logoUri": "https://verana.papapo.shoes/vt/default/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Papapo",
+            "logoUri": "https://papapo.shoes/_next/static/media/logo-papapo.92d6327f.svg",
+            "logoDigestSri": "sha384-ZGAxDcu7bKIMpLFruA2r9SwxA3XC2fo05PHnG/hmZg0PJEyEj7OwN+UD8xLCazT+",
+            "countryCode": "CO",
+            "registryId": "CO-XX-0000000",
+            "address": "Bogota, Colombia"
+          },
+          "corporation": {
+            "id": 34,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://verana.papapo.shoes"
+            },
+            {
+              "id": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://verana.papapo.shoes",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://verana.papapo.shoes"
+            }
+          ]
+        }
+      }
+    ],
+    "facets": {
+      "Did.operatorKind": [
+        {
+          "value": "Organization",
+          "count": 1
+        }
+      ],
+      "EcsCredential.ServiceCredential.type": [
+        {
+          "value": "WEB_PORTAL",
+          "count": 1
+        }
+      ],
+      "OrganizationCredential.countryCode": [
+        {
+          "value": "CO",
+          "count": 1
+        }
+      ]
+    },
+    "cursor": null
+  }
+}

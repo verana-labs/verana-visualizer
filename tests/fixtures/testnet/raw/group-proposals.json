@@ -1,0 +1,1817 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/group/proposals?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "proposals": [
+      {
+        "id": 36,
+        "corporation_id": 4,
+        "group_policy_address": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+        "metadata": "",
+        "proposers": [
+          "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t"
+        ],
+        "submit_time": "2026-10-16T21:36:44.497Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-21T21:36:44.497Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana1vtn3rc8xlgc3ypxnnru5mw6erkf9myclmv5kgu",
+            "msgTypes": [
+              "/verana.pp.v1.MsgSetParticipantOPToValidated"
+            ],
+            "operator": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+            "corporation": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4"
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 35,
+        "corporation_id": 34,
+        "group_policy_address": "verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj",
+        "metadata": "",
+        "proposers": [
+          "verana1vtn3rc8xlgc3ypxnnru5mw6erkf9myclmv5kgu"
+        ],
+        "submit_time": "2026-10-16T18:36:38.166Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-16T18:37:38.166Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana1vtn3rc8xlgc3ypxnnru5mw6erkf9myclmv5kgu",
+            "msgTypes": [
+              "/verana.co.v1.MsgUpdateCorporation",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.gf.v1.MsgAddGovernanceFrameworkDocument",
+              "/verana.gf.v1.MsgIncreaseActiveGovernanceFrameworkVersion",
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.cs.v1.MsgUpdateCredentialSchema",
+              "/verana.cs.v1.MsgArchiveCredentialSchema",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgSetParticipantEffectiveUntil",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgTriggerResolver",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgSlashParticipantTrustDeposit",
+              "/verana.pp.v1.MsgRepayParticipantSlashedTrustDeposit",
+              "/verana.td.v1.MsgRepaySlashedTrustDeposit",
+              "/verana.di.v1.MsgStoreDigest"
+            ],
+            "operator": "verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj",
+            "corporation": "verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj"
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 34,
+        "corporation_id": 33,
+        "group_policy_address": "verana10qtgwuea5kfmcyuvtpygqzgfz5fuv5qny6xsksfglhgyta2jc38sct5wad",
+        "metadata": "Grant operator authorization to verana16yq2ernuytcaafeld7daujflffn866spn4c2el",
+        "proposers": [
+          "verana16yq2ernuytcaafeld7daujflffn866spn4c2el"
+        ],
+        "submit_time": "2026-10-16T12:08:06.093Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-21T12:08:06.093Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana16yq2ernuytcaafeld7daujflffn866spn4c2el",
+            "msgTypes": [
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana10qtgwuea5kfmcyuvtpygqzgfz5fuv5qny6xsksfglhgyta2jc38sct5wad",
+            "corporation": "verana10qtgwuea5kfmcyuvtpygqzgfz5fuv5qny6xsksfglhgyta2jc38sct5wad",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 33,
+        "corporation_id": 32,
+        "group_policy_address": "verana1vwgu52h7nseth5utu8m0ufzllrgan5zyxfzzcmxaae93yh3cxy0s0tzze2",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T19:26:15.756Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T19:26:15.756Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1vwgu52h7nseth5utu8m0ufzllrgan5zyxfzzcmxaae93yh3cxy0s0tzze2",
+            "corporation": "verana1vwgu52h7nseth5utu8m0ufzllrgan5zyxfzzcmxaae93yh3cxy0s0tzze2",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 32,
+        "corporation_id": 31,
+        "group_policy_address": "verana1dsna449t2vzcdkla86p9n9jsxkfdvffufhsl5rnal2rfmwfpay0seqaqju",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T19:18:55.105Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T19:18:55.105Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1dsna449t2vzcdkla86p9n9jsxkfdvffufhsl5rnal2rfmwfpay0seqaqju",
+            "corporation": "verana1dsna449t2vzcdkla86p9n9jsxkfdvffufhsl5rnal2rfmwfpay0seqaqju",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 31,
+        "corporation_id": 30,
+        "group_policy_address": "verana1f9u5k0rzsdqzka6vkmffq4n8lvdn8l2hrmj6ezzhyw0ealrnt73qvvcj60",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T19:11:38.545Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T19:11:38.545Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1f9u5k0rzsdqzka6vkmffq4n8lvdn8l2hrmj6ezzhyw0ealrnt73qvvcj60",
+            "corporation": "verana1f9u5k0rzsdqzka6vkmffq4n8lvdn8l2hrmj6ezzhyw0ealrnt73qvvcj60",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 30,
+        "corporation_id": 29,
+        "group_policy_address": "verana1qtphvaxhenzvtalelz3gcfchlr7x7mhru72nmsghqmvld09usw7qr6g2ey",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:49:50.664Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:49:50.664Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1qtphvaxhenzvtalelz3gcfchlr7x7mhru72nmsghqmvld09usw7qr6g2ey",
+            "corporation": "verana1qtphvaxhenzvtalelz3gcfchlr7x7mhru72nmsghqmvld09usw7qr6g2ey",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 29,
+        "corporation_id": 28,
+        "group_policy_address": "verana1855he6kl0k9ntrrr9es0cvttexltyfthp4rsn00pzs8h5wvzwnfs5tedw3",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:44:49.484Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:44:49.484Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1855he6kl0k9ntrrr9es0cvttexltyfthp4rsn00pzs8h5wvzwnfs5tedw3",
+            "corporation": "verana1855he6kl0k9ntrrr9es0cvttexltyfthp4rsn00pzs8h5wvzwnfs5tedw3",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 28,
+        "corporation_id": 27,
+        "group_policy_address": "verana1pnxmcuxqvumfe6ktv40v2vm3z0zckluupzxu3uuq0f7t07w6xuwsrn2536",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:39:31.333Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:39:31.333Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1pnxmcuxqvumfe6ktv40v2vm3z0zckluupzxu3uuq0f7t07w6xuwsrn2536",
+            "corporation": "verana1pnxmcuxqvumfe6ktv40v2vm3z0zckluupzxu3uuq0f7t07w6xuwsrn2536",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 27,
+        "corporation_id": 26,
+        "group_policy_address": "verana1pn740xpvkvllwxlzjt2ff4knwdntdm4hrex08986hlvnfrgkcxgsv3qs6k",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:34:22.062Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:34:22.062Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1pn740xpvkvllwxlzjt2ff4knwdntdm4hrex08986hlvnfrgkcxgsv3qs6k",
+            "corporation": "verana1pn740xpvkvllwxlzjt2ff4knwdntdm4hrex08986hlvnfrgkcxgsv3qs6k",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 26,
+        "corporation_id": 25,
+        "group_policy_address": "verana1cf8f57fdpt7neps583v44smdftght8e5ee92np78xakrjf54d6ls4wmcuz",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:29:02.171Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:29:02.171Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1cf8f57fdpt7neps583v44smdftght8e5ee92np78xakrjf54d6ls4wmcuz",
+            "corporation": "verana1cf8f57fdpt7neps583v44smdftght8e5ee92np78xakrjf54d6ls4wmcuz",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 25,
+        "corporation_id": 24,
+        "group_policy_address": "verana1z02frlf8lj0v9l755cdjmjsjpfgt5psuxwjqa7zd2e8hgja208ns4dcx2w",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:24:42.025Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:24:42.025Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1z02frlf8lj0v9l755cdjmjsjpfgt5psuxwjqa7zd2e8hgja208ns4dcx2w",
+            "corporation": "verana1z02frlf8lj0v9l755cdjmjsjpfgt5psuxwjqa7zd2e8hgja208ns4dcx2w",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 24,
+        "corporation_id": 23,
+        "group_policy_address": "verana19rrgcsw8gu8c3rthucqnf6nyyg6q9pq79tt60pvahfsnfu4p5hrs8dutra",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:20:44.138Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:20:44.138Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana19rrgcsw8gu8c3rthucqnf6nyyg6q9pq79tt60pvahfsnfu4p5hrs8dutra",
+            "corporation": "verana19rrgcsw8gu8c3rthucqnf6nyyg6q9pq79tt60pvahfsnfu4p5hrs8dutra",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 23,
+        "corporation_id": 22,
+        "group_policy_address": "verana15lch5glk7deu9tk8wrcfcup4tdpz2l8zhhqn4r2zzsr46dfv849qzxhyh5",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:15:43.565Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:15:43.565Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana15lch5glk7deu9tk8wrcfcup4tdpz2l8zhhqn4r2zzsr46dfv849qzxhyh5",
+            "corporation": "verana15lch5glk7deu9tk8wrcfcup4tdpz2l8zhhqn4r2zzsr46dfv849qzxhyh5",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 22,
+        "corporation_id": 21,
+        "group_policy_address": "verana15629hwdy7rd7satqzffn4f80ftg2sln982xvwcalppg36td7jvuq2vpqv0",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:09:28.276Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:09:28.276Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana15629hwdy7rd7satqzffn4f80ftg2sln982xvwcalppg36td7jvuq2vpqv0",
+            "corporation": "verana15629hwdy7rd7satqzffn4f80ftg2sln982xvwcalppg36td7jvuq2vpqv0",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 21,
+        "corporation_id": 20,
+        "group_policy_address": "verana1cfey705ssf6ysclm9u47mvcgr5l6q6q86lk5dtq4jwdu6yjce6ds3xfa6n",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T18:03:06.185Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T18:03:06.185Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1cfey705ssf6ysclm9u47mvcgr5l6q6q86lk5dtq4jwdu6yjce6ds3xfa6n",
+            "corporation": "verana1cfey705ssf6ysclm9u47mvcgr5l6q6q86lk5dtq4jwdu6yjce6ds3xfa6n",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 20,
+        "corporation_id": 19,
+        "group_policy_address": "verana12xyww2vucfufyzknvyameh5v25cn6gxzzagwgpzhwdq8v35zdmgqkh2rcl",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T17:45:42.674Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T17:45:42.674Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana12xyww2vucfufyzknvyameh5v25cn6gxzzagwgpzhwdq8v35zdmgqkh2rcl",
+            "corporation": "verana12xyww2vucfufyzknvyameh5v25cn6gxzzagwgpzhwdq8v35zdmgqkh2rcl",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 19,
+        "corporation_id": 18,
+        "group_policy_address": "verana12s5tahy3850k3r3080en0pwhuk4l3my5l2cl8vxrsg6kx48de24q9ffymv",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T17:41:32.046Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T17:41:32.046Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana12s5tahy3850k3r3080en0pwhuk4l3my5l2cl8vxrsg6kx48de24q9ffymv",
+            "corporation": "verana12s5tahy3850k3r3080en0pwhuk4l3my5l2cl8vxrsg6kx48de24q9ffymv",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 18,
+        "corporation_id": 17,
+        "group_policy_address": "verana1mqevjln5hxv3qgd3c4m5zjeeand5hkc7r33ty82fjukw9shxjh6sczryfr",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T17:23:12.074Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T17:23:12.074Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1mqevjln5hxv3qgd3c4m5zjeeand5hkc7r33ty82fjukw9shxjh6sczryfr",
+            "corporation": "verana1mqevjln5hxv3qgd3c4m5zjeeand5hkc7r33ty82fjukw9shxjh6sczryfr",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 17,
+        "corporation_id": 16,
+        "group_policy_address": "verana1jc4mtk0g8ulmvhwmpfy5rrj7rwn85ual4p3w0tlwnp2rsauvf5eq02r5m0",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T17:18:58.845Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T17:18:58.845Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1jc4mtk0g8ulmvhwmpfy5rrj7rwn85ual4p3w0tlwnp2rsauvf5eq02r5m0",
+            "corporation": "verana1jc4mtk0g8ulmvhwmpfy5rrj7rwn85ual4p3w0tlwnp2rsauvf5eq02r5m0",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 16,
+        "corporation_id": 15,
+        "group_policy_address": "verana13cwsdsetcrhcyd3jeed0mgteg35qaju0q5s0u0drfylagahygwwsf8cynr",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:48:49.022Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:48:49.022Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana13cwsdsetcrhcyd3jeed0mgteg35qaju0q5s0u0drfylagahygwwsf8cynr",
+            "corporation": "verana13cwsdsetcrhcyd3jeed0mgteg35qaju0q5s0u0drfylagahygwwsf8cynr",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 15,
+        "corporation_id": 14,
+        "group_policy_address": "verana10w37pqels7ya404xdlfkc9vdfemejmc0e6hjlerknys3xjj9xnas8my9yt",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:44:15.413Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:44:15.413Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana10w37pqels7ya404xdlfkc9vdfemejmc0e6hjlerknys3xjj9xnas8my9yt",
+            "corporation": "verana10w37pqels7ya404xdlfkc9vdfemejmc0e6hjlerknys3xjj9xnas8my9yt",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 14,
+        "corporation_id": 13,
+        "group_policy_address": "verana1wfse3z8akyw3pmn8x0htzq6l5wwfgqmc2jgnhxtzm96h4ywhhr0qpua4w7",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:35:57.183Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:35:57.183Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1wfse3z8akyw3pmn8x0htzq6l5wwfgqmc2jgnhxtzm96h4ywhhr0qpua4w7",
+            "corporation": "verana1wfse3z8akyw3pmn8x0htzq6l5wwfgqmc2jgnhxtzm96h4ywhhr0qpua4w7",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 13,
+        "corporation_id": 12,
+        "group_policy_address": "verana10ezj2lmcj3flaacqwrzv278aled0pen8cnx257sggeng2fdel53q0929dj",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:30:49.181Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:30:49.181Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana10ezj2lmcj3flaacqwrzv278aled0pen8cnx257sggeng2fdel53q0929dj",
+            "corporation": "verana10ezj2lmcj3flaacqwrzv278aled0pen8cnx257sggeng2fdel53q0929dj",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 12,
+        "corporation_id": 11,
+        "group_policy_address": "verana17l6djqrztw0ux668vkw7ff7d2602jvml52w9fyrvryusp7djnhfq9afn9z",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:26:55.361Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:26:55.361Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana17l6djqrztw0ux668vkw7ff7d2602jvml52w9fyrvryusp7djnhfq9afn9z",
+            "corporation": "verana17l6djqrztw0ux668vkw7ff7d2602jvml52w9fyrvryusp7djnhfq9afn9z",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 11,
+        "corporation_id": 10,
+        "group_policy_address": "verana1rkml5878l2daw3a7xvg48wqecnh9u9dn2dtl8g57rsctq5pnc00syzjhah",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:22:52.847Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:22:52.847Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1rkml5878l2daw3a7xvg48wqecnh9u9dn2dtl8g57rsctq5pnc00syzjhah",
+            "corporation": "verana1rkml5878l2daw3a7xvg48wqecnh9u9dn2dtl8g57rsctq5pnc00syzjhah",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 10,
+        "corporation_id": 9,
+        "group_policy_address": "verana1wgjpjh42cr7t5sp5hgty4yrzww496a6yaznc9u4wsv9ac3xccu8sqduynj",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:13:43.559Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:13:43.559Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1wgjpjh42cr7t5sp5hgty4yrzww496a6yaznc9u4wsv9ac3xccu8sqduynj",
+            "corporation": "verana1wgjpjh42cr7t5sp5hgty4yrzww496a6yaznc9u4wsv9ac3xccu8sqduynj",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 9,
+        "corporation_id": 8,
+        "group_policy_address": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:09:51.713Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:09:51.713Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+            "corporation": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 8,
+        "corporation_id": 8,
+        "group_policy_address": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:08:41.903Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "SUBMITTED",
+        "voting_period_end": "2026-10-20T16:08:41.903Z",
+        "executor_result": "NOT_RUN",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+            "corporation": "verana1ys0dhh6x5s55h2g37zrnc7kh630jfq5p77as8pwyn60ax9zzqh9qhv0p0c",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": null,
+        "tally": {
+          "yes_count": "0",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 7,
+        "corporation_id": 7,
+        "group_policy_address": "verana142498n8sya3k3s5jftp7dujuqfw3ag4tpzc2ve45ykpwx6zmng8sd40dn0",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T16:04:54.049Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T16:04:54.049Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana142498n8sya3k3s5jftp7dujuqfw3ag4tpzc2ve45ykpwx6zmng8sd40dn0",
+            "corporation": "verana142498n8sya3k3s5jftp7dujuqfw3ag4tpzc2ve45ykpwx6zmng8sd40dn0",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 6,
+        "corporation_id": 6,
+        "group_policy_address": "verana1n64en27u7qckklkk4twkkun5h6v5dsur7g6l4pfmfhydvfru9upq5w4nlu",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T15:48:22.836Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T15:48:22.836Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1n64en27u7qckklkk4twkkun5h6v5dsur7g6l4pfmfhydvfru9upq5w4nlu",
+            "corporation": "verana1n64en27u7qckklkk4twkkun5h6v5dsur7g6l4pfmfhydvfru9upq5w4nlu",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 5,
+        "corporation_id": 5,
+        "group_policy_address": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+        "metadata": "Grant operator authorization to verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+        "proposers": [
+          "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7"
+        ],
+        "submit_time": "2026-10-15T15:20:21.702Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-20T15:20:21.702Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana19yv3gzjyqavqkmyffzxyj7j4pcwfes9477ate7",
+            "msgTypes": [
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+            "corporation": "verana1f6fyc0ptxh7padqr3hnrw6sm8wjfr93w6cgv39jwm00nd6kh08esdak22l",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 4,
+        "corporation_id": 4,
+        "group_policy_address": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+        "metadata": "Grant operator authorization to verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+        "proposers": [
+          "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t"
+        ],
+        "submit_time": "2026-10-14T22:46:45.757Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-19T22:46:45.757Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana1a7lnp2e3pscjxqah6nq6a5nynrzdj5rrztw30t",
+            "msgTypes": [
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgTriggerResolver"
+            ],
+            "operator": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+            "corporation": "verana17pmq7hp4upvmmveqexzuhzu64v36re3w3447n7dt46uwp594wtps7npxm4",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 3,
+        "corporation_id": 3,
+        "group_policy_address": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+        "metadata": "Grant operator authorization to verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+        "proposers": [
+          "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0"
+        ],
+        "submit_time": "2026-10-14T22:24:32.611Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-19T22:24:32.611Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana12h9k6dkcd6mekplc6klm2a7zelap7k77q0jva0",
+            "msgTypes": [
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgTriggerResolver",
+              "/verana.pp.v1.MsgSetParticipantEffectiveUntil"
+            ],
+            "operator": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+            "corporation": "verana1c799jddmlz7segvg6jrw6w2k6svwafganjdznard3tc74n7td7rqn2lclw",
+            "withFeegrant": true
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 2,
+        "corporation_id": 2,
+        "group_policy_address": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a",
+        "metadata": "",
+        "proposers": [
+          "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c"
+        ],
+        "submit_time": "2026-10-14T10:06:28.744Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-14T10:07:28.744Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+            "msgTypes": [
+              "/verana.co.v1.MsgUpdateCorporation",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.gf.v1.MsgAddGovernanceFrameworkDocument",
+              "/verana.gf.v1.MsgIncreaseActiveGovernanceFrameworkVersion",
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.cs.v1.MsgUpdateCredentialSchema",
+              "/verana.cs.v1.MsgArchiveCredentialSchema",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgSetParticipantEffectiveUntil",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgTriggerResolver",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgSlashParticipantTrustDeposit",
+              "/verana.pp.v1.MsgRepayParticipantSlashedTrustDeposit",
+              "/verana.td.v1.MsgRepaySlashedTrustDeposit",
+              "/verana.di.v1.MsgStoreDigest"
+            ],
+            "operator": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a",
+            "corporation": "verana1dlszg2sst9r69my4f84l3mj66zxcf3umcgujys30t84srg95dgvs9v9a3a"
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      },
+      {
+        "id": 1,
+        "corporation_id": 1,
+        "group_policy_address": "verana1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsh3z8fv",
+        "metadata": "",
+        "proposers": [
+          "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c"
+        ],
+        "submit_time": "2026-10-14T10:00:42.188Z",
+        "group_version": 2,
+        "group_policy_version": 2,
+        "status": "ACCEPTED",
+        "voting_period_end": "2026-10-14T10:01:42.188Z",
+        "executor_result": "SUCCESS",
+        "messages": [
+          {
+            "@type": "/verana.de.v1.MsgGrantOperatorAuthorization",
+            "grantee": "verana1dnucfytqvaat3a5m2tcc3dan0e3x8826h0fe6c",
+            "msgTypes": [
+              "/verana.co.v1.MsgUpdateCorporation",
+              "/verana.ec.v1.MsgCreateEcosystem",
+              "/verana.ec.v1.MsgUpdateEcosystem",
+              "/verana.ec.v1.MsgArchiveEcosystem",
+              "/verana.gf.v1.MsgAddGovernanceFrameworkDocument",
+              "/verana.gf.v1.MsgIncreaseActiveGovernanceFrameworkVersion",
+              "/verana.cs.v1.MsgCreateCredentialSchema",
+              "/verana.cs.v1.MsgUpdateCredentialSchema",
+              "/verana.cs.v1.MsgArchiveCredentialSchema",
+              "/verana.pp.v1.MsgSelfCreateParticipant",
+              "/verana.pp.v1.MsgCreateRootParticipant",
+              "/verana.pp.v1.MsgSetParticipantEffectiveUntil",
+              "/verana.pp.v1.MsgRevokeParticipant",
+              "/verana.pp.v1.MsgStartParticipantOP",
+              "/verana.pp.v1.MsgRenewParticipantOP",
+              "/verana.pp.v1.MsgSetParticipantOPToValidated",
+              "/verana.pp.v1.MsgTriggerResolver",
+              "/verana.pp.v1.MsgCancelParticipantOPLastRequest",
+              "/verana.pp.v1.MsgSlashParticipantTrustDeposit",
+              "/verana.pp.v1.MsgRepayParticipantSlashedTrustDeposit",
+              "/verana.td.v1.MsgRepaySlashedTrustDeposit",
+              "/verana.di.v1.MsgStoreDigest"
+            ],
+            "operator": "verana1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsh3z8fv",
+            "corporation": "verana1afk9zr2hn2jsac63h4hm60vl9z3e5u69gndzf7c99cqge3vzwjzsh3z8fv"
+          }
+        ],
+        "final_tally_result": {
+          "no_count": "0",
+          "yes_count": "1",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        },
+        "tally": {
+          "yes_count": "1",
+          "no_count": "0",
+          "abstain_count": "0",
+          "no_with_veto_count": "0"
+        }
+      }
+    ]
+  }
+}
