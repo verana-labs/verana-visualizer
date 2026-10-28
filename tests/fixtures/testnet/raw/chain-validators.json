@@ -1,0 +1,109 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.testnet.verana.network/cosmos/staking/v1beta1/validators?pagination.limit=200",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "validators": [
+      {
+        "operator_address": "veranavaloper1z2epxhjn6qrg0uca6j0rq7llupe3n0nlw8e6zd",
+        "consensus_pubkey": {
+          "@type": "/cosmos.crypto.ed25519.PubKey",
+          "key": "mUNO2bzyVU1hezYD7io7KoOayyakW4lt3RXF4S45U8c="
+        },
+        "jailed": false,
+        "status": "BOND_STATUS_BONDED",
+        "tokens": "1000000000",
+        "delegator_shares": "1000000000.000000000000000000",
+        "description": {
+          "moniker": "prime-node",
+          "identity": "",
+          "website": "",
+          "security_contact": "",
+          "details": ""
+        },
+        "unbonding_height": "0",
+        "unbonding_time": "1970-01-01T00:00:00Z",
+        "commission": {
+          "commission_rates": {
+            "rate": "0.100000000000000000",
+            "max_rate": "0.200000000000000000",
+            "max_change_rate": "0.010000000000000000"
+          },
+          "update_time": "2026-10-13T22:36:14.199914728Z"
+        },
+        "min_self_delegation": "1",
+        "unbonding_on_hold_ref_count": "0",
+        "unbonding_ids": []
+      },
+      {
+        "operator_address": "veranavaloper19ywhwwycdunw9yluwsefxe2ehs2d6nnuj905n3",
+        "consensus_pubkey": {
+          "@type": "/cosmos.crypto.ed25519.PubKey",
+          "key": "qobei6kpnxg+94XA5elT1fgyB8Psb45XRjp/NbnHBeo="
+        },
+        "jailed": false,
+        "status": "BOND_STATUS_BONDED",
+        "tokens": "990000000",
+        "delegator_shares": "990000000.000000000000000000",
+        "description": {
+          "moniker": "validator2",
+          "identity": "",
+          "website": "",
+          "security_contact": "",
+          "details": ""
+        },
+        "unbonding_height": "0",
+        "unbonding_time": "1970-01-01T00:00:00Z",
+        "commission": {
+          "commission_rates": {
+            "rate": "0.100000000000000000",
+            "max_rate": "0.200000000000000000",
+            "max_change_rate": "0.010000000000000000"
+          },
+          "update_time": "2026-10-13T22:41:08.699627502Z"
+        },
+        "min_self_delegation": "1",
+        "unbonding_on_hold_ref_count": "0",
+        "unbonding_ids": []
+      },
+      {
+        "operator_address": "veranavaloper16j9qracmadh977cp0zq2mam48zuyk7ql2mcl78",
+        "consensus_pubkey": {
+          "@type": "/cosmos.crypto.ed25519.PubKey",
+          "key": "VhG0dYV2Yy6sEF+5ht2d2fBfL8q0yv4bWiMpKFV74aQ="
+        },
+        "jailed": false,
+        "status": "BOND_STATUS_BONDED",
+        "tokens": "990000000",
+        "delegator_shares": "990000000.000000000000000000",
+        "description": {
+          "moniker": "validator3",
+          "identity": "",
+          "website": "",
+          "security_contact": "",
+          "details": ""
+        },
+        "unbonding_height": "0",
+        "unbonding_time": "1970-01-01T00:00:00Z",
+        "commission": {
+          "commission_rates": {
+            "rate": "0.100000000000000000",
+            "max_rate": "0.200000000000000000",
+            "max_change_rate": "0.010000000000000000"
+          },
+          "update_time": "2026-10-13T22:41:26.449725007Z"
+        },
+        "min_self_delegation": "1",
+        "unbonding_on_hold_ref_count": "0",
+        "unbonding_ids": []
+      }
+    ],
+    "pagination": {
+      "next_key": null,
+      "total": "0"
+    }
+  }
+}

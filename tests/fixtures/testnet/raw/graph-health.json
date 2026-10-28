@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://graph.testnet.verana.network/health",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "status": "ok",
+    "lastAppliedBlock": 96135
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -16,11 +16,11 @@
       "!**/coverage",
       "!**/pnpm-lock.yaml",
       "!**/.changeset",
-      "!.taskmaster",
-      "!.cursor",
-      "!.audit-ci.json",
       "!**/*.css",
-      "!public"
+      "!public",
+      "!tests/fixtures",
+      "!.superpowers",
+      "!.claude"
     ]
   },
   "formatter": {
@@ -34,10 +34,7 @@
       "!**/.idea",
       "!**/coverage",
       "!**/pnpm-lock.yaml",
-      "!**/.changeset",
-      "!.taskmaster",
-      "!.cursor",
-      "!.audit-ci.json"
+      "!**/.changeset"
     ]
   },
   "javascript": {
@@ -57,7 +54,13 @@
       "allowComments": true
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "rules": {
       "style": {
@@ -100,6 +103,16 @@
   },
   "overrides": [
     {
+      "includes": ["src/lib/logger.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": ["scripts/**"],
       "linter": {
         "rules": {
@@ -110,14 +123,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.test.ts",
-        "**/*.test.tsx",
-        "**/__tests__/**",
-        "**/vitest.*.ts",
-        "setupTests.ts",
-        "**/tests/**"
-      ],
+      "includes": ["**/*.test.ts", "**/*.test.tsx", "**/__tests__/**", "**/vitest.*.ts", "**/tests/**"],
       "linter": {
         "rules": {
           "suspicious": {

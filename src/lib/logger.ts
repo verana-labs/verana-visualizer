@@ -1,8 +1,3 @@
-/**
- * biome-ignore-all lint/suspicious/noConsole: this module is the single
- * permitted console-call site; all app code routes through `logger`.
- */
-
 type Level = 'error' | 'warn' | 'info' | 'debug' | 'log'
 
 const isProduction = process.env.NODE_ENV === 'production'
