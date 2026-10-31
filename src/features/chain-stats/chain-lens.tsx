@@ -115,23 +115,24 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
     const chain = createChainClient(cfg)
     const inFlight = new Set<number>()
     let disposed = false
-    const fetchBlock = (height: number) => {
-      inFlight.add(height)
-      chain
-        .block(height)
-        .then((res) => blockSummary(res.data))
-        .then(
-          (block) => {
-            if (disposed) return
-            setBlocks((current) => ({
-              blocks: mergeBlocks(current?.blocks ?? [], [block], BLOCK_TIME_WINDOW),
-              error: null,
-              query: current?.query ?? null,
-            }))
-          },
-          (error: unknown) => logger.error(`Could not read block ${height} from the chain, will retry`, error)
-        )
-        .finally(() => inFlight.delete(height))
+    const fetchBlocks = (heights: number[]) => {
+      for (const height of heights) inFlight.add(height)
+      void Promise.allSettled(heights.map((height) => chain.block(height).then((res) => blockSummary(res.data)))).then(
+        (results) => {
+          for (const height of heights) inFlight.delete(height)
+          const fetched = results.flatMap((result, i) => {
+            if (result.status === 'fulfilled') return [result.value]
+            logger.error(`Could not read block ${heights[i]} from the chain, will retry`, result.reason)
+            return []
+          })
+          if (disposed || fetched.length === 0) return
+          setBlocks((current) => ({
+            blocks: mergeBlocks(current?.blocks ?? [], fetched, BLOCK_TIME_WINDOW),
+            error: null,
+            query: current?.query ?? null,
+          }))
+        }
+      )
     }
     const unsubscribe = useObservatory.subscribe((state, previous) => {
       const height = state.blockHeight
@@ -140,8 +141,10 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
       if (current === null) return
       const top = Math.max(height, current.blocks.at(-1)?.height ?? 0)
       const known = new Set(current.blocks.map((b) => b.height))
+      const missing: number[] = []
       for (let h = Math.max(1, top - BLOCK_TIME_WINDOW + 1); h <= top; h++)
-        if (!known.has(h) && !inFlight.has(h)) fetchBlock(h)
+        if (!known.has(h) && !inFlight.has(h)) missing.push(h)
+      if (missing.length > 0) fetchBlocks(missing)
     })
     return () => {
       disposed = true
