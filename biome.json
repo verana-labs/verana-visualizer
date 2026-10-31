@@ -21,9 +21,7 @@
       "!.audit-ci.json",
       "!**/*.css",
       "!public",
-      "!tests/fixtures",
-      "!.superpowers",
-      "!.claude"
+      "!tests/fixtures"
     ]
   },
   "formatter": {

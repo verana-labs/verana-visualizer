@@ -59,3 +59,7 @@ node_modules/
 
 # superpowers working docs (internal specs/plans, not part of the deliverable)
 docs/superpowers/
+
+# local agent tooling
+.claude/
+.superpowers/
