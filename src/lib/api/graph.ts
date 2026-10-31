@@ -1,3 +1,4 @@
+import type { z } from 'zod'
 import type { NetworkConfig } from '../env'
 import type { QueryInfo } from './query-info'
 import { buildUrl, type RequestOptions, requestJson, requestSignal } from './request'
@@ -19,6 +20,8 @@ export interface SearchParams {
 
 const JSON_HEADERS = { 'content-type': 'application/json' }
 
+const TRAVERSAL_OUTPUT = { G1: validatorChainSchema } satisfies Record<TraversalQuery, z.ZodType>
+
 export function createGraphClient(cfg: NetworkConfig, options: RequestOptions = {}) {
   const post = (path: string, body: unknown): QueryInfo => ({
     method: 'POST',
@@ -27,18 +30,17 @@ export function createGraphClient(cfg: NetworkConfig, options: RequestOptions = 
     body,
   })
 
-  const traverseQuery = (query: TraversalQuery, input: Record<string, unknown>, limit?: number) =>
-    post('/v4/graph/traverse', { query, input, ...(limit === undefined ? {} : { limit }) })
+  const traverse = (query: TraversalQuery, input: Record<string, unknown>, limit?: number) =>
+    requestJson(
+      post('/v4/graph/traverse', { query, input, ...(limit === undefined ? {} : { limit }) }),
+      traverseResponseSchema.extend({ output: TRAVERSAL_OUTPUT[query] }),
+      requestSignal(options)
+    )
 
   return {
-    traverse: (query: TraversalQuery, input: Record<string, unknown>, limit?: number) =>
-      requestJson(traverseQuery(query, input, limit), traverseResponseSchema, requestSignal(options)),
+    traverse,
     async validatorChain(participantId: number) {
-      const res = await requestJson(
-        traverseQuery('G1', { participantId }),
-        traverseResponseSchema.extend({ output: validatorChainSchema }),
-        requestSignal(options)
-      )
+      const res = await traverse('G1', { participantId })
       return { data: res.data.output, query: res.query }
     },
     search: (params: SearchParams) =>
