@@ -139,6 +139,17 @@ describe('ChainLens resilience', () => {
     vi.useRealTimers()
   })
 
+  it('refreshes the stats once when the Chain lens is entered again', async () => {
+    const mock = stubNetwork()
+    render(<ChainLens cfg={testnetCfg} />)
+    const snapshots = () => mock.mock.calls.filter(([u]) => String(u).includes('/v4/stats/snapshot')).length
+    act(() => useObservatory.getState().setLens('chain'))
+    await vi.waitFor(() => expect(snapshots()).toBe(1))
+    act(() => useObservatory.getState().setLens('network'))
+    act(() => useObservatory.getState().setLens('chain'))
+    await vi.waitFor(() => expect(snapshots()).toBe(2))
+  })
+
   it('clears the chain scene when the network config changes', async () => {
     stubNetwork()
     const { rerender } = render(<ChainLens cfg={testnetCfg} />)

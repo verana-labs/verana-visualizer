@@ -41,8 +41,8 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
     let disposed = false
     let issued = 0
     let applied = 0
-    const refresh = (first: boolean) => {
-      if (!first && useObservatory.getState().lens !== 'chain') return
+    const refresh = (force: boolean) => {
+      if (!force && useObservatory.getState().lens !== 'chain') return
       const id = ++issued
       const current = () => !disposed && id > applied
       loadNetworkStats(cfg, new Date()).then(
@@ -73,9 +73,13 @@ export function ChainLens({ cfg }: { cfg: NetworkConfig }) {
     }
     refresh(true)
     const timer = setInterval(() => refresh(false), STATS_REFRESH_MS)
+    const unsubscribe = useObservatory.subscribe((state, previous) => {
+      if (state.lens === 'chain' && previous.lens !== 'chain') refresh(true)
+    })
     return () => {
       disposed = true
       clearInterval(timer)
+      unsubscribe()
       const store = useObservatory.getState()
       store.setChainBlocks([])
       store.setChainValidators(null)
