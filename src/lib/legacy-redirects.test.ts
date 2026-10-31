@@ -20,6 +20,7 @@ describe('legacyRedirect', () => {
     expect(r('/governance/12')).toBe('/?lens=governance&sel=proposal:12')
     expect(r('/ecosystem')).toBe('/?lens=registry')
     expect(r('/developer-activity')).toBe('/')
+    expect(r('/charts')).toBe('/?lens=economics')
   })
 
   it('maps permalinks', () => {

@@ -26,21 +26,35 @@ describe('density strip', () => {
     expect(days.every((d) => stats.buckets.some((b) => b.timestamp.startsWith(d.date)))).toBe(true)
   })
 
-  it('pages through every event without exceeding the 100 limit and keeps each once', async () => {
-    const pages = [events.slice(0, 100), events.slice(90, 100)]
+  it('pages through every event without exceeding the 500 limit and keeps each once', async () => {
+    const many = Array.from({ length: 1200 }, (_, i) => ({
+      ...events[0],
+      block_height: 1 + Math.floor(i / 3),
+      payload: { ...events[0].payload, message_index: i % 3 },
+    }))
     const calls: { after: number; limit: number }[] = []
     const fetchEvents = vi.fn(async (after: number, limit: number) => {
       calls.push({ after, limit })
-      return pages[calls.length - 1] ?? []
+      return many.filter((ev) => ev.block_height > after).slice(0, limit)
     })
     const all = await loadEvents(fetchEvents)
-    expect(calls.every((c) => c.limit <= 100)).toBe(true)
-    expect(calls[1].after).toBe(events[99].block_height - 1)
-    expect(all).toHaveLength(100)
+    expect(calls.every((c) => c.limit <= 500)).toBe(true)
+    expect(calls.length).toBeGreaterThan(2)
+    expect(all).toHaveLength(1200)
+  })
+
+  it('loads a block holding 100 events, the size of a crowded batch transaction', async () => {
+    const crowded = Array.from({ length: 100 }, (_, i) => ({
+      ...events[0],
+      block_height: 9000,
+      payload: { ...events[0].payload, message_index: i },
+    }))
+    const fetchEvents = vi.fn(async (after: number) => (after < 9000 ? crowded : []))
+    await expect(loadEvents(fetchEvents)).resolves.toHaveLength(100)
   })
 
   it('fails loudly when one block holds a full page, since the API cannot page within a block', async () => {
-    const crowded = Array.from({ length: 100 }, (_, i) => ({
+    const crowded = Array.from({ length: 500 }, (_, i) => ({
       ...events[0],
       block_height: 9000,
       payload: { ...events[0].payload, message_index: i },

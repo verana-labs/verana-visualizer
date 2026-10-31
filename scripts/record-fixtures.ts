@@ -14,6 +14,7 @@ const TRACED_PARTICIPANTS: Record<string, number[]> = { testnet: [11, 97] }
 const TRUST_PARTICIPANT: Record<string, number> = { testnet: 158, devnet: 48 }
 const FIXTURE_DIR = join(process.cwd(), 'tests', 'fixtures')
 const PALETTE_QUERY = 'papapo'
+const STATS_WINDOW_MS = 90 * 24 * 60 * 60 * 1000
 
 interface RawResponse {
   request: QueryInfo
@@ -48,10 +49,12 @@ async function recordNetwork(network: string) {
   const dir = join(FIXTURE_DIR, network)
   await mkdir(join(dir, 'raw'), { recursive: true })
 
-  const write = async (name: string, request: QueryInfo) => {
-    if (rawResponses.length > 1) throw new Error(`${network}/${name} took ${rawResponses.length} requests`)
-    const [{ status, body }] = rawResponses
-    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify({ request, status, body }, null, 2)}\n`)
+  const write = async (name: string, request?: QueryInfo) => {
+    if (rawResponses.length !== 1)
+      throw new Error(`${network}/${name} took ${rawResponses.length} requests, expected 1`)
+    const [raw] = rawResponses
+    const fixture = { request: request ?? raw.request, status: raw.status, body: raw.body }
+    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify(fixture, null, 2)}\n`)
     logger.log(`${network}/raw/${name}.json`)
   }
 
@@ -67,7 +70,7 @@ async function recordNetwork(network: string) {
     await load().catch((error: unknown) => {
       if (!(error instanceof FetchError) || error.status === null || error.status >= 500) throw error
     })
-    await write(name, rawResponses[0].request)
+    await write(name)
   }
 
   const recordIfFound = async <T>(name: string, load: () => Promise<Fetched<T>>) => {
@@ -129,12 +132,13 @@ async function recordNetwork(network: string) {
     await record('events-page-2', () => indexer.events(lastEvent.block_height - 1, 100))
   await record('changes', () => indexer.changes(Math.max(1, block.data.height - 1)))
   await record('changes-38000', () => indexer.changes(38000))
+  const statsUntil = new Date()
   await record('stats', () =>
     indexer.stats({
       entity_type: 'GLOBAL',
       granularity: 'DAY',
-      timestamp_from: '2026-10-01T00:00:00Z',
-      timestamp_until: '2026-12-31T00:00:00Z',
+      timestamp_from: new Date(statsUntil.getTime() - STATS_WINDOW_MS).toISOString(),
+      timestamp_until: statsUntil.toISOString(),
     })
   )
   await record('snapshot', () => indexer.snapshot())

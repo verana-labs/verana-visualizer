@@ -5,6 +5,7 @@ import { useTimeStore } from '@/features/time-scrubber/time-store'
 import { useTour } from '@/features/tour/tour-store'
 import { serializeViewState } from '@/lib/view-state'
 import { useObservatory } from '@/store/observatory-store'
+import { blockTime, failing, stubNetwork } from '../../../tests/support/chain-fixture'
 import { testnetCfg } from '../../../tests/support/network'
 import { useSceneHandle } from './scene-handle'
 import { ViewActions } from './view-actions'
@@ -23,6 +24,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  vi.unstubAllGlobals()
   useSceneHandle.setState({ handle: null })
   window.history.replaceState(null, '', '/')
 })
@@ -100,6 +102,7 @@ describe('ViewActions', () => {
   })
 
   it('stamps the scrubbed block, not the live head, in the Time lens', async () => {
+    stubNetwork()
     const canvas = document.createElement('canvas')
     useSceneHandle.setState({ handle: { camera: () => [0, 0, 1, 0, 0, 0], capture: () => canvas } })
     exportPng.mockReset().mockReturnValue(new Blob(['x'], { type: 'image/png' }))
@@ -110,7 +113,42 @@ describe('ViewActions', () => {
     useTimeStore.setState({ height: 38_000 })
     render(<ViewActions cfg={testnetCfg} />)
     await act(async () => screen.getByRole('button', { name: 'PNG' }).click())
-    expect(exportPng).toHaveBeenCalledWith(canvas, expect.objectContaining({ blockHeight: 38_000 }))
+    await vi.waitFor(() =>
+      expect(exportPng).toHaveBeenCalledWith(canvas, expect.objectContaining({ blockHeight: 38_000 }))
+    )
+    useTimeStore.getState().reset()
+  })
+
+  it('stamps the scrubbed block with its own chain time, not the wall clock', async () => {
+    stubNetwork()
+    const canvas = document.createElement('canvas')
+    useSceneHandle.setState({ handle: { camera: () => [0, 0, 1, 0, 0, 0], capture: () => canvas } })
+    exportPng.mockReset().mockReturnValue(new Blob(['x'], { type: 'image/png' }))
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    URL.createObjectURL = vi.fn(() => 'blob:png')
+    URL.revokeObjectURL = vi.fn()
+    useObservatory.setState({ lens: 'time' })
+    useTimeStore.setState({ height: 38_000 })
+    render(<ViewActions cfg={testnetCfg} />)
+    await act(async () => screen.getByRole('button', { name: 'PNG' }).click())
+    await vi.waitFor(() =>
+      expect(exportPng).toHaveBeenCalledWith(canvas, expect.objectContaining({ at: blockTime(38_000) }))
+    )
+    useTimeStore.getState().reset()
+  })
+
+  it('refuses the PNG when the scrubbed block time cannot be read, rather than stamping the wall clock', async () => {
+    stubNetwork(failing(/\/blocks\/38000$/))
+    useSceneHandle.setState({
+      handle: { camera: () => [0, 0, 1, 0, 0, 0], capture: () => document.createElement('canvas') },
+    })
+    exportPng.mockReset()
+    useObservatory.setState({ lens: 'time' })
+    useTimeStore.setState({ height: 38_000 })
+    render(<ViewActions cfg={testnetCfg} />)
+    await act(async () => screen.getByRole('button', { name: 'PNG' }).click())
+    await vi.waitFor(() => expect(useObservatory.getState().toast).toBe('PNG export failed'))
+    expect(exportPng).not.toHaveBeenCalled()
     useTimeStore.getState().reset()
   })
 })

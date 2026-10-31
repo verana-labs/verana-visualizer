@@ -18,6 +18,18 @@ describe('createGraphClient', () => {
       body: { query: 'G1', input: { participantId: 158 } },
     })
   })
+
+  it('validates the traverse output against the schema of its query', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => Response.json({ query: 'G1', evaluatedAtTime: 'now', output: [{ id: 'one' }] }))
+    )
+    const error = await createGraphClient(testnetCfg)
+      .traverse('G1', { participantId: 158 })
+      .catch((e: unknown) => e)
+    expect(error).toBeInstanceOf(FetchError)
+    expect((error as FetchError).message).toContain('output.0.id')
+  })
 })
 
 describe('validatorChain', () => {

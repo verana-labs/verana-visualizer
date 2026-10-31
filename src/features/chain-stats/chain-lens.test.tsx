@@ -87,12 +87,8 @@ describe('ChainLens resilience', () => {
     await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('unavailable'))
     chainDown = false
     act(() => useObservatory.getState().advanceBlock(HEAD + 1))
-    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('1,001'), {
-      timeout: 5000,
-    })
-    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockTime"]')).toHaveTextContent('6 s'), {
-      timeout: 5000,
-    })
+    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('1,001'))
+    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockTime"]')).toHaveTextContent('6 s'))
     expect(useObservatory.getState().chainBlocks).toHaveLength(12)
   })
 
@@ -137,6 +133,17 @@ describe('ChainLens resilience', () => {
     })
     await vi.waitFor(() => expect(snapshots()).toBe(2))
     vi.useRealTimers()
+  })
+
+  it('refreshes the stats once when the Chain lens is entered again', async () => {
+    const mock = stubNetwork()
+    render(<ChainLens cfg={testnetCfg} />)
+    const snapshots = () => mock.mock.calls.filter(([u]) => String(u).includes('/v4/stats/snapshot')).length
+    act(() => useObservatory.getState().setLens('chain'))
+    await vi.waitFor(() => expect(snapshots()).toBe(1))
+    act(() => useObservatory.getState().setLens('network'))
+    act(() => useObservatory.getState().setLens('chain'))
+    await vi.waitFor(() => expect(snapshots()).toBe(2))
   })
 
   it('clears the chain scene when the network config changes', async () => {
