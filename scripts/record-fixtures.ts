@@ -14,6 +14,7 @@ const TRACED_PARTICIPANTS: Record<string, number[]> = { testnet: [11, 97] }
 const TRUST_PARTICIPANT: Record<string, number> = { testnet: 158, devnet: 48 }
 const FIXTURE_DIR = join(process.cwd(), 'tests', 'fixtures')
 const PALETTE_QUERY = 'papapo'
+const STATS_WINDOW_MS = 90 * 24 * 60 * 60 * 1000
 
 interface RawResponse {
   request: QueryInfo
@@ -131,12 +132,13 @@ async function recordNetwork(network: string) {
     await record('events-page-2', () => indexer.events(lastEvent.block_height - 1, 100))
   await record('changes', () => indexer.changes(Math.max(1, block.data.height - 1)))
   await record('changes-38000', () => indexer.changes(38000))
+  const statsUntil = new Date()
   await record('stats', () =>
     indexer.stats({
       entity_type: 'GLOBAL',
       granularity: 'DAY',
-      timestamp_from: '2026-10-01T00:00:00Z',
-      timestamp_until: '2026-12-31T00:00:00Z',
+      timestamp_from: new Date(statsUntil.getTime() - STATS_WINDOW_MS).toISOString(),
+      timestamp_until: statsUntil.toISOString(),
     })
   )
   await record('snapshot', () => indexer.snapshot())
