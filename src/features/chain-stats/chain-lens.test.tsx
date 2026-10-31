@@ -87,12 +87,8 @@ describe('ChainLens resilience', () => {
     await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('unavailable'))
     chainDown = false
     act(() => useObservatory.getState().advanceBlock(HEAD + 1))
-    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('1,001'), {
-      timeout: 5000,
-    })
-    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockTime"]')).toHaveTextContent('6 s'), {
-      timeout: 5000,
-    })
+    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockHeight"]')).toHaveTextContent('1,001'))
+    await vi.waitFor(() => expect(panel.querySelector('[data-stat="blockTime"]')).toHaveTextContent('6 s'))
     expect(useObservatory.getState().chainBlocks).toHaveLength(12)
   })
 
