@@ -4,7 +4,7 @@ import type { QueryInfo } from '@/lib/api/query-info'
 import type { IndexerEvent } from '@/lib/api/schemas'
 import type { NetworkConfig } from '@/lib/env'
 
-const EVENTS_PAGE = 100
+const EVENTS_PAGE = 500
 
 export interface DensityPoint {
   height: number

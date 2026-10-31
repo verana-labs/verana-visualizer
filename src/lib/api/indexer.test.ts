@@ -12,9 +12,9 @@ function stubFetch(body: unknown = {}) {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('createIndexerClient', () => {
-  it('rejects events with a limit above 100 before fetching', async () => {
+  it('rejects events with a limit above 500 before fetching', async () => {
     const mock = stubFetch()
-    await expect(createIndexerClient(testnetCfg).events(0, 101)).rejects.toThrow('events limit must be <= 100')
+    await expect(createIndexerClient(testnetCfg).events(0, 501)).rejects.toThrow('events limit must be <= 500')
     expect(mock).not.toHaveBeenCalled()
   })
 
