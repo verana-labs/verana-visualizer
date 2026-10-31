@@ -33,7 +33,7 @@ const BACKGROUND = '#05040a'
 const FOG_DENSITY = 0.0028
 const EXPOSURE = 0.92
 const ZOOM_SPEED = 2.2
-// postprocessing is only a transitive dependency; 6 is its ToneMappingMode.ACES_FILMIC
+// postprocessing is an undeclared peer, so it is not importable here. 6 is its ToneMappingMode.ACES_FILMIC.
 const ACES_FILMIC = 6
 const QUALITY = [
   { dpr: 1.75, bloomLevels: 8 },
