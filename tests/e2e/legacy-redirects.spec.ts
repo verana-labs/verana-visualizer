@@ -13,6 +13,7 @@ const REDIRECTS: [string, string][] = [
   ['/governance/12', '/?lens=governance&sel=proposal:12'],
   ['/ecosystem', '/?lens=registry'],
   ['/developer-activity', '/'],
+  ['/charts', '/?lens=economics'],
   ['/e/participant/158', '/?sel=participant:158'],
   ['/e/schema/7', '/?sel=schema:7'],
   ['/e/did/did:web:x', '/?sel=agent:did%3Aweb%3Ax'],

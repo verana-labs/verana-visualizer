@@ -8,6 +8,7 @@ const STATIC_ROUTES: Record<string, string> = {
   '/governance': '/?lens=governance',
   '/ecosystem': '/?lens=registry',
   '/developer-activity': '/',
+  '/charts': '/?lens=economics',
 }
 
 const NUMERIC_KINDS = ['ecosystem', 'participant', 'corporation', 'schema', 'proposal']

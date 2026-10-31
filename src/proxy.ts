@@ -18,5 +18,6 @@ export const config = {
     '/governance/:path*',
     '/ecosystem',
     '/developer-activity',
+    '/charts',
   ],
 }
