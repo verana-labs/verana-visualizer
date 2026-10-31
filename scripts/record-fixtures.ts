@@ -48,10 +48,12 @@ async function recordNetwork(network: string) {
   const dir = join(FIXTURE_DIR, network)
   await mkdir(join(dir, 'raw'), { recursive: true })
 
-  const write = async (name: string, request: QueryInfo) => {
-    if (rawResponses.length > 1) throw new Error(`${network}/${name} took ${rawResponses.length} requests`)
-    const [{ status, body }] = rawResponses
-    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify({ request, status, body }, null, 2)}\n`)
+  const write = async (name: string, request?: QueryInfo) => {
+    if (rawResponses.length !== 1)
+      throw new Error(`${network}/${name} took ${rawResponses.length} requests, expected 1`)
+    const [raw] = rawResponses
+    const fixture = { request: request ?? raw.request, status: raw.status, body: raw.body }
+    await writeFile(join(dir, 'raw', `${name}.json`), `${JSON.stringify(fixture, null, 2)}\n`)
     logger.log(`${network}/raw/${name}.json`)
   }
 
@@ -67,7 +69,7 @@ async function recordNetwork(network: string) {
     await load().catch((error: unknown) => {
       if (!(error instanceof FetchError) || error.status === null || error.status >= 500) throw error
     })
-    await write(name, rawResponses[0].request)
+    await write(name)
   }
 
   const recordIfFound = async <T>(name: string, load: () => Promise<Fetched<T>>) => {
