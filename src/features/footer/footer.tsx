@@ -52,12 +52,12 @@ export function Footer({ cfg }: { cfg: NetworkConfig }) {
             href={s.href}
             target="_blank"
             rel="noreferrer"
-            aria-label={s.label}
             className="grid size-8 place-items-center rounded-[9px] text-scene-mut transition hover:-translate-y-px hover:bg-[color-mix(in_srgb,var(--accent)_22%,transparent)] hover:text-white"
           >
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="size-[15px]">
               <path d={s.icon} />
             </svg>
+            <span className="sr-only">{s.label}</span>
           </a>
         ))}
       </div>
