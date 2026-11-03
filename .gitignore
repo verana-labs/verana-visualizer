@@ -61,6 +61,7 @@ node_modules/
 docs/superpowers/
 
 # working scratch
+.claude/
 .superpowers/
 /test-results/
 /playwright-report/

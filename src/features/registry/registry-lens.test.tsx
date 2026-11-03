@@ -48,6 +48,14 @@ describe('RegistryLens', () => {
     expect(statsCalls()).toBe(2)
   })
 
+  it('shows the failed source instead of reading forever when the indexer is down', async () => {
+    fetchMock.mockImplementation(async () => new Response('down', { status: 503 }))
+    render(<RegistryLens cfg={testnetCfg} />)
+    act(() => useObservatory.getState().setLens('registry'))
+    expect(await screen.findByText(/Slash history unavailable: .*503/)).toBeInTheDocument()
+    expect(screen.queryByText('Reading pending tasks and slash history…')).toBeNull()
+  })
+
   it('gives the inspector slot back when an entity is selected', () => {
     render(<RegistryLens cfg={testnetCfg} />)
     act(() => useObservatory.setState({ lens: 'registry', selected: 'ecosystem:2' }))

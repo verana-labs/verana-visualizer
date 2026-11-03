@@ -24,6 +24,7 @@ const TOLERATED_404 = [
   /^\/v4\/group\/get\/\d+$/,
   /^\/v4\/trust-deposit\/get\/\d+$/,
 ]
+const EVENTS_PATH = '/v4/indexer/events'
 const CHANGES_PATH = '/v4/indexer/changes'
 const PARTICIPANTS_PATH = '/v4/participant/list'
 const RESOLVE_PATH = '/v4/verifiable-trust/resolve'
@@ -63,6 +64,13 @@ function load(): RawFixture[] {
 
 const FIXTURES = load()
 
+// The recorded events pages used limit=100; the app now asks for 500 and a shorter page simply ends the history.
+const eventsPage = (pathname: string, query: string, candidates: typeof FIXTURES) => {
+  if (pathname !== EVENTS_PATH) return undefined
+  const after = new URLSearchParams(query).get('after_block_height')
+  return candidates.find((f) => new URLSearchParams(f.query).get('after_block_height') === after)
+}
+
 export function matchFixture(
   method: string,
   url: string,
@@ -81,7 +89,7 @@ export function matchFixture(
         (ignoreHeight || f.height === height) &&
         JSON.stringify(f.body) === wantedBody
     )
-    const exact = candidates.find((f) => f.query === query)
+    const exact = candidates.find((f) => f.query === query) ?? eventsPage(pathname, query, candidates)
     return exact ?? (QUERY_AGNOSTIC.has(pathname) && candidates.length === 1 ? candidates[0] : undefined)
   }
   const pinnedReplay = height !== null && method === 'GET' && pathname !== CHANGES_PATH

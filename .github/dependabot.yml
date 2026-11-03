@@ -24,8 +24,6 @@ updates:
       - dependencies
     commit-message:
       prefix: ci(deps)
-    ignore:
-      - dependency-name: 2060-io/organization*
     groups:
       github-actions:
         patterns:
