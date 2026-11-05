@@ -60,6 +60,11 @@ node_modules/
 # superpowers working docs (internal specs/plans, not part of the deliverable)
 docs/superpowers/
 
-# local agent tooling
+# working scratch
 .claude/
 .superpowers/
+/test-results/
+/playwright-report/
+
+AGENTS.md
+CLAUDE.md
