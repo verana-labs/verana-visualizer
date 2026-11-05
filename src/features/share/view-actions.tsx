@@ -1,0 +1,96 @@
+'use client'
+
+import { useTimeStore } from '@/features/time-scrubber/time-store'
+import { useTour } from '@/features/tour/tour-store'
+import { createChainClient } from '@/lib/api/chain'
+import type { NetworkConfig } from '@/lib/env'
+import { logger } from '@/lib/logger'
+import { parseViewState, serializeViewState } from '@/lib/view-state'
+import { useObservatory } from '@/store/observatory-store'
+import { Button } from '@/ui/button'
+import { exportPng, pngFileName } from './export-png'
+import { useSceneHandle } from './scene-handle'
+
+const REVOKE_MS = 10_000
+
+async function copyShareLink() {
+  const { lens, selected, showToast } = useObservatory.getState()
+  const handle = useSceneHandle.getState().handle
+  if (!handle) {
+    showToast('Camera not ready')
+    return
+  }
+  const view = {
+    ...parseViewState(new URLSearchParams(window.location.search)),
+    lens,
+    sel: selected,
+    cam: handle.camera(),
+  }
+  try {
+    await navigator.clipboard.writeText(`${window.location.origin}/?${serializeViewState(view)}`)
+    showToast('Link copied')
+  } catch (error) {
+    logger.error('Could not copy the share link', error)
+    showToast('Could not copy the link')
+  }
+}
+
+async function downloadPng(cfg: NetworkConfig, blockHeight: number, scrubbed: boolean) {
+  const { showToast } = useObservatory.getState()
+  const handle = useSceneHandle.getState().handle
+  if (!handle) {
+    showToast('PNG export needs the 3D view')
+    return
+  }
+  try {
+    const at = scrubbed
+      ? (await createChainClient(cfg).block(blockHeight)).data.block.header.time
+      : new Date().toISOString()
+    const stamp = { chainId: cfg.chainId, blockHeight, at, source: new URL(cfg.indexerUrl).host }
+    const url = URL.createObjectURL(exportPng(handle.capture(), stamp))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = pngFileName(stamp)
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(url), REVOKE_MS)
+  } catch (error) {
+    logger.error('PNG export failed', error)
+    showToast('PNG export failed')
+  }
+}
+
+export function ViewActions({ cfg }: { cfg: NetworkConfig }) {
+  const ready = useObservatory((s) => s.model !== null)
+  const liveHeight = useObservatory((s) => s.blockHeight)
+  const timeLens = useObservatory((s) => s.lens === 'time')
+  const scrubbed = useTimeStore((s) => s.height)
+  const historical = timeLens && scrubbed !== null
+  const blockHeight = historical ? scrubbed : liveHeight
+  const cameraReady = useSceneHandle((s) => s.handle !== null)
+  const small = '!px-2 !py-1.5 flex-1 text-[11.5px]'
+  return (
+    <div className="flex gap-1.5">
+      <Button className={small} disabled={!ready} onClick={() => useTour.getState().present()}>
+        Present
+      </Button>
+      <Button className={small} disabled={!cameraReady} onClick={() => void copyShareLink()}>
+        Share
+      </Button>
+      <Button
+        className={small}
+        disabled={blockHeight === null}
+        onClick={() => blockHeight !== null && void downloadPng(cfg, blockHeight, historical)}
+      >
+        PNG
+      </Button>
+      <Button
+        className={small}
+        disabled={!ready}
+        title="Step-by-step guided tour"
+        onClick={() => useTour.getState().start()}
+      >
+        Tour
+      </Button>
+    </div>
+  )
+}

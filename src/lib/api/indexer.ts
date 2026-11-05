@@ -53,7 +53,7 @@ export interface SnapshotParams {
 }
 
 const PAGE_SIZE = 1000
-const MAX_EVENTS_LIMIT = 100
+const MAX_EVENTS_LIMIT = 500
 const PINNED_PROXY_PATH = '/api/indexer'
 
 export function pinnedProxyUrl(query: QueryInfo, indexerUrl: string): string | undefined {
