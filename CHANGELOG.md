@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.0.0](https://github.com/verana-labs/verana-visualizer/compare/v1.1.0...v2.0.0) (2026-11-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* rebuild the visualizer shell and 3d scene on v4 ([#47](https://github.com/verana-labs/verana-visualizer/issues/47))
+
+### Features
+
+* add the trust, economics, chain, time, governance and registry lenses ([#48](https://github.com/verana-labs/verana-visualizer/issues/48)) ([bd979fd](https://github.com/verana-labs/verana-visualizer/commit/bd979fd59ae59b6ef3185c6a2cc393c9a774ad4b))
+* add the v4 data layer for the visualizer ([#46](https://github.com/verana-labs/verana-visualizer/issues/46)) ([0cb2114](https://github.com/verana-labs/verana-visualizer/commit/0cb2114267c445395e7832e75af16455f3840dd9))
+* rebuild the visualizer shell and 3d scene on v4 ([#47](https://github.com/verana-labs/verana-visualizer/issues/47)) ([7c719c2](https://github.com/verana-labs/verana-visualizer/commit/7c719c25dbf17299850edce9822ff1759d53866b))
+
 ## [1.1.0](https://github.com/verana-labs/verana-visualizer/compare/v1.0.0...v1.1.0) (2026-06-09)
 
 
