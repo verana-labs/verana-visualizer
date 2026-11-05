@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.testnet.verana.network/v4/indexer/status",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "is_running": true,
+    "is_crawling": true
+  }
+}

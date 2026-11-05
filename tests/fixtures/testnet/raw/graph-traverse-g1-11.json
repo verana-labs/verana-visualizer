@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.testnet.verana.network/v4/graph/traverse",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "query": "G1",
+      "input": {
+        "participantId": 11
+      }
+    }
+  },
+  "status": 404,
+  "body": {
+    "error": {
+      "code": "UNKNOWN_ID",
+      "message": "unknown participant 11"
+    }
+  }
+}

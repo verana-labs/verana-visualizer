@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.devnet.verana.network/cosmos/gov/v1/proposals?pagination.limit=200",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "proposals": [],
+    "pagination": {
+      "next_key": null,
+      "total": "0"
+    }
+  }
+}

@@ -1,0 +1,906 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.devnet.verana.network/v4/graph/search",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "surface": "Did",
+      "limit": 20
+    }
+  },
+  "status": 200,
+  "body": {
+    "query": {
+      "surface": "Did",
+      "limit": 20
+    },
+    "totalCount": 14,
+    "hits": [
+      {
+        "type": "Did",
+        "id": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org",
+        "score": 0.001792432724,
+        "snippet": {
+          "did": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org",
+          "lastObservedAtTime": "2026-10-19T17:58:44.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": true,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "A",
+            "name": "Welcome to Ayni",
+            "type": "AIAgent",
+            "description": "The first agent to talk to on Ayni. It explains what Ayni is and lets you try it.",
+            "logoUri": "https://app.dev.ayni.org/brand/icon.svg",
+            "logoDigestSri": "sha384-dJaLJ52SMps2derRnbaFOPJCB+YVf6hQxcmMHjwvVDPMGcx/m7gLoMCUOS9hqlnI"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "2060 OÜ (devnet)",
+            "logoUri": "https://2060.io/images/logo-squared.svg",
+            "logoDigestSri": "sha384-dniFZP6z7WHUmBUDkvSqaoogFkrnCxh4qGCgQSPGvjIpqbaFFYRPSMiJe65C2QFb",
+            "countryCode": "EE",
+            "registryId": "16853041",
+            "address": "Harju maakond, Tallinn, Kesklinna linnaosa, Ahtri tn 12, 15551"
+          },
+          "corporation": {
+            "id": 8,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org#ayni-agui",
+              "type": "AyniAgUI",
+              "serviceEndpoint": "https://welcome.dev.ayni.org/.well-known/ayni-agent.json"
+            },
+            {
+              "id": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://welcome.dev.ayni.org"
+            },
+            {
+              "id": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://welcome.dev.ayni.org",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmPsq6CtGnYQ5T6nVFDQcWnWrZHVZ4KX1z5BtHP4YYsM4q:welcome.dev.ayni.org#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://welcome.dev.ayni.org"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmTjgAgrSEKmXDgyzQvzar92uwQvW8VSJV8ZS5SjzYqCxX:ecs-ecosystem.devnet.verana.network",
+        "score": 0.001792432724,
+        "snippet": {
+          "did": "did:webvh:QmTjgAgrSEKmXDgyzQvzar92uwQvW8VSJV8ZS5SjzYqCxX:ecs-ecosystem.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-19T17:58:44.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": true,
+          "service": {
+            "pattern": "A",
+            "name": "ECS Ecosystem (Devnet)",
+            "type": "WEB_PORTAL",
+            "description": "Essential Credential Schema authority of the Verana devnet",
+            "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+            "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana ECS Ecosystem",
+            "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+            "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO",
+            "countryCode": "CH",
+            "registryId": "VERANA-ECS-001",
+            "address": "Geneva, Switzerland"
+          },
+          "corporation": {
+            "id": 1,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://ecs-ecosystem.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmTjgAgrSEKmXDgyzQvzar92uwQvW8VSJV8ZS5SjzYqCxX:ecs-ecosystem.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://ecs-ecosystem.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmTjgAgrSEKmXDgyzQvzar92uwQvW8VSJV8ZS5SjzYqCxX:ecs-ecosystem.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://ecs-ecosystem.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmTjgAgrSEKmXDgyzQvzar92uwQvW8VSJV8ZS5SjzYqCxX:ecs-ecosystem.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://ecs-ecosystem.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmWyAPU1VaPCuU6fmVQnvvVW5KDqpmSUUUyE2yAXaGEPdL:ecs-org-issuer.devnet.verana.network",
+        "score": 0.001792432713,
+        "snippet": {
+          "did": "did:webvh:QmWyAPU1VaPCuU6fmVQnvvVW5KDqpmSUUUyE2yAXaGEPdL:ecs-org-issuer.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-19T17:58:33.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "A",
+            "name": "ECS Organization Issuer (Devnet)",
+            "type": "WEB_PORTAL",
+            "description": "Issues the ECS Organization credentials of the Verana devnet ECS Ecosystem",
+            "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+            "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana ECS Organization Issuer",
+            "logoUri": "https://veranacouncil.org/assets/img/favicon.svg",
+            "logoDigestSri": "sha384-osSD4hnwIHnjjqhSoO+Fj1JZ+9MfLrJOYhZNZmu1ULMUxuSe8enWCVxSQyoIvlYO",
+            "countryCode": "CH",
+            "registryId": "VERANA-ECS-ISSUER-001",
+            "address": "Geneva, Switzerland"
+          },
+          "corporation": {
+            "id": 2,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmWyAPU1VaPCuU6fmVQnvvVW5KDqpmSUUUyE2yAXaGEPdL:ecs-org-issuer.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://ecs-org-issuer.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmWyAPU1VaPCuU6fmVQnvvVW5KDqpmSUUUyE2yAXaGEPdL:ecs-org-issuer.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://ecs-org-issuer.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmWyAPU1VaPCuU6fmVQnvvVW5KDqpmSUUUyE2yAXaGEPdL:ecs-org-issuer.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://ecs-org-issuer.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev",
+        "score": 0.001792176635,
+        "snippet": {
+          "did": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev",
+          "lastObservedAtTime": "2026-10-16T18:50:35.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": true,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "A",
+            "name": "Hologram Agent (dev)",
+            "type": "AIAgent",
+            "description": "Development instance of the Hologram Agent.",
+            "logoUri": "https://ayni.dev.2060.io/brand/icon.svg",
+            "logoDigestSri": "sha384-dJaLJ52SMps2derRnbaFOPJCB+YVf6hQxcmMHjwvVDPMGcx/m7gLoMCUOS9hqlnI"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "2060 OÜ (dev)",
+            "logoUri": "https://2060.io/images/logo-squared.svg",
+            "logoDigestSri": "sha384-dniFZP6z7WHUmBUDkvSqaoogFkrnCxh4qGCgQSPGvjIpqbaFFYRPSMiJe65C2QFb",
+            "countryCode": "EE",
+            "registryId": "16853041",
+            "address": "Harju maakond, Tallinn, Kesklinna linnaosa, Ahtri tn 12, 15551"
+          },
+          "corporation": {
+            "id": 7,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://moonlit-trowel-unedited.ngrok-free.dev"
+            },
+            {
+              "id": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://moonlit-trowel-unedited.ngrok-free.dev",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://moonlit-trowel-unedited.ngrok-free.dev"
+            },
+            {
+              "id": "did:webvh:QmPk9gWBYyz93N8odMFuTpSS1yMPJhPpKynNwQw1oxjiqf:moonlit-trowel-unedited.ngrok-free.dev#hologram-agui",
+              "type": "AyniAgUI",
+              "serviceEndpoint": "http://localhost:3020/.well-known/ayni-agent.json"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io",
+        "score": 0.001792176539,
+        "snippet": {
+          "did": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io",
+          "lastObservedAtTime": "2026-10-16T18:48:59.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "A",
+            "name": "Welcome to Ayni",
+            "type": "AIAgent",
+            "description": "The first agent to talk to on Ayni. It explains what Ayni is and lets you try it.",
+            "logoUri": "https://ayni.dev.2060.io/brand/icon.svg",
+            "logoDigestSri": "sha384-dJaLJ52SMps2derRnbaFOPJCB+YVf6hQxcmMHjwvVDPMGcx/m7gLoMCUOS9hqlnI"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "2060 OÜ (devnet)",
+            "logoUri": "https://2060.io/images/logo-squared.svg",
+            "logoDigestSri": "sha384-dniFZP6z7WHUmBUDkvSqaoogFkrnCxh4qGCgQSPGvjIpqbaFFYRPSMiJe65C2QFb",
+            "countryCode": "EE",
+            "registryId": "16853041",
+            "address": "Harju maakond, Tallinn, Kesklinna linnaosa, Ahtri tn 12, 15551"
+          },
+          "corporation": {
+            "id": 8,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io#ayni-agui",
+              "type": "AyniAgUI",
+              "serviceEndpoint": "https://welcome.ayni.dev.2060.io/.well-known/ayni-agent.json"
+            },
+            {
+              "id": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://welcome.ayni.dev.2060.io"
+            },
+            {
+              "id": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://welcome.ayni.dev.2060.io",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmXNjcQjotAPMrs7h5jkUr3K2VBSVcB2JyHF3AVik6ysqR:welcome.ayni.dev.2060.io#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://welcome.ayni.dev.2060.io"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmbKsngBcU88sXmhXEccQdNL7dcjR4cFUjAe2Fm36j4PFA:rental.intexus-dl.devnet.verana.network",
+        "score": 0.001792104502,
+        "snippet": {
+          "did": "did:webvh:QmbKsngBcU88sXmhXEccQdNL7dcjR4cFUjAe2Fm36j4PFA:rental.intexus-dl.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T22:48:22.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Alquiladora de prueba",
+            "type": "WEB_PORTAL",
+            "description": "Alquiladora de vehículos que verifica licencias de conducción. Demostración sin validez oficial.",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Ecosistema de tránsito de prueba",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CO",
+            "registryId": "CO-DEMO-000001",
+            "address": "Bogotá, Colombia (demo)"
+          },
+          "corporation": {
+            "id": 4,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmbKsngBcU88sXmhXEccQdNL7dcjR4cFUjAe2Fm36j4PFA:rental.intexus-dl.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://rental.intexus-dl.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmbKsngBcU88sXmhXEccQdNL7dcjR4cFUjAe2Fm36j4PFA:rental.intexus-dl.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://rental.intexus-dl.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmbKsngBcU88sXmhXEccQdNL7dcjR4cFUjAe2Fm36j4PFA:rental.intexus-dl.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://rental.intexus-dl.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmRVh8axyKwDqxVGewWcgP4ZZ1yNuJMs1LiiMgqCcsA9Bf:traffic-authority.intexus-dl.devnet.verana.network",
+        "score": 0.001792104491,
+        "snippet": {
+          "did": "did:webvh:QmRVh8axyKwDqxVGewWcgP4ZZ1yNuJMs1LiiMgqCcsA9Bf:traffic-authority.intexus-dl.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T22:48:11.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Autoridad de tránsito de prueba",
+            "type": "WEB_PORTAL",
+            "description": "Entidad competente que acredita a los agentes de tránsito. Demostración sin validez oficial.",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Ecosistema de tránsito de prueba",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CO",
+            "registryId": "CO-DEMO-000001",
+            "address": "Bogotá, Colombia (demo)"
+          },
+          "corporation": {
+            "id": 4,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmRVh8axyKwDqxVGewWcgP4ZZ1yNuJMs1LiiMgqCcsA9Bf:traffic-authority.intexus-dl.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://traffic-authority.intexus-dl.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmRVh8axyKwDqxVGewWcgP4ZZ1yNuJMs1LiiMgqCcsA9Bf:traffic-authority.intexus-dl.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://traffic-authority.intexus-dl.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmRVh8axyKwDqxVGewWcgP4ZZ1yNuJMs1LiiMgqCcsA9Bf:traffic-authority.intexus-dl.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://traffic-authority.intexus-dl.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:Qmaqs8RCNtBCicTEupAr5jxpvjxedy4oi4ojqzSC7QShkR:license-issuer.intexus-dl.devnet.verana.network",
+        "score": 0.001792104491,
+        "snippet": {
+          "did": "did:webvh:Qmaqs8RCNtBCicTEupAr5jxpvjxedy4oi4ojqzSC7QShkR:license-issuer.intexus-dl.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T22:48:11.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Entidad emisora de prueba",
+            "type": "WEB_PORTAL",
+            "description": "Emisor de licencias de conducción verificables. Demostración sin validez oficial.",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Ecosistema de tránsito de prueba",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CO",
+            "registryId": "CO-DEMO-000001",
+            "address": "Bogotá, Colombia (demo)"
+          },
+          "corporation": {
+            "id": 4,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:Qmaqs8RCNtBCicTEupAr5jxpvjxedy4oi4ojqzSC7QShkR:license-issuer.intexus-dl.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://license-issuer.intexus-dl.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:Qmaqs8RCNtBCicTEupAr5jxpvjxedy4oi4ojqzSC7QShkR:license-issuer.intexus-dl.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://license-issuer.intexus-dl.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:Qmaqs8RCNtBCicTEupAr5jxpvjxedy4oi4ojqzSC7QShkR:license-issuer.intexus-dl.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://license-issuer.intexus-dl.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:Qmbsen8sNLZojkp8UVX4HcGqzmnv1s8M2v3g3zJsKGLz8m:ecosystem.intexus-dl.devnet.verana.network",
+        "score": 0.001792104491,
+        "snippet": {
+          "did": "did:webvh:Qmbsen8sNLZojkp8UVX4HcGqzmnv1s8M2v3g3zJsKGLz8m:ecosystem.intexus-dl.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T22:48:11.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": true,
+          "service": {
+            "pattern": "A",
+            "name": "Gobernanza del ecosistema de tránsito (demo)",
+            "type": "WEB_PORTAL",
+            "description": "Controlador del ecosistema de licencias de conducción verificables. Demostración sin validez oficial.",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Ecosistema de tránsito de prueba",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CO",
+            "registryId": "CO-DEMO-000001",
+            "address": "Bogotá, Colombia (demo)"
+          },
+          "corporation": {
+            "id": 4,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:Qmbsen8sNLZojkp8UVX4HcGqzmnv1s8M2v3g3zJsKGLz8m:ecosystem.intexus-dl.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://ecosystem.intexus-dl.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:Qmbsen8sNLZojkp8UVX4HcGqzmnv1s8M2v3g3zJsKGLz8m:ecosystem.intexus-dl.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://ecosystem.intexus-dl.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:Qmbsen8sNLZojkp8UVX4HcGqzmnv1s8M2v3g3zJsKGLz8m:ecosystem.intexus-dl.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://ecosystem.intexus-dl.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmUXux2gFhLgfEhSHoaLWsMx8PdzfBXnv5c4jjty5ah4yB:verifier-web-vs.example.demos.devnet.verana.network",
+        "score": 0.001792077789,
+        "snippet": {
+          "did": "did:webvh:QmUXux2gFhLgfEhSHoaLWsMx8PdzfBXnv5c4jjty5ah4yB:verifier-web-vs.example.demos.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T15:23:09.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Example Web Verifier",
+            "type": "WEB_PORTAL",
+            "description": "Web credential verifier for the Verana demo ecosystem",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana Example Organization",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CH",
+            "registryId": "CH-CHE-123.456.789",
+            "address": "Bahnhofstrasse 42, 8001 Zurich, Switzerland"
+          },
+          "corporation": {
+            "id": 3,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmUXux2gFhLgfEhSHoaLWsMx8PdzfBXnv5c4jjty5ah4yB:verifier-web-vs.example.demos.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://verifier-web-vs.example.demos.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmUXux2gFhLgfEhSHoaLWsMx8PdzfBXnv5c4jjty5ah4yB:verifier-web-vs.example.demos.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://verifier-web-vs.example.demos.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmUXux2gFhLgfEhSHoaLWsMx8PdzfBXnv5c4jjty5ah4yB:verifier-web-vs.example.demos.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://verifier-web-vs.example.demos.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmQV86gBQUS2vFWh2rhEhHxvSrvPPQzZHT921jdHimSXFh:issuer-chatbot-vs.example.demos.devnet.verana.network",
+        "score": 0.001792077779,
+        "snippet": {
+          "did": "did:webvh:QmQV86gBQUS2vFWh2rhEhHxvSrvPPQzZHT921jdHimSXFh:issuer-chatbot-vs.example.demos.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T15:22:59.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Example Issuer Chatbot",
+            "type": "MESSAGING_APP",
+            "description": "Chatbot credential issuer for the Verana demo ecosystem",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana Example Organization",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CH",
+            "registryId": "CH-CHE-123.456.789",
+            "address": "Bahnhofstrasse 42, 8001 Zurich, Switzerland"
+          },
+          "corporation": {
+            "id": 3,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmQV86gBQUS2vFWh2rhEhHxvSrvPPQzZHT921jdHimSXFh:issuer-chatbot-vs.example.demos.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://issuer-chatbot-vs.example.demos.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmQV86gBQUS2vFWh2rhEhHxvSrvPPQzZHT921jdHimSXFh:issuer-chatbot-vs.example.demos.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://issuer-chatbot-vs.example.demos.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmQV86gBQUS2vFWh2rhEhHxvSrvPPQzZHT921jdHimSXFh:issuer-chatbot-vs.example.demos.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://issuer-chatbot-vs.example.demos.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmRnTTDxoZa4M8DUcfcau6FXnkumTo8GVKbrfdFSHUYDqn:verifier-chatbot-vs.example.demos.devnet.verana.network",
+        "score": 0.001792077779,
+        "snippet": {
+          "did": "did:webvh:QmRnTTDxoZa4M8DUcfcau6FXnkumTo8GVKbrfdFSHUYDqn:verifier-chatbot-vs.example.demos.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T15:22:59.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Example Verifier Chatbot",
+            "type": "MESSAGING_APP",
+            "description": "Chatbot credential verifier for the Verana demo ecosystem",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana Example Organization",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CH",
+            "registryId": "CH-CHE-123.456.789",
+            "address": "Bahnhofstrasse 42, 8001 Zurich, Switzerland"
+          },
+          "corporation": {
+            "id": 3,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmRnTTDxoZa4M8DUcfcau6FXnkumTo8GVKbrfdFSHUYDqn:verifier-chatbot-vs.example.demos.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://verifier-chatbot-vs.example.demos.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmRnTTDxoZa4M8DUcfcau6FXnkumTo8GVKbrfdFSHUYDqn:verifier-chatbot-vs.example.demos.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://verifier-chatbot-vs.example.demos.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmRnTTDxoZa4M8DUcfcau6FXnkumTo8GVKbrfdFSHUYDqn:verifier-chatbot-vs.example.demos.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://verifier-chatbot-vs.example.demos.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmbwN1fGWHwsd4bK2Q31wmcf2FAR6MT973tcGwatF5esqm:issuer-web-vs.example.demos.devnet.verana.network",
+        "score": 0.001792077779,
+        "snippet": {
+          "did": "did:webvh:QmbwN1fGWHwsd4bK2Q31wmcf2FAR6MT973tcGwatF5esqm:issuer-web-vs.example.demos.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T15:22:59.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": false,
+          "service": {
+            "pattern": "B",
+            "name": "Example Issuer Web App",
+            "type": "WEB_PORTAL",
+            "description": "Web credential issuer for the Verana demo ecosystem",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana Example Organization",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CH",
+            "registryId": "CH-CHE-123.456.789",
+            "address": "Bahnhofstrasse 42, 8001 Zurich, Switzerland"
+          },
+          "corporation": {
+            "id": 3,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmbwN1fGWHwsd4bK2Q31wmcf2FAR6MT973tcGwatF5esqm:issuer-web-vs.example.demos.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://issuer-web-vs.example.demos.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmbwN1fGWHwsd4bK2Q31wmcf2FAR6MT973tcGwatF5esqm:issuer-web-vs.example.demos.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://issuer-web-vs.example.demos.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmbwN1fGWHwsd4bK2Q31wmcf2FAR6MT973tcGwatF5esqm:issuer-web-vs.example.demos.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://issuer-web-vs.example.demos.devnet.verana.network"
+            }
+          ]
+        }
+      },
+      {
+        "type": "Did",
+        "id": "did:webvh:QmfAa6ta6A3LzKZKe7QMN9X92wPTn9NQqdoiMMGr6mskty:organization-vs.example.demos.devnet.verana.network",
+        "score": 0.001792077779,
+        "snippet": {
+          "did": "did:webvh:QmfAa6ta6A3LzKZKe7QMN9X92wPTn9NQqdoiMMGr6mskty:organization-vs.example.demos.devnet.verana.network",
+          "lastObservedAtTime": "2026-10-15T15:22:59.000Z",
+          "isTrustExpired": false,
+          "trusted": true,
+          "isCorporation": false,
+          "isEcosystem": true,
+          "service": {
+            "pattern": "A",
+            "name": "Verana Example Ecosystem",
+            "type": "WEB_PORTAL",
+            "description": "Ecosystem controller of the Verana demo ecosystem",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+          },
+          "operator": {
+            "kind": "Organization",
+            "name": "Verana Example Organization",
+            "logoUri": "https://verana.io/logo.svg",
+            "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L",
+            "countryCode": "CH",
+            "registryId": "CH-CHE-123.456.789",
+            "address": "Bahnhofstrasse 42, 8001 Zurich, Switzerland"
+          },
+          "corporation": {
+            "id": 3,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "endpoints": [
+            {
+              "id": "did:webvh:QmfAa6ta6A3LzKZKe7QMN9X92wPTn9NQqdoiMMGr6mskty:organization-vs.example.demos.devnet.verana.network#did-communication",
+              "type": "did-communication",
+              "serviceEndpoint": "wss://organization-vs.example.demos.devnet.verana.network"
+            },
+            {
+              "id": "did:webvh:QmfAa6ta6A3LzKZKe7QMN9X92wPTn9NQqdoiMMGr6mskty:organization-vs.example.demos.devnet.verana.network#didcomm-messaging-0",
+              "type": "DIDCommMessaging",
+              "serviceEndpoint": {
+                "uri": "wss://organization-vs.example.demos.devnet.verana.network",
+                "accept": [
+                  "didcomm/v2"
+                ]
+              }
+            },
+            {
+              "id": "did:webvh:QmfAa6ta6A3LzKZKe7QMN9X92wPTn9NQqdoiMMGr6mskty:organization-vs.example.demos.devnet.verana.network#files",
+              "type": "relativeRef",
+              "serviceEndpoint": "https://organization-vs.example.demos.devnet.verana.network"
+            }
+          ]
+        }
+      }
+    ],
+    "facets": {
+      "Did.operatorKind": [
+        {
+          "value": "Organization",
+          "count": 14
+        }
+      ],
+      "EcsCredential.ServiceCredential.type": [
+        {
+          "value": "WEB_PORTAL",
+          "count": 9
+        },
+        {
+          "value": "AIAgent",
+          "count": 3
+        },
+        {
+          "value": "MESSAGING_APP",
+          "count": 2
+        }
+      ],
+      "OrganizationCredential.countryCode": [
+        {
+          "value": "CH",
+          "count": 7
+        },
+        {
+          "value": "CO",
+          "count": 4
+        },
+        {
+          "value": "EE",
+          "count": 3
+        }
+      ]
+    },
+    "cursor": null
+  }
+}

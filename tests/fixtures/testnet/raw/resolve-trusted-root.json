@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://idx.testnet.verana.network/v4/verifiable-trust/resolve",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network"
+    }
+  },
+  "status": 200,
+  "body": {
+    "did": "did:webvh:QmVEcKodsZWNhMx6UT7Sq4V8JBrcvohdJTutG6q88WQPhQ:ecs-ecosystem.testnet.verana.network",
+    "trusted": true,
+    "evaluatedAtTime": "2026-10-16T21:42:33.948Z",
+    "evaluatedAtBlock": 44161,
+    "expiresAtTime": null,
+    "corporationId": 3
+  }
+}

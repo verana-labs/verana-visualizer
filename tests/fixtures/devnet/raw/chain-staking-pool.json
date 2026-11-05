@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://api.devnet.verana.network/cosmos/staking/v1beta1/pool",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "pool": {
+      "not_bonded_tokens": "0",
+      "bonded_tokens": "2980000000"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.devnet.verana.network/v4/indexer/block-height",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "type": "block-indexed",
+    "height": 79385,
+    "timestamp": "2026-10-20T09:49:29Z"
+  }
+}

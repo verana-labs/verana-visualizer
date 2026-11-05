@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://idx.testnet.verana.network/v4/verifiable-trust/resolve",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes"
+    }
+  },
+  "status": 200,
+  "body": {
+    "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+    "trusted": false,
+    "evaluatedAtTime": "2026-10-16T21:46:17.090Z",
+    "evaluatedAtBlock": 44200,
+    "expiresAtTime": null,
+    "corporationId": 34
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.devnet.verana.network/v4/indexer/changes",
+    "headers": {
+      "At-Block-Height": "79384"
+    }
+  },
+  "status": 200,
+  "body": {
+    "block_height": 79384,
+    "next_change_at": null,
+    "activity": []
+  }
+}

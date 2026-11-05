@@ -1,0 +1,66 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.testnet.verana.network/v4/graph/search",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "surface": "Corporation",
+      "freeText": "papapo",
+      "limit": 20
+    }
+  },
+  "status": 200,
+  "body": {
+    "query": {
+      "surface": "Corporation",
+      "freeText": "papapo",
+      "limit": 20
+    },
+    "totalCount": 1,
+    "hits": [
+      {
+        "type": "Corporation",
+        "id": 34,
+        "score": 7.600881603702953,
+        "snippet": {
+          "id": 34,
+          "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+          "lastObservedAtTime": "2026-10-26T22:34:49.000Z",
+          "trust": {
+            "policyAddress": "verana1yp38kfyr2wmccyqryqggpmpmq09ur9wy48ksqw6x824n4la83jrstlhfcj",
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "didCard": {
+            "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+            "trusted": true,
+            "isTrustExpired": false,
+            "service": {
+              "pattern": "A",
+              "name": "Papapo agent",
+              "type": "WEB_PORTAL",
+              "description": "Testnet business wallet",
+              "logoUri": "https://verana.papapo.shoes/vt/default/logo.svg",
+              "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+            },
+            "operator": {
+              "kind": "Organization",
+              "name": "Papapo",
+              "logoUri": "https://papapo.shoes/_next/static/media/logo-papapo.92d6327f.svg",
+              "logoDigestSri": "sha384-ZGAxDcu7bKIMpLFruA2r9SwxA3XC2fo05PHnG/hmZg0PJEyEj7OwN+UD8xLCazT+",
+              "countryCode": "CO",
+              "registryId": "CO-XX-0000000",
+              "address": "Bogota, Colombia"
+            }
+          }
+        }
+      }
+    ],
+    "facets": {},
+    "cursor": null
+  }
+}

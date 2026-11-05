@@ -1,0 +1,85 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "https://graph.testnet.verana.network/v4/graph/search",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "body": {
+      "surface": "Ecosystem",
+      "freeText": "papapo",
+      "limit": 20
+    }
+  },
+  "status": 200,
+  "body": {
+    "query": {
+      "surface": "Ecosystem",
+      "freeText": "papapo",
+      "limit": 20
+    },
+    "totalCount": 1,
+    "hits": [
+      {
+        "type": "Ecosystem",
+        "id": 14,
+        "score": 7.600881603702953,
+        "snippet": {
+          "id": 14,
+          "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+          "archived": false,
+          "lastObservedAtTime": "2026-10-26T22:34:49.000Z",
+          "corporation": {
+            "id": 34,
+            "deposit": "0uvna",
+            "slashedEvents": 0,
+            "lastSlashedAtTime": null,
+            "slashedValue": null
+          },
+          "stats": {
+            "participants": {},
+            "issuedCredentials": 0,
+            "verifiedCredentials": 0
+          },
+          "didCard": {
+            "did": "did:webvh:QmbMzijTyACD4RgPscJmifpH4BXXCVq9yYjn36jcBntdDv:verana.papapo.shoes",
+            "trusted": true,
+            "isTrustExpired": false,
+            "service": {
+              "pattern": "A",
+              "name": "Papapo agent",
+              "type": "WEB_PORTAL",
+              "description": "Testnet business wallet",
+              "logoUri": "https://verana.papapo.shoes/vt/default/logo.svg",
+              "logoDigestSri": "sha384-1G4T+nqt0RLvb+W2nC1rwLqohRZemOfldSdbHLBLX4K8tF5vGeBU3GajkHFqPI4L"
+            },
+            "operator": {
+              "kind": "Organization",
+              "name": "Papapo",
+              "logoUri": "https://papapo.shoes/_next/static/media/logo-papapo.92d6327f.svg",
+              "logoDigestSri": "sha384-ZGAxDcu7bKIMpLFruA2r9SwxA3XC2fo05PHnG/hmZg0PJEyEj7OwN+UD8xLCazT+",
+              "countryCode": "CO",
+              "registryId": "CO-XX-0000000",
+              "address": "Bogota, Colombia"
+            }
+          }
+        }
+      }
+    ],
+    "facets": {
+      "archived": [
+        {
+          "value": false,
+          "count": 1
+        }
+      ],
+      "corporationId": [
+        {
+          "value": 34,
+          "count": 1
+        }
+      ]
+    },
+    "cursor": null
+  }
+}

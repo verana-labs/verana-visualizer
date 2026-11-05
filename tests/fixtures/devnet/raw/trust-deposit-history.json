@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "https://idx.devnet.verana.network/v4/trust-deposit/history/10?limit=1000&sort=-id",
+    "headers": {}
+  },
+  "status": 200,
+  "body": {
+    "entity_type": "TrustDeposit",
+    "entity_id": "10",
+    "activity": []
+  }
+}
