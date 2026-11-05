@@ -1,0 +1,20 @@
+ingress:
+  hosts:
+    - host: vis.testnet.verana.network
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - vis.testnet.verana.network
+      secretName: visualizer-tls-secret
+
+env:
+  NEXT_PUBLIC_VERANA_INDEXER_BASE_URL: "https://idx.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_RPC_ENDPOINT: "https://rpc.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_REST_ENDPOINT: "https://api.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_CHAIN_ID: "vna-testnet-1"
+  NEXT_PUBLIC_VERANA_CHAIN_NAME: "testnet"
+  NEXT_PUBLIC_VERANA_GRAPH_URL: "https://graph.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_FRONTEND_URL: "https://app.testnet.verana.network"
+  NEXT_PUBLIC_VERANA_PEER_VISUALIZER_URL: "https://vis.devnet.verana.network"
